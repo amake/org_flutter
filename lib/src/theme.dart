@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:org_parser/org_parser.dart';
 
 const orgLevelColors = [
@@ -19,7 +18,6 @@ const orgDoneColor = Color(0xff228b22);
 const orgCodeColor = Color(0xff7f7f7f);
 const orgLinkColor = Color(0xff3a5fcd);
 const orgMetaColor = Color(0xffb22222);
-final TextStyle orgStyle = GoogleFonts.firaMono(fontSize: 18);
 
 TextStyle fontStyleForOrgStyle(TextStyle base, OrgStyle style) {
   switch (style) {

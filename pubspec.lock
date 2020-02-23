@@ -88,6 +88,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.8"
+  org_parser:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: bc2a45f877ec3b546c2f8f0335de21dc701407a2
+      url: "https://github.com/amake/org_parser.git"
+    source: git
+    version: "0.0.1"
   path:
     dependency: transitive
     description:

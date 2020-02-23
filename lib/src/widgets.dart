@@ -1,14 +1,20 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:org_flutter/src/theme.dart';
 import 'package:org_parser/org_parser.dart';
-import 'package:orgro/src/theme.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class OrgDocumentWidget extends StatelessWidget {
-  const OrgDocumentWidget(this.text, {Key key}) : super(key: key);
+  const OrgDocumentWidget(
+    this.text, {
+    this.style,
+    this.linkHandler,
+    Key key,
+  }) : super(key: key);
 
   final String text;
+  final TextStyle style;
+  final Function(String) linkHandler;
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +22,8 @@ class OrgDocumentWidget extends StatelessWidget {
     final result = parser.parse(text);
     final topContent = result.value[0] as OrgContent;
     final sections = result.value[1] as List;
-    return DefaultTextStyle.merge(
-      style: orgStyle,
+    final body = _LinkHandler(
+      linkHandler,
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: <Widget>[
@@ -26,7 +32,30 @@ class OrgDocumentWidget extends StatelessWidget {
         ],
       ),
     );
+    return style == null
+        ? body
+        : DefaultTextStyle.merge(
+            style: style,
+            child: body,
+          );
   }
+}
+
+class _LinkHandler extends InheritedWidget {
+  const _LinkHandler(
+    this.handler, {
+    @required Widget child,
+    Key key,
+  }) : super(key: key, child: child);
+
+  final Function(String) handler;
+
+  static _LinkHandler of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_LinkHandler>();
+
+  @override
+  bool updateShouldNotify(_LinkHandler oldWidget) =>
+      handler != oldWidget.handler;
 }
 
 class OrgSectionWidget extends StatelessWidget {
@@ -114,14 +143,19 @@ class _OrgContentWidgetState extends State<OrgContentWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Text.rich(
-        _contentToSpanTree(context, widget.content, _recognizers.add));
+    return Text.rich(_contentToSpanTree(
+      context,
+      widget.content,
+      _LinkHandler.of(context).handler,
+      _recognizers.add,
+    ));
   }
 }
 
 InlineSpan _contentToSpanTree(
   BuildContext context,
   OrgContent content,
+  Function(String) linkHandler,
   Function(GestureRecognizer) registerRecognizer,
 ) {
   if (content is OrgPlainText) {
@@ -135,8 +169,10 @@ InlineSpan _contentToSpanTree(
       ),
     );
   } else if (content is OrgLink) {
-    final recognizer = TapGestureRecognizer()
-      ..onTap = () => launch(content.location);
+    final recognizer = TapGestureRecognizer();
+    if (linkHandler != null) {
+      recognizer.onTap = () => linkHandler(content.location);
+    }
     registerRecognizer(recognizer);
     return TextSpan(
       recognizer: recognizer,
@@ -151,8 +187,8 @@ InlineSpan _contentToSpanTree(
   } else {
     return TextSpan(
         children: content.children
-            .map((child) =>
-                _contentToSpanTree(context, child, registerRecognizer))
+            .map((child) => _contentToSpanTree(
+                context, child, linkHandler, registerRecognizer))
             .toList());
   }
 }
@@ -202,7 +238,11 @@ class _OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
                 TextSpan(text: '${widget.headline.priority} '),
               if (widget.headline.title != null)
                 _contentToSpanTree(
-                    context, widget.headline.title, _recognizers.add),
+                  context,
+                  widget.headline.title,
+                  _LinkHandler.of(context).handler,
+                  _recognizers.add,
+                ),
               if (widget.headline.tags.isNotEmpty)
                 TextSpan(text: ':${widget.headline.tags.join(':')}:'),
             ],

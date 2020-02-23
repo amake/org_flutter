@@ -1,7 +1,4 @@
 library org_flutter;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'package:org_flutter/src/theme.dart';
+export 'package:org_flutter/src/widgets.dart';
