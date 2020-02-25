@@ -69,7 +69,15 @@ class OrgSectionWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         InkWell(
-          child: OrgHeadlineWidget(section.headline),
+          child: ValueListenableBuilder(
+            valueListenable: open,
+            builder: (context, value, child) {
+              return OrgHeadlineWidget(
+                section.headline,
+                open: value || section.isEmpty,
+              );
+            },
+          ),
           onTap: () => open.value = !open.value,
         ),
         AnimatedShowHide(
@@ -196,8 +204,11 @@ InlineSpan _contentToSpanTree(
 }
 
 class OrgHeadlineWidget extends StatefulWidget {
-  const OrgHeadlineWidget(this.headline, {Key key}) : super(key: key);
+  const OrgHeadlineWidget(this.headline, {@required this.open, Key key})
+      : assert(open != null),
+        super(key: key);
   final OrgHeadline headline;
+  final bool open;
 
   @override
   _OrgHeadlineWidgetState createState() => _OrgHeadlineWidgetState();
@@ -247,6 +258,7 @@ class _OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
                 ),
               if (widget.headline.tags.isNotEmpty)
                 TextSpan(text: ':${widget.headline.tags.join(':')}:'),
+              if (!widget.open) TextSpan(text: '...'),
             ],
           ),
         ),
@@ -287,9 +299,15 @@ class OrgBlockWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         InkWell(
-          child: Text(
-            _trimLastBlankLine(block.header),
-            style: metaStyle,
+          child: ValueListenableBuilder(
+            valueListenable: open,
+            builder: (context, value, child) {
+              final suffix = value ? '' : '...';
+              return Text(
+                _trimLastBlankLine(block.header) + suffix,
+                style: metaStyle,
+              );
+            },
           ),
           onTap: () => open.value = !open.value,
         ),
