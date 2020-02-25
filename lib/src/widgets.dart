@@ -182,9 +182,10 @@ InlineSpan _contentToSpanTree(
       recognizer.onTap = () => linkHandler(content.location);
     }
     registerRecognizer(recognizer);
+    final visibleContent = content.description ?? content.location;
     return TextSpan(
       recognizer: recognizer,
-      text: content.description ?? content.location,
+      text: _characterWrappableString(visibleContent),
       style: DefaultTextStyle.of(context).style.copyWith(color: orgLinkColor),
     );
   } else if (content is OrgMeta) {
@@ -200,6 +201,17 @@ InlineSpan _contentToSpanTree(
             .map((child) => _contentToSpanTree(
                 context, child, linkHandler, registerRecognizer))
             .toList());
+  }
+}
+
+String _characterWrappableString(String text) {
+  if (text.contains(' ')) {
+    return text;
+  } else {
+    // Interleave runes with U+200B ZERO WIDTH SPACE to serve as a place to wrap
+    // the line
+    return String.fromCharCodes(text.runes
+        .fold<List<int>>([], (prev, elem) => prev..add(elem)..add(0x200b)));
   }
 }
 
