@@ -184,6 +184,8 @@ InlineSpan _contentToSpanTree(
         text: content.content,
         style:
             DefaultTextStyle.of(context).style.copyWith(color: orgMetaColor));
+  } else if (content is OrgBlock) {
+    return WidgetSpan(child: OrgBlockWidget(content));
   } else {
     return TextSpan(
         children: content.children
@@ -267,4 +269,44 @@ class IdentityTextScale extends StatelessWidget {
       child: child,
     );
   }
+}
+
+class OrgBlockWidget extends StatelessWidget {
+  const OrgBlockWidget(this.block, {Key key})
+      : assert(block != null),
+        super(key: key);
+  final OrgBlock block;
+
+  @override
+  Widget build(BuildContext context) {
+    final open = ValueNotifier<bool>(true);
+    final defaultStyle = DefaultTextStyle.of(context).style;
+    final metaStyle = defaultStyle.copyWith(color: orgMetaColor);
+    final codeStyle = defaultStyle.copyWith(color: orgCodeColor);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        InkWell(
+          child: Text(
+            _trimLastBlankLine(block.header),
+            style: metaStyle,
+          ),
+          onTap: () => open.value = !open.value,
+        ),
+        AnimatedShowHide(
+          open,
+          shownChild: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(_trimLastBlankLine(block.body), style: codeStyle),
+              Text(block.footer, style: metaStyle),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _trimLastBlankLine(String str) =>
+      str.endsWith('\n') ? str.substring(0, str.length - 1) : str;
 }
