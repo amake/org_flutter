@@ -132,7 +132,7 @@ class AnimatedShowHide extends StatelessWidget {
 
 class OrgContentWidget extends StatefulWidget {
   const OrgContentWidget(this.content, {Key key}) : super(key: key);
-  final OrgContent content;
+  final OrgContentElement content;
 
   @override
   _OrgContentWidgetState createState() => _OrgContentWidgetState();
@@ -162,7 +162,7 @@ class _OrgContentWidgetState extends State<OrgContentWidget> {
 
 InlineSpan _contentToSpanTree(
   BuildContext context,
-  OrgContent content,
+  OrgContentElement content,
   Function(String) linkHandler,
   Function(GestureRecognizer) registerRecognizer,
 ) {
@@ -195,12 +195,14 @@ InlineSpan _contentToSpanTree(
             DefaultTextStyle.of(context).style.copyWith(color: orgMetaColor));
   } else if (content is OrgBlock) {
     return WidgetSpan(child: OrgBlockWidget(content));
-  } else {
+  } else if (content is OrgContent) {
     return TextSpan(
         children: content.children
             .map((child) => _contentToSpanTree(
                 context, child, linkHandler, registerRecognizer))
             .toList());
+  } else {
+    throw Exception('Unknown OrgContentElement type: $content');
   }
 }
 
@@ -306,7 +308,6 @@ class OrgBlockWidget extends StatelessWidget {
     final open = ValueNotifier<bool>(true);
     final defaultStyle = DefaultTextStyle.of(context).style;
     final metaStyle = defaultStyle.copyWith(color: orgMetaColor);
-    final codeStyle = defaultStyle.copyWith(color: orgCodeColor);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -328,7 +329,7 @@ class OrgBlockWidget extends StatelessWidget {
           shownChild: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Text(_trimLastBlankLine(block.body), style: codeStyle),
+              OrgContentWidget(block.body),
               Text(block.footer, style: metaStyle),
             ],
           ),
