@@ -317,7 +317,7 @@ class OrgBlockWidget extends StatelessWidget {
             builder: (context, value, child) {
               final suffix = value ? '' : '...';
               return Text(
-                _trimLastBlankLine(block.header) + suffix,
+                block.header + suffix,
                 style: metaStyle,
               );
             },
@@ -337,7 +337,4 @@ class OrgBlockWidget extends StatelessWidget {
       ],
     );
   }
-
-  String _trimLastBlankLine(String str) =>
-      str.endsWith('\n') ? str.substring(0, str.length - 1) : str;
 }
