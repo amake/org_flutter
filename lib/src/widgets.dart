@@ -194,7 +194,7 @@ InlineSpan _contentToSpanTree(
         style:
             DefaultTextStyle.of(context).style.copyWith(color: orgMetaColor));
   } else if (content is OrgBlock) {
-    return WidgetSpan(child: OrgBlockWidget(content));
+    return WidgetSpan(child: IdentityTextScale(child: OrgBlockWidget(content)));
   } else if (content is OrgContent) {
     return TextSpan(
         children: content.children
