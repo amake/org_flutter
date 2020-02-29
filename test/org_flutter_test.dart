@@ -3,6 +3,6 @@ import 'package:org_flutter/org_flutter.dart';
 
 void main() {
   test('create widget', () {
-    OrgDocumentWidget('foo');
+    Org('foo');
   });
 }
