@@ -63,12 +63,14 @@ class OrgEvents extends InheritedWidget {
 }
 
 class OrgSectionWidget extends StatelessWidget {
-  const OrgSectionWidget(this.section, {Key key}) : super(key: key);
+  const OrgSectionWidget(this.section, {this.initiallyOpen, Key key})
+      : super(key: key);
   final OrgSection section;
+  final bool initiallyOpen;
 
   @override
   Widget build(BuildContext context) {
-    final open = ValueNotifier<bool>(section.level == 1);
+    final open = ValueNotifier<bool>(initiallyOpen ?? section.level == 1);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
