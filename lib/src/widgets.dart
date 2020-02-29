@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/theme.dart';
+import 'package:org_flutter/src/util.dart';
 import 'package:org_parser/org_parser.dart';
 
 class OrgDocumentWidget extends StatelessWidget {
@@ -185,7 +186,7 @@ InlineSpan _contentToSpanTree(
     final visibleContent = content.description ?? content.location;
     return TextSpan(
       recognizer: recognizer,
-      text: _characterWrappableString(visibleContent),
+      text: characterWrappable(visibleContent),
       style: DefaultTextStyle.of(context).style.copyWith(color: orgLinkColor),
     );
   } else if (content is OrgMeta) {
@@ -203,17 +204,6 @@ InlineSpan _contentToSpanTree(
             .toList());
   } else {
     throw Exception('Unknown OrgContentElement type: $content');
-  }
-}
-
-String _characterWrappableString(String text) {
-  if (text.contains(' ')) {
-    return text;
-  } else {
-    // Interleave runes with U+200B ZERO WIDTH SPACE to serve as a place to wrap
-    // the line
-    return String.fromCharCodes(text.runes
-        .fold<List<int>>([], (prev, elem) => prev..add(elem)..add(0x200b)));
   }
 }
 
