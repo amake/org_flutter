@@ -29,6 +29,8 @@ class OrgRootWidget extends StatelessWidget {
   const OrgRootWidget({
     this.child,
     this.style,
+    this.lightTheme,
+    this.darkTheme,
     this.onLinkTap,
     this.onSectionLongPress,
     Key key,
@@ -36,15 +38,21 @@ class OrgRootWidget extends StatelessWidget {
 
   final Widget child;
   final TextStyle style;
+  final OrgThemeData lightTheme;
+  final OrgThemeData darkTheme;
   final Function(String) onLinkTap;
   final Function(OrgSection) onSectionLongPress;
 
   @override
   Widget build(BuildContext context) {
-    final body = OrgEvents(
-      child: child,
-      onLinkTap: onLinkTap,
-      onSectionLongPress: onSectionLongPress,
+    final body = OrgTheme(
+      light: lightTheme ?? OrgThemeData.light(),
+      dark: darkTheme ?? OrgThemeData.dark(),
+      child: OrgEvents(
+        child: child,
+        onLinkTap: onLinkTap,
+        onSectionLongPress: onSectionLongPress,
+      ),
     );
     return style == null
         ? body
@@ -53,6 +61,37 @@ class OrgRootWidget extends StatelessWidget {
             child: body,
           );
   }
+}
+
+class OrgTheme extends InheritedWidget {
+  const OrgTheme({
+    this.light,
+    this.dark,
+    @required Widget child,
+    Key key,
+  }) : super(key: key, child: child);
+
+  static OrgTheme of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<OrgTheme>();
+
+  static OrgThemeData dataOf(BuildContext context) {
+    final theme = of(context);
+    final brightness = MediaQuery.of(context).platformBrightness;
+    switch (brightness) {
+      case Brightness.dark:
+        return theme.dark;
+      case Brightness.light:
+        return theme.light;
+    }
+    throw Exception('Unknown platform brightness: $brightness');
+  }
+
+  final OrgThemeData light;
+  final OrgThemeData dark;
+
+  @override
+  bool updateShouldNotify(OrgTheme oldWidget) =>
+      light != oldWidget.light || dark != oldWidget.dark;
 }
 
 class OrgEvents extends InheritedWidget {
@@ -193,7 +232,7 @@ InlineSpan _contentToSpanTree(
   } else if (content is OrgMarkup) {
     return TextSpan(
       text: content.content,
-      style: fontStyleForOrgStyle(
+      style: OrgTheme.dataOf(context).fontStyleForOrgStyle(
         DefaultTextStyle.of(context).style,
         content.style,
       ),
@@ -206,13 +245,16 @@ InlineSpan _contentToSpanTree(
     return TextSpan(
       recognizer: recognizer,
       text: characterWrappable(visibleContent),
-      style: DefaultTextStyle.of(context).style.copyWith(color: orgLinkColor),
+      style: DefaultTextStyle.of(context)
+          .style
+          .copyWith(color: OrgTheme.dataOf(context).linkColor),
     );
   } else if (content is OrgMeta) {
     return TextSpan(
         text: content.content,
-        style:
-            DefaultTextStyle.of(context).style.copyWith(color: orgMetaColor));
+        style: DefaultTextStyle.of(context)
+            .style
+            .copyWith(color: OrgTheme.dataOf(context).metaColor));
   } else if (content is OrgBlock) {
     return WidgetSpan(child: IdentityTextScale(child: OrgBlockWidget(content)));
   } else if (content is OrgContent) {
@@ -250,7 +292,8 @@ class _OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final color = orgLevelColors[widget.headline.level % orgLevelColors.length];
+    final theme = OrgTheme.dataOf(context);
+    final color = theme.levelColor(widget.headline.level);
     return DefaultTextStyle.merge(
       style: TextStyle(
         color: color,
@@ -268,8 +311,8 @@ class _OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
                     text: '${widget.headline.keyword} ',
                     style: DefaultTextStyle.of(context).style.copyWith(
                         color: widget.headline.keyword == 'DONE'
-                            ? orgDoneColor
-                            : orgTodoColor)),
+                            ? theme.doneColor
+                            : theme.todoColor)),
               if (widget.headline.priority != null)
                 TextSpan(text: '${widget.headline.priority} '),
               if (widget.headline.title != null)
@@ -316,7 +359,8 @@ class OrgBlockWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final open = ValueNotifier<bool>(true);
     final defaultStyle = DefaultTextStyle.of(context).style;
-    final metaStyle = defaultStyle.copyWith(color: orgMetaColor);
+    final metaStyle =
+        defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[

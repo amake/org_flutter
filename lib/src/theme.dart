@@ -1,9 +1,23 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:org_parser/org_parser.dart';
 
-const orgLevelColors = [
+// These colors found by
+// 1. Finding the face used for something in an org-mode buffer
+// 2. Finding the definition of the face or its root ancestor
+// 3. Finding the color name for max colors and light/dark background
+// 4. Converting color name to hex with
+/*
+(kill-new
+ (mapconcat (lambda (pct)
+              (format "%02x" (* 255 pct)))
+            (color-name-to-rgb COLORNAME)
+            ""))
+ */
+
+const _orgLevelColorsLight = [
   Color(0xff0000ff),
   Color(0xffa0522d),
   Color(0xffa020f0),
@@ -13,25 +27,123 @@ const orgLevelColors = [
   Color(0xff483d8b),
   Color(0xff8b2252),
 ];
-const orgTodoColor = Color(0xffff0000);
-const orgDoneColor = Color(0xff228b22);
-const orgCodeColor = Color(0xff7f7f7f);
-const orgLinkColor = Color(0xff3a5fcd);
-const orgMetaColor = Color(0xffb22222);
+const _orgTodoColorLight = Color(0xffff0000);
+const _orgDoneColorLight = Color(0xff228b22);
+const _orgCodeColorLight = Color(0xff7f7f7f);
+const _orgLinkColorLight = Color(0xff3a5fcd);
+const _orgMetaColorLight = Color(0xffb22222);
 
-TextStyle fontStyleForOrgStyle(TextStyle base, OrgStyle style) {
-  switch (style) {
-    case OrgStyle.bold:
-      return base.copyWith(fontWeight: FontWeight.bold);
-    case OrgStyle.verbatim: // fallthrough
-    case OrgStyle.code:
-      return base.copyWith(color: orgCodeColor);
-    case OrgStyle.italic:
-      return base.copyWith(fontStyle: FontStyle.italic);
-    case OrgStyle.strikeThrough:
-      return base.copyWith(decoration: TextDecoration.lineThrough);
-    case OrgStyle.underline:
-      return base.copyWith(decoration: TextDecoration.underline);
+const _orgLevelColorsDark = [
+  Color(0xff87cefa),
+  Color(0xffeedd82),
+  Color(0xff00ffff),
+  Color(0xffff7f24),
+  Color(0xff98fb98),
+  Color(0xff7fffd4),
+  Color(0xffb0c4de),
+  Color(0xffffa07a),
+];
+const _orgTodoColorDark = Color(0xffffc0cb);
+const _orgDoneColorDark = Color(0xff98fb98);
+const _orgCodeColorDark = Color(0xffb3b3b3);
+const _orgLinkColorDark = Color(0xff00ffff);
+const _orgMetaColorDark = Color(0xffff7f24);
+
+class OrgThemeData {
+  OrgThemeData.light()
+      : this(
+          todoColor: _orgTodoColorLight,
+          doneColor: _orgDoneColorLight,
+          codeColor: _orgCodeColorLight,
+          linkColor: _orgLinkColorLight,
+          metaColor: _orgMetaColorLight,
+          levelColors: _orgLevelColorsLight,
+        );
+
+  OrgThemeData.dark()
+      : this(
+          todoColor: _orgTodoColorDark,
+          doneColor: _orgDoneColorDark,
+          codeColor: _orgCodeColorDark,
+          linkColor: _orgLinkColorDark,
+          metaColor: _orgMetaColorDark,
+          levelColors: _orgLevelColorsDark,
+        );
+
+  OrgThemeData({
+    this.todoColor,
+    this.doneColor,
+    this.codeColor,
+    this.linkColor,
+    this.metaColor,
+    Iterable<Color> levelColors,
+  }) : levelColors = List.unmodifiable(levelColors);
+
+  final Color todoColor;
+  final Color doneColor;
+  final Color codeColor;
+  final Color linkColor;
+  final Color metaColor;
+  final List<Color> levelColors;
+
+  Color levelColor(int level) =>
+      levelColors == null ? null : levelColors[level % levelColors.length];
+
+  TextStyle fontStyleForOrgStyle(TextStyle base, OrgStyle style) {
+    switch (style) {
+      case OrgStyle.bold:
+        return base.copyWith(fontWeight: FontWeight.bold);
+      case OrgStyle.verbatim: // fallthrough
+      case OrgStyle.code:
+        return base.copyWith(color: codeColor);
+      case OrgStyle.italic:
+        return base.copyWith(fontStyle: FontStyle.italic);
+      case OrgStyle.strikeThrough:
+        return base.copyWith(decoration: TextDecoration.lineThrough);
+      case OrgStyle.underline:
+        return base.copyWith(decoration: TextDecoration.underline);
+    }
+    throw Exception('Unknown style: $style');
   }
-  throw Exception('Unknown style: $style');
+
+  OrgThemeData copyWith(
+    Color todoColor,
+    Color doneColor,
+    Color codeColor,
+    Color linkColor,
+    Color metaColor,
+    Iterable<Color> levelColors,
+  ) =>
+      OrgThemeData(
+        todoColor: todoColor ?? this.todoColor,
+        doneColor: doneColor ?? this.doneColor,
+        codeColor: codeColor ?? this.codeColor,
+        linkColor: linkColor ?? this.linkColor,
+        metaColor: metaColor ?? this.metaColor,
+        levelColors: levelColors ?? this.levelColors,
+      );
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    return other is OrgThemeData &&
+        todoColor == other.todoColor &&
+        doneColor == other.doneColor &&
+        codeColor == other.codeColor &&
+        linkColor == other.linkColor &&
+        metaColor == other.metaColor &&
+        listEquals(levelColors, other.levelColors);
+  }
+
+  @override
+  int get hashCode => hashValues(
+        todoColor,
+        doneColor,
+        codeColor,
+        linkColor,
+        metaColor,
+        levelColors,
+      );
 }
