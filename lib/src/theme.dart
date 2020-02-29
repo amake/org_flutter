@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:org_flutter/src/util.dart';
 import 'package:org_parser/org_parser.dart';
 
 // These colors found by
@@ -146,4 +147,50 @@ class OrgThemeData {
         metaColor,
         levelColors,
       );
+
+  static OrgThemeData lerp(OrgThemeData a, OrgThemeData b, double t) {
+    assert(t != null);
+    if (a == null && b == null) {
+      return null;
+    }
+    if (a == null) {
+      return OrgThemeData(
+        todoColor: Color.lerp(null, b.todoColor, t),
+        doneColor: Color.lerp(null, b.doneColor, t),
+        codeColor: Color.lerp(null, b.codeColor, t),
+        linkColor: Color.lerp(null, b.linkColor, t),
+        metaColor: Color.lerp(null, b.metaColor, t),
+        levelColors: b.levelColors.map((c) => Color.lerp(null, c, t)),
+      );
+    }
+    if (b == null) {
+      return OrgThemeData(
+        todoColor: Color.lerp(a.todoColor, null, t),
+        doneColor: Color.lerp(a.doneColor, null, t),
+        codeColor: Color.lerp(a.codeColor, null, t),
+        linkColor: Color.lerp(a.linkColor, null, t),
+        metaColor: Color.lerp(a.metaColor, null, t),
+        levelColors: a.levelColors.map((c) => Color.lerp(c, null, t)),
+      );
+    }
+    return OrgThemeData(
+      todoColor: Color.lerp(a.todoColor, b.todoColor, t),
+      doneColor: Color.lerp(a.doneColor, b.doneColor, t),
+      codeColor: Color.lerp(a.codeColor, b.codeColor, t),
+      linkColor: Color.lerp(a.linkColor, b.linkColor, t),
+      metaColor: Color.lerp(a.metaColor, b.metaColor, t),
+      levelColors: _lerpColorLists(a.levelColors, b.levelColors, t),
+    );
+  }
+
+  static Iterable<Color> _lerpColorLists(
+    List<Color> a,
+    List<Color> b,
+    double t,
+  ) {
+    if (a == null || b == null || a.length != b.length) {
+      return t < 0.5 ? a : b;
+    }
+    return zipMap(a, b, (ac, bc) => Color.lerp(ac, bc, t));
+  }
 }
