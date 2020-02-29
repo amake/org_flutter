@@ -42,21 +42,24 @@ class OrgDocumentWidget extends StatelessWidget {
   }
 }
 
-class _LinkHandler extends InheritedWidget {
-  const _LinkHandler(
-    this.handler, {
+class OrgEvents extends InheritedWidget {
+  const OrgEvents({
+    this.onLinkTap,
+    this.onSectionLongPress,
     @required Widget child,
     Key key,
   }) : super(key: key, child: child);
 
-  final Function(String) handler;
+  final Function(String) onLinkTap;
+  final Function(OrgSection) onSectionLongPress;
 
-  static _LinkHandler of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<_LinkHandler>();
+  static OrgEvents of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<OrgEvents>();
 
   @override
-  bool updateShouldNotify(_LinkHandler oldWidget) =>
-      handler != oldWidget.handler;
+  bool updateShouldNotify(OrgEvents oldWidget) =>
+      onLinkTap != oldWidget.onLinkTap ||
+      onSectionLongPress != oldWidget.onSectionLongPress;
 }
 
 class OrgSectionWidget extends StatelessWidget {
@@ -80,6 +83,7 @@ class OrgSectionWidget extends StatelessWidget {
             },
           ),
           onTap: () => open.value = !open.value,
+          onLongPress: () => OrgEvents.of(context)?.onSectionLongPress(section),
         ),
         AnimatedShowHide(
           open,
@@ -155,7 +159,7 @@ class _OrgContentWidgetState extends State<OrgContentWidget> {
     return Text.rich(_contentToSpanTree(
       context,
       widget.content,
-      _LinkHandler.of(context).handler,
+      OrgEvents.of(context)?.onLinkTap ?? () {},
       _recognizers.add,
     ));
   }
@@ -167,6 +171,8 @@ InlineSpan _contentToSpanTree(
   Function(String) linkHandler,
   Function(GestureRecognizer) registerRecognizer,
 ) {
+  assert(linkHandler != null);
+  assert(registerRecognizer != null);
   if (content is OrgPlainText) {
     return TextSpan(text: content.content);
   } else if (content is OrgMarkup) {
@@ -179,9 +185,7 @@ InlineSpan _contentToSpanTree(
     );
   } else if (content is OrgLink) {
     final recognizer = TapGestureRecognizer();
-    if (linkHandler != null) {
-      recognizer.onTap = () => linkHandler(content.location);
-    }
+    recognizer.onTap = () => linkHandler(content.location);
     registerRecognizer(recognizer);
     final visibleContent = content.description ?? content.location;
     return TextSpan(
@@ -257,7 +261,7 @@ class _OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
                 _contentToSpanTree(
                   context,
                   widget.headline.title,
-                  _LinkHandler.of(context).handler,
+                  OrgEvents.of(context)?.onLinkTap ?? () {},
                   _recognizers.add,
                 ),
               if (widget.headline.tags.isNotEmpty)
