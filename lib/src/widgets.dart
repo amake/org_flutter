@@ -7,31 +7,44 @@ import 'package:org_parser/org_parser.dart';
 
 class OrgDocumentWidget extends StatelessWidget {
   const OrgDocumentWidget(
-    this.text, {
-    this.style,
-    this.linkHandler,
+    this.document, {
     Key key,
   }) : super(key: key);
 
-  final String text;
-  final TextStyle style;
-  final Function(String) linkHandler;
+  final OrgDocument document;
 
   @override
   Widget build(BuildContext context) {
-    final parser = OrgParser();
-    final result = parser.parse(text);
-    final topContent = result.value[0] as OrgContent;
-    final sections = result.value[1] as List;
-    final body = _LinkHandler(
-      linkHandler,
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: <Widget>[
-          if (topContent != null) OrgContentWidget(topContent),
-          ...sections.map((section) => OrgSectionWidget(section as OrgSection)),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (document.topContent != null) OrgContentWidget(document.topContent),
+        ...document.sections.map((section) => OrgSectionWidget(section)),
+      ],
+    );
+  }
+}
+
+class OrgRootWidget extends StatelessWidget {
+  const OrgRootWidget({
+    this.child,
+    this.style,
+    this.onLinkTap,
+    this.onSectionLongPress,
+    Key key,
+  }) : super(key: key);
+
+  final Widget child;
+  final TextStyle style;
+  final Function(String) onLinkTap;
+  final Function(OrgSection) onSectionLongPress;
+
+  @override
+  Widget build(BuildContext context) {
+    final body = OrgEvents(
+      child: child,
+      onLinkTap: onLinkTap,
+      onSectionLongPress: onSectionLongPress,
     );
     return style == null
         ? body
