@@ -338,7 +338,10 @@ class OrgBlockWidget extends StatelessWidget {
           shownChild: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              OrgContentWidget(block.body),
+              SingleChildScrollView(
+                child: OrgContentWidget(block.body),
+                scrollDirection: Axis.horizontal,
+              ),
               Text(block.footer, style: metaStyle),
             ],
           ),
