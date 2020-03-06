@@ -148,6 +148,7 @@ class OrgThemeData {
         levelColors,
       );
 
+  // ignore: prefer_constructors_over_static_methods
   static OrgThemeData lerp(OrgThemeData a, OrgThemeData b, double t) {
     assert(t != null);
     if (a == null && b == null) {
@@ -191,6 +192,6 @@ class OrgThemeData {
     if (a == null || b == null || a.length != b.length) {
       return t < 0.5 ? a : b;
     }
-    return zipMap(a, b, (ac, bc) => Color.lerp(ac, bc, t));
+    return zipMap<Color, Color, Color>(a, b, (ac, bc) => Color.lerp(ac, bc, t));
   }
 }

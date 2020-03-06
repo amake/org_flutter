@@ -65,9 +65,9 @@ class OrgRootWidget extends StatelessWidget {
 
 class OrgTheme extends InheritedWidget {
   const OrgTheme({
+    @required Widget child,
     this.light,
     this.dark,
-    @required Widget child,
     Key key,
   }) : super(key: key, child: child);
 
@@ -96,9 +96,9 @@ class OrgTheme extends InheritedWidget {
 
 class OrgEvents extends InheritedWidget {
   const OrgEvents({
+    @required Widget child,
     this.onLinkTap,
     this.onSectionLongPress,
-    @required Widget child,
     Key key,
   }) : super(key: key, child: child);
 
@@ -127,7 +127,7 @@ class OrgSectionWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         InkWell(
-          child: ValueListenableBuilder(
+          child: ValueListenableBuilder<bool>(
             valueListenable: open,
             builder: (context, value, child) {
               return OrgHeadlineWidget(
@@ -213,7 +213,7 @@ class _OrgContentWidgetState extends State<OrgContentWidget> {
     return Text.rich(_contentToSpanTree(
       context,
       widget.content,
-      OrgEvents.of(context)?.onLinkTap ?? () {},
+      OrgEvents.of(context)?.onLinkTap ?? (_) {},
       _recognizers.add,
     ));
   }
@@ -238,8 +238,8 @@ InlineSpan _contentToSpanTree(
       ),
     );
   } else if (content is OrgLink) {
-    final recognizer = TapGestureRecognizer();
-    recognizer.onTap = () => linkHandler(content.location);
+    final recognizer = TapGestureRecognizer()
+      ..onTap = () => linkHandler(content.location);
     registerRecognizer(recognizer);
     final visibleContent = content.description ?? content.location;
     return TextSpan(
@@ -319,12 +319,12 @@ class _OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
                 _contentToSpanTree(
                   context,
                   widget.headline.title,
-                  OrgEvents.of(context)?.onLinkTap ?? () {},
+                  OrgEvents.of(context)?.onLinkTap ?? (_) {},
                   _recognizers.add,
                 ),
               if (widget.headline.tags.isNotEmpty)
                 TextSpan(text: ':${widget.headline.tags.join(':')}:'),
-              if (!widget.open) TextSpan(text: '...'),
+              if (!widget.open) const TextSpan(text: '...'),
             ],
           ),
         ),
@@ -365,7 +365,7 @@ class OrgBlockWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         InkWell(
-          child: ValueListenableBuilder(
+          child: ValueListenableBuilder<bool>(
             valueListenable: open,
             builder: (context, value, child) {
               final suffix = value ? '' : '...';
