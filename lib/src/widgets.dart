@@ -405,16 +405,52 @@ class OrgTableWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tableColor = OrgTheme.dataOf(context).tableColor;
+    final borderSide = BorderSide(color: tableColor);
     return DefaultTextStyle.merge(
-      style: TextStyle(color: OrgTheme.dataOf(context).tableColor),
+      style: TextStyle(color: tableColor),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: Column(
+        child: Row(
           children: <Widget>[
-            Text(table.rows.join('\n')),
+            Text(table.indent),
+            Table(
+              defaultColumnWidth: const IntrinsicColumnWidth(),
+              defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              border: TableBorder(
+                verticalInside: borderSide,
+                left: borderSide,
+                right: borderSide,
+              ),
+              children: _tableRows(borderSide).toList(),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Iterable<TableRow> _tableRows(BorderSide borderSide) sync* {
+    for (var i = 0; i < table.rows.length; i++) {
+      final row = table.rows[i];
+      if (row is OrgTableCellRow) {
+        // Peek at next row, add bottom border if it's a divider
+        final decoration =
+            i + 1 < table.rows.length && table.rows[i + 1] is OrgTableDividerRow
+                ? BoxDecoration(border: Border(bottom: borderSide))
+                : null;
+        yield TableRow(
+          decoration: decoration,
+          children: [
+            for (final cell in row.cells)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(cell),
+              ),
+          ],
+        );
+      }
+    }
   }
 }
