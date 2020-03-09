@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/theme.dart';
 import 'package:org_flutter/src/util.dart';
 import 'package:org_parser/org_parser.dart';
@@ -120,40 +122,62 @@ class OrgSectionWidget extends StatelessWidget {
   final OrgSection section;
   final bool initiallyOpen;
 
+  bool _fullyOpen(OrgVisibilityState visibility) {
+    switch (visibility) {
+      case OrgVisibilityState.folded:
+        return section.isEmpty;
+      case OrgVisibilityState.contents:
+        return section.content == null;
+      case OrgVisibilityState.children:
+        return section.children.isEmpty;
+      case OrgVisibilityState.subtree:
+        return true;
+    }
+    throw Exception('Unknown visibility: $visibility');
+  }
+
   @override
   Widget build(BuildContext context) {
-    final open = ValueNotifier<bool>(initiallyOpen ?? section.level == 1);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        InkWell(
-          child: ValueListenableBuilder<bool>(
-            valueListenable: open,
-            builder: (context, value, child) {
-              return OrgHeadlineWidget(
-                section.headline,
-                open: value || section.isEmpty,
-              );
-            },
+    final visibilityListenable =
+        OrgController.of(context).nodeFor(section).visibility;
+    return ValueListenableBuilder<OrgVisibilityState>(
+      valueListenable: visibilityListenable,
+      builder: (context, visibility, child) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          InkWell(
+            child: OrgHeadlineWidget(
+              section.headline,
+              open: _fullyOpen(visibility),
+            ),
+            onTap: () => OrgController.of(context).cycleVisibilityOf(section),
+            onLongPress: () =>
+                OrgEvents.of(context)?.onSectionLongPress(section),
           ),
-          onTap: () => open.value = !open.value,
-          onLongPress: () => OrgEvents.of(context)?.onSectionLongPress(section),
-        ),
-        AnimatedShowHide(
-          open,
-          shownChild: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              if (section.content != null) OrgContentWidget(section.content),
-              ...section.children.map((child) => OrgSectionWidget(child)),
-            ],
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 100),
+            transitionBuilder: (child, animation) =>
+                SizeTransition(child: child, sizeFactor: animation),
+            child: Column(
+              key: ValueKey(visibility),
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                if (section.content != null &&
+                    (visibility == OrgVisibilityState.children ||
+                        visibility == OrgVisibilityState.subtree))
+                  OrgContentWidget(section.content),
+                if (visibility != OrgVisibilityState.folded)
+                  ...section.children.map((child) => OrgSectionWidget(child)),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
+// TODO(aaron): maybe remove this in favor of AnimatedSwitcher
 class AnimatedShowHide extends StatelessWidget {
   const AnimatedShowHide(
     this.visible, {
