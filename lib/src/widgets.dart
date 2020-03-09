@@ -387,6 +387,7 @@ class OrgBlockWidget extends StatelessWidget {
               SingleChildScrollView(
                 child: OrgContentWidget(block.body),
                 scrollDirection: Axis.horizontal,
+                physics: const AlwaysScrollableScrollPhysics(),
               ),
               Text(block.footer, style: metaStyle),
             ],
@@ -411,6 +412,7 @@ class OrgTableWidget extends StatelessWidget {
       style: TextStyle(color: tableColor),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
+        physics: const AlwaysScrollableScrollPhysics(),
         child: Row(
           children: <Widget>[
             Text(table.indent),
