@@ -1,10 +1,12 @@
 library org_flutter;
 
 import 'package:flutter/widgets.dart';
+import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/theme.dart';
 import 'package:org_flutter/src/widgets.dart';
 import 'package:org_parser/org_parser.dart';
 
+export 'package:org_flutter/src/controller.dart';
 export 'package:org_flutter/src/theme.dart';
 export 'package:org_flutter/src/widgets.dart';
 export 'package:org_parser/org_parser.dart';
@@ -29,13 +31,17 @@ class Org extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OrgRootWidget(
-      style: style,
-      lightTheme: lightTheme,
-      darkTheme: darkTheme,
-      onLinkTap: onLinkTap,
-      onSectionLongPress: onSectionLongPress,
-      child: OrgDocumentWidget(OrgDocument(text)),
+    final doc = OrgDocument(text);
+    return OrgController(
+      root: doc,
+      child: OrgRootWidget(
+        style: style,
+        lightTheme: lightTheme,
+        darkTheme: darkTheme,
+        onLinkTap: onLinkTap,
+        onSectionLongPress: onSectionLongPress,
+        child: OrgDocumentWidget(doc),
+      ),
     );
   }
 }
