@@ -18,8 +18,8 @@ class OrgDocumentWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (document.topContent != null) OrgContentWidget(document.topContent),
-        ...document.sections.map((section) => OrgSectionWidget(section)),
+        if (document.content != null) OrgContentWidget(document.content),
+        ...document.children.map((section) => OrgSectionWidget(section)),
       ],
     );
   }
