@@ -177,42 +177,6 @@ class OrgSectionWidget extends StatelessWidget {
   }
 }
 
-// TODO(aaron): maybe remove this in favor of AnimatedSwitcher
-class AnimatedShowHide extends StatelessWidget {
-  const AnimatedShowHide(
-    this.visible, {
-    @required this.shownChild,
-    this.hiddenChild = const SizedBox.shrink(),
-    this.duration = const Duration(milliseconds: 100),
-    Key key,
-  })  : assert(visible != null),
-        assert(shownChild != null),
-        assert(hiddenChild != null),
-        assert(duration != null),
-        super(key: key);
-
-  final ValueNotifier<bool> visible;
-  final Widget shownChild;
-  final Widget hiddenChild;
-  final Duration duration;
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: visible,
-      builder: (context, value, child) => AnimatedCrossFade(
-        alignment: Alignment.topLeft,
-        duration: duration,
-        firstChild: child,
-        secondChild: hiddenChild,
-        crossFadeState:
-            value ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-      ),
-      child: shownChild,
-    );
-  }
-}
-
 class OrgContentWidget extends StatefulWidget {
   const OrgContentWidget(this.content, {Key key}) : super(key: key);
   final OrgContentElement content;
@@ -383,41 +347,45 @@ class OrgBlockWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final open = ValueNotifier<bool>(true);
+    final openListenable = ValueNotifier<bool>(true);
     final defaultStyle = DefaultTextStyle.of(context).style;
     final metaStyle =
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        InkWell(
-          child: ValueListenableBuilder<bool>(
-            valueListenable: open,
-            builder: (context, value, child) {
-              final suffix = value ? '' : '...';
-              return Text(
-                block.header + suffix,
+    return ValueListenableBuilder<bool>(
+      valueListenable: openListenable,
+      builder: (context, open, child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            InkWell(
+              child: Text(
+                block.header + (open ? '' : '...'),
                 style: metaStyle,
-              );
-            },
-          ),
-          onTap: () => open.value = !open.value,
-        ),
-        AnimatedShowHide(
-          open,
-          shownChild: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              SingleChildScrollView(
-                child: OrgContentWidget(block.body),
-                scrollDirection: Axis.horizontal,
-                physics: const AlwaysScrollableScrollPhysics(),
               ),
-              Text(block.footer, style: metaStyle),
-            ],
-          ),
-        ),
-      ],
+              onTap: () => openListenable.value = !openListenable.value,
+            ),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 100),
+              transitionBuilder: (child, animation) =>
+                  SizeTransition(child: child, sizeFactor: animation),
+              child: open
+                  ? Column(
+                      key: ValueKey(open),
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        SingleChildScrollView(
+                          child: OrgContentWidget(block.body),
+                          scrollDirection: Axis.horizontal,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                        ),
+                        Text(block.footer, style: metaStyle),
+                      ],
+                    )
+                  : const SizedBox.shrink(),
+            ),
+          ],
+        );
+      },
     );
   }
 }
