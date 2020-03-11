@@ -437,10 +437,12 @@ class OrgTableWidget extends StatelessWidget {
         yield TableRow(
           decoration: decoration,
           children: [
-            for (final cell in row.cells)
+            for (var j = 0; j < table.columnCount; j++)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(cell),
+                child: j < row.cellCount
+                    ? Text(row.cells[j])
+                    : const SizedBox.shrink(),
               ),
           ],
         );
