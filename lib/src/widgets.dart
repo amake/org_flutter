@@ -233,9 +233,10 @@ InlineSpan _contentToSpanTree(
     return TextSpan(
       recognizer: recognizer,
       text: characterWrappable(visibleContent),
-      style: DefaultTextStyle.of(context)
-          .style
-          .copyWith(color: OrgTheme.dataOf(context).linkColor),
+      style: DefaultTextStyle.of(context).style.copyWith(
+            color: OrgTheme.dataOf(context).linkColor,
+            decoration: TextDecoration.underline,
+          ),
     );
   } else if (content is OrgMeta) {
     return TextSpan(
