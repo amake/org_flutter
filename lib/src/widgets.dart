@@ -428,12 +428,12 @@ class OrgTableWidget extends StatelessWidget {
   Iterable<TableRow> _tableRows(BorderSide borderSide) sync* {
     for (var i = 0; i < table.rows.length; i++) {
       final row = table.rows[i];
+      final nextRow = i + 1 < table.rows.length ? table.rows[i + 1] : null;
       if (row is OrgTableCellRow) {
         // Peek at next row, add bottom border if it's a divider
-        final decoration =
-            i + 1 < table.rows.length && table.rows[i + 1] is OrgTableDividerRow
-                ? BoxDecoration(border: Border(bottom: borderSide))
-                : null;
+        final decoration = nextRow is OrgTableDividerRow
+            ? BoxDecoration(border: Border(bottom: borderSide))
+            : null;
         yield TableRow(
           decoration: decoration,
           children: [
