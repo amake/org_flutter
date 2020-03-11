@@ -415,7 +415,7 @@ class OrgTableWidget extends StatelessWidget {
               border: TableBorder(
                 verticalInside: borderSide,
                 left: borderSide,
-                right: borderSide,
+                right: table.rectangular ? borderSide : BorderSide.none,
               ),
               children: _tableRows(borderSide).toList(growable: false),
             ),
