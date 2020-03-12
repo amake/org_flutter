@@ -244,6 +244,14 @@ InlineSpan _contentToSpanTree(
         style: DefaultTextStyle.of(context)
             .style
             .copyWith(color: OrgTheme.dataOf(context).metaColor));
+  } else if (content is OrgTimestamp) {
+    return TextSpan(
+      text: content.content,
+      style: DefaultTextStyle.of(context).style.copyWith(
+            color: OrgTheme.dataOf(context).dateColor,
+            decoration: TextDecoration.underline,
+          ),
+    );
   } else if (content is OrgBlock) {
     return WidgetSpan(child: IdentityTextScale(child: OrgBlockWidget(content)));
   } else if (content is OrgTable) {
