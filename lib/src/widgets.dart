@@ -225,6 +225,13 @@ InlineSpan _contentToSpanTree(
         content.style,
       ),
     );
+  } else if (content is OrgKeyword) {
+    return TextSpan(
+      text: content.content,
+      style: DefaultTextStyle.of(context)
+          .style
+          .copyWith(color: OrgTheme.dataOf(context).keywordColor),
+    );
   } else if (content is OrgLink) {
     final recognizer = TapGestureRecognizer()
       ..onTap = () => linkHandler(content.location);

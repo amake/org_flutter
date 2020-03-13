@@ -35,6 +35,7 @@ const _orgCodeColorLight = Color(0xff7f7f7f);
 const _orgLinkColorLight = Color(0xff3a5fcd);
 const _orgMetaColorLight = Color(0xffb22222);
 const _orgTableColorLight = Color(0xff0000ff);
+const _orgKeywordColorLight = Color(0xffa020f0);
 
 const _orgLevelColorsDark = [
   Color(0xff87cefa),
@@ -53,6 +54,7 @@ const _orgCodeColorDark = Color(0xffb3b3b3);
 const _orgLinkColorDark = Color(0xff00ffff);
 const _orgMetaColorDark = Color(0xffff7f24);
 const _orgTableColorDark = Color(0xff87cefa);
+const _orgKeywordColorDark = Color(0xff00ffff);
 
 class OrgThemeData {
   OrgThemeData.light()
@@ -64,6 +66,7 @@ class OrgThemeData {
           linkColor: _orgLinkColorLight,
           metaColor: _orgMetaColorLight,
           tableColor: _orgTableColorLight,
+          keywordColor: _orgKeywordColorLight,
           levelColors: _orgLevelColorsLight,
         );
 
@@ -76,6 +79,7 @@ class OrgThemeData {
           linkColor: _orgLinkColorDark,
           metaColor: _orgMetaColorDark,
           tableColor: _orgTableColorDark,
+          keywordColor: _orgKeywordColorDark,
           levelColors: _orgLevelColorsDark,
         );
 
@@ -87,6 +91,7 @@ class OrgThemeData {
     this.linkColor,
     this.metaColor,
     this.tableColor,
+    this.keywordColor,
     Iterable<Color> levelColors,
   }) : levelColors =
             levelColors == null ? null : List.unmodifiable(levelColors);
@@ -98,6 +103,7 @@ class OrgThemeData {
   final Color linkColor;
   final Color metaColor;
   final Color tableColor;
+  final Color keywordColor;
   final List<Color> levelColors;
 
   Color levelColor(int level) =>
@@ -128,6 +134,7 @@ class OrgThemeData {
     Color linkColor,
     Color metaColor,
     Color tableColor,
+    Color keywordColor,
     Iterable<Color> levelColors,
   ) =>
       OrgThemeData(
@@ -138,6 +145,7 @@ class OrgThemeData {
         linkColor: linkColor ?? this.linkColor,
         metaColor: metaColor ?? this.metaColor,
         tableColor: tableColor ?? this.tableColor,
+        keywordColor: keywordColor ?? this.keywordColor,
         levelColors: levelColors ?? this.levelColors,
       );
 
@@ -154,6 +162,7 @@ class OrgThemeData {
         linkColor == other.linkColor &&
         metaColor == other.metaColor &&
         tableColor == other.tableColor &&
+        keywordColor == other.keywordColor &&
         listEquals(levelColors, other.levelColors);
   }
 
@@ -166,6 +175,7 @@ class OrgThemeData {
         linkColor,
         metaColor,
         tableColor,
+        keywordColor,
         levelColors,
       );
 
@@ -184,6 +194,7 @@ class OrgThemeData {
         linkColor: Color.lerp(null, b.linkColor, t),
         metaColor: Color.lerp(null, b.metaColor, t),
         tableColor: Color.lerp(null, b.tableColor, t),
+        keywordColor: Color.lerp(null, b.keywordColor, t),
         levelColors: b.levelColors?.map((c) => Color.lerp(null, c, t)),
       );
     }
@@ -196,6 +207,7 @@ class OrgThemeData {
         linkColor: Color.lerp(a.linkColor, null, t),
         metaColor: Color.lerp(a.metaColor, null, t),
         tableColor: Color.lerp(a.tableColor, null, t),
+        keywordColor: Color.lerp(a.keywordColor, null, t),
         levelColors: a.levelColors?.map((c) => Color.lerp(c, null, t)),
       );
     }
@@ -207,6 +219,7 @@ class OrgThemeData {
       linkColor: Color.lerp(a.linkColor, b.linkColor, t),
       metaColor: Color.lerp(a.metaColor, b.metaColor, t),
       tableColor: Color.lerp(a.tableColor, b.tableColor, t),
+      keywordColor: Color.lerp(a.keywordColor, b.keywordColor, t),
       levelColors: _lerpColorLists(a.levelColors, b.levelColors, t),
     );
   }
