@@ -263,6 +263,9 @@ InlineSpan _contentToSpanTree(
     return WidgetSpan(child: IdentityTextScale(child: OrgBlockWidget(content)));
   } else if (content is OrgTable) {
     return WidgetSpan(child: IdentityTextScale(child: OrgTableWidget(content)));
+  } else if (content is OrgFixedWidthArea) {
+    return WidgetSpan(
+        child: IdentityTextScale(child: OrgFixedWidthAreaWidget(content)));
   } else if (content is OrgContent) {
     return TextSpan(
         children: content.children
@@ -464,5 +467,24 @@ class OrgTableWidget extends StatelessWidget {
         );
       }
     }
+  }
+}
+
+class OrgFixedWidthAreaWidget extends StatelessWidget {
+  const OrgFixedWidthAreaWidget(this.fixedWidthArea, {Key key})
+      : assert(fixedWidthArea != null),
+        super(key: key);
+  final OrgFixedWidthArea fixedWidthArea;
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTextStyle.merge(
+      style: TextStyle(color: OrgTheme.dataOf(context).keywordColor),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Text(fixedWidthArea.content),
+      ),
+    );
   }
 }
