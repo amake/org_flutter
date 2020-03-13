@@ -479,7 +479,7 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTextStyle.merge(
-      style: TextStyle(color: OrgTheme.dataOf(context).keywordColor),
+      style: TextStyle(color: OrgTheme.dataOf(context).codeColor),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         physics: const AlwaysScrollableScrollPhysics(),
