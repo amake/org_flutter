@@ -52,6 +52,12 @@ class OrgController extends InheritedWidget {
 
   OrgNode nodeFor(OrgTree tree) => _nodeMap[tree];
 
+  OrgSection sectionWithTitle(String title) =>
+      _nodeMap.keys.whereType<OrgSection>().firstWhere(
+            (section) => section.headline.rawTitle == title,
+            orElse: () => null,
+          );
+
   void cycleVisibility() {
     final currentStates =
         _nodeMap.values.map((e) => e.visibility.value).toSet();

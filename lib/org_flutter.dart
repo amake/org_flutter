@@ -18,6 +18,7 @@ class Org extends StatelessWidget {
     this.lightTheme,
     this.darkTheme,
     this.onLinkTap,
+    this.onLocalSectionLinkTap,
     this.onSectionLongPress,
     Key key,
   })  : assert(text != null),
@@ -27,6 +28,7 @@ class Org extends StatelessWidget {
   final OrgThemeData lightTheme;
   final OrgThemeData darkTheme;
   final Function(String) onLinkTap;
+  final Function(OrgSection) onLocalSectionLinkTap;
   final Function(OrgSection) onSectionLongPress;
 
   @override
@@ -39,6 +41,7 @@ class Org extends StatelessWidget {
         lightTheme: lightTheme,
         darkTheme: darkTheme,
         onLinkTap: onLinkTap,
+        onLocalSectionLinkTap: onLocalSectionLinkTap,
         onSectionLongPress: onSectionLongPress,
         child: OrgDocumentWidget(doc),
       ),

@@ -34,6 +34,7 @@ class OrgRootWidget extends StatelessWidget {
     this.lightTheme,
     this.darkTheme,
     this.onLinkTap,
+    this.onLocalSectionLinkTap,
     this.onSectionLongPress,
     Key key,
   }) : super(key: key);
@@ -43,6 +44,7 @@ class OrgRootWidget extends StatelessWidget {
   final OrgThemeData lightTheme;
   final OrgThemeData darkTheme;
   final Function(String) onLinkTap;
+  final Function(OrgSection) onLocalSectionLinkTap;
   final Function(OrgSection) onSectionLongPress;
 
   @override
@@ -54,6 +56,7 @@ class OrgRootWidget extends StatelessWidget {
         child: child,
         onLinkTap: onLinkTap,
         onSectionLongPress: onSectionLongPress,
+        onLocalSectionLinkTap: onLocalSectionLinkTap,
       ),
     );
     return style == null
@@ -100,15 +103,37 @@ class OrgEvents extends InheritedWidget {
   const OrgEvents({
     @required Widget child,
     this.onLinkTap,
+    this.onLocalSectionLinkTap,
     this.onSectionLongPress,
     Key key,
   }) : super(key: key, child: child);
 
   final Function(String) onLinkTap;
+  final Function(OrgSection) onLocalSectionLinkTap;
   final Function(OrgSection) onSectionLongPress;
 
   static OrgEvents of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<OrgEvents>();
+
+  void dispatchLinkTap(BuildContext context, String url) {
+    if (!_handleLocalSectionLink(context, url)) {
+      onLinkTap(url);
+    }
+  }
+
+  bool _handleLocalSectionLink(BuildContext context, String url) {
+    if (isOrgLocalSectionUrl(url)) {
+      final sectionTitle = parseOrgLocalSectionUrl(url);
+      final section = OrgController.of(context).sectionWithTitle(sectionTitle);
+      if (section == null) {
+        debugPrint('Failed to find local section with title "$sectionTitle"');
+      } else {
+        onLocalSectionLinkTap(section);
+      }
+      return true;
+    }
+    return false;
+  }
 
   @override
   bool updateShouldNotify(OrgEvents oldWidget) =>
@@ -201,7 +226,7 @@ class _OrgContentWidgetState extends State<OrgContentWidget> {
     return Text.rich(_contentToSpanTree(
       context,
       widget.content,
-      OrgEvents.of(context)?.onLinkTap ?? (_) {},
+      OrgEvents.of(context)?.dispatchLinkTap ?? (_, __) {},
       _recognizers.add,
     ));
   }
@@ -210,10 +235,10 @@ class _OrgContentWidgetState extends State<OrgContentWidget> {
 InlineSpan _contentToSpanTree(
   BuildContext context,
   OrgContentElement content,
-  Function(String) linkHandler,
+  Function(BuildContext, String) linkDispatcher,
   Function(GestureRecognizer) registerRecognizer,
 ) {
-  assert(linkHandler != null);
+  assert(linkDispatcher != null);
   assert(registerRecognizer != null);
   if (content is OrgPlainText) {
     return TextSpan(text: content.content);
@@ -234,7 +259,7 @@ InlineSpan _contentToSpanTree(
     );
   } else if (content is OrgLink) {
     final recognizer = TapGestureRecognizer()
-      ..onTap = () => linkHandler(content.location);
+      ..onTap = () => linkDispatcher(context, content.location);
     registerRecognizer(recognizer);
     final visibleContent = content.description ?? content.location;
     return TextSpan(
@@ -270,7 +295,7 @@ InlineSpan _contentToSpanTree(
     return TextSpan(
         children: content.children
             .map((child) => _contentToSpanTree(
-                context, child, linkHandler, registerRecognizer))
+                context, child, linkDispatcher, registerRecognizer))
             .toList());
   } else {
     throw Exception('Unknown OrgContentElement type: $content');
@@ -328,7 +353,7 @@ class _OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
                 _contentToSpanTree(
                   context,
                   widget.headline.title,
-                  OrgEvents.of(context)?.onLinkTap ?? (_) {},
+                  OrgEvents.of(context)?.dispatchLinkTap ?? (_, __) {},
                   _recognizers.add,
                 ),
               if (widget.headline.tags.isNotEmpty)
