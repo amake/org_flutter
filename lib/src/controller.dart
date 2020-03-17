@@ -2,13 +2,16 @@ import 'package:flutter/widgets.dart';
 import 'package:org_parser/org_parser.dart';
 
 enum OrgVisibilityState {
-  // Just the root headline; equivalent to global "overview" state
+  /// Just the root headline; equivalent to global "overview" state
   folded,
-  // All headlines of all levels
+
+  /// All headlines of all levels
   contents,
-  // All immediate children (subtrees folded)
+
+  /// All immediate children (subtrees folded)
   children,
-  // Everything
+
+  /// Everything
   subtree,
 }
 
