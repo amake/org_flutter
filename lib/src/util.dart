@@ -23,3 +23,13 @@ Iterable<R> zipMap<R, T, U>(
     yield visit(iterA.current, iterB.current);
   }
 }
+
+bool emptyPattern(Pattern pattern) {
+  if (pattern is String) {
+    return pattern.isEmpty;
+  } else if (pattern is RegExp) {
+    return pattern.pattern.isEmpty;
+  } else {
+    return pattern == null;
+  }
+}

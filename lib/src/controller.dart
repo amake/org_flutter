@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:org_flutter/src/util.dart';
 import 'package:org_parser/org_parser.dart';
 
 enum OrgVisibilityState {
@@ -49,6 +50,7 @@ class OrgController extends InheritedWidget {
 
   final OrgTree root;
   final Map<OrgTree, OrgNode> _nodeMap;
+  final ValueNotifier<Pattern> _searchQuery = ValueNotifier('');
 
   static OrgController of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<OrgController>();
@@ -88,6 +90,21 @@ class OrgController extends InheritedWidget {
     // Do this last because otherwise _walk applies subtreeVisibility to this
     // root
     visibilityListenable.value = newVisibility;
+  }
+
+  void search(Pattern query) {
+    _searchQuery.value = query;
+    debugPrint('Querying: $query');
+    if (!emptyPattern(query)) {
+      _nodeMap.forEach((tree, node) {
+        final newValue = tree.contains(query)
+            ? OrgVisibilityState.children
+            : OrgVisibilityState.folded;
+        debugPrint(
+            'Changing visibility; from=${node.visibility.value}, to=$newValue');
+        node.visibility.value = newValue;
+      });
+    }
   }
 
   @override
