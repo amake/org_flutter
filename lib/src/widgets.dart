@@ -241,39 +241,39 @@ class _OrgContentWidgetState extends State<OrgContentWidget> {
 
 InlineSpan _contentToSpanTree(
   BuildContext context,
-  OrgContentElement content,
+  OrgContentElement element,
   Pattern highlight,
   Function(BuildContext, String) linkDispatcher,
   Function(GestureRecognizer) registerRecognizer,
 ) {
   assert(linkDispatcher != null);
   assert(registerRecognizer != null);
-  if (content is OrgPlainText) {
-    return _highlightedSpan(context, content.content, highlight);
-  } else if (content is OrgMarkup) {
+  if (element is OrgPlainText) {
+    return _highlightedSpan(context, element.content, highlight);
+  } else if (element is OrgMarkup) {
     return _highlightedSpan(
       context,
-      content.content,
+      element.content,
       highlight,
       style: OrgTheme.dataOf(context).fontStyleForOrgStyle(
         DefaultTextStyle.of(context).style,
-        content.style,
+        element.style,
       ),
     );
-  } else if (content is OrgKeyword) {
+  } else if (element is OrgKeyword) {
     return _highlightedSpan(
       context,
-      content.content,
+      element.content,
       highlight,
       style: DefaultTextStyle.of(context)
           .style
           .copyWith(color: OrgTheme.dataOf(context).keywordColor),
     );
-  } else if (content is OrgLink) {
+  } else if (element is OrgLink) {
     final recognizer = TapGestureRecognizer()
-      ..onTap = () => linkDispatcher(context, content.location);
+      ..onTap = () => linkDispatcher(context, element.location);
     registerRecognizer(recognizer);
-    final visibleContent = content.description ?? content.location;
+    final visibleContent = element.description ?? element.location;
     return _highlightedSpan(
       context,
       visibleContent,
@@ -285,35 +285,35 @@ InlineSpan _contentToSpanTree(
           ),
       charWrap: true,
     );
-  } else if (content is OrgMeta) {
+  } else if (element is OrgMeta) {
     return _highlightedSpan(
       context,
-      content.content,
+      element.content,
       highlight,
       style: DefaultTextStyle.of(context)
           .style
           .copyWith(color: OrgTheme.dataOf(context).metaColor),
     );
-  } else if (content is OrgTimestamp) {
+  } else if (element is OrgTimestamp) {
     return _highlightedSpan(
       context,
-      content.content,
+      element.content,
       highlight,
       style: DefaultTextStyle.of(context).style.copyWith(
             color: OrgTheme.dataOf(context).dateColor,
             decoration: TextDecoration.underline,
           ),
     );
-  } else if (content is OrgBlock) {
-    return WidgetSpan(child: IdentityTextScale(child: OrgBlockWidget(content)));
-  } else if (content is OrgTable) {
-    return WidgetSpan(child: IdentityTextScale(child: OrgTableWidget(content)));
-  } else if (content is OrgFixedWidthArea) {
+  } else if (element is OrgBlock) {
+    return WidgetSpan(child: IdentityTextScale(child: OrgBlockWidget(element)));
+  } else if (element is OrgTable) {
+    return WidgetSpan(child: IdentityTextScale(child: OrgTableWidget(element)));
+  } else if (element is OrgFixedWidthArea) {
     return WidgetSpan(
-        child: IdentityTextScale(child: OrgFixedWidthAreaWidget(content)));
-  } else if (content is OrgContent) {
+        child: IdentityTextScale(child: OrgFixedWidthAreaWidget(element)));
+  } else if (element is OrgContent) {
     return TextSpan(
-        children: content.children
+        children: element.children
             .map((child) => _contentToSpanTree(
                   context,
                   child,
@@ -323,7 +323,7 @@ InlineSpan _contentToSpanTree(
                 ))
             .toList());
   } else {
-    throw Exception('Unknown OrgContentElement type: $content');
+    throw Exception('Unknown OrgContentElement type: $element');
   }
 }
 
