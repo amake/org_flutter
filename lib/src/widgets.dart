@@ -223,36 +223,48 @@ class _OrgContentWidgetState extends State<OrgContentWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Text.rich(_contentToSpanTree(
-      context,
-      widget.content,
-      OrgEvents.of(context)?.dispatchLinkTap ?? (_, __) {},
-      _recognizers.add,
-    ));
+    return ValueListenableBuilder<Pattern>(
+      valueListenable: OrgController.of(context)?.searchQuery ??
+          ValueNotifier<Pattern>(null),
+      builder: (context, query, child) => Text.rich(
+        _contentToSpanTree(
+          context,
+          widget.content,
+          query,
+          OrgEvents.of(context)?.dispatchLinkTap ?? (_, __) {},
+          _recognizers.add,
+        ),
+      ),
+    );
   }
 }
 
 InlineSpan _contentToSpanTree(
   BuildContext context,
   OrgContentElement content,
+  Pattern highlight,
   Function(BuildContext, String) linkDispatcher,
   Function(GestureRecognizer) registerRecognizer,
 ) {
   assert(linkDispatcher != null);
   assert(registerRecognizer != null);
   if (content is OrgPlainText) {
-    return TextSpan(text: content.content);
+    return _highlightedSpan(context, content.content, highlight);
   } else if (content is OrgMarkup) {
-    return TextSpan(
-      text: content.content,
+    return _highlightedSpan(
+      context,
+      content.content,
+      highlight,
       style: OrgTheme.dataOf(context).fontStyleForOrgStyle(
         DefaultTextStyle.of(context).style,
         content.style,
       ),
     );
   } else if (content is OrgKeyword) {
-    return TextSpan(
-      text: content.content,
+    return _highlightedSpan(
+      context,
+      content.content,
+      highlight,
       style: DefaultTextStyle.of(context)
           .style
           .copyWith(color: OrgTheme.dataOf(context).keywordColor),
@@ -262,23 +274,31 @@ InlineSpan _contentToSpanTree(
       ..onTap = () => linkDispatcher(context, content.location);
     registerRecognizer(recognizer);
     final visibleContent = content.description ?? content.location;
-    return TextSpan(
+    return _highlightedSpan(
+      context,
+      visibleContent,
+      highlight,
       recognizer: recognizer,
-      text: characterWrappable(visibleContent),
       style: DefaultTextStyle.of(context).style.copyWith(
             color: OrgTheme.dataOf(context).linkColor,
             decoration: TextDecoration.underline,
           ),
+      charWrap: true,
     );
   } else if (content is OrgMeta) {
-    return TextSpan(
-        text: content.content,
-        style: DefaultTextStyle.of(context)
-            .style
-            .copyWith(color: OrgTheme.dataOf(context).metaColor));
+    return _highlightedSpan(
+      context,
+      content.content,
+      highlight,
+      style: DefaultTextStyle.of(context)
+          .style
+          .copyWith(color: OrgTheme.dataOf(context).metaColor),
+    );
   } else if (content is OrgTimestamp) {
-    return TextSpan(
-      text: content.content,
+    return _highlightedSpan(
+      context,
+      content.content,
+      highlight,
       style: DefaultTextStyle.of(context).style.copyWith(
             color: OrgTheme.dataOf(context).dateColor,
             decoration: TextDecoration.underline,
@@ -295,10 +315,46 @@ InlineSpan _contentToSpanTree(
     return TextSpan(
         children: content.children
             .map((child) => _contentToSpanTree(
-                context, child, linkDispatcher, registerRecognizer))
+                  context,
+                  child,
+                  highlight,
+                  linkDispatcher,
+                  registerRecognizer,
+                ))
             .toList());
   } else {
     throw Exception('Unknown OrgContentElement type: $content');
+  }
+}
+
+InlineSpan _highlightedSpan(
+  BuildContext context,
+  String text,
+  Pattern highlight, {
+  TextStyle style,
+  GestureRecognizer recognizer,
+  bool charWrap = false,
+}) {
+  if (emptyPattern(highlight)) {
+    return TextSpan(
+      text: charWrap ? characterWrappable(text) : text,
+      style: style,
+      recognizer: recognizer,
+    );
+  } else {
+    final realStyle = style ?? DefaultTextStyle.of(context).style;
+    return TextSpan(
+      style: realStyle,
+      recognizer: recognizer,
+      children: tokenizeTextSpan(
+              text,
+              highlight,
+              realStyle.copyWith(
+                backgroundColor: OrgTheme.dataOf(context).highlightColor,
+              ),
+              charWrap ? characterWrappable : (x) => x)
+          .toList(growable: false),
+    );
   }
 }
 
@@ -334,9 +390,10 @@ class _OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
         fontWeight: FontWeight.bold,
         height: 1.8,
       ),
-      child: Builder(
-        // Builder here to make modified default text style accessible
-        builder: (context) => Text.rich(
+      child: ValueListenableBuilder<Pattern>(
+        valueListenable: OrgController.of(context)?.searchQuery ??
+            ValueNotifier<Pattern>(null),
+        builder: (context, query, child) => Text.rich(
           TextSpan(
             text: '${widget.headline.stars} ',
             children: [
@@ -353,6 +410,7 @@ class _OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
                 _contentToSpanTree(
                   context,
                   widget.headline.title,
+                  query,
                   OrgEvents.of(context)?.dispatchLinkTap ?? (_, __) {},
                   _recognizers.add,
                 ),
