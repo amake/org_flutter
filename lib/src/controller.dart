@@ -50,7 +50,7 @@ class OrgController extends InheritedWidget {
 
   final OrgTree root;
   final Map<OrgTree, OrgNode> _nodeMap;
-  final ValueNotifier<Pattern> _searchQuery = ValueNotifier('');
+  final ValueNotifier<Pattern> searchQuery = ValueNotifier('');
 
   static OrgController of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<OrgController>();
@@ -93,7 +93,7 @@ class OrgController extends InheritedWidget {
   }
 
   void search(Pattern query) {
-    _searchQuery.value = query;
+    searchQuery.value = query;
     debugPrint('Querying: $query');
     if (!emptyPattern(query)) {
       _nodeMap.forEach((tree, node) {
