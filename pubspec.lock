@@ -93,7 +93,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "09fedef804a8eeff846d54e938c742878bf7371d"
+      resolved-ref: "42db32487e0ce621962ac5f3cc6155efa304b584"
       url: "https://github.com/amake/org_parser.git"
     source: git
     version: "0.0.1"
