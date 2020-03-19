@@ -96,14 +96,26 @@ class OrgController extends InheritedWidget {
     searchQuery.value = query;
     debugPrint('Querying: $query');
     if (!emptyPattern(query)) {
-      _nodeMap.forEach((tree, node) {
-        final newValue = tree.contains(query)
-            ? OrgVisibilityState.children
-            : OrgVisibilityState.folded;
+      // Traverse tree from leaves to root in order to
+      // a) prevent unnecessarily checking the same vertices twice
+      // b) ensure correct visibility result
+      bool _visit(OrgTree tree) {
+        final childrenMatch = tree.children.fold<bool>(false, (acc, child) {
+          final match = _visit(child);
+          return acc || match;
+        });
+        final anyMatch =
+            childrenMatch || tree.contains(query, includeChildren: false);
+        final newValue =
+            anyMatch ? OrgVisibilityState.children : OrgVisibilityState.folded;
+        final node = _nodeMap[tree];
         debugPrint(
             'Changing visibility; from=${node.visibility.value}, to=$newValue');
         node.visibility.value = newValue;
-      });
+        return anyMatch;
+      }
+
+      _visit(root);
     }
   }
 
