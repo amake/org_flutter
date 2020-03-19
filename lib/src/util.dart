@@ -36,6 +36,20 @@ bool emptyPattern(Pattern pattern) {
   }
 }
 
+bool patternEquals(Pattern a, Pattern b) {
+  if (a == b) {
+    return true;
+  }
+  if (a is RegExp && b is RegExp) {
+    return a.pattern == b.pattern &&
+        a.isCaseSensitive == b.isCaseSensitive &&
+        a.isDotAll == b.isDotAll &&
+        a.isMultiLine == b.isMultiLine &&
+        a.isUnicode == b.isUnicode;
+  }
+  return false;
+}
+
 Iterable<InlineSpan> tokenizeTextSpan(
   String text,
   Pattern pattern,

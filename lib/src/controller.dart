@@ -46,7 +46,9 @@ class OrgController extends InheritedWidget {
     Key key,
   })  : _nodeMap = _buildNodeMap(root),
         assert(root != null),
-        super(key: key, child: child);
+        super(key: key, child: child) {
+    searchQuery.addListener(_updateVisibilityForQuery);
+  }
 
   final OrgTree root;
   final Map<OrgTree, OrgNode> _nodeMap;
@@ -93,8 +95,14 @@ class OrgController extends InheritedWidget {
   }
 
   void search(Pattern query) {
-    searchQuery.value = query;
-    debugPrint('Querying: $query');
+    if (!patternEquals(searchQuery.value, query)) {
+      searchQuery.value = query;
+      debugPrint('Querying: $query');
+    }
+  }
+
+  void _updateVisibilityForQuery() {
+    final query = searchQuery.value;
     if (!emptyPattern(query)) {
       // Traverse tree from leaves to root in order to
       // a) prevent unnecessarily checking the same vertices twice
