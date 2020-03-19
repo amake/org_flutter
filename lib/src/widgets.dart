@@ -3,8 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/controller.dart';
+import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/theme.dart';
-import 'package:org_flutter/src/util.dart';
 import 'package:org_parser/org_parser.dart';
 
 class OrgDocumentWidget extends StatelessWidget {
@@ -227,133 +227,11 @@ class _OrgContentWidgetState extends State<OrgContentWidget> {
       valueListenable: OrgController.of(context)?.searchQuery ??
           ValueNotifier<Pattern>(null),
       builder: (context, query, child) => Text.rich(
-        _contentToSpanTree(
-          context,
+        SpanBuilder(context, highlight: query).build(
           widget.content,
-          query,
-          OrgEvents.of(context)?.dispatchLinkTap ?? (_, __) {},
           _recognizers.add,
         ),
       ),
-    );
-  }
-}
-
-InlineSpan _contentToSpanTree(
-  BuildContext context,
-  OrgContentElement element,
-  Pattern highlight,
-  Function(BuildContext, String) linkDispatcher,
-  Function(GestureRecognizer) registerRecognizer,
-) {
-  assert(linkDispatcher != null);
-  assert(registerRecognizer != null);
-  if (element is OrgPlainText) {
-    return _highlightedSpan(context, element.content, highlight);
-  } else if (element is OrgMarkup) {
-    return _highlightedSpan(
-      context,
-      element.content,
-      highlight,
-      style: OrgTheme.dataOf(context).fontStyleForOrgStyle(
-        DefaultTextStyle.of(context).style,
-        element.style,
-      ),
-    );
-  } else if (element is OrgKeyword) {
-    return _highlightedSpan(
-      context,
-      element.content,
-      highlight,
-      style: DefaultTextStyle.of(context)
-          .style
-          .copyWith(color: OrgTheme.dataOf(context).keywordColor),
-    );
-  } else if (element is OrgLink) {
-    final recognizer = TapGestureRecognizer()
-      ..onTap = () => linkDispatcher(context, element.location);
-    registerRecognizer(recognizer);
-    final visibleContent = element.description ?? element.location;
-    return _highlightedSpan(
-      context,
-      visibleContent,
-      highlight,
-      recognizer: recognizer,
-      style: DefaultTextStyle.of(context).style.copyWith(
-            color: OrgTheme.dataOf(context).linkColor,
-            decoration: TextDecoration.underline,
-          ),
-      charWrap: true,
-    );
-  } else if (element is OrgMeta) {
-    return _highlightedSpan(
-      context,
-      element.content,
-      highlight,
-      style: DefaultTextStyle.of(context)
-          .style
-          .copyWith(color: OrgTheme.dataOf(context).metaColor),
-    );
-  } else if (element is OrgTimestamp) {
-    return _highlightedSpan(
-      context,
-      element.content,
-      highlight,
-      style: DefaultTextStyle.of(context).style.copyWith(
-            color: OrgTheme.dataOf(context).dateColor,
-            decoration: TextDecoration.underline,
-          ),
-    );
-  } else if (element is OrgBlock) {
-    return WidgetSpan(child: IdentityTextScale(child: OrgBlockWidget(element)));
-  } else if (element is OrgTable) {
-    return WidgetSpan(child: IdentityTextScale(child: OrgTableWidget(element)));
-  } else if (element is OrgFixedWidthArea) {
-    return WidgetSpan(
-        child: IdentityTextScale(child: OrgFixedWidthAreaWidget(element)));
-  } else if (element is OrgContent) {
-    return TextSpan(
-        children: element.children
-            .map((child) => _contentToSpanTree(
-                  context,
-                  child,
-                  highlight,
-                  linkDispatcher,
-                  registerRecognizer,
-                ))
-            .toList());
-  } else {
-    throw Exception('Unknown OrgContentElement type: $element');
-  }
-}
-
-InlineSpan _highlightedSpan(
-  BuildContext context,
-  String text,
-  Pattern highlight, {
-  TextStyle style,
-  GestureRecognizer recognizer,
-  bool charWrap = false,
-}) {
-  if (emptyPattern(highlight)) {
-    return TextSpan(
-      text: charWrap ? characterWrappable(text) : text,
-      style: style,
-      recognizer: recognizer,
-    );
-  } else {
-    final realStyle = style ?? DefaultTextStyle.of(context).style;
-    return TextSpan(
-      style: realStyle,
-      recognizer: recognizer,
-      children: tokenizeTextSpan(
-              text,
-              highlight,
-              realStyle.copyWith(
-                backgroundColor: OrgTheme.dataOf(context).highlightColor,
-              ),
-              charWrap ? characterWrappable : (x) => x)
-          .toList(growable: false),
     );
   }
 }
@@ -407,11 +285,8 @@ class _OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
               if (widget.headline.priority != null)
                 TextSpan(text: '${widget.headline.priority} '),
               if (widget.headline.title != null)
-                _contentToSpanTree(
-                  context,
+                SpanBuilder(context, highlight: query).build(
                   widget.headline.title,
-                  query,
-                  OrgEvents.of(context)?.dispatchLinkTap ?? (_, __) {},
                   _recognizers.add,
                 ),
               if (widget.headline.tags.isNotEmpty)

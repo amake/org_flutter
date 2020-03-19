@@ -1,5 +1,3 @@
-import 'package:flutter/widgets.dart';
-
 /// If necessary, interleave runes with U+200B ZERO WIDTH SPACE to serve as a
 /// place to wrap the line.
 String characterWrappable(String text) {
@@ -48,23 +46,4 @@ bool patternEquals(Pattern a, Pattern b) {
         a.isUnicode == b.isUnicode;
   }
   return false;
-}
-
-Iterable<InlineSpan> tokenizeTextSpan(
-  String text,
-  Pattern pattern,
-  TextStyle matchStyle,
-  String Function(String) transform,
-) sync* {
-  var lastEnd = 0;
-  for (final match in pattern.allMatches(text)) {
-    if (match.start > lastEnd) {
-      yield TextSpan(text: transform(text.substring(lastEnd, match.start)));
-    }
-    yield TextSpan(text: transform(match.group(0)), style: matchStyle);
-    lastEnd = match.end;
-  }
-  if (lastEnd < text.length) {
-    yield TextSpan(text: transform(text.substring(lastEnd, text.length)));
-  }
 }
