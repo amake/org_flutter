@@ -271,30 +271,33 @@ class _OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
       child: ValueListenableBuilder<Pattern>(
         valueListenable: OrgController.of(context)?.searchQuery ??
             ValueNotifier<Pattern>(null),
-        builder: (context, query, child) => Text.rich(
-          TextSpan(
-            text: '${widget.headline.stars} ',
-            children: [
-              if (widget.headline.keyword != null)
-                TextSpan(
-                    text: '${widget.headline.keyword} ',
-                    style: DefaultTextStyle.of(context).style.copyWith(
-                        color: widget.headline.keyword == 'DONE'
-                            ? theme.doneColor
-                            : theme.todoColor)),
-              if (widget.headline.priority != null)
-                TextSpan(text: '${widget.headline.priority} '),
-              if (widget.headline.title != null)
-                SpanBuilder(context, highlight: query).build(
-                  widget.headline.title,
-                  _recognizers.add,
-                ),
-              if (widget.headline.tags.isNotEmpty)
-                TextSpan(text: ':${widget.headline.tags.join(':')}:'),
-              if (!widget.open) const TextSpan(text: '...'),
-            ],
-          ),
-        ),
+        builder: (context, query, child) {
+          final spanBuilder = SpanBuilder(context, highlight: query);
+          return Text.rich(
+            TextSpan(
+              children: [
+                spanBuilder.highlightedSpan('${widget.headline.stars} '),
+                if (widget.headline.keyword != null)
+                  spanBuilder.highlightedSpan('${widget.headline.keyword} ',
+                      style: DefaultTextStyle.of(context).style.copyWith(
+                          color: widget.headline.keyword == 'DONE'
+                              ? theme.doneColor
+                              : theme.todoColor)),
+                if (widget.headline.priority != null)
+                  spanBuilder.highlightedSpan('${widget.headline.priority} '),
+                if (widget.headline.title != null)
+                  spanBuilder.build(
+                    widget.headline.title,
+                    _recognizers.add,
+                  ),
+                if (widget.headline.tags.isNotEmpty)
+                  spanBuilder
+                      .highlightedSpan(':${widget.headline.tags.join(':')}:'),
+                if (!widget.open) const TextSpan(text: '...'),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

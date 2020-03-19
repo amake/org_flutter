@@ -15,9 +15,9 @@ class SpanBuilder {
   ) {
     assert(registerRecognizer != null);
     if (element is OrgPlainText) {
-      return _highlightedSpan(element.content);
+      return highlightedSpan(element.content);
     } else if (element is OrgMarkup) {
-      return _highlightedSpan(
+      return highlightedSpan(
         element.content,
         style: OrgTheme.dataOf(context).fontStyleForOrgStyle(
           DefaultTextStyle.of(context).style,
@@ -25,7 +25,7 @@ class SpanBuilder {
         ),
       );
     } else if (element is OrgKeyword) {
-      return _highlightedSpan(
+      return highlightedSpan(
         element.content,
         style: DefaultTextStyle.of(context)
             .style
@@ -38,7 +38,7 @@ class SpanBuilder {
         ..onTap = () => linkDispatcher(context, element.location);
       registerRecognizer(recognizer);
       final visibleContent = element.description ?? element.location;
-      return _highlightedSpan(
+      return highlightedSpan(
         visibleContent,
         recognizer: recognizer,
         style: DefaultTextStyle.of(context).style.copyWith(
@@ -48,14 +48,14 @@ class SpanBuilder {
         charWrap: true,
       );
     } else if (element is OrgMeta) {
-      return _highlightedSpan(
+      return highlightedSpan(
         element.content,
         style: DefaultTextStyle.of(context)
             .style
             .copyWith(color: OrgTheme.dataOf(context).metaColor),
       );
     } else if (element is OrgTimestamp) {
-      return _highlightedSpan(
+      return highlightedSpan(
         element.content,
         style: DefaultTextStyle.of(context).style.copyWith(
               color: OrgTheme.dataOf(context).dateColor,
@@ -81,7 +81,7 @@ class SpanBuilder {
     }
   }
 
-  InlineSpan _highlightedSpan(
+  InlineSpan highlightedSpan(
     String text, {
     TextStyle style,
     GestureRecognizer recognizer,
