@@ -223,14 +223,9 @@ class _OrgContentWidgetState extends State<OrgContentWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<Pattern>(
-      valueListenable: OrgController.of(context)?.searchQuery ??
-          ValueNotifier<Pattern>(null),
-      builder: (context, query, child) => Text.rich(
-        SpanBuilder(context, highlight: query).build(
-          widget.content,
-          _recognizers.add,
-        ),
+    return HighlightBuilder(
+      builder: (context, spanBuilder) => Text.rich(
+        spanBuilder.build(widget.content, _recognizers.add),
       ),
     );
   }
@@ -268,36 +263,31 @@ class _OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
         fontWeight: FontWeight.bold,
         height: 1.8,
       ),
-      child: ValueListenableBuilder<Pattern>(
-        valueListenable: OrgController.of(context)?.searchQuery ??
-            ValueNotifier<Pattern>(null),
-        builder: (context, query, child) {
-          final spanBuilder = SpanBuilder(context, highlight: query);
-          return Text.rich(
-            TextSpan(
-              children: [
-                spanBuilder.highlightedSpan('${widget.headline.stars} '),
-                if (widget.headline.keyword != null)
-                  spanBuilder.highlightedSpan('${widget.headline.keyword} ',
-                      style: DefaultTextStyle.of(context).style.copyWith(
-                          color: widget.headline.keyword == 'DONE'
-                              ? theme.doneColor
-                              : theme.todoColor)),
-                if (widget.headline.priority != null)
-                  spanBuilder.highlightedSpan('${widget.headline.priority} '),
-                if (widget.headline.title != null)
-                  spanBuilder.build(
-                    widget.headline.title,
-                    _recognizers.add,
-                  ),
-                if (widget.headline.tags.isNotEmpty)
-                  spanBuilder
-                      .highlightedSpan(':${widget.headline.tags.join(':')}:'),
-                if (!widget.open) const TextSpan(text: '...'),
-              ],
-            ),
-          );
-        },
+      child: HighlightBuilder(
+        builder: (context, spanBuilder) => Text.rich(
+          TextSpan(
+            children: [
+              spanBuilder.highlightedSpan('${widget.headline.stars} '),
+              if (widget.headline.keyword != null)
+                spanBuilder.highlightedSpan('${widget.headline.keyword} ',
+                    style: DefaultTextStyle.of(context).style.copyWith(
+                        color: widget.headline.keyword == 'DONE'
+                            ? theme.doneColor
+                            : theme.todoColor)),
+              if (widget.headline.priority != null)
+                spanBuilder.highlightedSpan('${widget.headline.priority} '),
+              if (widget.headline.title != null)
+                spanBuilder.build(
+                  widget.headline.title,
+                  _recognizers.add,
+                ),
+              if (widget.headline.tags.isNotEmpty)
+                spanBuilder
+                    .highlightedSpan(':${widget.headline.tags.join(':')}:'),
+              if (!widget.open) const TextSpan(text: '...'),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -447,5 +437,27 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
         child: Text(fixedWidthArea.content),
       ),
     );
+  }
+}
+
+class HighlightBuilder extends StatelessWidget {
+  const HighlightBuilder({@required this.builder, Key key})
+      : assert(builder != null),
+        super(key: key);
+  final Widget Function(BuildContext, SpanBuilder) builder;
+
+  @override
+  Widget build(BuildContext context) {
+    final queryListenable = OrgController.of(context)?.searchQuery;
+    if (queryListenable == null) {
+      return builder(context, SpanBuilder(context));
+    } else {
+      return ValueListenableBuilder<Pattern>(
+        valueListenable: queryListenable,
+        builder: (context, query, child) {
+          return builder(context, SpanBuilder(context, highlight: query));
+        },
+      );
+    }
   }
 }
