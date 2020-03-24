@@ -147,14 +147,14 @@ class OrgSectionWidget extends StatelessWidget {
   final OrgSection section;
   final bool initiallyOpen;
 
-  bool _fullyOpen(OrgVisibilityState visibility) {
+  // Whether the section is open "enough" to not show the trailing ellipsis
+  bool _openEnough(OrgVisibilityState visibility) {
     switch (visibility) {
       case OrgVisibilityState.folded:
         return section.isEmpty;
       case OrgVisibilityState.contents:
         return section.content == null;
       case OrgVisibilityState.children:
-        return section.children.isEmpty;
       case OrgVisibilityState.subtree:
         return true;
     }
@@ -176,7 +176,7 @@ class OrgSectionWidget extends StatelessWidget {
           InkWell(
             child: OrgHeadlineWidget(
               section.headline,
-              open: _fullyOpen(visibility),
+              open: _openEnough(visibility),
             ),
             onTap: () => OrgController.of(context).cycleVisibilityOf(section),
             onLongPress: () =>
