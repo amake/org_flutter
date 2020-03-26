@@ -71,6 +71,32 @@ class SpanBuilder {
     } else if (element is OrgFixedWidthArea) {
       return WidgetSpan(
           child: IdentityTextScale(child: OrgFixedWidthAreaWidget(element)));
+    } else if (element is OrgList) {
+      return TextSpan(children: [
+        for (final item in element.items) build(item, registerRecognizer),
+      ]);
+    } else if (element is OrgListItem) {
+      return TextSpan(children: [
+        TextSpan(text: element.indent),
+        TextSpan(text: element.bullet),
+        if (element is OrgListOrderedItem && element.counterSet != null)
+          TextSpan(text: '${element.counterSet} '),
+        if (element.checkbox != null)
+          TextSpan(
+            text: '${element.checkbox} ',
+            style: DefaultTextStyle.of(context)
+                .style
+                .copyWith(fontWeight: FontWeight.bold),
+          ),
+        if (element is OrgListUnorderedItem && element.tag != null)
+          TextSpan(
+            text: element.tag,
+            style: DefaultTextStyle.of(context)
+                .style
+                .copyWith(fontWeight: FontWeight.bold),
+          ),
+        if (element.body != null) build(element.body, registerRecognizer),
+      ]);
     } else if (element is OrgContent) {
       return TextSpan(
           children: element.children
