@@ -47,3 +47,16 @@ bool patternEquals(Pattern a, Pattern b) {
   }
   return false;
 }
+
+String reflowText(String text) =>
+    text.replaceAll(_unwrappableWhitespacePattern, ' ');
+
+final _unwrappableWhitespacePattern = RegExp(r'(?<=\S)[ \t]*\r?\n[ \t]*(?=\S)');
+
+String removeTrailingLineBreak(String text) {
+  if (text.endsWith('\n')) {
+    return text.substring(0, text.length - 1);
+  } else {
+    return text;
+  }
+}

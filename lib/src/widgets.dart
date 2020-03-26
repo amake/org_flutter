@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/theme.dart';
+import 'package:org_flutter/src/util.dart';
 import 'package:org_parser/org_parser.dart';
 
 class OrgDocumentWidget extends StatelessWidget {
@@ -466,5 +467,124 @@ class _RecognizerManagerState extends State<RecognizerManager> {
   @override
   Widget build(BuildContext context) {
     return widget.builder(context, _recognizers.add);
+  }
+}
+
+class OrgListWidget extends StatelessWidget {
+  const OrgListWidget(this.list, {Key key})
+      : assert(list != null),
+        super(key: key);
+  final OrgList list;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment:
+          CrossAxisAlignment.start, // CrossAxisAlignment.stretch,
+      children: <Widget>[
+        for (final item in list.items) OrgListItemWidget(item),
+      ],
+    );
+  }
+}
+
+class OrgListItemWidget extends StatelessWidget {
+  const OrgListItemWidget(this.item, {Key key})
+      : assert(item != null),
+        super(key: key);
+  final OrgListItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    return IndentBuilder(
+      '${item.indent}${item.bullet}',
+      builder: (context, indent) => Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(indent),
+          Expanded(
+            child: HighlightBuilder(
+              builder: (context, spanBuilder) => Text.rich(
+                TextSpan(
+                  children:
+                      _spans(context, spanBuilder).toList(growable: false),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Iterable<InlineSpan> _spans(
+    BuildContext context,
+    SpanBuilder builder,
+  ) sync* {
+    final item = this.item;
+    if (item is OrgListOrderedItem && item.counterSet != null) {
+      yield builder.highlightedSpan(
+        '${item.counterSet} ',
+        style: DefaultTextStyle.of(context)
+            .style
+            .copyWith(fontWeight: FontWeight.bold),
+      );
+    }
+    if (item.checkbox != null) {
+      yield builder.highlightedSpan(
+        '${item.checkbox} ',
+        style: DefaultTextStyle.of(context)
+            .style
+            .copyWith(fontWeight: FontWeight.bold),
+      );
+    }
+    if (item is OrgListUnorderedItem && item.tag != null) {
+      yield builder.highlightedSpan(
+        item.tag,
+        style: DefaultTextStyle.of(context)
+            .style
+            .copyWith(fontWeight: FontWeight.bold),
+      );
+    }
+    if (item.body != null) {
+      yield builder.build(item.body, transformer: (elem, content) {
+        if (elem is OrgPlainText) {
+          return removeTrailingLineBreak(reflowText(content));
+        } else {
+          return content;
+        }
+      });
+    }
+  }
+}
+
+class ListContext extends InheritedWidget {
+  const ListContext(this.indent, {Widget child, Key key})
+      : super(child: child, key: key);
+
+  final int indent;
+
+  @override
+  bool updateShouldNotify(ListContext oldWidget) => indent != oldWidget.indent;
+
+  static ListContext of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<ListContext>();
+}
+
+// TODO(aaron): Use indent builder to fix indent of blocks, tables, etc. inside lists
+class IndentBuilder extends StatelessWidget {
+  const IndentBuilder(this.indent, {this.builder, Key key}) : super(key: key);
+
+  final Widget Function(BuildContext, String) builder;
+  final String indent;
+
+  @override
+  Widget build(BuildContext context) {
+    final parentIndent = ListContext.of(context)?.indent ?? 0;
+    final newIndent = indent.substring(parentIndent);
+    return ListContext(
+      parentIndent + newIndent.length,
+      child: builder(context, newIndent),
+    );
   }
 }

@@ -83,9 +83,13 @@ class SpanBuilder {
       return WidgetSpan(
           child: IdentityTextScale(child: OrgFixedWidthAreaWidget(element)));
     } else if (element is OrgList) {
-      return TextSpan(children: [
-        for (final item in element.items) build(item, transformer: transformer),
-      ]);
+      // Render lists with structure for reflowing, etc.
+      return WidgetSpan(
+          child: IdentityTextScale(child: OrgListWidget(element)));
+      // Render lists as just text
+//      return TextSpan(children: [
+//        for (final item in element.items) build(item, transformer: transformer),
+//      ]);
     } else if (element is OrgListItem) {
       // TODO(aaron): Decide what use should be made of the transformer here
       return TextSpan(children: [
