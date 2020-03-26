@@ -205,36 +205,19 @@ class OrgSectionWidget extends StatelessWidget {
   }
 }
 
-class OrgContentWidget extends StatefulWidget {
+class OrgContentWidget extends StatelessWidget {
   const OrgContentWidget(this.content, {Key key}) : super(key: key);
   final OrgContentElement content;
 
   @override
-  _OrgContentWidgetState createState() => _OrgContentWidgetState();
-}
-
-class _OrgContentWidgetState extends State<OrgContentWidget> {
-  final _recognizers = <GestureRecognizer>[];
-
-  @override
-  void dispose() {
-    for (final item in _recognizers) {
-      item.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return HighlightBuilder(
-      builder: (context, spanBuilder) => Text.rich(
-        spanBuilder.build(widget.content, _recognizers.add),
-      ),
+      builder: (context, spanBuilder) => Text.rich(spanBuilder.build(content)),
     );
   }
 }
 
-class OrgHeadlineWidget extends StatefulWidget {
+class OrgHeadlineWidget extends StatelessWidget {
   const OrgHeadlineWidget(this.headline, {@required this.open, Key key})
       : assert(open != null),
         super(key: key);
@@ -242,24 +225,9 @@ class OrgHeadlineWidget extends StatefulWidget {
   final bool open;
 
   @override
-  _OrgHeadlineWidgetState createState() => _OrgHeadlineWidgetState();
-}
-
-class _OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
-  final _recognizers = <GestureRecognizer>[];
-
-  @override
-  void dispose() {
-    for (final item in _recognizers) {
-      item.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = OrgTheme.dataOf(context);
-    final color = theme.levelColor(widget.headline.level);
+    final color = theme.levelColor(headline.level);
     return DefaultTextStyle.merge(
       style: TextStyle(
         color: color,
@@ -270,24 +238,22 @@ class _OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
         builder: (context, spanBuilder) => Text.rich(
           TextSpan(
             children: [
-              spanBuilder.highlightedSpan('${widget.headline.stars} '),
-              if (widget.headline.keyword != null)
-                spanBuilder.highlightedSpan('${widget.headline.keyword} ',
+              spanBuilder.highlightedSpan('${headline.stars} '),
+              if (headline.keyword != null)
+                spanBuilder.highlightedSpan('${headline.keyword} ',
                     style: DefaultTextStyle.of(context).style.copyWith(
-                        color: widget.headline.keyword == 'DONE'
+                        color: headline.keyword == 'DONE'
                             ? theme.doneColor
                             : theme.todoColor)),
-              if (widget.headline.priority != null)
-                spanBuilder.highlightedSpan('${widget.headline.priority} '),
-              if (widget.headline.title != null)
+              if (headline.priority != null)
+                spanBuilder.highlightedSpan('${headline.priority} '),
+              if (headline.title != null)
                 spanBuilder.build(
-                  widget.headline.title,
-                  _recognizers.add,
+                  headline.title,
                 ),
-              if (widget.headline.tags.isNotEmpty)
-                spanBuilder
-                    .highlightedSpan(':${widget.headline.tags.join(':')}:'),
-              if (!widget.open) const TextSpan(text: '...'),
+              if (headline.tags.isNotEmpty)
+                spanBuilder.highlightedSpan(':${headline.tags.join(':')}:'),
+              if (!open) const TextSpan(text: '...'),
             ],
           ),
         ),
