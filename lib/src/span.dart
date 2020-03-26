@@ -3,6 +3,10 @@ import 'package:flutter/widgets.dart';
 import 'package:org_flutter/org_flutter.dart';
 import 'package:org_flutter/src/util.dart';
 
+typedef Transformer = String Function(OrgContentElement, String);
+
+String _identity(OrgContentElement _, String str) => str;
+
 class SpanBuilder {
   SpanBuilder(this.context, {this.highlight}) : assert(context != null);
 
@@ -11,14 +15,15 @@ class SpanBuilder {
 
   InlineSpan build(
     OrgContentElement element,
-    Function(GestureRecognizer) registerRecognizer,
-  ) {
+    Function(GestureRecognizer) registerRecognizer, {
+    Transformer transformer = _identity,
+  }) {
     assert(registerRecognizer != null);
     if (element is OrgPlainText) {
-      return highlightedSpan(element.content);
+      return highlightedSpan(transformer(element, element.content));
     } else if (element is OrgMarkup) {
       return highlightedSpan(
-        element.content,
+        transformer(element, element.content),
         style: OrgTheme.dataOf(context).fontStyleForOrgStyle(
           DefaultTextStyle.of(context).style,
           element.style,
@@ -26,7 +31,7 @@ class SpanBuilder {
       );
     } else if (element is OrgKeyword) {
       return highlightedSpan(
-        element.content,
+        transformer(element, element.content),
         style: DefaultTextStyle.of(context)
             .style
             .copyWith(color: OrgTheme.dataOf(context).keywordColor),
@@ -39,7 +44,7 @@ class SpanBuilder {
       registerRecognizer(recognizer);
       final visibleContent = element.description ?? element.location;
       return highlightedSpan(
-        visibleContent,
+        transformer(element, visibleContent),
         recognizer: recognizer,
         style: DefaultTextStyle.of(context).style.copyWith(
               color: OrgTheme.dataOf(context).linkColor,
@@ -49,14 +54,14 @@ class SpanBuilder {
       );
     } else if (element is OrgMeta) {
       return highlightedSpan(
-        element.content,
+        transformer(element, element.content),
         style: DefaultTextStyle.of(context)
             .style
             .copyWith(color: OrgTheme.dataOf(context).metaColor),
       );
     } else if (element is OrgTimestamp) {
       return highlightedSpan(
-        element.content,
+        transformer(element, element.content),
         style: DefaultTextStyle.of(context).style.copyWith(
               color: OrgTheme.dataOf(context).dateColor,
               decoration: TextDecoration.underline,
@@ -73,9 +78,10 @@ class SpanBuilder {
           child: IdentityTextScale(child: OrgFixedWidthAreaWidget(element)));
     } else if (element is OrgList) {
       return TextSpan(children: [
-        for (final item in element.items) build(item, registerRecognizer),
+        for (final item in element.items) build(item, transformer: transformer),
       ]);
     } else if (element is OrgListItem) {
+      // TODO(aaron): Decide what use should be made of the transformer here
       return TextSpan(children: [
         TextSpan(text: element.indent),
         TextSpan(text: element.bullet),
@@ -95,12 +101,18 @@ class SpanBuilder {
                 .style
                 .copyWith(fontWeight: FontWeight.bold),
           ),
-        if (element.body != null) build(element.body, registerRecognizer),
+        if (element.body != null)
+          build(
+            element.body,
+            registerRecognizer,
+            transformer: transformer,
+          ),
       ]);
     } else if (element is OrgContent) {
       return TextSpan(
           children: element.children
-              .map((child) => build(child, registerRecognizer))
+              .map((child) =>
+                  build(child, registerRecognizer, transformer: transformer))
               .toList(growable: false));
     } else {
       throw Exception('Unknown OrgContentElement type: $element');
