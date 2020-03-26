@@ -7,18 +7,24 @@ typedef Transformer = String Function(OrgContentElement, String);
 
 String _identity(OrgContentElement _, String str) => str;
 
+typedef RecognizerHandler = Function(GestureRecognizer);
+
 class SpanBuilder {
-  SpanBuilder(this.context, {this.highlight}) : assert(context != null);
+  SpanBuilder(
+    this.context, {
+    @required this.recognizerHandler,
+    this.highlight,
+  })  : assert(context != null),
+        assert(recognizerHandler != null);
 
   final BuildContext context;
+  final RecognizerHandler recognizerHandler;
   final Pattern highlight;
 
   InlineSpan build(
-    OrgContentElement element,
-    Function(GestureRecognizer) registerRecognizer, {
+    OrgContentElement element, {
     Transformer transformer = _identity,
   }) {
-    assert(registerRecognizer != null);
     if (element is OrgPlainText) {
       return highlightedSpan(transformer(element, element.content));
     } else if (element is OrgMarkup) {
@@ -41,7 +47,7 @@ class SpanBuilder {
           OrgEvents.of(context)?.dispatchLinkTap ?? (_, __) {};
       final recognizer = TapGestureRecognizer()
         ..onTap = () => linkDispatcher(context, element.location);
-      registerRecognizer(recognizer);
+      recognizerHandler(recognizer);
       final visibleContent = element.description ?? element.location;
       return highlightedSpan(
         transformer(element, visibleContent),
@@ -101,18 +107,12 @@ class SpanBuilder {
                 .style
                 .copyWith(fontWeight: FontWeight.bold),
           ),
-        if (element.body != null)
-          build(
-            element.body,
-            registerRecognizer,
-            transformer: transformer,
-          ),
+        if (element.body != null) build(element.body, transformer: transformer),
       ]);
     } else if (element is OrgContent) {
       return TextSpan(
           children: element.children
-              .map((child) =>
-                  build(child, registerRecognizer, transformer: transformer))
+              .map((child) => build(child, transformer: transformer))
               .toList(growable: false));
     } else {
       throw Exception('Unknown OrgContentElement type: $element');

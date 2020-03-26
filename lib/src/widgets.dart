@@ -451,16 +451,54 @@ class HighlightBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final queryListenable = OrgController.of(context)?.searchQuery;
-    if (queryListenable == null) {
-      return builder(context, SpanBuilder(context));
-    } else {
-      return ValueListenableBuilder<Pattern>(
-        valueListenable: queryListenable,
-        builder: (context, query, child) {
-          return builder(context, SpanBuilder(context, highlight: query));
-        },
-      );
+    return RecognizerManager(
+      builder: (context, registerRecognizer) {
+        final queryListenable = OrgController.of(context)?.searchQuery;
+        if (queryListenable == null) {
+          return builder(
+            context,
+            SpanBuilder(context, recognizerHandler: registerRecognizer),
+          );
+        } else {
+          return ValueListenableBuilder<Pattern>(
+            valueListenable: queryListenable,
+            builder: (context, query, child) => builder(
+              context,
+              SpanBuilder(
+                context,
+                recognizerHandler: registerRecognizer,
+                highlight: query,
+              ),
+            ),
+          );
+        }
+      },
+    );
+  }
+}
+
+class RecognizerManager extends StatefulWidget {
+  const RecognizerManager({this.builder, Key key}) : super(key: key);
+
+  final Widget Function(BuildContext, RecognizerHandler) builder;
+
+  @override
+  _RecognizerManagerState createState() => _RecognizerManagerState();
+}
+
+class _RecognizerManagerState extends State<RecognizerManager> {
+  final _recognizers = <GestureRecognizer>[];
+
+  @override
+  void dispose() {
+    for (final item in _recognizers) {
+      item.dispose();
     }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context, _recognizers.add);
   }
 }
