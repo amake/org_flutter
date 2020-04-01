@@ -303,9 +303,9 @@ class OrgBlockWidget extends StatelessWidget {
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
     return IndentBuilder(
       block.indent,
-      builder: (context, indent) {
+      builder: (context, indent, totalIndentSize) {
         final deindentPattern = RegExp(
-          '^ {0,${indent.length}}',
+          '^ {0,$totalIndentSize}',
           multiLine: true,
         );
         return Row(
@@ -529,7 +529,7 @@ class OrgListItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IndentBuilder(
       '${item.indent}${item.bullet}',
-      builder: (context, indent) => Row(
+      builder: (context, indent, _) => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(indent),
@@ -607,16 +607,17 @@ class ListContext extends InheritedWidget {
 class IndentBuilder extends StatelessWidget {
   const IndentBuilder(this.indent, {this.builder, Key key}) : super(key: key);
 
-  final Widget Function(BuildContext, String) builder;
+  final Widget Function(BuildContext, String, int) builder;
   final String indent;
 
   @override
   Widget build(BuildContext context) {
     final parentIndent = ListContext.of(context)?.indentSize ?? 0;
     final newIndent = indent.substring(parentIndent);
+    final totalIndentSize = parentIndent + newIndent.length;
     return ListContext(
       parentIndent + newIndent.length,
-      child: builder(context, newIndent),
+      child: builder(context, newIndent, totalIndentSize),
     );
   }
 }
