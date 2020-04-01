@@ -361,6 +361,47 @@ class OrgBlockWidget extends StatelessWidget {
   }
 }
 
+class OrgMetaWidget extends StatelessWidget {
+  const OrgMetaWidget(this.meta, {Key key})
+      : assert(meta != null),
+        super(key: key);
+  final OrgMeta meta;
+
+  @override
+  Widget build(BuildContext context) {
+    return IndentBuilder(
+      meta.indent,
+      builder: (context, indent, _) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(indent),
+            HighlightBuilder(
+              builder: (context, spanBuilder) => Text.rich(
+                TextSpan(
+                  children:
+                      _spans(context, spanBuilder).toList(growable: false),
+                ),
+                style: DefaultTextStyle.of(context)
+                    .style
+                    .copyWith(color: OrgTheme.dataOf(context).metaColor),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Iterable<InlineSpan> _spans(BuildContext context, SpanBuilder builder) sync* {
+    yield builder.highlightedSpan(meta.keyword);
+    final trailing = removeTrailingLineBreak(meta.trailing);
+    if (trailing.isNotEmpty) {
+      yield builder.highlightedSpan(trailing);
+    }
+  }
+}
+
 class OrgTableWidget extends StatelessWidget {
   const OrgTableWidget(this.table, {Key key})
       : assert(table != null),

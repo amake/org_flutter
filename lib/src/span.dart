@@ -59,12 +59,8 @@ class SpanBuilder {
         charWrap: true,
       );
     } else if (element is OrgMeta) {
-      return highlightedSpan(
-        transformer(element, element.content),
-        style: DefaultTextStyle.of(context)
-            .style
-            .copyWith(color: OrgTheme.dataOf(context).metaColor),
-      );
+      return WidgetSpan(
+          child: IdentityTextScale(child: OrgMetaWidget(element)));
     } else if (element is OrgTimestamp) {
       return highlightedSpan(
         transformer(element, element.content),
