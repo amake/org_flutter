@@ -55,7 +55,11 @@ final _unwrappableWhitespacePattern = RegExp(r'(?<=\S)[ \t]*\r?\n[ \t]*(?=\S)');
 
 String removeTrailingLineBreak(String text) {
   if (text.endsWith('\n')) {
-    return text.substring(0, text.length - 1);
+    if (text.endsWith('\r\n')) {
+      return text.substring(0, text.length - 2);
+    } else {
+      return text.substring(0, text.length - 1);
+    }
   } else {
     return text;
   }
