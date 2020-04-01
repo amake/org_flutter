@@ -303,49 +303,60 @@ class OrgBlockWidget extends StatelessWidget {
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
     return IndentBuilder(
       block.indent,
-      builder: (context, indent) => Row(
-        children: <Widget>[
-          Text(indent),
-          Expanded(
-            child: ValueListenableBuilder<bool>(
-              valueListenable: openListenable,
-              builder: (context, open, child) => Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  InkWell(
-                    child: Text(
-                      block.header.trimRight() + (open ? '' : '...'),
+      builder: (context, indent) {
+        final deindentPattern = RegExp(
+          '^ {0,${indent.length}}',
+          multiLine: true,
+        );
+        return Row(
+          children: <Widget>[
+            Text(indent),
+            Expanded(
+              child: ValueListenableBuilder<bool>(
+                valueListenable: openListenable,
+                builder: (context, open, child) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    InkWell(
+                      child: Text(
+                        block.header.trimRight() + (open ? '' : '...'),
+                        style: metaStyle,
+                      ),
+                      onTap: () => openListenable.value = !openListenable.value,
+                    ),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 100),
+                      transitionBuilder: (child, animation) =>
+                          SizeTransition(child: child, sizeFactor: animation),
+                      child: open ? child : const SizedBox.shrink(),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    SingleChildScrollView(
+                      child: OrgContentWidget(
+                        block.body,
+                        transformer: (_, string) {
+                          return removeTrailingLineBreak(
+                              string.replaceAll(deindentPattern, ''));
+                        },
+                      ),
+                      scrollDirection: Axis.horizontal,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                    ),
+                    Text(
+                      block.footer.replaceAll(deindentPattern, ''),
                       style: metaStyle,
                     ),
-                    onTap: () => openListenable.value = !openListenable.value,
-                  ),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 100),
-                    transitionBuilder: (child, animation) =>
-                        SizeTransition(child: child, sizeFactor: animation),
-                    child: open ? child : const SizedBox.shrink(),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  SingleChildScrollView(
-                    child: OrgContentWidget(block.body),
-                    scrollDirection: Axis.horizontal,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                  ),
-                  Text(
-                    block.footer
-                        .replaceFirst(RegExp(' {0,${indent.length}}'), ''),
-                    style: metaStyle,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 }
