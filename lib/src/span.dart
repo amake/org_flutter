@@ -5,7 +5,7 @@ import 'package:org_flutter/src/util.dart';
 
 typedef Transformer = String Function(OrgContentElement, String);
 
-String _identity(OrgContentElement _, String str) => str;
+String identityTransformer(OrgContentElement _, String str) => str;
 
 typedef RecognizerHandler = Function(GestureRecognizer);
 
@@ -23,7 +23,7 @@ class SpanBuilder {
 
   InlineSpan build(
     OrgContentElement element, {
-    Transformer transformer = _identity,
+    Transformer transformer = identityTransformer,
   }) {
     if (element is OrgPlainText) {
       return highlightedSpan(transformer(element, element.content));

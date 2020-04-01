@@ -207,13 +207,23 @@ class OrgSectionWidget extends StatelessWidget {
 }
 
 class OrgContentWidget extends StatelessWidget {
-  const OrgContentWidget(this.content, {Key key}) : super(key: key);
+  const OrgContentWidget(
+    this.content, {
+    this.transformer,
+    Key key,
+  }) : super(key: key);
   final OrgContentElement content;
+  final Transformer transformer;
 
   @override
   Widget build(BuildContext context) {
     return HighlightBuilder(
-      builder: (context, spanBuilder) => Text.rich(spanBuilder.build(content)),
+      builder: (context, spanBuilder) => Text.rich(
+        spanBuilder.build(
+          content,
+          transformer: transformer ?? identityTransformer,
+        ),
+      ),
     );
   }
 }
@@ -291,41 +301,51 @@ class OrgBlockWidget extends StatelessWidget {
     final defaultStyle = DefaultTextStyle.of(context).style;
     final metaStyle =
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
-    return ValueListenableBuilder<bool>(
-      valueListenable: openListenable,
-      builder: (context, open, child) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            InkWell(
-              child: Text(
-                block.header + (open ? '' : '...'),
-                style: metaStyle,
+    return IndentBuilder(
+      block.indent,
+      builder: (context, indent) => Row(
+        children: <Widget>[
+          Text(indent),
+          Expanded(
+            child: ValueListenableBuilder<bool>(
+              valueListenable: openListenable,
+              builder: (context, open, child) => Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  InkWell(
+                    child: Text(
+                      block.header.trimRight() + (open ? '' : '...'),
+                      style: metaStyle,
+                    ),
+                    onTap: () => openListenable.value = !openListenable.value,
+                  ),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 100),
+                    transitionBuilder: (child, animation) =>
+                        SizeTransition(child: child, sizeFactor: animation),
+                    child: open ? child : const SizedBox.shrink(),
+                  ),
+                ],
               ),
-              onTap: () => openListenable.value = !openListenable.value,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  SingleChildScrollView(
+                    child: OrgContentWidget(block.body),
+                    scrollDirection: Axis.horizontal,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                  ),
+                  Text(
+                    block.footer
+                        .replaceFirst(RegExp(' {0,${indent.length}}'), ''),
+                    style: metaStyle,
+                  ),
+                ],
+              ),
             ),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 100),
-              transitionBuilder: (child, animation) =>
-                  SizeTransition(child: child, sizeFactor: animation),
-              child: open
-                  ? Column(
-                      key: ValueKey(open),
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        SingleChildScrollView(
-                          child: OrgContentWidget(block.body),
-                          scrollDirection: Axis.horizontal,
-                          physics: const AlwaysScrollableScrollPhysics(),
-                        ),
-                        Text(block.footer, style: metaStyle),
-                      ],
-                    )
-                  : const SizedBox.shrink(),
-            ),
-          ],
-        );
-      },
+          ),
+        ],
+      ),
     );
   }
 }
