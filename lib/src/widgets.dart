@@ -590,13 +590,14 @@ class OrgListItemWidget extends StatelessWidget {
 }
 
 class ListContext extends InheritedWidget {
-  const ListContext(this.indent, {Widget child, Key key})
+  const ListContext(this.indentSize, {Widget child, Key key})
       : super(child: child, key: key);
 
-  final int indent;
+  final int indentSize;
 
   @override
-  bool updateShouldNotify(ListContext oldWidget) => indent != oldWidget.indent;
+  bool updateShouldNotify(ListContext oldWidget) =>
+      indentSize != oldWidget.indentSize;
 
   static ListContext of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<ListContext>();
@@ -611,7 +612,7 @@ class IndentBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final parentIndent = ListContext.of(context)?.indent ?? 0;
+    final parentIndent = ListContext.of(context)?.indentSize ?? 0;
     final newIndent = indent.substring(parentIndent);
     return ListContext(
       parentIndent + newIndent.length,
