@@ -335,17 +335,8 @@ class OrgBlockWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    SingleChildScrollView(
-                      child: OrgContentWidget(
-                        block.body,
-                        transformer: (_, string) {
-                          return removeTrailingLineBreak(
-                              string.replaceAll(deindentPattern, ''));
-                        },
-                      ),
-                      scrollDirection: Axis.horizontal,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                    ),
+                    _body((_, string) => removeTrailingLineBreak(
+                        string.replaceAll(deindentPattern, ''))),
                     Text(
                       block.footer.replaceAll(deindentPattern, ''),
                       style: metaStyle,
@@ -358,6 +349,21 @@ class OrgBlockWidget extends StatelessWidget {
         );
       },
     );
+  }
+
+  Widget _body(Transformer transformer) {
+    final body = OrgContentWidget(
+      block.body,
+      transformer: transformer,
+    );
+    // TODO(aaron): Better distinguish "greater block" from regular block
+    return block.body is OrgContent
+        ? body
+        : SingleChildScrollView(
+            child: body,
+            scrollDirection: Axis.horizontal,
+            physics: const AlwaysScrollableScrollPhysics(),
+          );
   }
 }
 
