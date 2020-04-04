@@ -20,6 +20,8 @@ class OrgNode {
   OrgNode({OrgVisibilityState initialVisibility})
       : visibility = ValueNotifier(initialVisibility);
   final ValueNotifier<OrgVisibilityState> visibility;
+
+  void dispose() => visibility.dispose();
 }
 
 Map<OrgTree, OrgNode> _buildNodeMap(OrgTree tree) {
@@ -39,46 +41,95 @@ void _walk(OrgTree tree, Function(OrgTree) visit) {
   }
 }
 
-class OrgController extends InheritedWidget {
-  OrgController({
-    @required Widget child,
+class OrgController extends StatefulWidget {
+  const OrgController({
+    @required this.child,
     @required this.root,
     Key key,
-  })  : _nodeMap = _buildNodeMap(root),
+  })  : assert(child != null),
         assert(root != null),
+        super(key: key);
+
+  final OrgTree root;
+  final Widget child;
+
+  static OrgControllerData of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<OrgControllerData>();
+
+  @override
+  _OrgControllerState createState() => _OrgControllerState();
+}
+
+class _OrgControllerState extends State<OrgController> {
+  Map<OrgTree, OrgNode> _nodeMap;
+  ValueNotifier<Pattern> _searchQuery;
+
+  @override
+  void initState() {
+    super.initState();
+    _nodeMap = _buildNodeMap(widget.root);
+    _searchQuery = ValueNotifier('');
+  }
+
+  @override
+  void dispose() {
+    for (final node in _nodeMap.values) {
+      node.dispose();
+    }
+    _searchQuery.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return OrgControllerData(
+      child: widget.child,
+      root: widget.root,
+      nodeMap: _nodeMap,
+      searchQuery: _searchQuery,
+    );
+  }
+}
+
+class OrgControllerData extends InheritedWidget {
+  OrgControllerData({
+    @required Widget child,
+    @required this.root,
+    @required this.nodeMap,
+    @required this.searchQuery,
+    Key key,
+  })  : assert(root != null),
+        assert(nodeMap != null),
+        assert(searchQuery != null),
         super(key: key, child: child) {
     searchQuery.addListener(_updateVisibilityForQuery);
   }
 
   final OrgTree root;
-  final Map<OrgTree, OrgNode> _nodeMap;
-  final ValueNotifier<Pattern> searchQuery = ValueNotifier('');
+  final Map<OrgTree, OrgNode> nodeMap;
+  final ValueNotifier<Pattern> searchQuery;
 
-  static OrgController of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<OrgController>();
-
-  OrgNode nodeFor(OrgTree tree) => _nodeMap[tree];
+  OrgNode nodeFor(OrgTree tree) => nodeMap[tree];
 
   OrgSection sectionWithTitle(String title) =>
-      _nodeMap.keys.whereType<OrgSection>().firstWhere(
+      nodeMap.keys.whereType<OrgSection>().firstWhere(
             (section) => section.headline.rawTitle == title,
             orElse: () => null,
           );
 
   void cycleVisibility() {
-    final currentStates =
-        _nodeMap.values.map((e) => e.visibility.value).toSet();
+    final currentStates = nodeMap.values.map((e) => e.visibility.value).toSet();
     final newState = currentStates.length == 1
         ? _cycleGlobal(currentStates.single)
         : OrgVisibilityState.folded;
     debugPrint('Cycling global visibility; from=$currentStates, to=$newState');
-    for (final node in _nodeMap.values) {
+    for (final node in nodeMap.values) {
       node.visibility.value = newState;
     }
   }
 
   void cycleVisibilityOf(OrgTree tree) {
-    final visibilityListenable = _nodeMap[tree].visibility;
+    final visibilityListenable = nodeMap[tree].visibility;
     final newVisibility =
         _cycleSubtree(visibilityListenable.value, tree.children.isEmpty);
     final subtreeVisibility = _subtreeState(newVisibility);
@@ -87,7 +138,7 @@ class OrgController extends InheritedWidget {
         'to=$newVisibility; subtree=$subtreeVisibility');
     _walk(
       tree,
-      (subtree) => _nodeMap[subtree].visibility.value = subtreeVisibility,
+      (subtree) => nodeMap[subtree].visibility.value = subtreeVisibility,
     );
     // Do this last because otherwise _walk applies subtreeVisibility to this
     // root
@@ -116,7 +167,7 @@ class OrgController extends InheritedWidget {
             childrenMatch || tree.contains(query, includeChildren: false);
         final newValue =
             anyMatch ? OrgVisibilityState.children : OrgVisibilityState.folded;
-        final node = _nodeMap[tree];
+        final node = nodeMap[tree];
         debugPrint(
             'Changing visibility; from=${node.visibility.value}, to=$newValue');
         node.visibility.value = newValue;
@@ -128,7 +179,8 @@ class OrgController extends InheritedWidget {
   }
 
   @override
-  bool updateShouldNotify(OrgController oldWidget) => root != oldWidget.root;
+  bool updateShouldNotify(OrgControllerData oldWidget) =>
+      root != oldWidget.root;
 
   OrgVisibilityState _cycleGlobal(OrgVisibilityState state) {
     switch (state) {
