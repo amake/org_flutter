@@ -64,3 +64,12 @@ String removeTrailingLineBreak(String text) {
     return text;
   }
 }
+
+String deindent(String text, int indentSize) {
+  // TODO(aaron): Consider memoizing this in case it's a performance issue
+  final deindentPattern = RegExp(
+    '^ {0,$indentSize}',
+    multiLine: true,
+  );
+  return text.replaceAll(deindentPattern, '');
+}

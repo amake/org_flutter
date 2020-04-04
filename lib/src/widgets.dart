@@ -304,10 +304,6 @@ class OrgBlockWidget extends StatelessWidget {
     return IndentBuilder(
       block.indent,
       builder: (context, indent, totalIndentSize) {
-        final deindentPattern = RegExp(
-          '^ {0,$totalIndentSize}',
-          multiLine: true,
-        );
         return Row(
           children: <Widget>[
             Text(indent),
@@ -336,9 +332,9 @@ class OrgBlockWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     _body((_, string) => removeTrailingLineBreak(
-                        string.replaceAll(deindentPattern, ''))),
+                        deindent(string, totalIndentSize))),
                     Text(
-                      block.footer.replaceAll(deindentPattern, ''),
+                      deindent(block.footer, totalIndentSize),
                       style: metaStyle,
                     ),
                   ],
