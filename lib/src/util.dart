@@ -65,11 +65,15 @@ String removeTrailingLineBreak(String text) {
   }
 }
 
-String deindent(String text, int indentSize) {
-  // TODO(aaron): Consider memoizing this in case it's a performance issue
-  final deindentPattern = RegExp(
-    '^ {0,$indentSize}',
-    multiLine: true,
-  );
-  return text.replaceAll(deindentPattern, '');
+String deindent(String text, int indentSize) =>
+    text.replaceAll(_deindentPattern(indentSize), '');
+
+Pattern Function(int) _deindentPattern = _memoize1((indentSize) => RegExp(
+      '^ {0,$indentSize}',
+      multiLine: true,
+    ));
+
+R Function(T) _memoize1<T, R>(R Function(T) func) {
+  final cache = <T, R>{};
+  return (arg) => cache.putIfAbsent(arg, () => func(arg));
 }
