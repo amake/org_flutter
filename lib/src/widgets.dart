@@ -485,8 +485,11 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   physics: const AlwaysScrollableScrollPhysics(),
-                  child:
-                      Text(deindent(fixedWidthArea.content, totalIndentSize)),
+                  child: HighlightBuilder(
+                    builder: (context, spanBuilder) => Text.rich(spanBuilder
+                        .highlightedSpan(removeTrailingLineBreak(deindent(
+                            fixedWidthArea.content, totalIndentSize)))),
+                  ),
                 ),
               ),
             ],
