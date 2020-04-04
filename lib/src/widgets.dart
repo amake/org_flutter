@@ -375,27 +375,27 @@ class OrgMetaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IndentBuilder(
-      meta.indent,
-      builder: (context, indent, _) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(indent),
-            HighlightBuilder(
-              builder: (context, spanBuilder) => Text.rich(
-                TextSpan(
-                  children:
-                      _spans(context, spanBuilder).toList(growable: false),
+    return DefaultTextStyle.merge(
+      style: TextStyle(color: OrgTheme.dataOf(context).metaColor),
+      child: IndentBuilder(
+        meta.indent,
+        builder: (context, indent, _) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(indent),
+              HighlightBuilder(
+                builder: (context, spanBuilder) => Text.rich(
+                  TextSpan(
+                    children:
+                        _spans(context, spanBuilder).toList(growable: false),
+                  ),
                 ),
-                style: DefaultTextStyle.of(context)
-                    .style
-                    .copyWith(color: OrgTheme.dataOf(context).metaColor),
               ),
-            ),
-          ],
-        );
-      },
+            ],
+          );
+        },
+      ),
     );
   }
 
