@@ -473,13 +473,26 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTextStyle.merge(
-      style: TextStyle(color: OrgTheme.dataOf(context).codeColor),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Text(fixedWidthArea.content),
-      ),
+    return IndentBuilder(
+      fixedWidthArea.indent,
+      builder: (context, indent, totalIndentSize) {
+        return DefaultTextStyle.merge(
+          style: TextStyle(color: OrgTheme.dataOf(context).codeColor),
+          child: Row(
+            children: [
+              Text(indent),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child:
+                      Text(deindent(fixedWidthArea.content, totalIndentSize)),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
