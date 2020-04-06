@@ -30,6 +30,7 @@ const _orgLevelColorsLight = [
 ];
 const _orgTodoColorLight = Color(0xffff0000);
 const _orgDoneColorLight = Color(0xff228b22);
+const _orgPriorityColorLight = Color(0xffa020f0);
 const _orgDateColorLight = Color(0xffa020f0);
 const _orgCodeColorLight = Color(0xff7f7f7f);
 const _orgLinkColorLight = Color(0xff3a5fcd);
@@ -50,6 +51,7 @@ const _orgLevelColorsDark = [
 ];
 const _orgTodoColorDark = Color(0xffffc0cb);
 const _orgDoneColorDark = Color(0xff98fb98);
+const _orgPriorityColorDark = Color(0xff00ffff);
 const _orgDateColorDark = Color(0xff00ffff);
 const _orgCodeColorDark = Color(0xffb3b3b3);
 const _orgLinkColorDark = Color(0xff00ffff);
@@ -63,6 +65,7 @@ class OrgThemeData {
       : this(
           todoColor: _orgTodoColorLight,
           doneColor: _orgDoneColorLight,
+          priorityColor: _orgPriorityColorLight,
           dateColor: _orgDateColorLight,
           codeColor: _orgCodeColorLight,
           linkColor: _orgLinkColorLight,
@@ -77,6 +80,7 @@ class OrgThemeData {
       : this(
           todoColor: _orgTodoColorDark,
           doneColor: _orgDoneColorDark,
+          priorityColor: _orgPriorityColorDark,
           dateColor: _orgDateColorDark,
           codeColor: _orgCodeColorDark,
           linkColor: _orgLinkColorDark,
@@ -90,6 +94,7 @@ class OrgThemeData {
   OrgThemeData({
     this.todoColor,
     this.doneColor,
+    this.priorityColor,
     this.dateColor,
     this.codeColor,
     this.linkColor,
@@ -103,6 +108,7 @@ class OrgThemeData {
 
   final Color todoColor;
   final Color doneColor;
+  final Color priorityColor;
   final Color dateColor;
   final Color codeColor;
   final Color linkColor;
@@ -135,6 +141,7 @@ class OrgThemeData {
   OrgThemeData copyWith(
     Color todoColor,
     Color doneColor,
+    Color priorityColor,
     Color dateColor,
     Color codeColor,
     Color linkColor,
@@ -147,6 +154,7 @@ class OrgThemeData {
       OrgThemeData(
         todoColor: todoColor ?? this.todoColor,
         doneColor: doneColor ?? this.doneColor,
+        priorityColor: priorityColor ?? this.priorityColor,
         dateColor: dateColor ?? this.dateColor,
         codeColor: codeColor ?? this.codeColor,
         linkColor: linkColor ?? this.linkColor,
@@ -165,6 +173,7 @@ class OrgThemeData {
     return other is OrgThemeData &&
         todoColor == other.todoColor &&
         doneColor == other.doneColor &&
+        priorityColor == other.priorityColor &&
         dateColor == other.dateColor &&
         codeColor == other.codeColor &&
         linkColor == other.linkColor &&
@@ -179,6 +188,7 @@ class OrgThemeData {
   int get hashCode => hashValues(
         todoColor,
         doneColor,
+        priorityColor,
         dateColor,
         codeColor,
         linkColor,
@@ -199,6 +209,7 @@ class OrgThemeData {
       return OrgThemeData(
         todoColor: Color.lerp(null, b.todoColor, t),
         doneColor: Color.lerp(null, b.doneColor, t),
+        priorityColor: Color.lerp(null, b.priorityColor, t),
         dateColor: Color.lerp(null, b.dateColor, t),
         codeColor: Color.lerp(null, b.codeColor, t),
         linkColor: Color.lerp(null, b.linkColor, t),
@@ -213,6 +224,7 @@ class OrgThemeData {
       return OrgThemeData(
         todoColor: Color.lerp(a.todoColor, null, t),
         doneColor: Color.lerp(a.doneColor, null, t),
+        priorityColor: Color.lerp(a.priorityColor, null, t),
         dateColor: Color.lerp(a.dateColor, null, t),
         codeColor: Color.lerp(a.codeColor, null, t),
         linkColor: Color.lerp(a.linkColor, null, t),
@@ -226,6 +238,7 @@ class OrgThemeData {
     return OrgThemeData(
       todoColor: Color.lerp(a.todoColor, b.todoColor, t),
       doneColor: Color.lerp(a.doneColor, b.doneColor, t),
+      priorityColor: Color.lerp(a.priorityColor, b.priorityColor, t),
       dateColor: Color.lerp(a.dateColor, b.dateColor, t),
       codeColor: Color.lerp(a.codeColor, b.codeColor, t),
       linkColor: Color.lerp(a.linkColor, b.linkColor, t),

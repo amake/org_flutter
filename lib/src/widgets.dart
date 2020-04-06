@@ -257,7 +257,10 @@ class OrgHeadlineWidget extends StatelessWidget {
                             ? theme.doneColor
                             : theme.todoColor)),
               if (headline.priority != null)
-                spanBuilder.highlightedSpan('${headline.priority} '),
+                spanBuilder.highlightedSpan('${headline.priority} ',
+                    style: DefaultTextStyle.of(context)
+                        .style
+                        .copyWith(color: theme.priorityColor)),
               if (headline.title != null)
                 spanBuilder.build(
                   headline.title,
