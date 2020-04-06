@@ -238,7 +238,7 @@ class OrgHeadlineWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = OrgTheme.dataOf(context);
-    final color = theme.levelColor(headline.level);
+    final color = theme.levelColor(headline.level - 1);
     return DefaultTextStyle.merge(
       style: TextStyle(
         color: color,
