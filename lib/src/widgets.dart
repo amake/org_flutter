@@ -504,6 +504,42 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
   }
 }
 
+class OrgParagraphWidget extends StatelessWidget {
+  const OrgParagraphWidget(this.paragraph, {Key key})
+      : assert(paragraph != null),
+        super(key: key);
+  final OrgParagraph paragraph;
+
+  @override
+  Widget build(BuildContext context) {
+    return IndentBuilder(
+      paragraph.indent,
+      builder: (context, indent, totalIndentSize) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(indent),
+            Expanded(
+              child: OrgContentWidget(
+                paragraph.body,
+                transformer: (elem, content) {
+                  final reflowed =
+                      reflowText(deindent(content, totalIndentSize));
+                  if (elem == paragraph.body.children.last) {
+                    return removeTrailingLineBreak(reflowed);
+                  } else {
+                    return reflowed;
+                  }
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
 class HighlightBuilder extends StatelessWidget {
   const HighlightBuilder({@required this.builder, Key key})
       : assert(builder != null),

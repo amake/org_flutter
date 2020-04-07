@@ -78,6 +78,9 @@ class SpanBuilder {
     } else if (element is OrgFixedWidthArea) {
       return WidgetSpan(
           child: IdentityTextScale(child: OrgFixedWidthAreaWidget(element)));
+    } else if (element is OrgParagraph) {
+      return WidgetSpan(
+          child: IdentityTextScale(child: OrgParagraphWidget(element)));
     } else if (element is OrgList) {
       // Render lists with structure for reflowing, etc.
       return WidgetSpan(
