@@ -337,7 +337,8 @@ class OrgBlockWidget extends StatelessWidget {
                     _body((_, string) => removeTrailingLineBreak(
                         deindent(string, totalIndentSize))),
                     Text(
-                      deindent(block.footer, totalIndentSize),
+                      removeTrailingLineBreak(
+                          deindent(block.footer, totalIndentSize)),
                       style: metaStyle,
                     ),
                   ],
