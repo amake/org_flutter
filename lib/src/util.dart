@@ -69,7 +69,7 @@ String deindent(String text, int indentSize) =>
     text.replaceAll(_deindentPattern(indentSize), '');
 
 Pattern Function(int) _deindentPattern = _memoize1((indentSize) => RegExp(
-      '^ {0,$indentSize}',
+      '^ {$indentSize}',
       multiLine: true,
     ));
 
