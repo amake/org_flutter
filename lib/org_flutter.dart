@@ -33,7 +33,7 @@ class Org extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final doc = OrgDocument(text);
+    final doc = OrgDocument.parse(text);
     return OrgController(
       root: doc,
       child: OrgRootWidget(
