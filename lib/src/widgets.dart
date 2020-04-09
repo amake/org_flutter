@@ -384,11 +384,13 @@ class OrgMetaWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(indent),
-              HighlightBuilder(
-                builder: (context, spanBuilder) => Text.rich(
-                  TextSpan(
-                    children:
-                        _spans(context, spanBuilder).toList(growable: false),
+              Expanded(
+                child: HighlightBuilder(
+                  builder: (context, spanBuilder) => Text.rich(
+                    TextSpan(
+                      children:
+                          _spans(context, spanBuilder).toList(growable: false),
+                    ),
                   ),
                 ),
               ),
