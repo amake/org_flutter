@@ -337,8 +337,8 @@ class OrgBlockWidget extends StatelessWidget {
                     _body((_, string) => removeTrailingLineBreak(
                         deindent(string, totalIndentSize))),
                     Text(
-                      removeTrailingLineBreak(
-                          deindent(block.footer, totalIndentSize)),
+                      deindent(block.footer, totalIndentSize) +
+                          removeTrailingLineBreak(block.trailing),
                       style: metaStyle,
                     ),
                   ],
@@ -416,31 +416,39 @@ class OrgTableWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tableColor = OrgTheme.dataOf(context).tableColor;
-    final borderSide = BorderSide(color: tableColor);
     return DefaultTextStyle.merge(
-      style: TextStyle(color: tableColor),
+      style: TextStyle(color: OrgTheme.dataOf(context).tableColor),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         physics: const AlwaysScrollableScrollPhysics(),
         child: Row(
           children: <Widget>[
             Text(table.indent),
-            Table(
-              defaultColumnWidth: const IntrinsicColumnWidth(),
-              defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              border: TableBorder(
-                verticalInside: borderSide,
-                left: borderSide,
-                right: table.rectangular ? borderSide : BorderSide.none,
-              ),
-              children: _tableRows(borderSide).toList(growable: false),
-            ),
+            Column(children: _columnChildren(context).toList(growable: false)),
           ],
         ),
       ),
     );
+  }
+
+  Iterable<Widget> _columnChildren(BuildContext context) sync* {
+    final tableColor = OrgTheme.dataOf(context).tableColor;
+    final borderSide = BorderSide(color: tableColor);
+    yield Table(
+      defaultColumnWidth: const IntrinsicColumnWidth(),
+      defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
+      border: TableBorder(
+        verticalInside: borderSide,
+        left: borderSide,
+        right: table.rectangular ? borderSide : BorderSide.none,
+      ),
+      children: _tableRows(borderSide).toList(growable: false),
+    );
+    final trailing = removeTrailingLineBreak(table.trailing);
+    if (trailing.isNotEmpty) {
+      yield Text(trailing);
+    }
   }
 
   Iterable<TableRow> _tableRows(BorderSide borderSide) sync* {
@@ -490,9 +498,12 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: HighlightBuilder(
-                    builder: (context, spanBuilder) => Text.rich(spanBuilder
-                        .highlightedSpan(removeTrailingLineBreak(deindent(
-                            fixedWidthArea.content, totalIndentSize)))),
+                    builder: (context, spanBuilder) => Text.rich(
+                      spanBuilder.highlightedSpan(
+                        deindent(fixedWidthArea.content, totalIndentSize) +
+                            removeTrailingLineBreak(fixedWidthArea.trailing),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -609,12 +620,19 @@ class OrgListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start, // CrossAxisAlignment.stretch,
-      children: <Widget>[
-        for (final item in list.items) OrgListItemWidget(item),
-      ],
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: _children.toList(growable: false),
     );
+  }
+
+  Iterable<Widget> get _children sync* {
+    for (final item in list.items) {
+      yield OrgListItemWidget(item);
+    }
+    final trailing = removeTrailingLineBreak(list.trailing);
+    if (trailing.isNotEmpty) {
+      yield Text(trailing);
+    }
   }
 }
 
@@ -678,10 +696,11 @@ class OrgListItemWidget extends StatelessWidget {
     }
     if (item.body != null) {
       yield builder.build(item.body, transformer: (elem, content) {
-        if (elem is OrgPlainText) {
-          return removeTrailingLineBreak(reflowText(content));
+        final reflowed = reflowText(content);
+        if (item.body.children.last == elem) {
+          return removeTrailingLineBreak(reflowed);
         } else {
-          return content;
+          return reflowed;
         }
       });
     }
