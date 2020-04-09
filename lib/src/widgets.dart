@@ -447,9 +447,8 @@ class OrgTableWidget extends StatelessWidget {
       ),
       children: _tableRows(borderSide).toList(growable: false),
     );
-    final trailing = removeTrailingLineBreak(table.trailing);
-    if (trailing.isNotEmpty) {
-      yield Text(trailing);
+    if (table.trailing.isNotEmpty) {
+      yield Text(removeTrailingLineBreak(table.trailing));
     }
   }
 
