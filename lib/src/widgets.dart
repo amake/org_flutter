@@ -249,7 +249,7 @@ class OrgHeadlineWidget extends StatelessWidget {
         builder: (context, spanBuilder) => Text.rich(
           TextSpan(
             children: [
-              spanBuilder.highlightedSpan('${headline.stars} '),
+              spanBuilder.highlightedSpan(headline.stars),
               if (headline.keyword != null)
                 spanBuilder.highlightedSpan('${headline.keyword} ',
                     style: DefaultTextStyle.of(context).style.copyWith(
