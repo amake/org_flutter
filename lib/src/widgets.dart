@@ -740,3 +740,124 @@ class IndentBuilder extends StatelessWidget {
     );
   }
 }
+
+class OrgDrawerWidget extends StatelessWidget {
+  const OrgDrawerWidget(this.drawer, {Key key})
+      : assert(drawer != null),
+        super(key: key);
+  final OrgDrawer drawer;
+
+  @override
+  Widget build(BuildContext context) {
+    final openListenable = ValueNotifier<bool>(false);
+    final defaultStyle = DefaultTextStyle.of(context).style;
+    final drawerStyle =
+        defaultStyle.copyWith(color: OrgTheme.dataOf(context).drawerColor);
+    return IndentBuilder(
+      drawer.indent,
+      builder: (context, indent, totalIndentSize) {
+        return Row(
+          children: <Widget>[
+            Text(indent),
+            Expanded(
+              child: ValueListenableBuilder<bool>(
+                valueListenable: openListenable,
+                builder: (context, open, child) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    InkWell(
+                      child: Text(
+                        drawer.header.trimRight() + (open ? '' : '...'),
+                        style: drawerStyle,
+                      ),
+                      onTap: () => openListenable.value = !openListenable.value,
+                    ),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 100),
+                      transitionBuilder: (child, animation) =>
+                          SizeTransition(child: child, sizeFactor: animation),
+                      child: open ? child : const SizedBox.shrink(),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    _body((_, string) => removeTrailingLineBreak(
+                        deindent(string, totalIndentSize))),
+                    Text(
+                      deindent(drawer.footer, totalIndentSize) +
+                          removeTrailingLineBreak(drawer.trailing),
+                      style: drawerStyle,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _body(Transformer transformer) {
+    final body = OrgContentWidget(
+      drawer.body,
+      transformer: transformer,
+    );
+    // TODO(aaron): Better distinguish "greater block" from regular block
+    return drawer.body is OrgContent
+        ? body
+        : SingleChildScrollView(
+            child: body,
+            scrollDirection: Axis.horizontal,
+            physics: const AlwaysScrollableScrollPhysics(),
+          );
+  }
+}
+
+class OrgPropertyWidget extends StatelessWidget {
+  const OrgPropertyWidget(this.property, {Key key})
+      : assert(property != null),
+        super(key: key);
+  final OrgProperty property;
+
+  @override
+  Widget build(BuildContext context) {
+    return IndentBuilder(
+      property.indent,
+      builder: (context, indent, _) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(indent),
+            Expanded(
+              child: HighlightBuilder(
+                builder: (context, spanBuilder) => Text.rich(
+                  TextSpan(
+                    children:
+                        _spans(context, spanBuilder).toList(growable: false),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Iterable<InlineSpan> _spans(BuildContext context, SpanBuilder builder) sync* {
+    yield builder.highlightedSpan(
+      property.key,
+      style: DefaultTextStyle.of(context)
+          .style
+          .copyWith(color: OrgTheme.dataOf(context).keywordColor),
+    );
+    yield builder.highlightedSpan(property.value);
+    final trailing = removeTrailingLineBreak(property.trailing);
+    if (trailing.isNotEmpty) {
+      yield builder.highlightedSpan(trailing);
+    }
+  }
+}

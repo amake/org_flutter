@@ -112,6 +112,12 @@ class SpanBuilder {
           ),
         if (element.body != null) build(element.body, transformer: transformer),
       ]);
+    } else if (element is OrgDrawer) {
+      return WidgetSpan(
+          child: IdentityTextScale(child: OrgDrawerWidget(element)));
+    } else if (element is OrgProperty) {
+      return WidgetSpan(
+          child: IdentityTextScale(child: OrgPropertyWidget(element)));
     } else if (element is OrgContent) {
       return TextSpan(
           children: element.children

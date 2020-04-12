@@ -31,6 +31,7 @@ const _orgLevelColorsLight = [
 const _orgTodoColorLight = Color(0xffff0000);
 const _orgDoneColorLight = Color(0xff228b22);
 const _orgPriorityColorLight = Color(0xffa020f0);
+const _orgDrawerColorLight = Color(0xff0000ff);
 const _orgDateColorLight = Color(0xffa020f0);
 const _orgCodeColorLight = Color(0xff7f7f7f);
 const _orgLinkColorLight = Color(0xff3a5fcd);
@@ -52,6 +53,7 @@ const _orgLevelColorsDark = [
 const _orgTodoColorDark = Color(0xffffc0cb);
 const _orgDoneColorDark = Color(0xff98fb98);
 const _orgPriorityColorDark = Color(0xff00ffff);
+const _orgDrawerColorDark = Color(0xff87ceffa);
 const _orgDateColorDark = Color(0xff00ffff);
 const _orgCodeColorDark = Color(0xffb3b3b3);
 const _orgLinkColorDark = Color(0xff00ffff);
@@ -66,6 +68,7 @@ class OrgThemeData {
           todoColor: _orgTodoColorLight,
           doneColor: _orgDoneColorLight,
           priorityColor: _orgPriorityColorLight,
+          drawerColor: _orgDrawerColorLight,
           dateColor: _orgDateColorLight,
           codeColor: _orgCodeColorLight,
           linkColor: _orgLinkColorLight,
@@ -81,6 +84,7 @@ class OrgThemeData {
           todoColor: _orgTodoColorDark,
           doneColor: _orgDoneColorDark,
           priorityColor: _orgPriorityColorDark,
+          drawerColor: _orgDrawerColorDark,
           dateColor: _orgDateColorDark,
           codeColor: _orgCodeColorDark,
           linkColor: _orgLinkColorDark,
@@ -95,6 +99,7 @@ class OrgThemeData {
     this.todoColor,
     this.doneColor,
     this.priorityColor,
+    this.drawerColor,
     this.dateColor,
     this.codeColor,
     this.linkColor,
@@ -109,6 +114,7 @@ class OrgThemeData {
   final Color todoColor;
   final Color doneColor;
   final Color priorityColor;
+  final Color drawerColor;
   final Color dateColor;
   final Color codeColor;
   final Color linkColor;
@@ -142,6 +148,7 @@ class OrgThemeData {
     Color todoColor,
     Color doneColor,
     Color priorityColor,
+    Color drawerColor,
     Color dateColor,
     Color codeColor,
     Color linkColor,
@@ -155,6 +162,7 @@ class OrgThemeData {
         todoColor: todoColor ?? this.todoColor,
         doneColor: doneColor ?? this.doneColor,
         priorityColor: priorityColor ?? this.priorityColor,
+        drawerColor: drawerColor ?? this.drawerColor,
         dateColor: dateColor ?? this.dateColor,
         codeColor: codeColor ?? this.codeColor,
         linkColor: linkColor ?? this.linkColor,
@@ -174,6 +182,7 @@ class OrgThemeData {
         todoColor == other.todoColor &&
         doneColor == other.doneColor &&
         priorityColor == other.priorityColor &&
+        drawerColor == other.drawerColor &&
         dateColor == other.dateColor &&
         codeColor == other.codeColor &&
         linkColor == other.linkColor &&
@@ -189,6 +198,7 @@ class OrgThemeData {
         todoColor,
         doneColor,
         priorityColor,
+        drawerColor,
         dateColor,
         codeColor,
         linkColor,
@@ -210,6 +220,7 @@ class OrgThemeData {
         todoColor: Color.lerp(null, b.todoColor, t),
         doneColor: Color.lerp(null, b.doneColor, t),
         priorityColor: Color.lerp(null, b.priorityColor, t),
+        drawerColor: Color.lerp(null, b.drawerColor, t),
         dateColor: Color.lerp(null, b.dateColor, t),
         codeColor: Color.lerp(null, b.codeColor, t),
         linkColor: Color.lerp(null, b.linkColor, t),
@@ -225,6 +236,7 @@ class OrgThemeData {
         todoColor: Color.lerp(a.todoColor, null, t),
         doneColor: Color.lerp(a.doneColor, null, t),
         priorityColor: Color.lerp(a.priorityColor, null, t),
+        drawerColor: Color.lerp(a.drawerColor, null, t),
         dateColor: Color.lerp(a.dateColor, null, t),
         codeColor: Color.lerp(a.codeColor, null, t),
         linkColor: Color.lerp(a.linkColor, null, t),
@@ -239,6 +251,7 @@ class OrgThemeData {
       todoColor: Color.lerp(a.todoColor, b.todoColor, t),
       doneColor: Color.lerp(a.doneColor, b.doneColor, t),
       priorityColor: Color.lerp(a.priorityColor, b.priorityColor, t),
+      drawerColor: Color.lerp(a.drawerColor, b.drawerColor, t),
       dateColor: Color.lerp(a.dateColor, b.dateColor, t),
       codeColor: Color.lerp(a.codeColor, b.codeColor, t),
       linkColor: Color.lerp(a.linkColor, b.linkColor, t),
