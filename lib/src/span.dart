@@ -72,24 +72,18 @@ class SpanBuilder {
             ),
       );
     } else if (element is OrgMeta) {
-      return WidgetSpan(
-          child: IdentityTextScale(child: OrgMetaWidget(element)));
+      return WidgetSpan(child: OrgMetaWidget(element));
     } else if (element is OrgBlock) {
-      return WidgetSpan(
-          child: IdentityTextScale(child: OrgBlockWidget(element)));
+      return WidgetSpan(child: OrgBlockWidget(element));
     } else if (element is OrgTable) {
-      return WidgetSpan(
-          child: IdentityTextScale(child: OrgTableWidget(element)));
+      return WidgetSpan(child: OrgTableWidget(element));
     } else if (element is OrgFixedWidthArea) {
-      return WidgetSpan(
-          child: IdentityTextScale(child: OrgFixedWidthAreaWidget(element)));
+      return WidgetSpan(child: OrgFixedWidthAreaWidget(element));
     } else if (element is OrgParagraph) {
-      return WidgetSpan(
-          child: IdentityTextScale(child: OrgParagraphWidget(element)));
+      return WidgetSpan(child: OrgParagraphWidget(element));
     } else if (element is OrgList) {
       // Render lists with structure for reflowing, etc.
-      return WidgetSpan(
-          child: IdentityTextScale(child: OrgListWidget(element)));
+      return WidgetSpan(child: OrgListWidget(element));
       // Render lists as just text
 //      return TextSpan(children: [
 //        for (final item in element.items) build(item, transformer: transformer),
@@ -118,11 +112,9 @@ class SpanBuilder {
         if (element.body != null) build(element.body, transformer: transformer),
       ]);
     } else if (element is OrgDrawer) {
-      return WidgetSpan(
-          child: IdentityTextScale(child: OrgDrawerWidget(element)));
+      return WidgetSpan(child: OrgDrawerWidget(element));
     } else if (element is OrgProperty) {
-      return WidgetSpan(
-          child: IdentityTextScale(child: OrgPropertyWidget(element)));
+      return WidgetSpan(child: OrgPropertyWidget(element));
     } else if (element is OrgContent) {
       return TextSpan(
           children: element.children

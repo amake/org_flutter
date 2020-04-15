@@ -54,7 +54,7 @@ class OrgRootWidget extends StatelessWidget {
       light: lightTheme ?? OrgThemeData.light(),
       dark: darkTheme ?? OrgThemeData.dark(),
       child: OrgEvents(
-        child: child,
+        child: IdentityTextScale(child: child),
         onLinkTap: onLinkTap,
         onSectionLongPress: onSectionLongPress,
         onLocalSectionLinkTap: onLocalSectionLinkTap,
