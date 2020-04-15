@@ -58,9 +58,6 @@ class SpanBuilder {
             ),
         charWrap: true,
       );
-    } else if (element is OrgMeta) {
-      return WidgetSpan(
-          child: IdentityTextScale(child: OrgMetaWidget(element)));
     } else if (element is OrgTimestamp) {
       return highlightedSpan(
         transformer(element, element.content),
@@ -69,6 +66,9 @@ class SpanBuilder {
               decoration: TextDecoration.underline,
             ),
       );
+    } else if (element is OrgMeta) {
+      return WidgetSpan(
+          child: IdentityTextScale(child: OrgMetaWidget(element)));
     } else if (element is OrgBlock) {
       return WidgetSpan(
           child: IdentityTextScale(child: OrgBlockWidget(element)));
