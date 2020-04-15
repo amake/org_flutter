@@ -36,6 +36,7 @@ const _orgDateColorLight = Color(0xffa020f0);
 const _orgCodeColorLight = Color(0xff7f7f7f);
 const _orgLinkColorLight = Color(0xff3a5fcd);
 const _orgMetaColorLight = Color(0xffb22222);
+const _orgMacroColorLight = Color(0xff8b4513);
 const _orgTableColorLight = Color(0xff0000ff);
 const _orgKeywordColorLight = Color(0xffa020f0);
 const _orgHighlightColorLight = Color(0xffffff00);
@@ -58,6 +59,7 @@ const _orgDateColorDark = Color(0xff00ffff);
 const _orgCodeColorDark = Color(0xffb3b3b3);
 const _orgLinkColorDark = Color(0xff00ffff);
 const _orgMetaColorDark = Color(0xffff7f24);
+const _orgMacroColorDark = Color(0xffdeb887);
 const _orgTableColorDark = Color(0xff87cefa);
 const _orgKeywordColorDark = Color(0xff00ffff);
 const _orgHighlightColorDark = Color(0xff4a708b);
@@ -73,6 +75,7 @@ class OrgThemeData {
           codeColor: _orgCodeColorLight,
           linkColor: _orgLinkColorLight,
           metaColor: _orgMetaColorLight,
+          macroColor: _orgMacroColorLight,
           tableColor: _orgTableColorLight,
           keywordColor: _orgKeywordColorLight,
           highlightColor: _orgHighlightColorLight,
@@ -89,6 +92,7 @@ class OrgThemeData {
           codeColor: _orgCodeColorDark,
           linkColor: _orgLinkColorDark,
           metaColor: _orgMetaColorDark,
+          macroColor: _orgMacroColorDark,
           tableColor: _orgTableColorDark,
           keywordColor: _orgKeywordColorDark,
           highlightColor: _orgHighlightColorDark,
@@ -104,6 +108,7 @@ class OrgThemeData {
     this.codeColor,
     this.linkColor,
     this.metaColor,
+    this.macroColor,
     this.tableColor,
     this.keywordColor,
     this.highlightColor,
@@ -119,6 +124,7 @@ class OrgThemeData {
   final Color codeColor;
   final Color linkColor;
   final Color metaColor;
+  final Color macroColor;
   final Color tableColor;
   final Color keywordColor;
   final Color highlightColor;
@@ -153,6 +159,7 @@ class OrgThemeData {
     Color codeColor,
     Color linkColor,
     Color metaColor,
+    Color macroColor,
     Color tableColor,
     Color keywordColor,
     Color highlightColor,
@@ -167,6 +174,7 @@ class OrgThemeData {
         codeColor: codeColor ?? this.codeColor,
         linkColor: linkColor ?? this.linkColor,
         metaColor: metaColor ?? this.metaColor,
+        macroColor: macroColor ?? this.macroColor,
         tableColor: tableColor ?? this.tableColor,
         keywordColor: keywordColor ?? this.keywordColor,
         highlightColor: highlightColor ?? this.highlightColor,
@@ -187,6 +195,7 @@ class OrgThemeData {
         codeColor == other.codeColor &&
         linkColor == other.linkColor &&
         metaColor == other.metaColor &&
+        macroColor == other.macroColor &&
         tableColor == other.tableColor &&
         keywordColor == other.keywordColor &&
         highlightColor == other.highlightColor &&
@@ -203,6 +212,7 @@ class OrgThemeData {
         codeColor,
         linkColor,
         metaColor,
+        macroColor,
         tableColor,
         keywordColor,
         highlightColor,
@@ -225,6 +235,7 @@ class OrgThemeData {
         codeColor: Color.lerp(null, b.codeColor, t),
         linkColor: Color.lerp(null, b.linkColor, t),
         metaColor: Color.lerp(null, b.metaColor, t),
+        macroColor: Color.lerp(null, b.macroColor, t),
         tableColor: Color.lerp(null, b.tableColor, t),
         keywordColor: Color.lerp(null, b.keywordColor, t),
         highlightColor: Color.lerp(null, b.highlightColor, t),
@@ -241,6 +252,7 @@ class OrgThemeData {
         codeColor: Color.lerp(a.codeColor, null, t),
         linkColor: Color.lerp(a.linkColor, null, t),
         metaColor: Color.lerp(a.metaColor, null, t),
+        macroColor: Color.lerp(a.macroColor, null, t),
         tableColor: Color.lerp(a.tableColor, null, t),
         keywordColor: Color.lerp(a.keywordColor, null, t),
         highlightColor: Color.lerp(a.highlightColor, null, t),
@@ -256,6 +268,7 @@ class OrgThemeData {
       codeColor: Color.lerp(a.codeColor, b.codeColor, t),
       linkColor: Color.lerp(a.linkColor, b.linkColor, t),
       metaColor: Color.lerp(a.metaColor, b.metaColor, t),
+      macroColor: Color.lerp(a.macroColor, b.macroColor, t),
       tableColor: Color.lerp(a.tableColor, b.tableColor, t),
       keywordColor: Color.lerp(a.keywordColor, b.keywordColor, t),
       highlightColor: Color.lerp(a.highlightColor, b.highlightColor, t),

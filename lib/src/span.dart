@@ -35,6 +35,11 @@ class SpanBuilder {
           element.style,
         ),
       );
+    } else if (element is OrgMacroReference) {
+      return highlightedSpan(transformer(element, element.content),
+          style: DefaultTextStyle.of(context)
+              .style
+              .copyWith(color: OrgTheme.dataOf(context).macroColor));
     } else if (element is OrgKeyword) {
       return highlightedSpan(
         transformer(element, element.content),
