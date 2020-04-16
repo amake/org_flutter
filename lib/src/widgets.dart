@@ -722,9 +722,10 @@ class ListContext extends InheritedWidget {
       context.dependOnInheritedWidgetOfExactType<ListContext>();
 }
 
-// TODO(aaron): Use indent builder to fix indent of blocks, tables, etc. inside lists
 class IndentBuilder extends StatelessWidget {
-  const IndentBuilder(this.indent, {this.builder, Key key}) : super(key: key);
+  const IndentBuilder(this.indent, {this.builder, Key key})
+      : assert(indent != null),
+        super(key: key);
 
   final Widget Function(BuildContext, String, int) builder;
   final String indent;
@@ -732,7 +733,8 @@ class IndentBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final parentIndent = ListContext.of(context)?.indentSize ?? 0;
-    final newIndent = indent.substring(parentIndent);
+    final newIndent =
+        indent.length >= parentIndent ? indent.substring(parentIndent) : '';
     final totalIndentSize = parentIndent + newIndent.length;
     return ListContext(
       parentIndent + newIndent.length,
