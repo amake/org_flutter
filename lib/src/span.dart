@@ -82,35 +82,7 @@ class SpanBuilder {
     } else if (element is OrgParagraph) {
       return WidgetSpan(child: OrgParagraphWidget(element));
     } else if (element is OrgList) {
-      // Render lists with structure for reflowing, etc.
       return WidgetSpan(child: OrgListWidget(element));
-      // Render lists as just text
-//      return TextSpan(children: [
-//        for (final item in element.items) build(item, transformer: transformer),
-//      ]);
-    } else if (element is OrgListItem) {
-      // TODO(aaron): Decide what use should be made of the transformer here
-      return TextSpan(children: [
-        TextSpan(text: element.indent),
-        TextSpan(text: element.bullet),
-        if (element is OrgListOrderedItem && element.counterSet != null)
-          TextSpan(text: '${element.counterSet} '),
-        if (element.checkbox != null)
-          TextSpan(
-            text: '${element.checkbox} ',
-            style: DefaultTextStyle.of(context)
-                .style
-                .copyWith(fontWeight: FontWeight.bold),
-          ),
-        if (element is OrgListUnorderedItem && element.tag != null)
-          TextSpan(
-            text: element.tag,
-            style: DefaultTextStyle.of(context)
-                .style
-                .copyWith(fontWeight: FontWeight.bold),
-          ),
-        if (element.body != null) build(element.body, transformer: transformer),
-      ]);
     } else if (element is OrgDrawer) {
       return WidgetSpan(child: OrgDrawerWidget(element));
     } else if (element is OrgProperty) {
