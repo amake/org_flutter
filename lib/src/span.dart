@@ -23,29 +23,30 @@ class SpanBuilder {
 
   InlineSpan build(
     OrgContentElement element, {
+    TextStyle style,
     Transformer transformer = identityTransformer,
   }) {
+    style ??= DefaultTextStyle.of(context).style;
     if (element is OrgPlainText) {
-      return highlightedSpan(transformer(element, element.content));
+      return highlightedSpan(
+        transformer(element, element.content),
+        style: style,
+      );
     } else if (element is OrgMarkup) {
       return highlightedSpan(
         transformer(element, element.content),
         style: OrgTheme.dataOf(context).fontStyleForOrgStyle(
-          DefaultTextStyle.of(context).style,
+          style,
           element.style,
         ),
       );
     } else if (element is OrgMacroReference) {
       return highlightedSpan(transformer(element, element.content),
-          style: DefaultTextStyle.of(context)
-              .style
-              .copyWith(color: OrgTheme.dataOf(context).macroColor));
+          style: style.copyWith(color: OrgTheme.dataOf(context).macroColor));
     } else if (element is OrgKeyword) {
       return highlightedSpan(
         transformer(element, element.content),
-        style: DefaultTextStyle.of(context)
-            .style
-            .copyWith(color: OrgTheme.dataOf(context).keywordColor),
+        style: style.copyWith(color: OrgTheme.dataOf(context).keywordColor),
       );
     } else if (element is OrgLink) {
       final linkDispatcher =
@@ -57,19 +58,19 @@ class SpanBuilder {
       return highlightedSpan(
         transformer(element, visibleContent),
         recognizer: recognizer,
-        style: DefaultTextStyle.of(context).style.copyWith(
-              color: OrgTheme.dataOf(context).linkColor,
-              decoration: TextDecoration.underline,
-            ),
+        style: style.copyWith(
+          color: OrgTheme.dataOf(context).linkColor,
+          decoration: TextDecoration.underline,
+        ),
         charWrap: true,
       );
     } else if (element is OrgTimestamp) {
       return highlightedSpan(
         transformer(element, element.content),
-        style: DefaultTextStyle.of(context).style.copyWith(
-              color: OrgTheme.dataOf(context).dateColor,
-              decoration: TextDecoration.underline,
-            ),
+        style: style.copyWith(
+          color: OrgTheme.dataOf(context).dateColor,
+          decoration: TextDecoration.underline,
+        ),
       );
     } else if (element is OrgMeta) {
       return WidgetSpan(child: OrgMetaWidget(element));
@@ -90,7 +91,11 @@ class SpanBuilder {
     } else if (element is OrgContent) {
       return TextSpan(
           children: element.children
-              .map((child) => build(child, transformer: transformer))
+              .map((child) => build(
+                    child,
+                    transformer: transformer,
+                    style: style,
+                  ))
               .toList(growable: false));
     } else {
       throw Exception('Unknown OrgContentElement type: $element');
@@ -110,14 +115,14 @@ class SpanBuilder {
         recognizer: recognizer,
       );
     } else {
-      final realStyle = style ?? DefaultTextStyle.of(context).style;
+      style ??= DefaultTextStyle.of(context).style;
       return TextSpan(
-        style: realStyle,
+        style: style,
         recognizer: recognizer,
         children: tokenizeTextSpan(
           text,
           highlight,
-          realStyle.copyWith(
+          style.copyWith(
             backgroundColor: OrgTheme.dataOf(context).highlightColor,
           ),
           charWrap ? characterWrappable : (x) => x,
