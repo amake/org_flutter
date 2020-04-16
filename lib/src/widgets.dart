@@ -688,12 +688,13 @@ class OrgListItemWidget extends StatelessWidget {
       );
     }
     if (item is OrgListUnorderedItem && item.tag != null) {
-      yield builder.highlightedSpan(
-        item.tag,
-        style: DefaultTextStyle.of(context)
-            .style
-            .copyWith(fontWeight: FontWeight.bold),
-      );
+      final style = DefaultTextStyle.of(context)
+          .style
+          .copyWith(fontWeight: FontWeight.bold);
+      yield TextSpan(children: [
+        builder.build(item.tag, style: style),
+        builder.highlightedSpan(item.tagDelimiter, style: style),
+      ]);
     }
     if (item.body != null) {
       yield builder.build(item.body, transformer: (elem, content) {
