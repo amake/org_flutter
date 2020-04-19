@@ -72,6 +72,40 @@ class SpanBuilder {
           decoration: TextDecoration.underline,
         ),
       );
+    } else if (element is OrgFootnoteReference) {
+      final footnoteStyle = style.copyWith(
+        color: OrgTheme.dataOf(context).footnoteColor,
+      );
+      InlineSpan _highlight(String text) {
+        return highlightedSpan(
+          transformer(element, text),
+          style: footnoteStyle,
+        );
+      }
+
+      // TODO(aaron): Make footnote references clickable
+      return TextSpan(children: [
+        _highlight(element.leading),
+        if (element.name != null) _highlight(element.name),
+        if (element.definitionDelimiter != null)
+          _highlight(element.definitionDelimiter),
+        if (element.definition != null)
+          build(element.definition, style: style, transformer: transformer),
+        _highlight(element.trailing),
+      ]);
+    } else if (element is OrgFootnote) {
+      return TextSpan(
+        children: [
+          element.marker,
+          element.content,
+        ]
+            .map((child) => build(
+                  child,
+                  style: style,
+                  transformer: transformer,
+                ))
+            .toList(growable: false),
+      );
     } else if (element is OrgMeta) {
       return WidgetSpan(child: OrgMetaWidget(element));
     } else if (element is OrgBlock) {

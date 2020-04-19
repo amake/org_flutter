@@ -40,6 +40,7 @@ const _orgMacroColorLight = Color(0xff8b4513);
 const _orgTableColorLight = Color(0xff0000ff);
 const _orgKeywordColorLight = Color(0xffa020f0);
 const _orgHighlightColorLight = Color(0xffffff00);
+const _orgFootnoteColorLight = Color(0xffa020f0);
 
 const _orgLevelColorsDark = [
   Color(0xff87cefa),
@@ -63,6 +64,7 @@ const _orgMacroColorDark = Color(0xffdeb887);
 const _orgTableColorDark = Color(0xff87cefa);
 const _orgKeywordColorDark = Color(0xff00ffff);
 const _orgHighlightColorDark = Color(0xff4a708b);
+const _orgFootnoteColorDark = Color(0xff00ffff);
 
 class OrgThemeData {
   OrgThemeData.light()
@@ -79,6 +81,7 @@ class OrgThemeData {
           tableColor: _orgTableColorLight,
           keywordColor: _orgKeywordColorLight,
           highlightColor: _orgHighlightColorLight,
+          footnoteColor: _orgFootnoteColorLight,
           levelColors: _orgLevelColorsLight,
         );
 
@@ -96,6 +99,7 @@ class OrgThemeData {
           tableColor: _orgTableColorDark,
           keywordColor: _orgKeywordColorDark,
           highlightColor: _orgHighlightColorDark,
+          footnoteColor: _orgFootnoteColorDark,
           levelColors: _orgLevelColorsDark,
         );
 
@@ -112,6 +116,7 @@ class OrgThemeData {
     this.tableColor,
     this.keywordColor,
     this.highlightColor,
+    this.footnoteColor,
     Iterable<Color> levelColors,
   }) : levelColors =
             levelColors == null ? null : List.unmodifiable(levelColors);
@@ -128,6 +133,7 @@ class OrgThemeData {
   final Color tableColor;
   final Color keywordColor;
   final Color highlightColor;
+  final Color footnoteColor;
   final List<Color> levelColors;
 
   Color levelColor(int level) =>
@@ -163,6 +169,7 @@ class OrgThemeData {
     Color tableColor,
     Color keywordColor,
     Color highlightColor,
+    Color footnoteColor,
     Iterable<Color> levelColors,
   ) =>
       OrgThemeData(
@@ -178,6 +185,7 @@ class OrgThemeData {
         tableColor: tableColor ?? this.tableColor,
         keywordColor: keywordColor ?? this.keywordColor,
         highlightColor: highlightColor ?? this.highlightColor,
+        footnoteColor: footnoteColor ?? this.footnoteColor,
         levelColors: levelColors ?? this.levelColors,
       );
 
@@ -199,6 +207,7 @@ class OrgThemeData {
         tableColor == other.tableColor &&
         keywordColor == other.keywordColor &&
         highlightColor == other.highlightColor &&
+        footnoteColor == other.footnoteColor &&
         listEquals(levelColors, other.levelColors);
   }
 
@@ -216,6 +225,7 @@ class OrgThemeData {
         tableColor,
         keywordColor,
         highlightColor,
+        footnoteColor,
         levelColors,
       );
 
@@ -239,6 +249,7 @@ class OrgThemeData {
         tableColor: Color.lerp(null, b.tableColor, t),
         keywordColor: Color.lerp(null, b.keywordColor, t),
         highlightColor: Color.lerp(null, b.highlightColor, t),
+        footnoteColor: Color.lerp(null, b.footnoteColor, t),
         levelColors: b.levelColors?.map((c) => Color.lerp(null, c, t)),
       );
     }
@@ -256,6 +267,7 @@ class OrgThemeData {
         tableColor: Color.lerp(a.tableColor, null, t),
         keywordColor: Color.lerp(a.keywordColor, null, t),
         highlightColor: Color.lerp(a.highlightColor, null, t),
+        footnoteColor: Color.lerp(a.footnoteColor, null, t),
         levelColors: a.levelColors?.map((c) => Color.lerp(c, null, t)),
       );
     }
@@ -272,6 +284,7 @@ class OrgThemeData {
       tableColor: Color.lerp(a.tableColor, b.tableColor, t),
       keywordColor: Color.lerp(a.keywordColor, b.keywordColor, t),
       highlightColor: Color.lerp(a.highlightColor, b.highlightColor, t),
+      footnoteColor: Color.lerp(a.footnoteColor, b.footnoteColor, t),
       levelColors: _lerpColorLists(a.levelColors, b.levelColors, t),
     );
   }
