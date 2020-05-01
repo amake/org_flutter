@@ -247,31 +247,50 @@ class OrgHeadlineWidget extends StatelessWidget {
         height: 1.8,
       ),
       child: HighlightBuilder(
-        builder: (context, spanBuilder) => Text.rich(
-          TextSpan(
-            children: [
-              spanBuilder.highlightedSpan(headline.stars),
-              if (headline.keyword != null)
-                spanBuilder.highlightedSpan('${headline.keyword} ',
-                    style: DefaultTextStyle.of(context).style.copyWith(
-                        color: headline.keyword == 'DONE'
-                            ? theme.doneColor
-                            : theme.todoColor)),
-              if (headline.priority != null)
-                spanBuilder.highlightedSpan('${headline.priority} ',
-                    style: DefaultTextStyle.of(context)
-                        .style
-                        .copyWith(color: theme.priorityColor)),
-              if (headline.title != null)
-                spanBuilder.build(
-                  headline.title,
-                ),
-              if (headline.tags.isNotEmpty)
-                spanBuilder.highlightedSpan(':${headline.tags.join(':')}:'),
-              if (!open) const TextSpan(text: '...'),
-            ],
-          ),
-        ),
+        builder: (context, spanBuilder) {
+          final body = Text.rich(
+            TextSpan(
+              children: [
+                spanBuilder.highlightedSpan(headline.stars),
+                if (headline.keyword != null)
+                  spanBuilder.highlightedSpan('${headline.keyword} ',
+                      style: DefaultTextStyle.of(context).style.copyWith(
+                          color: headline.keyword == 'DONE'
+                              ? theme.doneColor
+                              : theme.todoColor)),
+                if (headline.priority != null)
+                  spanBuilder.highlightedSpan('${headline.priority} ',
+                      style: DefaultTextStyle.of(context)
+                          .style
+                          .copyWith(color: theme.priorityColor)),
+                if (headline.title != null)
+                  spanBuilder.build(
+                    headline.title,
+                    transformer: (elem, text) {
+                      if (elem == headline.title.children.last) {
+                        return text.trimRight();
+                      } else {
+                        return text;
+                      }
+                    },
+                  ),
+                if (!open && headline.tags.isEmpty) const TextSpan(text: '...'),
+              ],
+            ),
+          );
+          if (headline.tags.isEmpty) {
+            return body;
+          } else {
+            return Row(
+              children: [
+                Expanded(child: body),
+                Text.rich(spanBuilder
+                    .highlightedSpan(':${headline.tags.join(':')}:')),
+                if (!open) const Text('...'),
+              ],
+            );
+          }
+        },
       ),
     );
   }
