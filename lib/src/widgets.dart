@@ -306,7 +306,7 @@ class OrgBlockWidget extends StatelessWidget {
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
     return IndentBuilder(
       block.indent,
-      builder: (context, _, totalIndentSize) {
+      builder: (context, totalIndentSize) {
         return ValueListenableBuilder<bool>(
           valueListenable: openListenable,
           builder: (context, open, child) => Column(
@@ -372,7 +372,7 @@ class OrgMetaWidget extends StatelessWidget {
       style: TextStyle(color: OrgTheme.dataOf(context).metaColor),
       child: IndentBuilder(
         meta.indent,
-        builder: (context, _, __) {
+        builder: (context, _) {
           return HighlightBuilder(
             builder: (context, spanBuilder) => Text.rich(
               TextSpan(
@@ -472,7 +472,7 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IndentBuilder(
       fixedWidthArea.indent,
-      builder: (context, _, totalIndentSize) {
+      builder: (context, totalIndentSize) {
         return DefaultTextStyle.merge(
           style: TextStyle(color: OrgTheme.dataOf(context).codeColor),
           child: SingleChildScrollView(
@@ -503,7 +503,7 @@ class OrgParagraphWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IndentBuilder(
       paragraph.indent,
-      builder: (context, _, totalIndentSize) {
+      builder: (context, totalIndentSize) {
         return OrgContentWidget(
           paragraph.body,
           transformer: (elem, content) {
@@ -615,7 +615,7 @@ class OrgListItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IndentBuilder(
       '${item.indent}${item.bullet}',
-      builder: (context, _, __) => HighlightBuilder(
+      builder: (context, _) => HighlightBuilder(
         builder: (context, spanBuilder) => Text.rich(
           TextSpan(
             children: _spans(context, spanBuilder).toList(growable: false),
@@ -687,7 +687,7 @@ class IndentBuilder extends StatelessWidget {
       : assert(indent != null),
         super(key: key);
 
-  final Widget Function(BuildContext, String, int) builder;
+  final Widget Function(BuildContext, int) builder;
   final String indent;
 
   @override
@@ -703,7 +703,7 @@ class IndentBuilder extends StatelessWidget {
         Expanded(
           child: ListContext(
             parentIndent + newIndent.length,
-            child: builder(context, newIndent, totalIndentSize),
+            child: builder(context, totalIndentSize),
           ),
         ),
       ],
@@ -725,7 +725,7 @@ class OrgDrawerWidget extends StatelessWidget {
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).drawerColor);
     return IndentBuilder(
       drawer.indent,
-      builder: (context, _, totalIndentSize) {
+      builder: (context, totalIndentSize) {
         return ValueListenableBuilder<bool>(
           valueListenable: openListenable,
           builder: (context, open, child) => Column(
@@ -789,7 +789,7 @@ class OrgPropertyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IndentBuilder(
       property.indent,
-      builder: (context, _, __) {
+      builder: (context, _) {
         return HighlightBuilder(
           builder: (context, spanBuilder) => Text.rich(
             TextSpan(
