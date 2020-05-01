@@ -34,7 +34,10 @@ class SpanBuilder {
       );
     } else if (element is OrgMarkup) {
       return highlightedSpan(
-        transformer(element, element.content),
+        transformer(
+          element,
+          '${element.leadingDecoration}${element.content}${element.trailingDecoration}',
+        ),
         style: OrgTheme.dataOf(context).fontStyleForOrgStyle(
           style,
           element.style,
