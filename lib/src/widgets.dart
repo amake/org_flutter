@@ -306,46 +306,39 @@ class OrgBlockWidget extends StatelessWidget {
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
     return IndentBuilder(
       block.indent,
-      builder: (context, indent, totalIndentSize) {
-        return Row(
-          children: <Widget>[
-            Text(indent),
-            Expanded(
-              child: ValueListenableBuilder<bool>(
-                valueListenable: openListenable,
-                builder: (context, open, child) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    InkWell(
-                      child: Text(
-                        block.header.trimRight() + (open ? '' : '...'),
-                        style: metaStyle,
-                      ),
-                      onTap: () => openListenable.value = !openListenable.value,
-                    ),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 100),
-                      transitionBuilder: (child, animation) =>
-                          SizeTransition(child: child, sizeFactor: animation),
-                      child: open ? child : const SizedBox.shrink(),
-                    ),
-                  ],
+      builder: (context, _, totalIndentSize) {
+        return ValueListenableBuilder<bool>(
+          valueListenable: openListenable,
+          builder: (context, open, child) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              InkWell(
+                child: Text(
+                  block.header.trimRight() + (open ? '' : '...'),
+                  style: metaStyle,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    _body((_, string) => removeTrailingLineBreak(
-                        deindent(string, totalIndentSize))),
-                    Text(
-                      deindent(block.footer, totalIndentSize) +
-                          removeTrailingLineBreak(block.trailing),
-                      style: metaStyle,
-                    ),
-                  ],
-                ),
+                onTap: () => openListenable.value = !openListenable.value,
               ),
-            ),
-          ],
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 100),
+                transitionBuilder: (child, animation) =>
+                    SizeTransition(child: child, sizeFactor: animation),
+                child: open ? child : const SizedBox.shrink(),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              _body((_, string) =>
+                  removeTrailingLineBreak(deindent(string, totalIndentSize))),
+              Text(
+                deindent(block.footer, totalIndentSize) +
+                    removeTrailingLineBreak(block.trailing),
+                style: metaStyle,
+              ),
+            ],
+          ),
         );
       },
     );
@@ -379,22 +372,13 @@ class OrgMetaWidget extends StatelessWidget {
       style: TextStyle(color: OrgTheme.dataOf(context).metaColor),
       child: IndentBuilder(
         meta.indent,
-        builder: (context, indent, _) {
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(indent),
-              Expanded(
-                child: HighlightBuilder(
-                  builder: (context, spanBuilder) => Text.rich(
-                    TextSpan(
-                      children:
-                          _spans(context, spanBuilder).toList(growable: false),
-                    ),
-                  ),
-                ),
+        builder: (context, _, __) {
+          return HighlightBuilder(
+            builder: (context, spanBuilder) => Text.rich(
+              TextSpan(
+                children: _spans(context, spanBuilder).toList(growable: false),
               ),
-            ],
+            ),
           );
         },
       ),
@@ -488,27 +472,20 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IndentBuilder(
       fixedWidthArea.indent,
-      builder: (context, indent, totalIndentSize) {
+      builder: (context, _, totalIndentSize) {
         return DefaultTextStyle.merge(
           style: TextStyle(color: OrgTheme.dataOf(context).codeColor),
-          child: Row(
-            children: [
-              Text(indent),
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: HighlightBuilder(
-                    builder: (context, spanBuilder) => Text.rich(
-                      spanBuilder.highlightedSpan(
-                        deindent(fixedWidthArea.content, totalIndentSize) +
-                            removeTrailingLineBreak(fixedWidthArea.trailing),
-                      ),
-                    ),
-                  ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: HighlightBuilder(
+              builder: (context, spanBuilder) => Text.rich(
+                spanBuilder.highlightedSpan(
+                  deindent(fixedWidthArea.content, totalIndentSize) +
+                      removeTrailingLineBreak(fixedWidthArea.trailing),
                 ),
               ),
-            ],
+            ),
           ),
         );
       },
@@ -526,26 +503,17 @@ class OrgParagraphWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IndentBuilder(
       paragraph.indent,
-      builder: (context, indent, totalIndentSize) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(indent),
-            Expanded(
-              child: OrgContentWidget(
-                paragraph.body,
-                transformer: (elem, content) {
-                  final reflowed =
-                      reflowText(deindent(content, totalIndentSize));
-                  if (elem == paragraph.body.children.last) {
-                    return removeTrailingLineBreak(reflowed);
-                  } else {
-                    return reflowed;
-                  }
-                },
-              ),
-            ),
-          ],
+      builder: (context, _, totalIndentSize) {
+        return OrgContentWidget(
+          paragraph.body,
+          transformer: (elem, content) {
+            final reflowed = reflowText(deindent(content, totalIndentSize));
+            if (elem == paragraph.body.children.last) {
+              return removeTrailingLineBreak(reflowed);
+            } else {
+              return reflowed;
+            }
+          },
         );
       },
     );
@@ -647,21 +615,12 @@ class OrgListItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IndentBuilder(
       '${item.indent}${item.bullet}',
-      builder: (context, indent, _) => Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(indent),
-          Expanded(
-            child: HighlightBuilder(
-              builder: (context, spanBuilder) => Text.rich(
-                TextSpan(
-                  children:
-                      _spans(context, spanBuilder).toList(growable: false),
-                ),
-              ),
-            ),
+      builder: (context, _, __) => HighlightBuilder(
+        builder: (context, spanBuilder) => Text.rich(
+          TextSpan(
+            children: _spans(context, spanBuilder).toList(growable: false),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -737,9 +696,17 @@ class IndentBuilder extends StatelessWidget {
     final newIndent =
         indent.length >= parentIndent ? indent.substring(parentIndent) : '';
     final totalIndentSize = parentIndent + newIndent.length;
-    return ListContext(
-      parentIndent + newIndent.length,
-      child: builder(context, newIndent, totalIndentSize),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(newIndent),
+        Expanded(
+          child: ListContext(
+            parentIndent + newIndent.length,
+            child: builder(context, newIndent, totalIndentSize),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -758,46 +725,39 @@ class OrgDrawerWidget extends StatelessWidget {
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).drawerColor);
     return IndentBuilder(
       drawer.indent,
-      builder: (context, indent, totalIndentSize) {
-        return Row(
-          children: <Widget>[
-            Text(indent),
-            Expanded(
-              child: ValueListenableBuilder<bool>(
-                valueListenable: openListenable,
-                builder: (context, open, child) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    InkWell(
-                      child: Text(
-                        drawer.header.trimRight() + (open ? '' : '...'),
-                        style: drawerStyle,
-                      ),
-                      onTap: () => openListenable.value = !openListenable.value,
-                    ),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 100),
-                      transitionBuilder: (child, animation) =>
-                          SizeTransition(child: child, sizeFactor: animation),
-                      child: open ? child : const SizedBox.shrink(),
-                    ),
-                  ],
+      builder: (context, _, totalIndentSize) {
+        return ValueListenableBuilder<bool>(
+          valueListenable: openListenable,
+          builder: (context, open, child) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              InkWell(
+                child: Text(
+                  drawer.header.trimRight() + (open ? '' : '...'),
+                  style: drawerStyle,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    _body((_, string) => removeTrailingLineBreak(
-                        deindent(string, totalIndentSize))),
-                    Text(
-                      deindent(drawer.footer, totalIndentSize) +
-                          removeTrailingLineBreak(drawer.trailing),
-                      style: drawerStyle,
-                    ),
-                  ],
-                ),
+                onTap: () => openListenable.value = !openListenable.value,
               ),
-            ),
-          ],
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 100),
+                transitionBuilder: (child, animation) =>
+                    SizeTransition(child: child, sizeFactor: animation),
+                child: open ? child : const SizedBox.shrink(),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              _body((_, string) =>
+                  removeTrailingLineBreak(deindent(string, totalIndentSize))),
+              Text(
+                deindent(drawer.footer, totalIndentSize) +
+                    removeTrailingLineBreak(drawer.trailing),
+                style: drawerStyle,
+              ),
+            ],
+          ),
         );
       },
     );
@@ -829,22 +789,13 @@ class OrgPropertyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IndentBuilder(
       property.indent,
-      builder: (context, indent, _) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(indent),
-            Expanded(
-              child: HighlightBuilder(
-                builder: (context, spanBuilder) => Text.rich(
-                  TextSpan(
-                    children:
-                        _spans(context, spanBuilder).toList(growable: false),
-                  ),
-                ),
-              ),
+      builder: (context, _, __) {
+        return HighlightBuilder(
+          builder: (context, spanBuilder) => Text.rich(
+            TextSpan(
+              children: _spans(context, spanBuilder).toList(growable: false),
             ),
-          ],
+          ),
         );
       },
     );
