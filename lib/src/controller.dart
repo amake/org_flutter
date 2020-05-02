@@ -129,7 +129,7 @@ class OrgControllerData extends InheritedWidget {
   }
 
   void cycleVisibilityOf(OrgTree tree) {
-    final visibilityListenable = nodeMap[tree].visibility;
+    final visibilityListenable = nodeFor(tree).visibility;
     final newVisibility =
         _cycleSubtree(visibilityListenable.value, tree.children.isEmpty);
     final subtreeVisibility = _subtreeState(newVisibility);
@@ -138,7 +138,7 @@ class OrgControllerData extends InheritedWidget {
         'to=$newVisibility; subtree=$subtreeVisibility');
     _walk(
       tree,
-      (subtree) => nodeMap[subtree].visibility.value = subtreeVisibility,
+      (subtree) => nodeFor(subtree).visibility.value = subtreeVisibility,
     );
     // Do this last because otherwise _walk applies subtreeVisibility to this
     // root
@@ -167,7 +167,7 @@ class OrgControllerData extends InheritedWidget {
             childrenMatch || tree.contains(query, includeChildren: false);
         final newValue =
             anyMatch ? OrgVisibilityState.children : OrgVisibilityState.folded;
-        final node = nodeMap[tree];
+        final node = nodeFor(tree);
         debugPrint(
             'Changing visibility; from=${node.visibility.value}, to=$newValue');
         node.visibility.value = newValue;
