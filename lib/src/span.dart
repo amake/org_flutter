@@ -14,12 +14,15 @@ class SpanBuilder {
     this.context, {
     @required this.recognizerHandler,
     this.highlight,
+    this.hideMarkup = false,
   })  : assert(context != null),
-        assert(recognizerHandler != null);
+        assert(recognizerHandler != null),
+        assert(hideMarkup != null);
 
   final BuildContext context;
   final RecognizerHandler recognizerHandler;
   final Pattern highlight;
+  final bool hideMarkup;
 
   InlineSpan build(
     OrgContentElement element, {
@@ -36,7 +39,9 @@ class SpanBuilder {
       return highlightedSpan(
         transformer(
           element,
-          '${element.leadingDecoration}${element.content}${element.trailingDecoration}',
+          hideMarkup
+              ? element.content
+              : '${element.leadingDecoration}${element.content}${element.trailingDecoration}',
         ),
         style: OrgTheme.dataOf(context).fontStyleForOrgStyle(
           style,
@@ -110,7 +115,10 @@ class SpanBuilder {
             .toList(growable: false),
       );
     } else if (element is OrgMeta) {
-      return WidgetSpan(child: OrgMetaWidget(element));
+      // TODO(aaron): Decide whether to hide this when `hideMarkup` is true
+      return hideMarkup
+          ? const TextSpan()
+          : WidgetSpan(child: OrgMetaWidget(element));
     } else if (element is OrgBlock) {
       return WidgetSpan(child: OrgBlockWidget(element));
     } else if (element is OrgTable) {
@@ -122,7 +130,9 @@ class SpanBuilder {
     } else if (element is OrgList) {
       return WidgetSpan(child: OrgListWidget(element));
     } else if (element is OrgDrawer) {
-      return WidgetSpan(child: OrgDrawerWidget(element));
+      return hideMarkup
+          ? const TextSpan()
+          : WidgetSpan(child: OrgDrawerWidget(element));
     } else if (element is OrgProperty) {
       return WidgetSpan(child: OrgPropertyWidget(element));
     } else if (element is OrgContent) {

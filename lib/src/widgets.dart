@@ -327,6 +327,7 @@ class OrgBlockWidget extends StatelessWidget {
     final defaultStyle = DefaultTextStyle.of(context).style;
     final metaStyle =
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
+    final hideMarkup = OrgSettings.of(context).hideMarkup;
     return IndentBuilder(
       block.indent,
       builder: (context, totalIndentSize) {
@@ -335,13 +336,14 @@ class OrgBlockWidget extends StatelessWidget {
           builder: (context, open, child) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              InkWell(
-                child: Text(
-                  block.header.trimRight() + (open ? '' : '...'),
-                  style: metaStyle,
+              if (!hideMarkup)
+                InkWell(
+                  child: Text(
+                    block.header.trimRight() + (open ? '' : '...'),
+                    style: metaStyle,
+                  ),
+                  onTap: () => openListenable.value = !openListenable.value,
                 ),
-                onTap: () => openListenable.value = !openListenable.value,
-              ),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 100),
                 transitionBuilder: (child, animation) =>
@@ -355,11 +357,14 @@ class OrgBlockWidget extends StatelessWidget {
             children: <Widget>[
               _body((_, string) =>
                   removeTrailingLineBreak(deindent(string, totalIndentSize))),
-              Text(
-                deindent(block.footer, totalIndentSize) +
-                    removeTrailingLineBreak(block.trailing),
-                style: metaStyle,
-              ),
+              if (!hideMarkup)
+                // TODO(aaron): Split trailing new lines from footer so we can
+                // keep good spacing even when hiding footer
+                Text(
+                  deindent(block.footer, totalIndentSize) +
+                      removeTrailingLineBreak(block.trailing),
+                  style: metaStyle,
+                ),
             ],
           ),
         );
@@ -559,6 +564,7 @@ class HighlightBuilder extends StatelessWidget {
           context,
           recognizerHandler: registerRecognizer,
           highlight: settings.searchQuery,
+          hideMarkup: settings.hideMarkup,
         ),
       );
     });

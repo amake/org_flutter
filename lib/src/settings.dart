@@ -20,9 +20,15 @@ class OrgSettings extends StatelessWidget {
       return ValueListenableBuilder<Pattern>(
         valueListenable: controller.searchQuery,
         builder: (context, searchQuery, _child) {
-          return OrgSettingsData(
-            searchQuery: searchQuery,
-            child: child,
+          return ValueListenableBuilder<bool>(
+            valueListenable: controller.hideMarkup,
+            builder: (context, hideMarkup, _child) {
+              return OrgSettingsData(
+                searchQuery: searchQuery,
+                hideMarkup: hideMarkup,
+                child: child,
+              );
+            },
           );
         },
       );
@@ -34,12 +40,16 @@ class OrgSettingsData extends InheritedWidget {
   const OrgSettingsData({
     @required Widget child,
     this.searchQuery,
+    this.hideMarkup = false,
     Key key,
-  }) : super(key: key, child: child);
+  })  : assert(hideMarkup != null),
+        super(key: key, child: child);
 
   final Pattern searchQuery;
+  final bool hideMarkup;
 
   @override
   bool updateShouldNotify(OrgSettingsData oldWidget) =>
-      searchQuery != oldWidget.searchQuery;
+      searchQuery != oldWidget.searchQuery ||
+      hideMarkup != oldWidget.hideMarkup;
 }

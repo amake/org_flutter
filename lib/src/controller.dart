@@ -63,12 +63,14 @@ class OrgController extends StatefulWidget {
 class _OrgControllerState extends State<OrgController> {
   Map<OrgTree, OrgNode> _nodeMap;
   ValueNotifier<Pattern> _searchQuery;
+  ValueNotifier<bool> _hideMarkup;
 
   @override
   void initState() {
     super.initState();
     _nodeMap = _buildNodeMap(widget.root);
     _searchQuery = ValueNotifier('');
+    _hideMarkup = ValueNotifier(false);
   }
 
   @override
@@ -87,6 +89,7 @@ class _OrgControllerState extends State<OrgController> {
       root: widget.root,
       nodeMap: _nodeMap,
       searchQuery: _searchQuery,
+      hideMarkup: _hideMarkup,
     );
   }
 }
@@ -97,10 +100,12 @@ class OrgControllerData extends InheritedWidget {
     @required this.root,
     @required this.nodeMap,
     @required this.searchQuery,
+    @required this.hideMarkup,
     Key key,
   })  : assert(root != null),
         assert(nodeMap != null),
         assert(searchQuery != null),
+        assert(hideMarkup != null),
         super(key: key, child: child) {
     searchQuery.addListener(_updateVisibilityForQuery);
   }
@@ -108,6 +113,7 @@ class OrgControllerData extends InheritedWidget {
   final OrgTree root;
   final Map<OrgTree, OrgNode> nodeMap;
   final ValueNotifier<Pattern> searchQuery;
+  final ValueNotifier<bool> hideMarkup;
 
   OrgNode nodeFor(OrgTree tree) => nodeMap[tree];
 
