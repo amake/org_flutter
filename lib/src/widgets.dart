@@ -285,7 +285,7 @@ class OrgHeadlineWidget extends StatelessWidget {
               children: [
                 Expanded(child: body),
                 Text.rich(spanBuilder
-                    .highlightedSpan(':${headline.tags.join(':')}:')),
+                    .highlightedSpan(' :${headline.tags.join(':')}:')),
                 if (!open) const Text('...'),
               ],
             );
