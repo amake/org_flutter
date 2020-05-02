@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/indent.dart';
+import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/theme.dart';
 import 'package:org_flutter/src/util.dart';
@@ -55,7 +56,9 @@ class OrgRootWidget extends StatelessWidget {
       light: lightTheme ?? OrgThemeData.light(),
       dark: darkTheme ?? OrgThemeData.dark(),
       child: OrgEvents(
-        child: IdentityTextScale(child: child),
+        child: IdentityTextScale(
+          child: OrgSettings(child: child),
+        ),
         onLinkTap: onLinkTap,
         onSectionLongPress: onSectionLongPress,
         onLocalSectionLinkTap: onLocalSectionLinkTap,
@@ -548,29 +551,17 @@ class HighlightBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RecognizerManager(
-      builder: (context, registerRecognizer) {
-        final queryListenable = OrgController.of(context)?.searchQuery;
-        if (queryListenable == null) {
-          return builder(
-            context,
-            SpanBuilder(context, recognizerHandler: registerRecognizer),
-          );
-        } else {
-          return ValueListenableBuilder<Pattern>(
-            valueListenable: queryListenable,
-            builder: (context, query, child) => builder(
-              context,
-              SpanBuilder(
-                context,
-                recognizerHandler: registerRecognizer,
-                highlight: query,
-              ),
-            ),
-          );
-        }
-      },
-    );
+    return RecognizerManager(builder: (context, registerRecognizer) {
+      final settings = OrgSettings.of(context);
+      return builder(
+        context,
+        SpanBuilder(
+          context,
+          recognizerHandler: registerRecognizer,
+          highlight: settings.searchQuery,
+        ),
+      );
+    });
   }
 }
 
