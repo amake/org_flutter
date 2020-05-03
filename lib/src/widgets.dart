@@ -315,34 +315,52 @@ class IdentityTextScale extends StatelessWidget {
   }
 }
 
-class OrgBlockWidget extends StatelessWidget {
+class OrgBlockWidget extends StatefulWidget {
   const OrgBlockWidget(this.block, {Key key})
       : assert(block != null),
         super(key: key);
   final OrgBlock block;
 
   @override
+  _OrgBlockWidgetState createState() => _OrgBlockWidgetState();
+}
+
+class _OrgBlockWidgetState extends State<OrgBlockWidget> {
+  ValueNotifier<bool> _openListenable;
+
+  @override
+  void initState() {
+    _openListenable = ValueNotifier<bool>(true);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _openListenable.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final openListenable = ValueNotifier<bool>(true);
     final defaultStyle = DefaultTextStyle.of(context).style;
     final metaStyle =
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
     final hideMarkup = OrgSettings.of(context).hideMarkup;
     return IndentBuilder(
-      block.indent,
+      widget.block.indent,
       builder: (context, totalIndentSize) {
         return ValueListenableBuilder<bool>(
-          valueListenable: openListenable,
+          valueListenable: _openListenable,
           builder: (context, open, child) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               if (!hideMarkup)
                 InkWell(
                   child: Text(
-                    block.header.trimRight() + (open ? '' : '...'),
+                    widget.block.header.trimRight() + (open ? '' : '...'),
                     style: metaStyle,
                   ),
-                  onTap: () => openListenable.value = !openListenable.value,
+                  onTap: () => _openListenable.value = !_openListenable.value,
                 ),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 100),
@@ -361,8 +379,8 @@ class OrgBlockWidget extends StatelessWidget {
                 // TODO(aaron): Split trailing new lines from footer so we can
                 // keep good spacing even when hiding footer
                 Text(
-                  deindent(block.footer, totalIndentSize) +
-                      removeTrailingLineBreak(block.trailing),
+                  deindent(widget.block.footer, totalIndentSize) +
+                      removeTrailingLineBreak(widget.block.trailing),
                   style: metaStyle,
                 ),
             ],
@@ -374,11 +392,11 @@ class OrgBlockWidget extends StatelessWidget {
 
   Widget _body(Transformer transformer) {
     final body = OrgContentWidget(
-      block.body,
+      widget.block.body,
       transformer: transformer,
     );
     // TODO(aaron): Better distinguish "greater block" from regular block
-    return block.body is OrgContent
+    return widget.block.body is OrgContent
         ? body
         : SingleChildScrollView(
             child: body,
@@ -685,32 +703,50 @@ class OrgListItemWidget extends StatelessWidget {
   }
 }
 
-class OrgDrawerWidget extends StatelessWidget {
+class OrgDrawerWidget extends StatefulWidget {
   const OrgDrawerWidget(this.drawer, {Key key})
       : assert(drawer != null),
         super(key: key);
   final OrgDrawer drawer;
 
   @override
+  _OrgDrawerWidgetState createState() => _OrgDrawerWidgetState();
+}
+
+class _OrgDrawerWidgetState extends State<OrgDrawerWidget> {
+  ValueNotifier<bool> _openListenable;
+
+  @override
+  void initState() {
+    _openListenable = ValueNotifier<bool>(false);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _openListenable.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final openListenable = ValueNotifier<bool>(false);
     final defaultStyle = DefaultTextStyle.of(context).style;
     final drawerStyle =
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).drawerColor);
     return IndentBuilder(
-      drawer.indent,
+      widget.drawer.indent,
       builder: (context, totalIndentSize) {
         return ValueListenableBuilder<bool>(
-          valueListenable: openListenable,
+          valueListenable: _openListenable,
           builder: (context, open, child) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               InkWell(
                 child: Text(
-                  drawer.header.trimRight() + (open ? '' : '...'),
+                  widget.drawer.header.trimRight() + (open ? '' : '...'),
                   style: drawerStyle,
                 ),
-                onTap: () => openListenable.value = !openListenable.value,
+                onTap: () => _openListenable.value = !_openListenable.value,
               ),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 100),
@@ -726,8 +762,8 @@ class OrgDrawerWidget extends StatelessWidget {
               _body((_, string) =>
                   removeTrailingLineBreak(deindent(string, totalIndentSize))),
               Text(
-                deindent(drawer.footer, totalIndentSize) +
-                    removeTrailingLineBreak(drawer.trailing),
+                deindent(widget.drawer.footer, totalIndentSize) +
+                    removeTrailingLineBreak(widget.drawer.trailing),
                 style: drawerStyle,
               ),
             ],
@@ -739,11 +775,11 @@ class OrgDrawerWidget extends StatelessWidget {
 
   Widget _body(Transformer transformer) {
     final body = OrgContentWidget(
-      drawer.body,
+      widget.drawer.body,
       transformer: transformer,
     );
     // TODO(aaron): Better distinguish "greater block" from regular block
-    return drawer.body is OrgContent
+    return widget.drawer.body is OrgContent
         ? body
         : SingleChildScrollView(
             child: body,
