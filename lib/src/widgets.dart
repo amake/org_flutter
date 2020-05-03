@@ -557,12 +557,12 @@ class OrgParagraphWidget extends StatelessWidget {
         return OrgContentWidget(
           paragraph.body,
           transformer: (elem, content) {
-            final reflowed = reflowText(deindent(content, totalIndentSize));
-            if (elem == paragraph.body.children.last) {
-              return removeTrailingLineBreak(reflowed);
-            } else {
-              return reflowed;
-            }
+            final isLast = elem == paragraph.body.children.last;
+            final reflowed = reflowText(
+              deindent(content, totalIndentSize),
+              end: isLast,
+            );
+            return isLast ? removeTrailingLineBreak(reflowed) : reflowed;
           },
         );
       },
@@ -696,12 +696,12 @@ class OrgListItemWidget extends StatelessWidget {
     }
     if (item.body != null) {
       yield builder.build(item.body, transformer: (elem, content) {
-        final reflowed = reflowText(content);
-        if (item.body.children.last == elem) {
-          return removeTrailingLineBreak(reflowed);
-        } else {
-          return reflowed;
-        }
+        final isLast = item.body.children.last == elem;
+        final reflowed = reflowText(
+          content,
+          end: isLast,
+        );
+        return isLast ? removeTrailingLineBreak(reflowed) : reflowed;
       });
     }
   }

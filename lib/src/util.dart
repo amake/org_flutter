@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// If necessary, interleave runes with U+200B ZERO WIDTH SPACE to serve as a
 /// place to wrap the line.
 String characterWrappable(String text) {
@@ -48,10 +50,18 @@ bool patternEquals(Pattern a, Pattern b) {
   return false;
 }
 
-String reflowText(String text) =>
-    text.replaceAll(_unwrappableWhitespacePattern, ' ');
+String reflowText(String text, {@required bool end}) => text.replaceAll(
+    end ? _unwrappableEndWhitespacePattern : _unwrappableWhitespacePattern,
+    ' ');
 
-final _unwrappableWhitespacePattern = RegExp(r'(?<=\S)[ \t]*\r?\n[ \t]*(?=\S)');
+// Match single (CR)LF between non-whitespace chars OR at end of text for
+// "inside" text runs only
+final _unwrappableWhitespacePattern =
+    RegExp(r'(?<=\S)[ \t]*\r?\n[ \t]*(?=\S|$)');
+// Match single (CR)LF between non-whitespace chars ONLY for final text run
+// (preserve trailing linebreaks)
+final _unwrappableEndWhitespacePattern =
+    RegExp(r'(?<=\S)[ \t]*\r?\n[ \t]*(?=\S)');
 
 String removeTrailingLineBreak(String text) {
   if (text.endsWith('\n')) {

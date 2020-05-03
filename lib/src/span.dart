@@ -111,7 +111,10 @@ class SpanBuilder {
                   child,
                   style: style,
                   transformer: transformer == identityTransformer
-                      ? (_, text) => reflowText(text)
+                      ? (elem, text) => reflowText(
+                            text,
+                            end: element.content.children.last == elem,
+                          )
                       : transformer,
                 ))
             .toList(growable: false),
