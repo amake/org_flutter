@@ -110,7 +110,9 @@ class SpanBuilder {
             .map((child) => build(
                   child,
                   style: style,
-                  transformer: transformer,
+                  transformer: transformer == identityTransformer
+                      ? (_, text) => reflowText(text)
+                      : transformer,
                 ))
             .toList(growable: false),
       );
