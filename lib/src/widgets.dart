@@ -376,13 +376,17 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget> {
               _body((_, string) =>
                   removeTrailingLineBreak(deindent(string, totalIndentSize))),
               if (!hideMarkup)
-                // TODO(aaron): Split trailing new lines from footer so we can
-                // keep good spacing even when hiding footer
                 Text(
-                  deindent(widget.block.footer, totalIndentSize) +
-                      removeTrailingLineBreak(widget.block.trailing),
+                  deindent(widget.block.footer, totalIndentSize),
                   style: metaStyle,
                 ),
+              // Remove two linebreaks because we introduce two by splitting the
+              // text into two widgets in this Column
+              Text(
+                removeTrailingLineBreak(
+                  removeTrailingLineBreak(widget.block.trailing),
+                ),
+              )
             ],
           ),
         );
