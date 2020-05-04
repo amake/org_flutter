@@ -13,10 +13,11 @@ class SpanBuilder {
   SpanBuilder(
     this.context, {
     @required this.recognizerHandler,
-    this.highlight,
-    this.hideMarkup = false,
+    @required this.highlight,
+    @required this.hideMarkup,
   })  : assert(context != null),
         assert(recognizerHandler != null),
+        assert(highlight != null),
         assert(hideMarkup != null);
 
   final BuildContext context;

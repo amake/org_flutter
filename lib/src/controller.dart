@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/util.dart';
 import 'package:org_parser/org_parser.dart';
 
@@ -42,9 +43,24 @@ void _walk(OrgTree tree, Function(OrgTree) visit) {
 }
 
 class OrgController extends StatefulWidget {
+  OrgController.defaults(
+    OrgControllerData data, {
+    @required OrgTree root,
+    @required Widget child,
+    Key key,
+  }) : this(
+          child: child,
+          root: root,
+          initialSearchQuery: data.searchQuery.value,
+          initiallyHideMarkup: data.hideMarkup.value,
+          key: key,
+        );
+
   const OrgController({
     @required this.child,
     @required this.root,
+    this.initialSearchQuery,
+    this.initiallyHideMarkup,
     Key key,
   })  : assert(child != null),
         assert(root != null),
@@ -52,6 +68,8 @@ class OrgController extends StatefulWidget {
 
   final OrgTree root;
   final Widget child;
+  final Pattern initialSearchQuery;
+  final bool initiallyHideMarkup;
 
   static OrgControllerData of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<OrgControllerData>();
@@ -69,8 +87,10 @@ class _OrgControllerState extends State<OrgController> {
   void initState() {
     super.initState();
     _nodeMap = _buildNodeMap(widget.root);
-    _searchQuery = ValueNotifier('');
-    _hideMarkup = ValueNotifier(false);
+    _searchQuery =
+        ValueNotifier(widget.initialSearchQuery ?? kDefaultSearchQuery);
+    _hideMarkup =
+        ValueNotifier(widget.initiallyHideMarkup ?? kDefaultHideMarkup);
   }
 
   @override

@@ -1,6 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/controller.dart';
 
+const Pattern kDefaultSearchQuery = '';
+const bool kDefaultHideMarkup = false;
+
 class OrgSettings extends StatelessWidget {
   const OrgSettings({@required this.child, Key key})
       : assert(child != null),
@@ -15,7 +18,11 @@ class OrgSettings extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = OrgController.of(context);
     if (controller == null) {
-      return OrgSettingsData(child: child);
+      return OrgSettingsData(
+        child: child,
+        searchQuery: kDefaultSearchQuery,
+        hideMarkup: kDefaultHideMarkup,
+      );
     } else {
       return ValueListenableBuilder<Pattern>(
         valueListenable: controller.searchQuery,
@@ -39,10 +46,11 @@ class OrgSettings extends StatelessWidget {
 class OrgSettingsData extends InheritedWidget {
   const OrgSettingsData({
     @required Widget child,
-    this.searchQuery,
-    this.hideMarkup = false,
+    @required this.searchQuery,
+    @required this.hideMarkup,
     Key key,
-  })  : assert(hideMarkup != null),
+  })  : assert(searchQuery != null),
+        assert(hideMarkup != null),
         super(key: key, child: child);
 
   final Pattern searchQuery;
