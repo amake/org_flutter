@@ -171,7 +171,6 @@ class SpanBuilder {
       style ??= DefaultTextStyle.of(context).style;
       return TextSpan(
         style: style,
-        recognizer: recognizer,
         children: tokenizeTextSpan(
           text,
           highlight,
@@ -179,6 +178,7 @@ class SpanBuilder {
             backgroundColor: OrgTheme.dataOf(context).highlightColor,
           ),
           charWrap ? characterWrappable : (x) => x,
+          recognizer,
         ).toList(growable: false),
       );
     }
@@ -190,16 +190,27 @@ Iterable<InlineSpan> tokenizeTextSpan(
   Pattern pattern,
   TextStyle matchStyle,
   String Function(String) transform,
+  GestureRecognizer recognizer,
 ) sync* {
   var lastEnd = 0;
   for (final match in pattern.allMatches(text)) {
     if (match.start > lastEnd) {
-      yield TextSpan(text: transform(text.substring(lastEnd, match.start)));
+      yield TextSpan(
+        text: transform(text.substring(lastEnd, match.start)),
+        recognizer: recognizer,
+      );
     }
-    yield TextSpan(text: transform(match.group(0)), style: matchStyle);
+    yield TextSpan(
+      text: transform(match.group(0)),
+      style: matchStyle,
+      recognizer: recognizer,
+    );
     lastEnd = match.end;
   }
   if (lastEnd < text.length) {
-    yield TextSpan(text: transform(text.substring(lastEnd, text.length)));
+    yield TextSpan(
+      text: transform(text.substring(lastEnd, text.length)),
+      recognizer: recognizer,
+    );
   }
 }
