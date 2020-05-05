@@ -5,7 +5,7 @@
 # Usage
 
 For parsing Org-mode documents, see
-[org_flutter](https://github.com/amake/org_parser). For an example application
+[org_parser](https://github.com/amake/org_parser). For an example application
 that displays Org-mode documents with org_parser and org_flutter, see
 [orgro](https://github.com/amake/orgro).
 
