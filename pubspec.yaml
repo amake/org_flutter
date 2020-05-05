@@ -9,10 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  org_parser:
+  org_parser: ^0.1.0
+#  org_parser:
 #    path: ../org_parser
-     git:
-       url: https://github.com/amake/org_parser.git
 
 dev_dependencies:
   flutter_test:
