@@ -214,10 +214,12 @@ class OrgContentWidget extends StatelessWidget {
   const OrgContentWidget(
     this.content, {
     this.transformer,
+    this.textAlign,
     Key key,
   }) : super(key: key);
   final OrgContentElement content;
   final Transformer transformer;
+  final TextAlign textAlign;
 
   @override
   Widget build(BuildContext context) {
@@ -227,6 +229,7 @@ class OrgContentWidget extends StatelessWidget {
           content,
           transformer: transformer ?? identityTransformer,
         ),
+        textAlign: textAlign,
       ),
     );
   }
@@ -487,6 +490,8 @@ class OrgTableWidget extends StatelessWidget {
   }
 
   Iterable<TableRow> _tableRows(BorderSide borderSide) sync* {
+    final columnCount = table.columnCount;
+    final numerical = List<bool>.generate(columnCount, table.columnIsNumeric);
     for (var i = 0; i < table.rows.length; i++) {
       final row = table.rows[i];
       final nextRow = i + 1 < table.rows.length ? table.rows[i + 1] : null;
@@ -498,11 +503,14 @@ class OrgTableWidget extends StatelessWidget {
         yield TableRow(
           decoration: decoration,
           children: [
-            for (var j = 0; j < table.columnCount; j++)
+            for (var j = 0; j < columnCount; j++)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: j < row.cellCount
-                    ? OrgContentWidget(row.cells[j])
+                    ? OrgContentWidget(
+                        row.cells[j],
+                        textAlign: numerical[j] ? TextAlign.right : null,
+                      )
                     : const SizedBox.shrink(),
               ),
           ],
