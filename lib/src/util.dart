@@ -87,3 +87,7 @@ R Function(T) _memoize1<T, R>(R Function(T) func) {
   final cache = <T, R>{};
   return (arg) => cache.putIfAbsent(arg, () => func(arg));
 }
+
+bool looksLikeUrl(String text) => _urlLikeRegexp.hasMatch(text);
+
+final _urlLikeRegexp = RegExp(r'^\w+://');

@@ -71,7 +71,7 @@ class SpanBuilder {
           color: OrgTheme.dataOf(context).linkColor,
           decoration: TextDecoration.underline,
         ),
-        charWrap: true,
+        charWrap: looksLikeUrl(visibleContent),
       );
     } else if (element is OrgTimestamp) {
       return highlightedSpan(
