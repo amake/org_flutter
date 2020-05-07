@@ -20,8 +20,7 @@ class OrgDocumentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ListView(
       children: <Widget>[
         if (document.content != null) OrgContentWidget(document.content),
         ...document.children.map((section) => OrgSectionWidget(section)),
@@ -147,10 +146,15 @@ class OrgEvents extends InheritedWidget {
 }
 
 class OrgSectionWidget extends StatelessWidget {
-  const OrgSectionWidget(this.section, {this.initiallyOpen, Key key})
-      : super(key: key);
+  const OrgSectionWidget(
+    this.section, {
+    this.root = false,
+    Key key,
+  })  : assert(section != null),
+        assert(root != null),
+        super(key: key);
   final OrgSection section;
-  final bool initiallyOpen;
+  final bool root;
 
   // Whether the section is open "enough" to not show the trailing ellipsis
   bool _openEnough(OrgVisibilityState visibility) {
@@ -175,8 +179,9 @@ class OrgSectionWidget extends StatelessWidget {
     }
     return ValueListenableBuilder<OrgVisibilityState>(
       valueListenable: visibilityListenable,
-      builder: (context, visibility, child) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      builder: (context, visibility, child) => ListView(
+        shrinkWrap: !root,
+        physics: !root ? const NeverScrollableScrollPhysics() : null,
         children: <Widget>[
           InkWell(
             child: OrgHeadlineWidget(
