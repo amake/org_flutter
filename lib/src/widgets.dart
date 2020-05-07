@@ -371,6 +371,13 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget> {
                     SizeTransition(child: child, sizeFactor: animation),
                 child: open ? child : const SizedBox.shrink(),
               ),
+              // Remove two linebreaks because we introduce two by splitting the
+              // text into two widgets in this Column
+              Text(
+                removeTrailingLineBreak(
+                  removeTrailingLineBreak(widget.block.trailing),
+                ),
+              )
             ],
           ),
           child: Column(
@@ -383,13 +390,6 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget> {
                   deindent(widget.block.footer, totalIndentSize),
                   style: metaStyle,
                 ),
-              // Remove two linebreaks because we introduce two by splitting the
-              // text into two widgets in this Column
-              Text(
-                removeTrailingLineBreak(
-                  removeTrailingLineBreak(widget.block.trailing),
-                ),
-              )
             ],
           ),
         );
@@ -772,6 +772,13 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget> {
                     SizeTransition(child: child, sizeFactor: animation),
                 child: open ? child : const SizedBox.shrink(),
               ),
+              // Remove two linebreaks because we introduce two by splitting the
+              // text into two widgets in this Column
+              Text(
+                removeTrailingLineBreak(
+                  removeTrailingLineBreak(widget.drawer.trailing),
+                ),
+              )
             ],
           ),
           child: Column(
@@ -780,8 +787,7 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget> {
               _body((_, string) =>
                   removeTrailingLineBreak(deindent(string, totalIndentSize))),
               Text(
-                deindent(widget.drawer.footer, totalIndentSize) +
-                    removeTrailingLineBreak(widget.drawer.trailing),
+                deindent(widget.drawer.footer, totalIndentSize),
                 style: drawerStyle,
               ),
             ],
