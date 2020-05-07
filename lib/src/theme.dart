@@ -66,6 +66,8 @@ const _orgKeywordColorDark = Color(0xff00ffff);
 const _orgHighlightColorDark = Color(0xff4a708b);
 const _orgFootnoteColorDark = Color(0xff00ffff);
 
+const _orgRootPadding = EdgeInsets.all(8);
+
 class OrgThemeData {
   OrgThemeData.light()
       : this(
@@ -83,6 +85,7 @@ class OrgThemeData {
           highlightColor: _orgHighlightColorLight,
           footnoteColor: _orgFootnoteColorLight,
           levelColors: _orgLevelColorsLight,
+          rootPadding: _orgRootPadding,
         );
 
   OrgThemeData.dark()
@@ -101,6 +104,7 @@ class OrgThemeData {
           highlightColor: _orgHighlightColorDark,
           footnoteColor: _orgFootnoteColorDark,
           levelColors: _orgLevelColorsDark,
+          rootPadding: _orgRootPadding,
         );
 
   OrgThemeData({
@@ -117,6 +121,7 @@ class OrgThemeData {
     this.keywordColor,
     this.highlightColor,
     this.footnoteColor,
+    this.rootPadding,
     Iterable<Color> levelColors,
   }) : levelColors =
             levelColors == null ? null : List.unmodifiable(levelColors);
@@ -135,6 +140,8 @@ class OrgThemeData {
   final Color highlightColor;
   final Color footnoteColor;
   final List<Color> levelColors;
+
+  final EdgeInsets rootPadding;
 
   Color levelColor(int level) =>
       levelColors == null ? null : levelColors[level % levelColors.length];
@@ -171,6 +178,7 @@ class OrgThemeData {
     Color highlightColor,
     Color footnoteColor,
     Iterable<Color> levelColors,
+    EdgeInsets rootPadding,
   ) =>
       OrgThemeData(
         todoColor: todoColor ?? this.todoColor,
@@ -187,6 +195,7 @@ class OrgThemeData {
         highlightColor: highlightColor ?? this.highlightColor,
         footnoteColor: footnoteColor ?? this.footnoteColor,
         levelColors: levelColors ?? this.levelColors,
+        rootPadding: rootPadding ?? this.rootPadding,
       );
 
   @override
@@ -208,7 +217,8 @@ class OrgThemeData {
         keywordColor == other.keywordColor &&
         highlightColor == other.highlightColor &&
         footnoteColor == other.footnoteColor &&
-        listEquals(levelColors, other.levelColors);
+        listEquals(levelColors, other.levelColors) &&
+        rootPadding == other.rootPadding;
   }
 
   @override
@@ -227,6 +237,7 @@ class OrgThemeData {
         highlightColor,
         footnoteColor,
         levelColors,
+        rootPadding,
       );
 
   // ignore: prefer_constructors_over_static_methods
@@ -251,6 +262,7 @@ class OrgThemeData {
         highlightColor: Color.lerp(null, b.highlightColor, t),
         footnoteColor: Color.lerp(null, b.footnoteColor, t),
         levelColors: b.levelColors?.map((c) => Color.lerp(null, c, t)),
+        rootPadding: EdgeInsets.lerp(null, b.rootPadding, t),
       );
     }
     if (b == null) {
@@ -269,6 +281,7 @@ class OrgThemeData {
         highlightColor: Color.lerp(a.highlightColor, null, t),
         footnoteColor: Color.lerp(a.footnoteColor, null, t),
         levelColors: a.levelColors?.map((c) => Color.lerp(c, null, t)),
+        rootPadding: EdgeInsets.lerp(a.rootPadding, null, t),
       );
     }
     return OrgThemeData(
@@ -286,6 +299,7 @@ class OrgThemeData {
       highlightColor: Color.lerp(a.highlightColor, b.highlightColor, t),
       footnoteColor: Color.lerp(a.footnoteColor, b.footnoteColor, t),
       levelColors: _lerpColorLists(a.levelColors, b.levelColors, t),
+      rootPadding: EdgeInsets.lerp(a.rootPadding, b.rootPadding, t),
     );
   }
 

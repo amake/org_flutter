@@ -21,6 +21,7 @@ class OrgDocumentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      padding: OrgTheme.dataOf(context).rootPadding,
       children: <Widget>[
         if (document.content != null) OrgContentWidget(document.content),
         ...document.children.map((section) => OrgSectionWidget(section)),
@@ -182,6 +183,10 @@ class OrgSectionWidget extends StatelessWidget {
       builder: (context, visibility, child) => ListView(
         shrinkWrap: !root,
         physics: !root ? const NeverScrollableScrollPhysics() : null,
+        // It's very important that the padding not be null here; otherwise
+        // sections inside a root document will get some extraneous padding (see
+        // discussion of padding behavior on ListView)
+        padding: root ? OrgTheme.dataOf(context).rootPadding : EdgeInsets.zero,
         children: <Widget>[
           InkWell(
             child: OrgHeadlineWidget(
