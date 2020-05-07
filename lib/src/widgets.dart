@@ -457,14 +457,20 @@ class OrgTableWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTextStyle.merge(
       style: TextStyle(color: OrgTheme.dataOf(context).tableColor),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Row(
-          children: <Widget>[
-            Text(table.indent),
-            Column(children: _columnChildren(context).toList(growable: false)),
-          ],
+      child: ConstrainedBox(
+        // Ensure that table takes up entire width (can't have tables
+        // side-by-side)
+        constraints: const BoxConstraints.tightFor(width: double.infinity),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Row(
+            children: <Widget>[
+              Text(table.indent),
+              Column(
+                  children: _columnChildren(context).toList(growable: false)),
+            ],
+          ),
         ),
       ),
     );
