@@ -1,3 +1,7 @@
+## [0.2.1] - 2020-05-09
+
+* Fix color of inline footnote body
+
 ## [0.2.0] - 2020-05-08
 
 * Fix table width
