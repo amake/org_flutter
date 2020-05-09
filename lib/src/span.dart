@@ -99,7 +99,11 @@ class SpanBuilder {
         if (element.definitionDelimiter != null)
           _highlight(element.definitionDelimiter),
         if (element.definition != null)
-          build(element.definition, style: style, transformer: transformer),
+          build(
+            element.definition,
+            style: footnoteStyle,
+            transformer: transformer,
+          ),
         _highlight(element.trailing),
       ]);
     } else if (element is OrgFootnote) {
