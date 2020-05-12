@@ -24,6 +24,7 @@ class OrgDocumentWidget extends StatelessWidget {
       children: <Widget>[
         if (document.content != null) OrgContentWidget(document.content),
         ...document.children.map((section) => OrgSectionWidget(section)),
+        listBottomSafeArea(),
       ],
     );
   }
@@ -213,6 +214,7 @@ class OrgSectionWidget extends StatelessWidget {
               ],
             ),
           ),
+          if (root) listBottomSafeArea(),
         ],
       ),
     );

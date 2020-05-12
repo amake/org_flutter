@@ -36,3 +36,10 @@ mixin RecognizerManager<T extends StatefulWidget> on State<T> {
   void registerRecognizer(GestureRecognizer recognizer) =>
       _recognizers.add(recognizer);
 }
+
+Widget listBottomSafeArea() => const SafeArea(
+      child: SizedBox.shrink(),
+      top: false,
+      left: false,
+      right: false,
+    );
