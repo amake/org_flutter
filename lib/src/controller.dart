@@ -35,6 +35,10 @@ Map<OrgTree, OrgNode> _buildNodeMap(OrgTree tree) {
   return map;
 }
 
+Map<OrgTree, OrgNode> _copyNodeMap(Map<OrgTree, OrgNode> nodeMap) =>
+    nodeMap.map((tree, node) =>
+        MapEntry(tree, OrgNode(initialVisibility: node.visibility.value)));
+
 void _walk(OrgTree tree, Function(OrgTree) visit) {
   visit(tree);
   for (final child in tree.children) {
@@ -48,17 +52,27 @@ class OrgController extends StatefulWidget {
     @required OrgTree root,
     @required Widget child,
     Key key,
-  }) : this(
+  }) : this._(
           child: child,
           root: root,
+          inheritedNodeMap: data.nodeMap,
           initialSearchQuery: data.searchQuery.value,
           initiallyHideMarkup: data.hideMarkup.value,
           key: key,
         );
 
   const OrgController({
+    @required Widget child,
+    @required OrgTree root,
+  }) : this._(
+          child: child,
+          root: root,
+        );
+
+  const OrgController._({
     @required this.child,
     @required this.root,
+    this.inheritedNodeMap,
     this.initialSearchQuery,
     this.initiallyHideMarkup,
     Key key,
@@ -68,6 +82,7 @@ class OrgController extends StatefulWidget {
 
   final OrgTree root;
   final Widget child;
+  final Map<OrgTree, OrgNode> inheritedNodeMap;
   final Pattern initialSearchQuery;
   final bool initiallyHideMarkup;
 
@@ -86,7 +101,9 @@ class _OrgControllerState extends State<OrgController> {
   @override
   void initState() {
     super.initState();
-    _nodeMap = _buildNodeMap(widget.root);
+    _nodeMap = widget.inheritedNodeMap != null
+        ? _copyNodeMap(widget.inheritedNodeMap)
+        : _buildNodeMap(widget.root);
     _searchQuery =
         ValueNotifier(widget.initialSearchQuery ?? kDefaultSearchQuery);
     _hideMarkup =
