@@ -1,14 +1,15 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/org_flutter.dart';
+import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/util/util.dart';
 
 typedef Transformer = String Function(OrgContentElement, String);
 
 String identityTransformer(OrgContentElement _, String str) => str;
 
-class SpanBuilder {
-  SpanBuilder(
+class OrgSpanBuilder {
+  OrgSpanBuilder(
     this.context, {
     @required this.recognizerHandler,
     @required this.highlight,
@@ -213,6 +214,33 @@ Iterable<InlineSpan> tokenizeTextSpan(
     yield TextSpan(
       text: transform(text.substring(lastEnd, text.length)),
       recognizer: recognizer,
+    );
+  }
+}
+
+class FancySpanBuilder extends StatefulWidget {
+  const FancySpanBuilder({@required this.builder, Key key})
+      : assert(builder != null),
+        super(key: key);
+  final Widget Function(BuildContext, OrgSpanBuilder) builder;
+
+  @override
+  _FancySpanBuilderState createState() => _FancySpanBuilderState();
+}
+
+class _FancySpanBuilderState extends State<FancySpanBuilder>
+    with RecognizerManager<FancySpanBuilder> {
+  @override
+  Widget build(BuildContext context) {
+    final settings = OrgSettings.of(context);
+    return widget.builder(
+      context,
+      OrgSpanBuilder(
+        context,
+        recognizerHandler: registerRecognizer,
+        highlight: settings.searchQuery,
+        hideMarkup: settings.hideMarkup,
+      ),
     );
   }
 }

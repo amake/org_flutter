@@ -232,7 +232,7 @@ class OrgContentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HighlightBuilder(
+    return FancySpanBuilder(
       builder: (context, spanBuilder) => Text.rich(
         spanBuilder.build(
           content,
@@ -261,7 +261,7 @@ class OrgHeadlineWidget extends StatelessWidget {
         fontWeight: FontWeight.bold,
         height: 1.8,
       ),
-      child: HighlightBuilder(
+      child: FancySpanBuilder(
         builder: (context, spanBuilder) {
           final body = Text.rich(
             TextSpan(
@@ -422,7 +422,7 @@ class OrgMetaWidget extends StatelessWidget {
       child: IndentBuilder(
         meta.indent,
         builder: (context, _) {
-          return HighlightBuilder(
+          return FancySpanBuilder(
             builder: (context, spanBuilder) => Text.rich(
               TextSpan(
                 children: _spans(context, spanBuilder).toList(growable: false),
@@ -434,7 +434,8 @@ class OrgMetaWidget extends StatelessWidget {
     );
   }
 
-  Iterable<InlineSpan> _spans(BuildContext context, SpanBuilder builder) sync* {
+  Iterable<InlineSpan> _spans(
+      BuildContext context, OrgSpanBuilder builder) sync* {
     yield builder.highlightedSpan(meta.keyword);
     final trailing = removeTrailingLineBreak(meta.trailing);
     if (trailing.isNotEmpty) {
@@ -538,7 +539,7 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             physics: const AlwaysScrollableScrollPhysics(),
-            child: HighlightBuilder(
+            child: FancySpanBuilder(
               builder: (context, spanBuilder) => Text.rich(
                 spanBuilder.highlightedSpan(
                   deindent(fixedWidthArea.content, totalIndentSize) +
@@ -580,33 +581,6 @@ class OrgParagraphWidget extends StatelessWidget {
   }
 }
 
-class HighlightBuilder extends StatefulWidget {
-  const HighlightBuilder({@required this.builder, Key key})
-      : assert(builder != null),
-        super(key: key);
-  final Widget Function(BuildContext, SpanBuilder) builder;
-
-  @override
-  _HighlightBuilderState createState() => _HighlightBuilderState();
-}
-
-class _HighlightBuilderState extends State<HighlightBuilder>
-    with RecognizerManager<HighlightBuilder> {
-  @override
-  Widget build(BuildContext context) {
-    final settings = OrgSettings.of(context);
-    return widget.builder(
-      context,
-      SpanBuilder(
-        context,
-        recognizerHandler: registerRecognizer,
-        highlight: settings.searchQuery,
-        hideMarkup: settings.hideMarkup,
-      ),
-    );
-  }
-}
-
 class OrgListWidget extends StatelessWidget {
   const OrgListWidget(this.list, {Key key})
       : assert(list != null),
@@ -642,7 +616,7 @@ class OrgListItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IndentBuilder(
       '${item.indent}${item.bullet}',
-      builder: (context, _) => HighlightBuilder(
+      builder: (context, _) => FancySpanBuilder(
         builder: (context, spanBuilder) => Text.rich(
           TextSpan(
             children: _spans(context, spanBuilder).toList(growable: false),
@@ -654,7 +628,7 @@ class OrgListItemWidget extends StatelessWidget {
 
   Iterable<InlineSpan> _spans(
     BuildContext context,
-    SpanBuilder builder,
+    OrgSpanBuilder builder,
   ) sync* {
     final item = this.item;
     if (item is OrgListOrderedItem && item.counterSet != null) {
@@ -785,7 +759,7 @@ class OrgPropertyWidget extends StatelessWidget {
     return IndentBuilder(
       property.indent,
       builder: (context, _) {
-        return HighlightBuilder(
+        return FancySpanBuilder(
           builder: (context, spanBuilder) => Text.rich(
             TextSpan(
               children: _spans(context, spanBuilder).toList(growable: false),
@@ -796,7 +770,8 @@ class OrgPropertyWidget extends StatelessWidget {
     );
   }
 
-  Iterable<InlineSpan> _spans(BuildContext context, SpanBuilder builder) sync* {
+  Iterable<InlineSpan> _spans(
+      BuildContext context, OrgSpanBuilder builder) sync* {
     yield builder.highlightedSpan(
       property.key,
       style: DefaultTextStyle.of(context)
