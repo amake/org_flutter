@@ -350,7 +350,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
       widget.block.indent,
       builder: (context, totalIndentSize) {
         return ValueListenableBuilder<bool>(
-          valueListenable: _openListenable,
+          valueListenable: openListenable,
           builder: (context, open, child) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -360,7 +360,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
                     widget.block.header.trimRight() + (open ? '' : '...'),
                     style: metaStyle,
                   ),
-                  onTap: () => _openListenable.value = !_openListenable.value,
+                  onTap: () => openListenable.value = !openListenable.value,
                 ),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 100),
@@ -718,22 +718,6 @@ class OrgListItemWidget extends StatelessWidget {
   }
 }
 
-mixin OpenCloseable<T extends StatefulWidget> on State<T> {
-  ValueNotifier<bool> _openListenable;
-
-  @override
-  void initState() {
-    super.initState();
-    _openListenable = ValueNotifier<bool>(false);
-  }
-
-  @override
-  void dispose() {
-    _openListenable.dispose();
-    super.dispose();
-  }
-}
-
 class OrgDrawerWidget extends StatefulWidget {
   const OrgDrawerWidget(this.drawer, {Key key})
       : assert(drawer != null),
@@ -755,7 +739,7 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
       widget.drawer.indent,
       builder: (context, totalIndentSize) {
         return ValueListenableBuilder<bool>(
-          valueListenable: _openListenable,
+          valueListenable: openListenable,
           builder: (context, open, child) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -764,7 +748,7 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
                   widget.drawer.header.trimRight() + (open ? '' : '...'),
                   style: drawerStyle,
                 ),
-                onTap: () => _openListenable.value = !_openListenable.value,
+                onTap: () => openListenable.value = !openListenable.value,
               ),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 100),
