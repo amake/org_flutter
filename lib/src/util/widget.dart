@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 
 mixin OpenCloseable<T extends StatefulWidget> on State<T> {
@@ -15,4 +16,21 @@ mixin OpenCloseable<T extends StatefulWidget> on State<T> {
     _openListenable.dispose();
     super.dispose();
   }
+}
+
+typedef RecognizerHandler = Function(GestureRecognizer);
+
+mixin RecognizerManager<T extends StatefulWidget> on State<T> {
+  final _recognizers = <GestureRecognizer>[];
+
+  @override
+  void dispose() {
+    for (final item in _recognizers) {
+      item.dispose();
+    }
+    super.dispose();
+  }
+
+  void registerRecognizer(GestureRecognizer recognizer) =>
+      _recognizers.add(recognizer);
 }

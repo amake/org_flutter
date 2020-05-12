@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/controller.dart';
@@ -581,52 +580,30 @@ class OrgParagraphWidget extends StatelessWidget {
   }
 }
 
-class HighlightBuilder extends StatelessWidget {
+class HighlightBuilder extends StatefulWidget {
   const HighlightBuilder({@required this.builder, Key key})
       : assert(builder != null),
         super(key: key);
   final Widget Function(BuildContext, SpanBuilder) builder;
 
   @override
+  _HighlightBuilderState createState() => _HighlightBuilderState();
+}
+
+class _HighlightBuilderState extends State<HighlightBuilder>
+    with RecognizerManager<HighlightBuilder> {
+  @override
   Widget build(BuildContext context) {
-    return RecognizerManager(builder: (context, registerRecognizer) {
-      final settings = OrgSettings.of(context);
-      return builder(
+    final settings = OrgSettings.of(context);
+    return widget.builder(
+      context,
+      SpanBuilder(
         context,
-        SpanBuilder(
-          context,
-          recognizerHandler: registerRecognizer,
-          highlight: settings.searchQuery,
-          hideMarkup: settings.hideMarkup,
-        ),
-      );
-    });
-  }
-}
-
-class RecognizerManager extends StatefulWidget {
-  const RecognizerManager({this.builder, Key key}) : super(key: key);
-
-  final Widget Function(BuildContext, RecognizerHandler) builder;
-
-  @override
-  _RecognizerManagerState createState() => _RecognizerManagerState();
-}
-
-class _RecognizerManagerState extends State<RecognizerManager> {
-  final _recognizers = <GestureRecognizer>[];
-
-  @override
-  void dispose() {
-    for (final item in _recognizers) {
-      item.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.builder(context, _recognizers.add);
+        recognizerHandler: registerRecognizer,
+        highlight: settings.searchQuery,
+        hideMarkup: settings.hideMarkup,
+      ),
+    );
   }
 }
 

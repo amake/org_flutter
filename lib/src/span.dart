@@ -7,8 +7,6 @@ typedef Transformer = String Function(OrgContentElement, String);
 
 String identityTransformer(OrgContentElement _, String str) => str;
 
-typedef RecognizerHandler = Function(GestureRecognizer);
-
 class SpanBuilder {
   SpanBuilder(
     this.context, {
