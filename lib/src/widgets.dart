@@ -682,6 +682,9 @@ class OrgDrawerWidget extends StatefulWidget {
 class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
     with OpenCloseable<OrgDrawerWidget> {
   @override
+  bool get defaultOpen => false;
+
+  @override
   Widget build(BuildContext context) {
     final defaultStyle = DefaultTextStyle.of(context).style;
     final drawerStyle =

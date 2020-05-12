@@ -5,10 +5,12 @@ mixin OpenCloseable<T extends StatefulWidget> on State<T> {
   ValueNotifier<bool> _openListenable;
   ValueNotifier<bool> get openListenable => _openListenable;
 
+  bool get defaultOpen => true;
+
   @override
   void initState() {
     super.initState();
-    _openListenable = ValueNotifier<bool>(false);
+    _openListenable = ValueNotifier<bool>(defaultOpen);
   }
 
   @override
