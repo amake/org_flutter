@@ -338,21 +338,8 @@ class OrgBlockWidget extends StatefulWidget {
   _OrgBlockWidgetState createState() => _OrgBlockWidgetState();
 }
 
-class _OrgBlockWidgetState extends State<OrgBlockWidget> {
-  ValueNotifier<bool> _openListenable;
-
-  @override
-  void initState() {
-    _openListenable = ValueNotifier<bool>(true);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _openListenable.dispose();
-    super.dispose();
-  }
-
+class _OrgBlockWidgetState extends State<OrgBlockWidget>
+    with OpenCloseable<OrgBlockWidget> {
   @override
   Widget build(BuildContext context) {
     final defaultStyle = DefaultTextStyle.of(context).style;
@@ -731,6 +718,22 @@ class OrgListItemWidget extends StatelessWidget {
   }
 }
 
+mixin OpenCloseable<T extends StatefulWidget> on State<T> {
+  ValueNotifier<bool> _openListenable;
+
+  @override
+  void initState() {
+    super.initState();
+    _openListenable = ValueNotifier<bool>(false);
+  }
+
+  @override
+  void dispose() {
+    _openListenable.dispose();
+    super.dispose();
+  }
+}
+
 class OrgDrawerWidget extends StatefulWidget {
   const OrgDrawerWidget(this.drawer, {Key key})
       : assert(drawer != null),
@@ -741,21 +744,8 @@ class OrgDrawerWidget extends StatefulWidget {
   _OrgDrawerWidgetState createState() => _OrgDrawerWidgetState();
 }
 
-class _OrgDrawerWidgetState extends State<OrgDrawerWidget> {
-  ValueNotifier<bool> _openListenable;
-
-  @override
-  void initState() {
-    _openListenable = ValueNotifier<bool>(false);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _openListenable.dispose();
-    super.dispose();
-  }
-
+class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
+    with OpenCloseable<OrgDrawerWidget> {
   @override
   Widget build(BuildContext context) {
     final defaultStyle = DefaultTextStyle.of(context).style;
