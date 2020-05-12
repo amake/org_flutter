@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/settings.dart';
-import 'package:org_flutter/src/util.dart';
+import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
 enum OrgVisibilityState {

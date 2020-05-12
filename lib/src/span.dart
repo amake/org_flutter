@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/org_flutter.dart';
-import 'package:org_flutter/src/util.dart';
+import 'package:org_flutter/src/util/util.dart';
 
 typedef Transformer = String Function(OrgContentElement, String);
 
