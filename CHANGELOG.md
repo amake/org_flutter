@@ -1,3 +1,9 @@
+## [0.3.0] - 2020-05-15
+
+* Pad root view to safe area
+* Inherit visibility state when narrowing
+* Various refactoring
+
 ## [0.2.1] - 2020-05-09
 
 * Fix color of inline footnote body
