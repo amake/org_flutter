@@ -23,6 +23,8 @@ baz buzz''');
 }
 ```
 
+See the [example](./example/lib/main.dart) for more.
+
 ## Advanced
 
 For more advanced usage, such as specifying link handling, use `OrgController`
