@@ -1,5 +1,5 @@
 name: org_flutter
-description: Org-mode widgets for Flutter
+description: Flutter widgets for displaying Emacs org-mode (https://orgmode.org) content
 version: 0.3.0
 homepage: https://github.com/amake/org_flutter
 
