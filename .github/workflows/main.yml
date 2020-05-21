@@ -22,3 +22,5 @@ jobs:
       run: flutter analyze
     - name: Run tests
       run: flutter test test
+    - name: Build example
+      run: cd example; flutter build apk
