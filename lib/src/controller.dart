@@ -64,9 +64,11 @@ class OrgController extends StatefulWidget {
   const OrgController({
     @required Widget child,
     @required OrgTree root,
+    bool hideMarkup,
   }) : this._(
           child: child,
           root: root,
+          initiallyHideMarkup: hideMarkup,
         );
 
   const OrgController._({
