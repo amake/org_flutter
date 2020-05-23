@@ -1,3 +1,7 @@
+## [0.3.1] - 2020-05-23
+
+* Add `hideMarkup` argument to `OrgController` constructor
+
 ## [0.3.0+1] - 2020-05-21
 
 * Add example
