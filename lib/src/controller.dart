@@ -56,8 +56,8 @@ class OrgController extends StatefulWidget {
           child: child,
           root: root,
           inheritedNodeMap: data.nodeMap,
-          initialSearchQuery: data.searchQuery.value,
-          initiallyHideMarkup: data.hideMarkup.value,
+          searchQuery: data.searchQuery.value,
+          hideMarkup: data.hideMarkup.value,
           key: key,
         );
 
@@ -68,15 +68,15 @@ class OrgController extends StatefulWidget {
   }) : this._(
           child: child,
           root: root,
-          initiallyHideMarkup: hideMarkup,
+          hideMarkup: hideMarkup,
         );
 
   const OrgController._({
     @required this.child,
     @required this.root,
     this.inheritedNodeMap,
-    this.initialSearchQuery,
-    this.initiallyHideMarkup,
+    this.searchQuery,
+    this.hideMarkup,
     Key key,
   })  : assert(child != null),
         assert(root != null),
@@ -85,8 +85,8 @@ class OrgController extends StatefulWidget {
   final OrgTree root;
   final Widget child;
   final Map<OrgTree, OrgNode> inheritedNodeMap;
-  final Pattern initialSearchQuery;
-  final bool initiallyHideMarkup;
+  final Pattern searchQuery;
+  final bool hideMarkup;
 
   static OrgControllerData of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<OrgControllerData>();
@@ -106,10 +106,8 @@ class _OrgControllerState extends State<OrgController> {
     _nodeMap = widget.inheritedNodeMap != null
         ? _copyNodeMap(widget.inheritedNodeMap)
         : _buildNodeMap(widget.root);
-    _searchQuery =
-        ValueNotifier(widget.initialSearchQuery ?? kDefaultSearchQuery);
-    _hideMarkup =
-        ValueNotifier(widget.initiallyHideMarkup ?? kDefaultHideMarkup);
+    _searchQuery = ValueNotifier(widget.searchQuery ?? kDefaultSearchQuery);
+    _hideMarkup = ValueNotifier(widget.hideMarkup ?? kDefaultHideMarkup);
   }
 
   @override
