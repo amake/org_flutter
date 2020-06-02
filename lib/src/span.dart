@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/org_flutter.dart';
-import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/util/util.dart';
 
 typedef Transformer = String Function(OrgContentElement, String);
@@ -232,14 +231,14 @@ class _FancySpanBuilderState extends State<FancySpanBuilder>
     with RecognizerManager<FancySpanBuilder> {
   @override
   Widget build(BuildContext context) {
-    final settings = OrgSettings.of(context);
+    final controller = OrgController.of(context);
     return widget.builder(
       context,
       OrgSpanBuilder(
         context,
         recognizerHandler: registerRecognizer,
-        highlight: settings.searchQuery,
-        hideMarkup: settings.hideMarkup,
+        highlight: controller.searchQuery,
+        hideMarkup: controller.hideMarkup,
       ),
     );
   }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/indent.dart';
-import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/theme.dart';
 import 'package:org_flutter/src/util/util.dart';
@@ -56,9 +55,7 @@ class OrgRootWidget extends StatelessWidget {
       light: lightTheme ?? OrgThemeData.light(),
       dark: darkTheme ?? OrgThemeData.dark(),
       child: OrgEvents(
-        child: IdentityTextScale(
-          child: OrgSettings(child: child),
-        ),
+        child: IdentityTextScale(child: child),
         onLinkTap: onLinkTap,
         onSectionLongPress: onSectionLongPress,
         onLocalSectionLinkTap: onLocalSectionLinkTap,
@@ -346,7 +343,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
     final defaultStyle = DefaultTextStyle.of(context).style;
     final metaStyle =
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
-    final hideMarkup = OrgSettings.of(context).hideMarkup;
+    final hideMarkup = OrgController.of(context).hideMarkup;
     return IndentBuilder(
       widget.block.indent,
       builder: (context, totalIndentSize) {
