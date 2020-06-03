@@ -1,3 +1,8 @@
+## [0.4.1] - 2020-06-04
+
+* Replace `OrgControllerData.initialScrollOffset` with
+  `OrgControllerData.scrollController`
+
 ## [0.4.0] - 2020-06-03
 
 * Changes to `OrgControllerData` members
