@@ -1,3 +1,12 @@
+## [0.4.0] - 2020-06-03
+
+* Changes to `OrgControllerData` members
+  * E.g. `OrgController.of(context).hideMarkup` is now a setter/getter rather
+    than a `ValueNotifier`
+* Add ability to save/restore transient view state (currently section
+  visibilities, scroll position)
+  * See `initialState`, `stateListener` args to `OrgController` constructor
+
 ## [0.3.1] - 2020-05-23
 
 * Add `hideMarkup` argument to `OrgController` constructor
