@@ -152,6 +152,8 @@ class OrgController extends StatefulWidget {
     Key key,
   })  : assert(child != null),
         assert(root != null),
+        assert(!(inheritedNodeMap != null && initialState != null),
+            'Cannot supply both inheritedNodeMap and initialState'),
         super(key: key);
 
   final OrgTree root;
