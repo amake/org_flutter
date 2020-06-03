@@ -8,7 +8,7 @@ import 'package:org_flutter/src/theme.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
-class OrgDocumentWidget extends StatelessWidget {
+class OrgDocumentWidget extends StatefulWidget {
   const OrgDocumentWidget(
     this.document, {
     Key key,
@@ -17,12 +17,34 @@ class OrgDocumentWidget extends StatelessWidget {
   final OrgDocument document;
 
   @override
+  _OrgDocumentWidgetState createState() => _OrgDocumentWidgetState();
+}
+
+class _OrgDocumentWidgetState extends State<OrgDocumentWidget> {
+  ScrollController _scrollController;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final initialOffset = OrgController.of(context).initialScrollOffset ?? 0;
+    _scrollController = ScrollController(initialScrollOffset: initialOffset);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListView(
+      controller: _scrollController,
       padding: OrgTheme.dataOf(context).rootPadding,
       children: <Widget>[
-        if (document.content != null) OrgContentWidget(document.content),
-        ...document.children.map((section) => OrgSectionWidget(section)),
+        if (widget.document.content != null)
+          OrgContentWidget(widget.document.content),
+        ...widget.document.children.map((section) => OrgSectionWidget(section)),
         listBottomSafeArea(),
       ],
     );
