@@ -181,8 +181,7 @@ class _OrgControllerState extends State<OrgController> {
   OrgNodeMap _nodeMap;
   Pattern _searchQuery;
   bool _hideMarkup;
-  double _initialScrollOffset;
-  double _currentScrollOffset;
+  ScrollController _scrollController;
 
   @override
   void initState() {
@@ -195,15 +194,17 @@ class _OrgControllerState extends State<OrgController> {
         : OrgNodeMap.build(root: _root, json: nodeMapJson);
     _searchQuery = widget.searchQuery ?? _kDefaultSearchQuery;
     _hideMarkup = widget.hideMarkup ?? _kDefaultHideMarkup;
-    if (_initialState != null) {
-      _initialScrollOffset =
-          _initialState[_kTransientStateScrollPositionKey] as double;
-    }
+    final initialScrollOffset = _initialState == null
+        ? 0.0
+        : _initialState[_kTransientStateScrollPositionKey] as double;
+    _scrollController =
+        ScrollController(initialScrollOffset: initialScrollOffset);
   }
 
   @override
   void dispose() {
     _nodeMap.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -212,7 +213,7 @@ class _OrgControllerState extends State<OrgController> {
     return NotificationListener<ScrollEndNotification>(
       onNotification: (notification) {
         if (notification.metrics.axis == Axis.vertical) {
-          _updateScrollPosition(notification.metrics.pixels);
+          _notifyState();
         }
         return false;
       },
@@ -226,7 +227,7 @@ class _OrgControllerState extends State<OrgController> {
         setHideMarkup: _setHideMarkup,
         cycleVisibility: _cycleVisibility,
         cycleVisibilityOf: _cycleVisibilityOf,
-        initialScrollOffset: _initialScrollOffset,
+        scrollController: _scrollController,
       ),
     );
   }
@@ -295,15 +296,9 @@ class _OrgControllerState extends State<OrgController> {
     _notifyState();
   }
 
-  void _updateScrollPosition(double value) {
-    // No need to setState because value only sent to stateListener?
-    _currentScrollOffset = value;
-    _notifyState();
-  }
-
   void _notifyState() => widget.stateListener?.call(<String, dynamic>{
         _kTransientStateNodeMapKey: _nodeMap.toJson(),
-        _kTransientStateScrollPositionKey: _currentScrollOffset,
+        _kTransientStateScrollPositionKey: _scrollController.offset,
       });
 
   void _setHideMarkup(bool value) => setState(() => _hideMarkup = value);
@@ -320,7 +315,7 @@ class OrgControllerData extends InheritedWidget {
     @required Function(bool) setHideMarkup,
     @required this.cycleVisibility,
     @required this.cycleVisibilityOf,
-    @required this.initialScrollOffset,
+    @required this.scrollController,
     Key key,
   })  : assert(root != null),
         assert(nodeMap != null),
@@ -342,7 +337,7 @@ class OrgControllerData extends InheritedWidget {
   final Function(bool) _setHideMarkup;
   final void Function() cycleVisibility;
   final void Function(OrgTree) cycleVisibilityOf;
-  final double initialScrollOffset;
+  final ScrollController scrollController;
 
   bool get hideMarkup => _hideMarkup;
 
