@@ -1,3 +1,7 @@
+## [0.4.2] - 2020-06-09
+
+* Fix headline layout with long tags
+
 ## [0.4.1] - 2020-06-04
 
 * Replace `OrgControllerData.initialScrollOffset` with
