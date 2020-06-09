@@ -296,13 +296,35 @@ class OrgHeadlineWidget extends StatelessWidget {
           if (headline.tags.isEmpty) {
             return body;
           } else {
-            return Row(
-              children: [
-                Expanded(child: body),
-                Text.rich(spanBuilder
-                    .highlightedSpan(' :${headline.tags.join(':')}:')),
-                if (!open) const Text('...'),
-              ],
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: body),
+                    const SizedBox(width: 16),
+                    ConstrainedBox(
+                      constraints:
+                          BoxConstraints(maxWidth: constraints.maxWidth / 3),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: Text.rich(
+                              spanBuilder.highlightedSpan(
+                                  ' :${headline.tags.join(':')}:'),
+                              overflow: TextOverflow.fade,
+                              softWrap: false,
+                            ),
+                          ),
+                          if (!open) const Text('...'),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
             );
           }
         },
