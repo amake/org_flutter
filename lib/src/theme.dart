@@ -68,6 +68,90 @@ const _orgFootnoteColorDark = Color(0xff00ffff);
 
 const _orgRootPadding = EdgeInsets.all(8);
 
+// Key meanings documented here:
+// https://github.com/highlightjs/highlight.js/blob/d72f0817aaab8187711fca7c608f5272ea5147f6/docs/css-classes-reference.rst
+const _orgSrcThemeLight = {
+  'root': TextStyle(backgroundColor: Colors.transparent),
+  'subst': TextStyle(color: Color(0xffa0522d)), // font-lock-variable-name-face
+  'comment': TextStyle(color: Color(0xffb22222)), // font-lock-comment-face
+  'keyword': TextStyle(color: Color(0xffa020f0)), // font-lock-keyword-face
+  'attribute': TextStyle(color: Color(0xffa020f0)), // css-property
+  'selector-tag': TextStyle(color: Color(0xff0000ff)), // css-selector
+  'meta-keyword': TextStyle(color: Color(0xff483d8b)), // font-lock-builtin-face
+  'doctag': TextStyle(color: Color(0xff008b8b)), // font-lock-constant-face
+  'name': TextStyle(color: Color(0xff0000ff)), // nxml-element-local-name
+  'type': TextStyle(color: Color(0xff228b22)), // font-lock-type-face
+  'string': TextStyle(color: Color(0xff8b2252)), // font-lock-string-face
+  'number': TextStyle(color: Color(0xff008b8b)), // font-lock-constant-face
+  'selector-id': TextStyle(color: Color(0xff0000ff)), // css-selector
+  'selector-class': TextStyle(color: Color(0xff0000ff)), // css-selector
+  'quote': TextStyle(color: Color(0xff880000)), // markdown-blockquote-face
+  'template-tag':
+      TextStyle(color: Color(0xff0000ff)), // font-lock-function-name-face
+  'deletion': TextStyle(backgroundColor: Color(0xffffeeee)), // diff-removed
+  'title': TextStyle(color: Color(0xff0000ff)), // font-lock-function-name-face
+  'section': TextStyle(color: Color(0xff0000ff)), // markdown-header-face
+  'regexp': TextStyle(color: Color(0xff8b2252)), // font-lock-string-face
+  'symbol': TextStyle(color: Color(0xff008b8b)), // font-lock-constant-face
+  'variable':
+      TextStyle(color: Color(0xffa0522d)), // font-name-variable-name-face
+  'template-variable':
+      TextStyle(color: Color(0xffa0522d)), // font-name-variable-name-face
+  'link': TextStyle(color: Color(0xff8b2252)), // markdown-url-face
+  'selector-attr': TextStyle(color: Color(0xff0000ff)), // css-selector
+  'selector-pseudo': TextStyle(color: Color(0xff0000ff)), // css-selector
+  'literal': TextStyle(color: Color(0xff008b8b)), // font-lock-constant-face
+  'built_in': TextStyle(color: Color(0xff483d8b)), // font-lock-builtin-face
+  'bullet': TextStyle(color: Color(0xff7f7f7f)), // markdown-list-face
+  'code': TextStyle(color: Color(0xff008b8b)), // markdown-pre-face
+  'addition': TextStyle(backgroundColor: Color(0xffeeffee)), // diff-added
+  'meta': TextStyle(color: Color(0xff008b8b)), // c-annotation-face
+  'meta-string': TextStyle(color: Color(0xff8b2252)), // font-lock-string-face
+  'emphasis': TextStyle(fontStyle: FontStyle.italic),
+  'strong': TextStyle(fontWeight: FontWeight.bold),
+};
+
+const _orgSrcThemeDark = {
+  'root': TextStyle(backgroundColor: Colors.transparent),
+  'subst': TextStyle(color: Color(0xffeedd82)), // font-lock-variable-name-face
+  'comment': TextStyle(color: Color(0xffff7f24)), // font-lock-comment-face
+  'keyword': TextStyle(color: Color(0xff00ffff)), // font-lock-keyword-face
+  'attribute': TextStyle(color: Color(0xff00ffff)), // css-property
+  'selector-tag': TextStyle(color: Color(0xff87cefa)), // css-selector
+  'meta-keyword': TextStyle(color: Color(0xffb0c4de)), // font-lock-builtin-face
+  'doctag': TextStyle(color: Color(0xff7fffd4)), // font-lock-constant-face
+  'name': TextStyle(color: Color(0xff87cefa)), // nxml-element-local-name
+  'type': TextStyle(color: Color(0xff98fb98)), // font-lock-type-face
+  'string': TextStyle(color: Color(0xffffa07a)), // font-lock-string-face
+  'number': TextStyle(color: Color(0xff7fffd4)), // font-lock-constant-face
+  'selector-id': TextStyle(color: Color(0xff87cefa)), // css-selector
+  'selector-class': TextStyle(color: Color(0xff87cefa)), // css-selector
+  'quote': TextStyle(color: Color(0xffffa07a)), // markdown-blockquote-face
+  'template-tag':
+      TextStyle(color: Color(0xff87cefa)), // font-lock-function-name-face
+  'deletion': TextStyle(backgroundColor: Color(0xff553333)), // diff-removed
+  'title': TextStyle(color: Color(0xff87cefa)), // font-lock-function-name-face
+  'section': TextStyle(color: Color(0xff87cefa)), // markdown-header-face
+  'regexp': TextStyle(color: Color(0xffffa07a)), // font-lock-string-face
+  'symbol': TextStyle(color: Color(0xff7fffd4)), // font-lock-constant-face
+  'variable':
+      TextStyle(color: Color(0xffeedd82)), // font-name-variable-name-face
+  'template-variable':
+      TextStyle(color: Color(0xffeedd82)), // font-name-variable-name-face
+  'link': TextStyle(color: Color(0xffffa07a)), // markdown-url-face
+  'selector-attr': TextStyle(color: Color(0xff87cefa)), // css-selector
+  'selector-pseudo': TextStyle(color: Color(0xff87cefa)), // css-selector
+  'literal': TextStyle(color: Color(0xff7fffd4)), // font-lock-constant-face
+  'built_in': TextStyle(color: Color(0xffb0c4de)), // font-lock-builtin-face
+  'bullet': TextStyle(color: Color(0xffb3b3b3)), // markdown-list-face
+  'code': TextStyle(color: Color(0xff7fffd4)), // markdown-pre-face
+  'addition': TextStyle(backgroundColor: Color(0xff335533)), // diff-added
+  'meta': TextStyle(color: Color(0xff7fffd4)), // c-annotation-face
+  'meta-string': TextStyle(color: Color(0xffffa07a)), // font-lock-string-face
+  'emphasis': TextStyle(fontStyle: FontStyle.italic),
+  'strong': TextStyle(fontWeight: FontWeight.bold),
+};
+
 class OrgThemeData {
   OrgThemeData.light()
       : this(
@@ -85,6 +169,7 @@ class OrgThemeData {
           highlightColor: _orgHighlightColorLight,
           footnoteColor: _orgFootnoteColorLight,
           levelColors: _orgLevelColorsLight,
+          srcTheme: _orgSrcThemeLight,
           rootPadding: _orgRootPadding,
         );
 
@@ -104,6 +189,7 @@ class OrgThemeData {
           highlightColor: _orgHighlightColorDark,
           footnoteColor: _orgFootnoteColorDark,
           levelColors: _orgLevelColorsDark,
+          srcTheme: _orgSrcThemeDark,
           rootPadding: _orgRootPadding,
         );
 
@@ -123,8 +209,10 @@ class OrgThemeData {
     this.footnoteColor,
     this.rootPadding,
     Iterable<Color> levelColors,
-  }) : levelColors =
-            levelColors == null ? null : List.unmodifiable(levelColors);
+    Map<String, TextStyle> srcTheme,
+  })  : levelColors =
+            levelColors == null ? null : List.unmodifiable(levelColors),
+        srcTheme = srcTheme == null ? null : Map.unmodifiable(srcTheme);
 
   final Color todoColor;
   final Color doneColor;
@@ -140,6 +228,7 @@ class OrgThemeData {
   final Color highlightColor;
   final Color footnoteColor;
   final List<Color> levelColors;
+  final Map<String, TextStyle> srcTheme;
 
   final EdgeInsets rootPadding;
 
@@ -178,6 +267,7 @@ class OrgThemeData {
     Color highlightColor,
     Color footnoteColor,
     Iterable<Color> levelColors,
+    Map<String, TextStyle> srcTheme,
     EdgeInsets rootPadding,
   ) =>
       OrgThemeData(
@@ -195,6 +285,7 @@ class OrgThemeData {
         highlightColor: highlightColor ?? this.highlightColor,
         footnoteColor: footnoteColor ?? this.footnoteColor,
         levelColors: levelColors ?? this.levelColors,
+        srcTheme: srcTheme ?? this.srcTheme,
         rootPadding: rootPadding ?? this.rootPadding,
       );
 
@@ -218,6 +309,7 @@ class OrgThemeData {
         highlightColor == other.highlightColor &&
         footnoteColor == other.footnoteColor &&
         listEquals(levelColors, other.levelColors) &&
+        mapEquals(srcTheme, other.srcTheme) &&
         rootPadding == other.rootPadding;
   }
 
@@ -237,6 +329,7 @@ class OrgThemeData {
         highlightColor,
         footnoteColor,
         levelColors,
+        srcTheme,
         rootPadding,
       );
 
@@ -262,6 +355,8 @@ class OrgThemeData {
         highlightColor: Color.lerp(null, b.highlightColor, t),
         footnoteColor: Color.lerp(null, b.footnoteColor, t),
         levelColors: b.levelColors?.map((c) => Color.lerp(null, c, t)),
+        srcTheme:
+            b.srcTheme?.map((k, v) => MapEntry(k, TextStyle.lerp(null, v, t))),
         rootPadding: EdgeInsets.lerp(null, b.rootPadding, t),
       );
     }
@@ -281,6 +376,8 @@ class OrgThemeData {
         highlightColor: Color.lerp(a.highlightColor, null, t),
         footnoteColor: Color.lerp(a.footnoteColor, null, t),
         levelColors: a.levelColors?.map((c) => Color.lerp(c, null, t)),
+        srcTheme:
+            a.srcTheme?.map((k, v) => MapEntry(k, TextStyle.lerp(v, null, t))),
         rootPadding: EdgeInsets.lerp(a.rootPadding, null, t),
       );
     }
@@ -299,6 +396,7 @@ class OrgThemeData {
       highlightColor: Color.lerp(a.highlightColor, b.highlightColor, t),
       footnoteColor: Color.lerp(a.footnoteColor, b.footnoteColor, t),
       levelColors: _lerpColorLists(a.levelColors, b.levelColors, t),
+      srcTheme: _lerpSrcThemes(a.srcTheme, b.srcTheme, t),
       rootPadding: EdgeInsets.lerp(a.rootPadding, b.rootPadding, t),
     );
   }
@@ -312,5 +410,22 @@ class OrgThemeData {
       return t < 0.5 ? a : b;
     }
     return zipMap<Color, Color, Color>(a, b, (ac, bc) => Color.lerp(ac, bc, t));
+  }
+
+  static Map<String, TextStyle> _lerpSrcThemes(
+    Map<String, TextStyle> a,
+    Map<String, TextStyle> b,
+    double t,
+  ) {
+    if (a == null ||
+        b == null ||
+        a.length != b.length ||
+        !listEquals(
+          a.keys.toList(growable: false),
+          b.keys.toList(growable: false),
+        )) {
+      return t < 0.5 ? a : b;
+    }
+    return a.map((k, ae) => MapEntry(k, TextStyle.lerp(ae, b[k], t)));
   }
 }

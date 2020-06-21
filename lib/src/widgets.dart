@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/controller.dart';
+import 'package:org_flutter/src/highlight.dart';
 import 'package:org_flutter/src/indent.dart';
 import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/theme.dart';
@@ -401,8 +402,11 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              _body((_, string) =>
-                  removeTrailingLineBreak(deindent(string, totalIndentSize))),
+              _body(
+                context,
+                (_, string) =>
+                    removeTrailingLineBreak(deindent(string, totalIndentSize)),
+              ),
               if (!hideMarkup)
                 Text(
                   deindent(widget.block.footer, totalIndentSize),
@@ -415,13 +419,31 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
     );
   }
 
-  Widget _body(Transformer transformer) {
-    final body = OrgContentWidget(
-      widget.block.body,
-      transformer: transformer,
-    );
+  Widget _body(BuildContext context, Transformer transformer) {
+    final block = widget.block;
+    Widget body;
+    if (block is OrgSrcBlock) {
+      final code = widget.block.body as OrgPlainText;
+      if (supportedSrcLanguage(block.language)) {
+        body = buildSrcHighlight(
+          context,
+          code: transformer(code, code.content),
+          language: block.language,
+        );
+      } else {
+        body = OrgContentWidget(
+          OrgMarkup.just(code.content, OrgStyle.code),
+          transformer: transformer,
+        );
+      }
+    } else {
+      body = OrgContentWidget(
+        block.body,
+        transformer: transformer,
+      );
+    }
     // TODO(aaron): Better distinguish "greater block" from regular block
-    return widget.block.body is OrgContent
+    return block.body is OrgContent
         ? body
         : SingleChildScrollView(
             child: body,
