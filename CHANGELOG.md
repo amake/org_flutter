@@ -1,3 +1,7 @@
+## [0.5.0] - 2020-06-22
+
+* Highlight syntax in source blocks
+
 ## [0.4.2] - 2020-06-09
 
 * Fix headline layout with long tags
