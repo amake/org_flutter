@@ -1,3 +1,7 @@
+## [0.5.1] - 2020-06-22
+
+* Fix error handling source blocks with no language specification
+
 ## [0.5.0] - 2020-06-22
 
 * Highlight syntax in source blocks
