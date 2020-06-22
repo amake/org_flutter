@@ -5,7 +5,7 @@ import 'package:org_flutter/src/widgets.dart';
 
 bool supportedSrcLanguage(String language) =>
     allLanguages.containsKey(language) ||
-    allLanguages.containsKey(language.toLowerCase());
+    allLanguages.containsKey(language?.toLowerCase());
 
 Widget buildSrcHighlight(
   BuildContext context, {
