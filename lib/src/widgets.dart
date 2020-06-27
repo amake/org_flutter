@@ -12,16 +12,20 @@ import 'package:org_parser/org_parser.dart';
 class OrgDocumentWidget extends StatelessWidget {
   const OrgDocumentWidget(
     this.document, {
+    this.shrinkWrap = false,
     Key key,
-  }) : super(key: key);
+  })  : assert(shrinkWrap != null),
+        super(key: key);
 
   final OrgDocument document;
+  final bool shrinkWrap;
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       controller: OrgController.of(context).scrollController,
       padding: OrgTheme.dataOf(context).rootPadding,
+      shrinkWrap: shrinkWrap,
       children: <Widget>[
         if (document.content != null) OrgContentWidget(document.content),
         ...document.children.map((section) => OrgSectionWidget(section)),
@@ -149,12 +153,15 @@ class OrgSectionWidget extends StatelessWidget {
   const OrgSectionWidget(
     this.section, {
     this.root = false,
+    this.shrinkWrap = false,
     Key key,
   })  : assert(section != null),
         assert(root != null),
+        assert(shrinkWrap != null),
         super(key: key);
   final OrgSection section;
   final bool root;
+  final bool shrinkWrap;
 
   // Whether the section is open "enough" to not show the trailing ellipsis
   bool _openEnough(OrgVisibilityState visibility) {
@@ -180,8 +187,9 @@ class OrgSectionWidget extends StatelessWidget {
     return ValueListenableBuilder<OrgVisibilityState>(
       valueListenable: visibilityListenable,
       builder: (context, visibility, child) => ListView(
-        shrinkWrap: !root,
-        physics: !root ? const NeverScrollableScrollPhysics() : null,
+        shrinkWrap: shrinkWrap || !root,
+        physics:
+            shrinkWrap || !root ? const NeverScrollableScrollPhysics() : null,
         // It's very important that the padding not be null here; otherwise
         // sections inside a root document will get some extraneous padding (see
         // discussion of padding behavior on ListView)
