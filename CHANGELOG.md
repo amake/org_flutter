@@ -1,3 +1,7 @@
+## [0.5.2] - 2020-06-28
+
+* Add `shrinkWrap` option to `OrgDocumentWidget` and `OrgSectionWidget`
+
 ## [0.5.1] - 2020-06-22
 
 * Fix error handling source blocks with no language specification
