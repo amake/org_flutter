@@ -1,3 +1,7 @@
+## [0.6.0] - 2020-07-15
+
+* Support LaTeX inline and block fragments
+
 ## [0.5.2] - 2020-06-28
 
 * Add `shrinkWrap` option to `OrgDocumentWidget` and `OrgSectionWidget`
