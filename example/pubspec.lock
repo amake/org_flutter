@@ -60,6 +60,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_tex_js:
+    dependency: transitive
+    description:
+      name: flutter_tex_js
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   highlight:
     dependency: transitive
     description:
@@ -94,7 +101,7 @@ packages:
       name: org_parser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.0"
+    version: "0.3.0"
   path:
     dependency: transitive
     description:
@@ -179,3 +186,4 @@ packages:
     version: "2.0.8"
 sdks:
   dart: ">=2.7.0 <3.0.0"
+  flutter: ">=1.10.0"

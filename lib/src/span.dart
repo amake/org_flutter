@@ -143,6 +143,13 @@ class OrgSpanBuilder {
           : WidgetSpan(child: OrgDrawerWidget(element));
     } else if (element is OrgProperty) {
       return WidgetSpan(child: OrgPropertyWidget(element));
+    } else if (element is OrgLatexBlock) {
+      return WidgetSpan(child: OrgLatexBlockWidget(element));
+    } else if (element is OrgLatexInline) {
+      return WidgetSpan(
+        child: OrgLatexInlineWidget(element),
+        alignment: PlaceholderAlignment.middle,
+      );
     } else if (element is OrgContent) {
       return TextSpan(
           children: element.children

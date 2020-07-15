@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_tex_js/flutter_tex_js.dart';
 import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/highlight.dart';
 import 'package:org_flutter/src/indent.dart';
@@ -838,5 +839,73 @@ class OrgPropertyWidget extends StatelessWidget {
     if (trailing.isNotEmpty) {
       yield builder.highlightedSpan(trailing);
     }
+  }
+}
+
+class OrgLatexBlockWidget extends StatelessWidget {
+  const OrgLatexBlockWidget(this.block, {Key key})
+      : assert(block != null),
+        super(key: key);
+
+  final OrgLatexBlock block;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints.tightFor(width: double.infinity),
+          child: SingleChildScrollView(
+            child: TexImage(
+              _content,
+              displayMode: true,
+              error: (context, error) {
+                debugPrint(error.toString());
+                return Text([
+                  block.leading,
+                  block.begin,
+                  block.content,
+                  block.end
+                ].join(''));
+              },
+            ),
+            scrollDirection: Axis.horizontal,
+          ),
+        ),
+        Text(removeTrailingLineBreak(block.trailing)),
+      ],
+    );
+  }
+
+  String get _content {
+    if (flutterTexJsSupportedEnvironments.contains(block.environment)) {
+      return '${block.begin}${block.content}${block.end}';
+    } else {
+      return block.content;
+    }
+  }
+}
+
+class OrgLatexInlineWidget extends StatelessWidget {
+  const OrgLatexInlineWidget(this.latex, {Key key})
+      : assert(latex != null),
+        super(key: key);
+
+  final OrgLatexInline latex;
+
+  @override
+  Widget build(BuildContext context) {
+    return TexImage(
+      latex.content,
+      displayMode: false,
+      error: (context, error) {
+        debugPrint(error.toString());
+        return Text([
+          latex.leadingDecoration,
+          latex.content,
+          latex.trailingDecoration,
+        ].join(''));
+      },
+    );
   }
 }

@@ -9,11 +9,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  org_parser: ^0.2.0
+  org_parser: ^0.3.0
   # org_parser:
   #   path: ../org_parser
   flutter_highlight: ^0.6.0
   highlight: ^0.6.0
+  flutter_tex_js: ^0.1.0
+  # flutter_tex_js:
+  #   path: ../flutter_tex_js
 
 dev_dependencies:
   flutter_test:
