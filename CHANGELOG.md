@@ -1,3 +1,7 @@
+## [0.6.1] - 2020-07-16
+
+* Fix extraneous line break following LaTeX block
+
 ## [0.6.0] - 2020-07-15
 
 * Support LaTeX inline and block fragments
