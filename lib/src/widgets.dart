@@ -872,7 +872,9 @@ class OrgLatexBlockWidget extends StatelessWidget {
             scrollDirection: Axis.horizontal,
           ),
         ),
-        Text(removeTrailingLineBreak(block.trailing)),
+        // Remove two linebreaks because we introduce two by splitting the
+        // text into two widgets in this Column
+        Text(removeTrailingLineBreak(removeTrailingLineBreak(block.trailing))),
       ],
     );
   }
