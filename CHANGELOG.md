@@ -1,3 +1,7 @@
+## [0.6.2] - 2020-07-16
+
+* Update flutter_tex_js to v0.1.1 (LaTeX fragments now follow ambient font size)
+
 ## [0.6.1] - 2020-07-16
 
 * Fix extraneous line break following LaTeX block
