@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:org_flutter/src/entity.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
@@ -152,6 +154,7 @@ class OrgController extends StatefulWidget {
     this.inheritedNodeMap,
     this.searchQuery,
     this.hideMarkup,
+    this.entityReplacements = orgDefaultEntityReplacements,
     Key key,
   })  : assert(child != null),
         assert(root != null),
@@ -166,6 +169,7 @@ class OrgController extends StatefulWidget {
   final OrgNodeMap inheritedNodeMap;
   final Pattern searchQuery;
   final bool hideMarkup;
+  final Map<String, String> entityReplacements;
 
   static OrgControllerData of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<OrgControllerData>();
@@ -181,6 +185,7 @@ class _OrgControllerState extends State<OrgController> {
   OrgNodeMap _nodeMap;
   Pattern _searchQuery;
   bool _hideMarkup;
+  Map<String, String> get _entityReplacements => widget.entityReplacements;
   ScrollController _scrollController;
 
   @override
@@ -224,6 +229,7 @@ class _OrgControllerState extends State<OrgController> {
         searchQuery: _searchQuery,
         search: search,
         hideMarkup: _hideMarkup,
+        entityReplacements: _entityReplacements,
         setHideMarkup: _setHideMarkup,
         cycleVisibility: _cycleVisibility,
         cycleVisibilityOf: _cycleVisibilityOf,
@@ -312,6 +318,7 @@ class OrgControllerData extends InheritedWidget {
     @required this.searchQuery,
     @required this.search,
     @required bool hideMarkup,
+    @required Map<String, String> entityReplacements,
     @required Function(bool) setHideMarkup,
     @required this.cycleVisibility,
     @required this.cycleVisibilityOf,
@@ -322,10 +329,12 @@ class OrgControllerData extends InheritedWidget {
         assert(searchQuery != null),
         assert(search != null),
         assert(hideMarkup != null),
+        assert(entityReplacements != null),
         assert(cycleVisibility != null),
         assert(cycleVisibilityOf != null),
         _nodeMap = nodeMap,
         _hideMarkup = hideMarkup,
+        _entityReplacements = entityReplacements,
         _setHideMarkup = setHideMarkup,
         super(key: key, child: child);
 
@@ -334,6 +343,7 @@ class OrgControllerData extends InheritedWidget {
   final Function(Pattern) search;
   final Pattern searchQuery;
   final bool _hideMarkup;
+  final Map<String, String> _entityReplacements;
   final Function(bool) _setHideMarkup;
   final void Function() cycleVisibility;
   final void Function(OrgTree) cycleVisibilityOf;
@@ -347,12 +357,15 @@ class OrgControllerData extends InheritedWidget {
 
   OrgSection sectionWithTitle(String title) => _nodeMap.sectionWithTitle(title);
 
+  String prettifyEntity(String name) => _entityReplacements[name];
+
   @override
   bool updateShouldNotify(OrgControllerData oldWidget) =>
       root != oldWidget.root ||
       search != oldWidget.search ||
       searchQuery != oldWidget.searchQuery ||
-      hideMarkup != oldWidget.hideMarkup;
+      hideMarkup != oldWidget.hideMarkup ||
+      !mapEquals(_entityReplacements, oldWidget._entityReplacements);
 }
 
 OrgVisibilityState _cycleGlobal(OrgVisibilityState state) {

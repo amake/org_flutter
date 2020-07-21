@@ -47,6 +47,10 @@ class OrgSpanBuilder {
           element.style,
         ),
       );
+    } else if (element is OrgEntity) {
+      var text = OrgController.of(context).prettifyEntity(element.name);
+      text ??= '${element.leading}${element.name}${element.trailing}';
+      return highlightedSpan(transformer(element, text), style: style);
     } else if (element is OrgMacroReference) {
       return highlightedSpan(transformer(element, element.content),
           style: style.copyWith(color: OrgTheme.dataOf(context).macroColor));

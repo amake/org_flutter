@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  org_parser: ^0.3.0
+  org_parser: ^0.4.0
   # org_parser:
   #   path: ../org_parser
   flutter_highlight: ^0.6.0
