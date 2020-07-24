@@ -243,7 +243,7 @@ class OrgContentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FancySpanBuilder(
-      builder: (context, spanBuilder) => Text.rich(
+      builder: (context, spanBuilder) => maybeSelectableText(
         spanBuilder.build(
           content,
           transformer: transformer ?? identityTransformer,
@@ -273,6 +273,8 @@ class OrgHeadlineWidget extends StatelessWidget {
       ),
       child: FancySpanBuilder(
         builder: (context, spanBuilder) {
+          // This should not be SelectableText because that appears to prevent
+          // tap detection for opening/narrowing purposes
           final body = Text.rich(
             TextSpan(
               children: [
@@ -321,6 +323,8 @@ class OrgHeadlineWidget extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Flexible(
+                            // This can't be SelectableText because overflow,
+                            // softWrap are not supported by same
                             child: Text.rich(
                               spanBuilder.highlightedSpan(
                                   ' :${headline.tags.join(':')}:'),
@@ -476,7 +480,7 @@ class OrgMetaWidget extends StatelessWidget {
         meta.indent,
         builder: (context, _) {
           return FancySpanBuilder(
-            builder: (context, spanBuilder) => Text.rich(
+            builder: (context, spanBuilder) => maybeSelectableText(
               TextSpan(
                 children: _spans(context, spanBuilder).toList(growable: false),
               ),
@@ -593,7 +597,7 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             physics: const AlwaysScrollableScrollPhysics(),
             child: FancySpanBuilder(
-              builder: (context, spanBuilder) => Text.rich(
+              builder: (context, spanBuilder) => maybeSelectableText(
                 spanBuilder.highlightedSpan(
                   deindent(fixedWidthArea.content, totalIndentSize) +
                       removeTrailingLineBreak(fixedWidthArea.trailing),
@@ -670,7 +674,7 @@ class OrgListItemWidget extends StatelessWidget {
     return IndentBuilder(
       '${item.indent}${item.bullet}',
       builder: (context, _) => FancySpanBuilder(
-        builder: (context, spanBuilder) => Text.rich(
+        builder: (context, spanBuilder) => maybeSelectableText(
           TextSpan(
             children: _spans(context, spanBuilder).toList(growable: false),
           ),
@@ -816,7 +820,7 @@ class OrgPropertyWidget extends StatelessWidget {
       property.indent,
       builder: (context, _) {
         return FancySpanBuilder(
-          builder: (context, spanBuilder) => Text.rich(
+          builder: (context, spanBuilder) => maybeSelectableText(
             TextSpan(
               children: _spans(context, spanBuilder).toList(growable: false),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 mixin OpenCloseable<T extends StatefulWidget> on State<T> {
@@ -43,3 +44,24 @@ Widget listBottomSafeArea() => const SafeArea(
       left: false,
       right: false,
     );
+
+Widget maybeSelectableText(
+  InlineSpan span, {
+  TextAlign textAlign,
+}) {
+  if (_isOnlyTextSpans(span)) {
+    return SelectableText.rich(
+      span as TextSpan,
+      textAlign: textAlign,
+    );
+  } else {
+    return Text.rich(
+      span,
+      textAlign: textAlign,
+    );
+  }
+}
+
+bool _isOnlyTextSpans(InlineSpan span) =>
+    span is TextSpan &&
+    (span.children == null || span.children.every(_isOnlyTextSpans));
