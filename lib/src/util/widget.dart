@@ -1,5 +1,5 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 mixin OpenCloseable<T extends StatefulWidget> on State<T> {
   late ValueNotifier<bool> _openListenable;
@@ -48,3 +48,24 @@ const _kReducedOpacity = 0.6;
 
 Widget reduceOpacity(Widget child, {bool enabled = true}) =>
     enabled ? Opacity(opacity: _kReducedOpacity, child: child) : child;
+
+Widget maybeSelectableText(
+  InlineSpan span, {
+  TextAlign? textAlign,
+}) {
+  if (_isOnlyTextSpans(span)) {
+    return SelectableText.rich(
+      span as TextSpan,
+      textAlign: textAlign,
+    );
+  } else {
+    return Text.rich(
+      span,
+      textAlign: textAlign,
+    );
+  }
+}
+
+bool _isOnlyTextSpans(InlineSpan span) =>
+    span is TextSpan &&
+    (span.children == null || span.children!.every(_isOnlyTextSpans));
