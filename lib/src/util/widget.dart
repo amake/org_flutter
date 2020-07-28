@@ -53,6 +53,7 @@ Widget maybeSelectableText(
     return SelectableText.rich(
       span as TextSpan,
       textAlign: textAlign,
+      scrollPhysics: const NeverScrollableScrollPhysics(),
     );
   } else {
     return Text.rich(
