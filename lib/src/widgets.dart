@@ -624,9 +624,12 @@ class OrgTableWidget extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: j < row.cellCount
-                    ? OrgContentWidget(
-                        row.cells[j],
-                        textAlign: numerical[j] ? TextAlign.right : null,
+                    ? DefaultTextStyle.merge(
+                        maxLines: 1,
+                        child: OrgContentWidget(
+                          row.cells[j],
+                          textAlign: numerical[j] ? TextAlign.right : null,
+                        ),
                       )
                     : const SizedBox.shrink(),
               ),
