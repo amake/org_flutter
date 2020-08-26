@@ -385,14 +385,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
           builder: (context, open, child) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              if (!hideMarkup)
-                InkWell(
-                  child: Text(
-                    widget.block.header.trimRight() + (open ? '' : '...'),
-                    style: metaStyle,
-                  ),
-                  onTap: () => openListenable.value = !openListenable.value,
-                ),
+              _header(context, metaStyle, open: open, hideMarkup: hideMarkup),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 100),
                 transitionBuilder: (child, animation) =>
@@ -416,15 +409,50 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
                 (_, string) =>
                     removeTrailingLineBreak(deindent(string, totalIndentSize)),
               ),
-              if (!hideMarkup)
+              reduceOpacity(
                 Text(
                   deindent(widget.block.footer, totalIndentSize),
                   style: metaStyle,
                 ),
+                enabled: hideMarkup,
+              ),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget _header(
+    BuildContext context,
+    TextStyle metaStyle, {
+    @required bool hideMarkup,
+    @required bool open,
+  }) {
+    var text = widget.block.header.trimRight();
+    if (!hideMarkup && !open) {
+      text += '...';
+    }
+    Widget header = Text(
+      text,
+      style: metaStyle,
+      softWrap: !hideMarkup,
+      overflow: hideMarkup ? TextOverflow.fade : null,
+    );
+    if (hideMarkup && !open) {
+      header = Row(
+        children: [
+          Flexible(
+            child: header,
+          ),
+          if (hideMarkup && !open) Text('...', style: metaStyle)
+        ],
+      );
+    }
+    header = reduceOpacity(header, enabled: hideMarkup);
+    return InkWell(
+      child: header,
+      onTap: () => openListenable.value = !openListenable.value,
     );
   }
 
