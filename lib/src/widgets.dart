@@ -498,7 +498,8 @@ class OrgMetaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTextStyle.merge(
+    final hideMarkup = OrgController.of(context).hideMarkup;
+    final body = DefaultTextStyle.merge(
       style: TextStyle(color: OrgTheme.dataOf(context).metaColor),
       child: IndentBuilder(
         meta.indent,
@@ -513,6 +514,7 @@ class OrgMetaWidget extends StatelessWidget {
         },
       ),
     );
+    return reduceOpacity(body, enabled: hideMarkup);
   }
 
   Iterable<InlineSpan> _spans(
@@ -770,7 +772,7 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
     final defaultStyle = DefaultTextStyle.of(context).style;
     final drawerStyle =
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).drawerColor);
-    return IndentBuilder(
+    final body = IndentBuilder(
       widget.drawer.indent,
       builder: (context, totalIndentSize) {
         return ValueListenableBuilder<bool>(
@@ -814,6 +816,7 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
         );
       },
     );
+    return reduceOpacity(body, enabled: OrgController.of(context).hideMarkup);
   }
 
   Widget _body(Transformer transformer) {
