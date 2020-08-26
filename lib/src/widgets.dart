@@ -509,6 +509,8 @@ class OrgMetaWidget extends StatelessWidget {
               TextSpan(
                 children: _spans(context, spanBuilder).toList(growable: false),
               ),
+              softWrap: !hideMarkup,
+              overflow: hideMarkup ? TextOverflow.fade : null,
             ),
           );
         },
