@@ -43,3 +43,8 @@ Widget listBottomSafeArea() => const SafeArea(
       left: false,
       right: false,
     );
+
+const _kReducedOpacity = 0.6;
+
+Widget reduceOpacity(Widget child, {bool enabled = true}) =>
+    enabled ? Opacity(opacity: _kReducedOpacity, child: child) : child;

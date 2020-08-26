@@ -127,10 +127,9 @@ class OrgSpanBuilder {
             .toList(growable: false),
       );
     } else if (element is OrgMeta) {
-      // TODO(aaron): Decide whether to hide this when `hideMarkup` is true
-      return hideMarkup
-          ? const TextSpan()
-          : WidgetSpan(child: OrgMetaWidget(element));
+      return WidgetSpan(
+        child: reduceOpacity(OrgMetaWidget(element), enabled: hideMarkup),
+      );
     } else if (element is OrgBlock) {
       return WidgetSpan(child: OrgBlockWidget(element));
     } else if (element is OrgTable) {
@@ -142,9 +141,9 @@ class OrgSpanBuilder {
     } else if (element is OrgList) {
       return WidgetSpan(child: OrgListWidget(element));
     } else if (element is OrgDrawer) {
-      return hideMarkup
-          ? const TextSpan()
-          : WidgetSpan(child: OrgDrawerWidget(element));
+      return WidgetSpan(
+        child: reduceOpacity(OrgDrawerWidget(element), enabled: hideMarkup),
+      );
     } else if (element is OrgProperty) {
       return WidgetSpan(child: OrgPropertyWidget(element));
     } else if (element is OrgLatexBlock) {
