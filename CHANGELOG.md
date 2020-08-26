@@ -1,3 +1,9 @@
+## [0.8.0] - 2020-08-26
+
+* Change effects of `hideMarkup` option:
+  * Drawers and meta lines no longer hidden, but rather faded (reduced opacity)
+  * Block headers, meta lines truncated to fit document width with no wrapping
+
 ## [0.7.0] - 2020-07-22
 
 * Prettify org entities
