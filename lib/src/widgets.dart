@@ -90,7 +90,7 @@ class OrgTheme extends InheritedWidget {
 
   static OrgThemeData dataOf(BuildContext context) {
     final theme = of(context);
-    final brightness = MediaQuery.of(context).platformBrightness;
+    final brightness = Theme.of(context).brightness;
     switch (brightness) {
       case Brightness.dark:
         return theme.dark;
