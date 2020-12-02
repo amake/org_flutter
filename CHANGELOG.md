@@ -1,3 +1,7 @@
+## [0.8.1] - 2020-12-02
+
+* Take theme brightness from current `ThemeData`, not `MediaQuery`
+
 ## [0.8.0] - 2020-08-26
 
 * Change effects of `hideMarkup` option:
