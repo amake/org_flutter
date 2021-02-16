@@ -136,6 +136,8 @@ class OrgSpanBuilder {
       return WidgetSpan(child: OrgFixedWidthAreaWidget(element));
     } else if (element is OrgParagraph) {
       return WidgetSpan(child: OrgParagraphWidget(element));
+    } else if (element is OrgPlanningLine) {
+      return WidgetSpan(child: OrgPlanningLineWidget(element));
     } else if (element is OrgList) {
       return WidgetSpan(child: OrgListWidget(element));
     } else if (element is OrgDrawer) {

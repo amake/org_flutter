@@ -639,6 +639,39 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
   }
 }
 
+class OrgPlanningLineWidget extends StatelessWidget {
+  const OrgPlanningLineWidget(this.planningLine, {Key key})
+      : assert(planningLine != null),
+        super(key: key);
+  final OrgPlanningLine planningLine;
+
+  @override
+  Widget build(BuildContext context) {
+    return IndentBuilder(
+      planningLine.indent,
+      builder: (context, totalIndentSize) {
+        return FancySpanBuilder(
+          builder: (context, spanBuilder) => Text.rich(
+            TextSpan(
+              children: _spans(context, spanBuilder).toList(growable: false),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Iterable<InlineSpan> _spans(
+      BuildContext context, OrgSpanBuilder builder) sync* {
+    yield builder.build(planningLine.keyword);
+    yield builder.build(planningLine.body);
+    final trailing = removeTrailingLineBreak(planningLine.trailing);
+    if (trailing.isNotEmpty) {
+      yield builder.highlightedSpan(trailing);
+    }
+  }
+}
+
 class OrgParagraphWidget extends StatelessWidget {
   const OrgParagraphWidget(this.paragraph, {Key key})
       : assert(paragraph != null),
