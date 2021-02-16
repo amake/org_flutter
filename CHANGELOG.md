@@ -1,3 +1,8 @@
+## [0.9.0] - 2021-02-16
+
+* Fix handling of drawer content
+* Handle planning/clock lines as separate elements
+
 ## [0.8.1] - 2020-12-02
 
 * Take theme brightness from current `ThemeData`, not `MediaQuery`
