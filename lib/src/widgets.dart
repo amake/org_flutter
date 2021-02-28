@@ -651,9 +651,13 @@ class OrgPlanningLineWidget extends StatelessWidget {
       planningLine.indent,
       builder: (context, totalIndentSize) {
         return FancySpanBuilder(
-          builder: (context, spanBuilder) => Text.rich(
-            TextSpan(
-              children: _spans(context, spanBuilder).toList(growable: false),
+          builder: (context, spanBuilder) => SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Text.rich(
+              TextSpan(
+                children: _spans(context, spanBuilder).toList(growable: false),
+              ),
             ),
           ),
         );
@@ -882,9 +886,13 @@ class OrgPropertyWidget extends StatelessWidget {
       property.indent,
       builder: (context, _) {
         return FancySpanBuilder(
-          builder: (context, spanBuilder) => Text.rich(
-            TextSpan(
-              children: _spans(context, spanBuilder).toList(growable: false),
+          builder: (context, spanBuilder) => SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Text.rich(
+              TextSpan(
+                children: _spans(context, spanBuilder).toList(growable: false),
+              ),
             ),
           ),
         );
