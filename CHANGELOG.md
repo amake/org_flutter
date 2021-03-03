@@ -1,3 +1,7 @@
+## [0.10.0] - 2021-03-03
+
+* Property lines, planning/clock lines no longer wrap
+
 ## [0.9.0] - 2021-02-16
 
 * Fix handling of drawer content
