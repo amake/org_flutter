@@ -14,9 +14,8 @@ class OrgDocumentWidget extends StatelessWidget {
   const OrgDocumentWidget(
     this.document, {
     this.shrinkWrap = false,
-    Key key,
-  })  : assert(shrinkWrap != null),
-        super(key: key);
+    Key? key,
+  }) : super(key: key);
 
   final OrgDocument document;
   final bool shrinkWrap;
@@ -28,7 +27,7 @@ class OrgDocumentWidget extends StatelessWidget {
       padding: OrgTheme.dataOf(context).rootPadding,
       shrinkWrap: shrinkWrap,
       children: <Widget>[
-        if (document.content != null) OrgContentWidget(document.content),
+        if (document.content != null) OrgContentWidget(document.content!),
         ...document.children.map((section) => OrgSectionWidget(section)),
         listBottomSafeArea(),
       ],
@@ -38,23 +37,23 @@ class OrgDocumentWidget extends StatelessWidget {
 
 class OrgRootWidget extends StatelessWidget {
   const OrgRootWidget({
-    this.child,
+    required this.child,
     this.style,
     this.lightTheme,
     this.darkTheme,
     this.onLinkTap,
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   final Widget child;
-  final TextStyle style;
-  final OrgThemeData lightTheme;
-  final OrgThemeData darkTheme;
-  final Function(String) onLinkTap;
-  final Function(OrgSection) onLocalSectionLinkTap;
-  final Function(OrgSection) onSectionLongPress;
+  final TextStyle? style;
+  final OrgThemeData? lightTheme;
+  final OrgThemeData? darkTheme;
+  final Function(String)? onLinkTap;
+  final Function(OrgSection)? onLocalSectionLinkTap;
+  final Function(OrgSection)? onSectionLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -79,17 +78,21 @@ class OrgRootWidget extends StatelessWidget {
 
 class OrgTheme extends InheritedWidget {
   const OrgTheme({
-    @required Widget child,
-    this.light,
-    this.dark,
-    Key key,
+    required Widget child,
+    required this.light,
+    required this.dark,
+    Key? key,
   }) : super(key: key, child: child);
 
-  static OrgTheme of(BuildContext context) =>
+  static OrgTheme? of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<OrgTheme>();
 
+  /// Throws an exception if OrgTheme is not found in the context.
   static OrgThemeData dataOf(BuildContext context) {
     final theme = of(context);
+    if (theme == null) {
+      throw Exception('OrgTheme was null');
+    }
     final brightness = Theme.of(context).brightness;
     switch (brightness) {
       case Brightness.dark:
@@ -97,7 +100,6 @@ class OrgTheme extends InheritedWidget {
       case Brightness.light:
         return theme.light;
     }
-    throw Exception('Unknown platform brightness: $brightness');
   }
 
   final OrgThemeData light;
@@ -110,23 +112,23 @@ class OrgTheme extends InheritedWidget {
 
 class OrgEvents extends InheritedWidget {
   const OrgEvents({
-    @required Widget child,
+    required Widget child,
     this.onLinkTap,
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
-    Key key,
+    Key? key,
   }) : super(key: key, child: child);
 
-  final Function(String) onLinkTap;
-  final Function(OrgSection) onLocalSectionLinkTap;
-  final Function(OrgSection) onSectionLongPress;
+  final Function(String)? onLinkTap;
+  final Function(OrgSection)? onLocalSectionLinkTap;
+  final Function(OrgSection)? onSectionLongPress;
 
-  static OrgEvents of(BuildContext context) =>
+  static OrgEvents? of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<OrgEvents>();
 
   void dispatchLinkTap(BuildContext context, String url) {
     if (!_handleLocalSectionLink(context, url)) {
-      onLinkTap(url);
+      onLinkTap?.call(url);
     }
   }
 
@@ -137,7 +139,7 @@ class OrgEvents extends InheritedWidget {
       if (section == null) {
         debugPrint('Failed to find local section with title "$sectionTitle"');
       } else {
-        onLocalSectionLinkTap(section);
+        onLocalSectionLinkTap?.call(section);
       }
       return true;
     }
@@ -155,11 +157,8 @@ class OrgSectionWidget extends StatelessWidget {
     this.section, {
     this.root = false,
     this.shrinkWrap = false,
-    Key key,
-  })  : assert(section != null),
-        assert(root != null),
-        assert(shrinkWrap != null),
-        super(key: key);
+    Key? key,
+  }) : super(key: key);
   final OrgSection section;
   final bool root;
   final bool shrinkWrap;
@@ -175,7 +174,6 @@ class OrgSectionWidget extends StatelessWidget {
       case OrgVisibilityState.subtree:
         return true;
     }
-    throw Exception('Unknown visibility: $visibility');
   }
 
   @override
@@ -199,7 +197,7 @@ class OrgSectionWidget extends StatelessWidget {
           InkWell(
             onTap: () => OrgController.of(context).cycleVisibilityOf(section),
             onLongPress: () =>
-                OrgEvents.of(context)?.onSectionLongPress(section),
+                OrgEvents.of(context)?.onSectionLongPress?.call(section),
             child: OrgHeadlineWidget(
               section.headline,
               open: _openEnough(visibility),
@@ -216,7 +214,7 @@ class OrgSectionWidget extends StatelessWidget {
                 if (section.content != null &&
                     (visibility == OrgVisibilityState.children ||
                         visibility == OrgVisibilityState.subtree))
-                  OrgContentWidget(section.content),
+                  OrgContentWidget(section.content!),
                 if (visibility != OrgVisibilityState.folded)
                   ...section.children.map((child) => OrgSectionWidget(child)),
               ],
@@ -234,11 +232,11 @@ class OrgContentWidget extends StatelessWidget {
     this.content, {
     this.transformer,
     this.textAlign,
-    Key key,
+    Key? key,
   }) : super(key: key);
   final OrgContentElement content;
-  final Transformer transformer;
-  final TextAlign textAlign;
+  final Transformer? transformer;
+  final TextAlign? textAlign;
 
   @override
   Widget build(BuildContext context) {
@@ -255,9 +253,8 @@ class OrgContentWidget extends StatelessWidget {
 }
 
 class OrgHeadlineWidget extends StatelessWidget {
-  const OrgHeadlineWidget(this.headline, {@required this.open, Key key})
-      : assert(open != null),
-        super(key: key);
+  const OrgHeadlineWidget(this.headline, {required this.open, Key? key})
+      : super(key: key);
   final OrgHeadline headline;
   final bool open;
 
@@ -290,9 +287,9 @@ class OrgHeadlineWidget extends StatelessWidget {
                           .copyWith(color: theme.priorityColor)),
                 if (headline.title != null)
                   spanBuilder.build(
-                    headline.title,
+                    headline.title!,
                     transformer: (elem, text) {
-                      if (elem == headline.title.children.last) {
+                      if (elem == headline.title!.children.last) {
                         return text.trimRight();
                       } else {
                         return text;
@@ -344,9 +341,7 @@ class OrgHeadlineWidget extends StatelessWidget {
 }
 
 class IdentityTextScale extends StatelessWidget {
-  const IdentityTextScale({@required this.child, Key key})
-      : assert(child != null),
-        super(key: key);
+  const IdentityTextScale({required this.child, Key? key}) : super(key: key);
 
   final Widget child;
 
@@ -360,9 +355,7 @@ class IdentityTextScale extends StatelessWidget {
 }
 
 class OrgBlockWidget extends StatefulWidget {
-  const OrgBlockWidget(this.block, {Key key})
-      : assert(block != null),
-        super(key: key);
+  const OrgBlockWidget(this.block, {Key? key}) : super(key: key);
   final OrgBlock block;
 
   @override
@@ -426,8 +419,8 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
   Widget _header(
     BuildContext context,
     TextStyle metaStyle, {
-    @required bool hideMarkup,
-    @required bool open,
+    required bool hideMarkup,
+    required bool open,
   }) {
     var text = widget.block.header.trimRight();
     if (!hideMarkup && !open) {
@@ -491,9 +484,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
 }
 
 class OrgMetaWidget extends StatelessWidget {
-  const OrgMetaWidget(this.meta, {Key key})
-      : assert(meta != null),
-        super(key: key);
+  const OrgMetaWidget(this.meta, {Key? key}) : super(key: key);
   final OrgMeta meta;
 
   @override
@@ -530,9 +521,7 @@ class OrgMetaWidget extends StatelessWidget {
 }
 
 class OrgTableWidget extends StatelessWidget {
-  const OrgTableWidget(this.table, {Key key})
-      : assert(table != null),
-        super(key: key);
+  const OrgTableWidget(this.table, {Key? key}) : super(key: key);
   final OrgTable table;
 
   @override
@@ -560,7 +549,8 @@ class OrgTableWidget extends StatelessWidget {
 
   Iterable<Widget> _columnChildren(BuildContext context) sync* {
     final tableColor = OrgTheme.dataOf(context).tableColor;
-    final borderSide = BorderSide(color: tableColor);
+    final borderSide =
+        tableColor == null ? const BorderSide() : BorderSide(color: tableColor);
     yield Table(
       defaultColumnWidth: const IntrinsicColumnWidth(),
       defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
@@ -609,9 +599,8 @@ class OrgTableWidget extends StatelessWidget {
 }
 
 class OrgFixedWidthAreaWidget extends StatelessWidget {
-  const OrgFixedWidthAreaWidget(this.fixedWidthArea, {Key key})
-      : assert(fixedWidthArea != null),
-        super(key: key);
+  const OrgFixedWidthAreaWidget(this.fixedWidthArea, {Key? key})
+      : super(key: key);
   final OrgFixedWidthArea fixedWidthArea;
 
   @override
@@ -640,9 +629,7 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
 }
 
 class OrgPlanningLineWidget extends StatelessWidget {
-  const OrgPlanningLineWidget(this.planningLine, {Key key})
-      : assert(planningLine != null),
-        super(key: key);
+  const OrgPlanningLineWidget(this.planningLine, {Key? key}) : super(key: key);
   final OrgPlanningLine planningLine;
 
   @override
@@ -677,9 +664,7 @@ class OrgPlanningLineWidget extends StatelessWidget {
 }
 
 class OrgParagraphWidget extends StatelessWidget {
-  const OrgParagraphWidget(this.paragraph, {Key key})
-      : assert(paragraph != null),
-        super(key: key);
+  const OrgParagraphWidget(this.paragraph, {Key? key}) : super(key: key);
   final OrgParagraph paragraph;
 
   @override
@@ -704,9 +689,7 @@ class OrgParagraphWidget extends StatelessWidget {
 }
 
 class OrgListWidget extends StatelessWidget {
-  const OrgListWidget(this.list, {Key key})
-      : assert(list != null),
-        super(key: key);
+  const OrgListWidget(this.list, {Key? key}) : super(key: key);
   final OrgList list;
 
   @override
@@ -729,9 +712,7 @@ class OrgListWidget extends StatelessWidget {
 }
 
 class OrgListItemWidget extends StatelessWidget {
-  const OrgListItemWidget(this.item, {Key key})
-      : assert(item != null),
-        super(key: key);
+  const OrgListItemWidget(this.item, {Key? key}) : super(key: key);
   final OrgListItem item;
 
   @override
@@ -774,13 +755,13 @@ class OrgListItemWidget extends StatelessWidget {
           .style
           .copyWith(fontWeight: FontWeight.bold);
       yield TextSpan(children: [
-        builder.build(item.tag, style: style),
-        builder.highlightedSpan(item.tagDelimiter, style: style),
+        builder.build(item.tag!, style: style),
+        builder.highlightedSpan(item.tagDelimiter!, style: style),
       ]);
     }
     if (item.body != null) {
-      yield builder.build(item.body, transformer: (elem, content) {
-        final isLast = item.body.children.last == elem;
+      yield builder.build(item.body!, transformer: (elem, content) {
+        final isLast = item.body!.children.last == elem;
         final reflowed = reflowText(
           content,
           end: isLast,
@@ -792,9 +773,7 @@ class OrgListItemWidget extends StatelessWidget {
 }
 
 class OrgDrawerWidget extends StatefulWidget {
-  const OrgDrawerWidget(this.drawer, {Key key})
-      : assert(drawer != null),
-        super(key: key);
+  const OrgDrawerWidget(this.drawer, {Key? key}) : super(key: key);
   final OrgDrawer drawer;
 
   @override
@@ -875,9 +854,7 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
 }
 
 class OrgPropertyWidget extends StatelessWidget {
-  const OrgPropertyWidget(this.property, {Key key})
-      : assert(property != null),
-        super(key: key);
+  const OrgPropertyWidget(this.property, {Key? key}) : super(key: key);
   final OrgProperty property;
 
   @override
@@ -917,9 +894,7 @@ class OrgPropertyWidget extends StatelessWidget {
 }
 
 class OrgLatexBlockWidget extends StatelessWidget {
-  const OrgLatexBlockWidget(this.block, {Key key})
-      : assert(block != null),
-        super(key: key);
+  const OrgLatexBlockWidget(this.block, {Key? key}) : super(key: key);
 
   final OrgLatexBlock block;
 
@@ -963,9 +938,7 @@ class OrgLatexBlockWidget extends StatelessWidget {
 }
 
 class OrgLatexInlineWidget extends StatelessWidget {
-  const OrgLatexInlineWidget(this.latex, {Key key})
-      : assert(latex != null),
-        super(key: key);
+  const OrgLatexInlineWidget(this.latex, {Key? key}) : super(key: key);
 
   final OrgLatexInline latex;
 

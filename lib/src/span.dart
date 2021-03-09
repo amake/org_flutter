@@ -10,13 +10,10 @@ String identityTransformer(OrgContentElement _, String str) => str;
 class OrgSpanBuilder {
   OrgSpanBuilder(
     this.context, {
-    @required this.recognizerHandler,
-    @required this.highlight,
-    @required this.hideMarkup,
-  })  : assert(context != null),
-        assert(recognizerHandler != null),
-        assert(highlight != null),
-        assert(hideMarkup != null);
+    required this.recognizerHandler,
+    required this.highlight,
+    required this.hideMarkup,
+  });
 
   final BuildContext context;
   final RecognizerHandler recognizerHandler;
@@ -25,7 +22,7 @@ class OrgSpanBuilder {
 
   InlineSpan build(
     OrgContentElement element, {
-    TextStyle style,
+    TextStyle? style,
     Transformer transformer = identityTransformer,
   }) {
     style ??= DefaultTextStyle.of(context).style;
@@ -97,12 +94,12 @@ class OrgSpanBuilder {
       // TODO(aaron): Make footnote references clickable
       return TextSpan(children: [
         _highlight(element.leading),
-        if (element.name != null) _highlight(element.name),
+        if (element.name != null) _highlight(element.name!),
         if (element.definitionDelimiter != null)
-          _highlight(element.definitionDelimiter),
+          _highlight(element.definitionDelimiter!),
         if (element.definition != null)
           build(
-            element.definition,
+            element.definition!,
             style: footnoteStyle,
             transformer: transformer,
           ),
@@ -167,8 +164,8 @@ class OrgSpanBuilder {
 
   InlineSpan highlightedSpan(
     String text, {
-    TextStyle style,
-    GestureRecognizer recognizer,
+    TextStyle? style,
+    GestureRecognizer? recognizer,
     bool charWrap = false,
   }) {
     if (emptyPattern(highlight)) {
@@ -200,7 +197,7 @@ Iterable<InlineSpan> tokenizeTextSpan(
   Pattern pattern,
   TextStyle matchStyle,
   String Function(String) transform,
-  GestureRecognizer recognizer,
+  GestureRecognizer? recognizer,
 ) sync* {
   var lastEnd = 0;
   for (final match in pattern.allMatches(text)) {
@@ -211,7 +208,7 @@ Iterable<InlineSpan> tokenizeTextSpan(
       );
     }
     yield TextSpan(
-      text: transform(match.group(0)),
+      text: transform(match.group(0)!),
       style: matchStyle,
       recognizer: recognizer,
     );
@@ -226,9 +223,7 @@ Iterable<InlineSpan> tokenizeTextSpan(
 }
 
 class FancySpanBuilder extends StatefulWidget {
-  const FancySpanBuilder({@required this.builder, Key key})
-      : assert(builder != null),
-        super(key: key);
+  const FancySpanBuilder({required this.builder, Key? key}) : super(key: key);
   final Widget Function(BuildContext, OrgSpanBuilder) builder;
 
   @override

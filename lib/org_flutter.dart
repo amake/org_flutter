@@ -20,16 +20,15 @@ class Org extends StatelessWidget {
     this.onLinkTap,
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
-    Key key,
-  })  : assert(text != null),
-        super(key: key);
+    Key? key,
+  }) : super(key: key);
   final String text;
-  final TextStyle style;
-  final OrgThemeData lightTheme;
-  final OrgThemeData darkTheme;
-  final Function(String) onLinkTap;
-  final Function(OrgSection) onLocalSectionLinkTap;
-  final Function(OrgSection) onSectionLongPress;
+  final TextStyle? style;
+  final OrgThemeData? lightTheme;
+  final OrgThemeData? darkTheme;
+  final Function(String)? onLinkTap;
+  final Function(OrgSection)? onLocalSectionLinkTap;
+  final Function(OrgSection)? onSectionLongPress;
 
   @override
   Widget build(BuildContext context) {

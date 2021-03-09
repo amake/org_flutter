@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 class IndentContext extends InheritedWidget {
-  const IndentContext(this.indentSize, {Widget child, Key key})
+  const IndentContext(this.indentSize, {required Widget child, Key? key})
       : super(child: child, key: key);
 
   final int indentSize;
@@ -10,14 +10,16 @@ class IndentContext extends InheritedWidget {
   bool updateShouldNotify(IndentContext oldWidget) =>
       indentSize != oldWidget.indentSize;
 
-  static IndentContext of(BuildContext context) =>
+  static IndentContext? of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<IndentContext>();
 }
 
 class IndentBuilder extends StatelessWidget {
-  const IndentBuilder(this.indent, {this.builder, Key key})
-      : assert(indent != null),
-        super(key: key);
+  const IndentBuilder(
+    this.indent, {
+    required this.builder,
+    Key? key,
+  }) : super(key: key);
 
   final Widget Function(BuildContext, int) builder;
   final String indent;

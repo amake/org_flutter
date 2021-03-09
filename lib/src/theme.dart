@@ -208,32 +208,34 @@ class OrgThemeData {
     this.highlightColor,
     this.footnoteColor,
     this.rootPadding,
-    Iterable<Color> levelColors,
-    Map<String, TextStyle> srcTheme,
+    Iterable<Color>? levelColors,
+    Map<String, TextStyle>? srcTheme,
   })  : levelColors =
             levelColors == null ? null : List.unmodifiable(levelColors),
         srcTheme = srcTheme == null ? null : Map.unmodifiable(srcTheme);
 
-  final Color todoColor;
-  final Color doneColor;
-  final Color priorityColor;
-  final Color drawerColor;
-  final Color dateColor;
-  final Color codeColor;
-  final Color linkColor;
-  final Color metaColor;
-  final Color macroColor;
-  final Color tableColor;
-  final Color keywordColor;
-  final Color highlightColor;
-  final Color footnoteColor;
-  final List<Color> levelColors;
-  final Map<String, TextStyle> srcTheme;
+  final Color? todoColor;
+  final Color? doneColor;
+  final Color? priorityColor;
+  final Color? drawerColor;
+  final Color? dateColor;
+  final Color? codeColor;
+  final Color? linkColor;
+  final Color? metaColor;
+  final Color? macroColor;
+  final Color? tableColor;
+  final Color? keywordColor;
+  final Color? highlightColor;
+  final Color? footnoteColor;
+  final List<Color>? levelColors;
+  final Map<String, TextStyle>? srcTheme;
 
-  final EdgeInsets rootPadding;
+  final EdgeInsets? rootPadding;
 
-  Color levelColor(int level) =>
-      levelColors == null ? null : levelColors[level % levelColors.length];
+  Color? levelColor(int level) {
+    final levelColors = this.levelColors;
+    return levelColors == null ? null : levelColors[level % levelColors.length];
+  }
 
   TextStyle fontStyleForOrgStyle(TextStyle base, OrgStyle style) {
     switch (style) {
@@ -249,26 +251,25 @@ class OrgThemeData {
       case OrgStyle.underline:
         return base.copyWith(decoration: TextDecoration.underline);
     }
-    throw Exception('Unknown style: $style');
   }
 
   OrgThemeData copyWith(
-    Color todoColor,
-    Color doneColor,
-    Color priorityColor,
-    Color drawerColor,
-    Color dateColor,
-    Color codeColor,
-    Color linkColor,
-    Color metaColor,
-    Color macroColor,
-    Color tableColor,
-    Color keywordColor,
-    Color highlightColor,
-    Color footnoteColor,
-    Iterable<Color> levelColors,
-    Map<String, TextStyle> srcTheme,
-    EdgeInsets rootPadding,
+    Color? todoColor,
+    Color? doneColor,
+    Color? priorityColor,
+    Color? drawerColor,
+    Color? dateColor,
+    Color? codeColor,
+    Color? linkColor,
+    Color? metaColor,
+    Color? macroColor,
+    Color? tableColor,
+    Color? keywordColor,
+    Color? highlightColor,
+    Color? footnoteColor,
+    Iterable<Color>? levelColors,
+    Map<String, TextStyle>? srcTheme,
+    EdgeInsets? rootPadding,
   ) =>
       OrgThemeData(
         todoColor: todoColor ?? this.todoColor,
@@ -334,87 +335,48 @@ class OrgThemeData {
       );
 
   // ignore: prefer_constructors_over_static_methods
-  static OrgThemeData lerp(OrgThemeData a, OrgThemeData b, double t) {
-    assert(t != null);
+  static OrgThemeData? lerp(OrgThemeData? a, OrgThemeData? b, double t) {
     if (a == null && b == null) {
       return null;
     }
-    if (a == null) {
-      return OrgThemeData(
-        todoColor: Color.lerp(null, b.todoColor, t),
-        doneColor: Color.lerp(null, b.doneColor, t),
-        priorityColor: Color.lerp(null, b.priorityColor, t),
-        drawerColor: Color.lerp(null, b.drawerColor, t),
-        dateColor: Color.lerp(null, b.dateColor, t),
-        codeColor: Color.lerp(null, b.codeColor, t),
-        linkColor: Color.lerp(null, b.linkColor, t),
-        metaColor: Color.lerp(null, b.metaColor, t),
-        macroColor: Color.lerp(null, b.macroColor, t),
-        tableColor: Color.lerp(null, b.tableColor, t),
-        keywordColor: Color.lerp(null, b.keywordColor, t),
-        highlightColor: Color.lerp(null, b.highlightColor, t),
-        footnoteColor: Color.lerp(null, b.footnoteColor, t),
-        levelColors: b.levelColors?.map((c) => Color.lerp(null, c, t)),
-        srcTheme:
-            b.srcTheme?.map((k, v) => MapEntry(k, TextStyle.lerp(null, v, t))),
-        rootPadding: EdgeInsets.lerp(null, b.rootPadding, t),
-      );
-    }
-    if (b == null) {
-      return OrgThemeData(
-        todoColor: Color.lerp(a.todoColor, null, t),
-        doneColor: Color.lerp(a.doneColor, null, t),
-        priorityColor: Color.lerp(a.priorityColor, null, t),
-        drawerColor: Color.lerp(a.drawerColor, null, t),
-        dateColor: Color.lerp(a.dateColor, null, t),
-        codeColor: Color.lerp(a.codeColor, null, t),
-        linkColor: Color.lerp(a.linkColor, null, t),
-        metaColor: Color.lerp(a.metaColor, null, t),
-        macroColor: Color.lerp(a.macroColor, null, t),
-        tableColor: Color.lerp(a.tableColor, null, t),
-        keywordColor: Color.lerp(a.keywordColor, null, t),
-        highlightColor: Color.lerp(a.highlightColor, null, t),
-        footnoteColor: Color.lerp(a.footnoteColor, null, t),
-        levelColors: a.levelColors?.map((c) => Color.lerp(c, null, t)),
-        srcTheme:
-            a.srcTheme?.map((k, v) => MapEntry(k, TextStyle.lerp(v, null, t))),
-        rootPadding: EdgeInsets.lerp(a.rootPadding, null, t),
-      );
-    }
     return OrgThemeData(
-      todoColor: Color.lerp(a.todoColor, b.todoColor, t),
-      doneColor: Color.lerp(a.doneColor, b.doneColor, t),
-      priorityColor: Color.lerp(a.priorityColor, b.priorityColor, t),
-      drawerColor: Color.lerp(a.drawerColor, b.drawerColor, t),
-      dateColor: Color.lerp(a.dateColor, b.dateColor, t),
-      codeColor: Color.lerp(a.codeColor, b.codeColor, t),
-      linkColor: Color.lerp(a.linkColor, b.linkColor, t),
-      metaColor: Color.lerp(a.metaColor, b.metaColor, t),
-      macroColor: Color.lerp(a.macroColor, b.macroColor, t),
-      tableColor: Color.lerp(a.tableColor, b.tableColor, t),
-      keywordColor: Color.lerp(a.keywordColor, b.keywordColor, t),
-      highlightColor: Color.lerp(a.highlightColor, b.highlightColor, t),
-      footnoteColor: Color.lerp(a.footnoteColor, b.footnoteColor, t),
-      levelColors: _lerpColorLists(a.levelColors, b.levelColors, t),
-      srcTheme: _lerpSrcThemes(a.srcTheme, b.srcTheme, t),
-      rootPadding: EdgeInsets.lerp(a.rootPadding, b.rootPadding, t),
+      todoColor: Color.lerp(a?.todoColor, b?.todoColor, t),
+      doneColor: Color.lerp(a?.doneColor, b?.doneColor, t),
+      priorityColor: Color.lerp(a?.priorityColor, b?.priorityColor, t),
+      drawerColor: Color.lerp(a?.drawerColor, b?.drawerColor, t),
+      dateColor: Color.lerp(a?.dateColor, b?.dateColor, t),
+      codeColor: Color.lerp(a?.codeColor, b?.codeColor, t),
+      linkColor: Color.lerp(a?.linkColor, b?.linkColor, t),
+      metaColor: Color.lerp(a?.metaColor, b?.metaColor, t),
+      macroColor: Color.lerp(a?.macroColor, b?.macroColor, t),
+      tableColor: Color.lerp(a?.tableColor, b?.tableColor, t),
+      keywordColor: Color.lerp(a?.keywordColor, b?.keywordColor, t),
+      highlightColor: Color.lerp(a?.highlightColor, b?.highlightColor, t),
+      footnoteColor: Color.lerp(a?.footnoteColor, b?.footnoteColor, t),
+      levelColors: _lerpColorLists(a?.levelColors, b?.levelColors, t),
+      srcTheme: _lerpSrcThemes(a?.srcTheme, b?.srcTheme, t),
+      rootPadding: EdgeInsets.lerp(a?.rootPadding, b?.rootPadding, t),
     );
   }
 
-  static Iterable<Color> _lerpColorLists(
-    List<Color> a,
-    List<Color> b,
+  static Iterable<Color>? _lerpColorLists(
+    List<Color>? a,
+    List<Color>? b,
     double t,
   ) {
     if (a == null || b == null || a.length != b.length) {
       return t < 0.5 ? a : b;
     }
-    return zipMap<Color, Color, Color>(a, b, (ac, bc) => Color.lerp(ac, bc, t));
+    return zipMap<Color, Color, Color>(
+      a,
+      b,
+      (ac, bc) => Color.lerp(ac, bc, t)!,
+    );
   }
 
-  static Map<String, TextStyle> _lerpSrcThemes(
-    Map<String, TextStyle> a,
-    Map<String, TextStyle> b,
+  static Map<String, TextStyle>? _lerpSrcThemes(
+    Map<String, TextStyle>? a,
+    Map<String, TextStyle>? b,
     double t,
   ) {
     if (a == null ||
@@ -426,6 +388,6 @@ class OrgThemeData {
         )) {
       return t < 0.5 ? a : b;
     }
-    return a.map((k, ae) => MapEntry(k, TextStyle.lerp(ae, b[k], t)));
+    return a.map((k, ae) => MapEntry(k, TextStyle.lerp(ae, b[k], t)!));
   }
 }

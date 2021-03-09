@@ -25,9 +25,10 @@ enum OrgVisibilityState {
   subtree,
 }
 
-String _orgVisibilityStateToJson(OrgVisibilityState value) => value?.toString();
+String? _orgVisibilityStateToJson(OrgVisibilityState? value) =>
+    value?.toString();
 
-OrgVisibilityState _orgVisibilityStateFromJson(String json) => json == null
+OrgVisibilityState? _orgVisibilityStateFromJson(String? json) => json == null
     ? null
     : OrgVisibilityState.values.singleWhere(
         (value) => value.toString() == json,
@@ -35,14 +36,14 @@ OrgVisibilityState _orgVisibilityStateFromJson(String json) => json == null
 
 class OrgNodeMap {
   factory OrgNodeMap.build({
-    @required OrgTree root,
-    Map<String, dynamic> json,
+    required OrgTree root,
+    Map<String, dynamic>? json,
   }) {
     OrgVisibilityState _computeVisibility(OrgTree subtree) {
       var result = _kDefaultVisibilityState;
       if (json != null && subtree is OrgSection) {
         final title = subtree.headline.rawTitle;
-        final fromJson = _orgVisibilityStateFromJson(json[title] as String);
+        final fromJson = _orgVisibilityStateFromJson(json[title] as String?);
         result = fromJson ?? result;
       }
       return result;
@@ -67,7 +68,7 @@ class OrgNodeMap {
 
   final Map<OrgTree, OrgNode> _data;
 
-  OrgNode nodeFor(OrgTree tree) => _data[tree];
+  OrgNode? nodeFor(OrgTree tree) => _data[tree];
 
   Set<OrgVisibilityState> get currentVisibility =>
       _data.values.map((e) => e.visibility.value).toSet();
@@ -76,7 +77,10 @@ class OrgNodeMap {
     final json = <String, dynamic>{};
     for (final section in _data.keys.whereType<OrgSection>()) {
       final title = section.headline.rawTitle;
-      json[title] = _orgVisibilityStateToJson(_data[section].visibility.value);
+      if (title != null) {
+        json[title] =
+            _orgVisibilityStateToJson(_data[section]?.visibility.value);
+      }
     }
     return json;
   }
@@ -93,15 +97,15 @@ class OrgNodeMap {
     }
   }
 
-  OrgSection sectionWithTitle(String title) =>
-      _data.keys.whereType<OrgSection>().firstWhere(
-            (section) => section.headline.rawTitle == title,
+  OrgSection? sectionWithTitle(String title) =>
+      _data.keys.whereType<OrgSection?>().firstWhere(
+            (section) => section!.headline.rawTitle == title,
             orElse: () => null,
           );
 }
 
 class OrgNode {
-  OrgNode({OrgVisibilityState initialVisibility})
+  OrgNode({required OrgVisibilityState initialVisibility})
       : visibility = ValueNotifier(initialVisibility);
   final ValueNotifier<OrgVisibilityState> visibility;
 
@@ -120,9 +124,9 @@ typedef OrgStateListener = Function(Map<String, dynamic>);
 class OrgController extends StatefulWidget {
   OrgController.defaults(
     OrgControllerData data, {
-    @required OrgTree root,
-    @required Widget child,
-    Key key,
+    required OrgTree root,
+    required Widget child,
+    Key? key,
   }) : this._(
           child: child,
           root: root,
@@ -133,11 +137,11 @@ class OrgController extends StatefulWidget {
         );
 
   const OrgController({
-    @required Widget child,
-    @required OrgTree root,
-    Map<String, dynamic> initialState,
-    OrgStateListener stateListener,
-    bool hideMarkup,
+    required Widget child,
+    required OrgTree root,
+    Map<String, dynamic>? initialState,
+    OrgStateListener? stateListener,
+    bool? hideMarkup,
   }) : this._(
           child: child,
           root: root,
@@ -147,32 +151,36 @@ class OrgController extends StatefulWidget {
         );
 
   const OrgController._({
-    @required this.child,
-    @required this.root,
+    required this.child,
+    required this.root,
     this.initialState,
     this.stateListener,
     this.inheritedNodeMap,
     this.searchQuery,
     this.hideMarkup,
     this.entityReplacements = orgDefaultEntityReplacements,
-    Key key,
-  })  : assert(child != null),
-        assert(root != null),
-        assert(!(inheritedNodeMap != null && initialState != null),
+    Key? key,
+  })  : assert(!(inheritedNodeMap != null && initialState != null),
             'Cannot supply both inheritedNodeMap and initialState'),
         super(key: key);
 
   final OrgTree root;
   final Widget child;
-  final Map<String, dynamic> initialState;
-  final OrgStateListener stateListener;
-  final OrgNodeMap inheritedNodeMap;
-  final Pattern searchQuery;
-  final bool hideMarkup;
+  final Map<String, dynamic>? initialState;
+  final OrgStateListener? stateListener;
+  final OrgNodeMap? inheritedNodeMap;
+  final Pattern? searchQuery;
+  final bool? hideMarkup;
   final Map<String, String> entityReplacements;
 
-  static OrgControllerData of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<OrgControllerData>();
+  static OrgControllerData of(BuildContext context) {
+    final data =
+        context.dependOnInheritedWidgetOfExactType<OrgControllerData>();
+    if (data == null) {
+      throw Exception('OrgControllerData was null');
+    }
+    return data;
+  }
 
   @override
   _OrgControllerState createState() => _OrgControllerState();
@@ -181,27 +189,28 @@ class OrgController extends StatefulWidget {
 class _OrgControllerState extends State<OrgController> {
   OrgTree get _root => widget.root;
 
-  Map<String, dynamic> get _initialState => widget.initialState;
-  OrgNodeMap _nodeMap;
-  Pattern _searchQuery;
-  bool _hideMarkup;
+  late OrgNodeMap _nodeMap;
+  late Pattern _searchQuery;
+  late bool _hideMarkup;
   Map<String, String> get _entityReplacements => widget.entityReplacements;
-  ScrollController _scrollController;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
-    final nodeMapJson = _initialState == null
+    final initialState = widget.initialState;
+    final nodeMapJson = initialState == null
         ? null
-        : _initialState[_kTransientStateNodeMapKey] as Map<String, dynamic>;
-    _nodeMap = widget.inheritedNodeMap != null
-        ? OrgNodeMap.inherit(widget.inheritedNodeMap)
+        : initialState[_kTransientStateNodeMapKey] as Map<String, dynamic>;
+    final inheritedNodeMap = widget.inheritedNodeMap;
+    _nodeMap = inheritedNodeMap != null
+        ? OrgNodeMap.inherit(inheritedNodeMap)
         : OrgNodeMap.build(root: _root, json: nodeMapJson);
     _searchQuery = widget.searchQuery ?? _kDefaultSearchQuery;
     _hideMarkup = widget.hideMarkup ?? _kDefaultHideMarkup;
-    final initialScrollOffset = _initialState == null
+    final initialScrollOffset = initialState == null
         ? 0.0
-        : _initialState[_kTransientStateScrollPositionKey] as double;
+        : initialState[_kTransientStateScrollPositionKey] as double;
     _scrollController =
         ScrollController(initialScrollOffset: initialScrollOffset);
   }
@@ -262,7 +271,7 @@ class _OrgControllerState extends State<OrgController> {
             childrenMatch || tree.contains(query, includeChildren: false);
         final newValue =
             anyMatch ? OrgVisibilityState.children : OrgVisibilityState.folded;
-        final node = _nodeMap.nodeFor(tree);
+        final node = _nodeMap.nodeFor(tree)!;
         debugPrint(
             'Changing visibility; from=${node.visibility.value}, to=$newValue');
         node.visibility.value = newValue;
@@ -284,7 +293,7 @@ class _OrgControllerState extends State<OrgController> {
   }
 
   void _cycleVisibilityOf(OrgTree tree) {
-    final visibilityListenable = _nodeMap.nodeFor(tree).visibility;
+    final visibilityListenable = _nodeMap.nodeFor(tree)!.visibility;
     final newVisibility =
         _cycleSubtree(visibilityListenable.value, tree.children.isEmpty);
     final subtreeVisibility = _subtreeState(newVisibility);
@@ -294,7 +303,7 @@ class _OrgControllerState extends State<OrgController> {
     _walk(
       tree,
       (subtree) =>
-          _nodeMap.nodeFor(subtree).visibility.value = subtreeVisibility,
+          _nodeMap.nodeFor(subtree)!.visibility.value = subtreeVisibility,
     );
     // Do this last because otherwise _walk applies subtreeVisibility to this
     // root
@@ -312,27 +321,19 @@ class _OrgControllerState extends State<OrgController> {
 
 class OrgControllerData extends InheritedWidget {
   const OrgControllerData({
-    @required Widget child,
-    @required this.root,
-    @required OrgNodeMap nodeMap,
-    @required this.searchQuery,
-    @required this.search,
-    @required bool hideMarkup,
-    @required Map<String, String> entityReplacements,
-    @required Function(bool) setHideMarkup,
-    @required this.cycleVisibility,
-    @required this.cycleVisibilityOf,
-    @required this.scrollController,
-    Key key,
-  })  : assert(root != null),
-        assert(nodeMap != null),
-        assert(searchQuery != null),
-        assert(search != null),
-        assert(hideMarkup != null),
-        assert(entityReplacements != null),
-        assert(cycleVisibility != null),
-        assert(cycleVisibilityOf != null),
-        _nodeMap = nodeMap,
+    required Widget child,
+    required this.root,
+    required OrgNodeMap nodeMap,
+    required this.searchQuery,
+    required this.search,
+    required bool hideMarkup,
+    required Map<String, String> entityReplacements,
+    required Function(bool) setHideMarkup,
+    required this.cycleVisibility,
+    required this.cycleVisibilityOf,
+    required this.scrollController,
+    Key? key,
+  })  : _nodeMap = nodeMap,
         _hideMarkup = hideMarkup,
         _entityReplacements = entityReplacements,
         _setHideMarkup = setHideMarkup,
@@ -353,11 +354,12 @@ class OrgControllerData extends InheritedWidget {
 
   set hideMarkup(bool value) => _setHideMarkup(value);
 
-  OrgNode nodeFor(OrgTree tree) => _nodeMap.nodeFor(tree);
+  OrgNode? nodeFor(OrgTree tree) => _nodeMap.nodeFor(tree);
 
-  OrgSection sectionWithTitle(String title) => _nodeMap.sectionWithTitle(title);
+  OrgSection? sectionWithTitle(String title) =>
+      _nodeMap.sectionWithTitle(title);
 
-  String prettifyEntity(String name) => _entityReplacements[name];
+  String? prettifyEntity(String name) => _entityReplacements[name];
 
   @override
   bool updateShouldNotify(OrgControllerData oldWidget) =>
@@ -378,7 +380,6 @@ OrgVisibilityState _cycleGlobal(OrgVisibilityState state) {
     case OrgVisibilityState.children:
       return OrgVisibilityState.folded;
   }
-  throw Exception('Unknown state: $state');
 }
 
 OrgVisibilityState _cycleSubtree(OrgVisibilityState state, bool empty) {
@@ -392,7 +393,6 @@ OrgVisibilityState _cycleSubtree(OrgVisibilityState state, bool empty) {
     case OrgVisibilityState.subtree:
       return OrgVisibilityState.folded;
   }
-  throw Exception('Unknown state: $state');
 }
 
 OrgVisibilityState _subtreeState(OrgVisibilityState state) {
@@ -404,5 +404,4 @@ OrgVisibilityState _subtreeState(OrgVisibilityState state) {
     case OrgVisibilityState.subtree:
       return OrgVisibilityState.subtree;
   }
-  throw Exception('Unknown state: $state');
 }

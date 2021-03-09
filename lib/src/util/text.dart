@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:org_flutter/src/util/collection.dart';
 
 /// If necessary, interleave runes with U+200B ZERO WIDTH SPACE to serve as a
@@ -11,7 +10,7 @@ String characterWrappable(String text) {
   }
 }
 
-bool emptyPattern(Pattern pattern) {
+bool emptyPattern(Pattern? pattern) {
   if (pattern is String) {
     return pattern.isEmpty;
   } else if (pattern is RegExp) {
@@ -35,7 +34,7 @@ bool patternEquals(Pattern a, Pattern b) {
   return false;
 }
 
-String reflowText(String text, {@required bool end}) => text.replaceAll(
+String reflowText(String text, {required bool end}) => text.replaceAll(
     end ? _unwrappableEndWhitespacePattern : _unwrappableWhitespacePattern,
     ' ');
 
