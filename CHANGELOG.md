@@ -1,3 +1,7 @@
+## [1.0.0-nullsafety.0] - 2021-03-09
+
+* Migrate to non-nullable by default
+
 ## [0.10.0] - 2021-03-03
 
 * Property lines, planning/clock lines no longer wrap
