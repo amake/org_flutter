@@ -62,10 +62,10 @@ class OrgRootWidget extends StatelessWidget {
       light: lightTheme ?? OrgThemeData.light(),
       dark: darkTheme ?? OrgThemeData.dark(),
       child: OrgEvents(
-        child: IdentityTextScale(child: child),
         onLinkTap: onLinkTap,
         onSectionLongPress: onSectionLongPress,
         onLocalSectionLinkTap: onLocalSectionLinkTap,
+        child: IdentityTextScale(child: child),
       ),
     );
     return style == null
@@ -197,18 +197,18 @@ class OrgSectionWidget extends StatelessWidget {
         padding: root ? OrgTheme.dataOf(context).rootPadding : EdgeInsets.zero,
         children: <Widget>[
           InkWell(
+            onTap: () => OrgController.of(context).cycleVisibilityOf(section),
+            onLongPress: () =>
+                OrgEvents.of(context)?.onSectionLongPress(section),
             child: OrgHeadlineWidget(
               section.headline,
               open: _openEnough(visibility),
             ),
-            onTap: () => OrgController.of(context).cycleVisibilityOf(section),
-            onLongPress: () =>
-                OrgEvents.of(context)?.onSectionLongPress(section),
           ),
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 100),
             transitionBuilder: (child, animation) =>
-                SizeTransition(child: child, sizeFactor: animation),
+                SizeTransition(sizeFactor: animation, child: child),
             child: Column(
               key: ValueKey(visibility),
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -389,7 +389,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 100),
                 transitionBuilder: (child, animation) =>
-                    SizeTransition(child: child, sizeFactor: animation),
+                    SizeTransition(sizeFactor: animation, child: child),
                 child: open ? child : const SizedBox.shrink(),
               ),
               // Remove two linebreaks because we introduce two by splitting the
@@ -451,8 +451,8 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
     }
     header = reduceOpacity(header, enabled: hideMarkup);
     return InkWell(
-      child: header,
       onTap: () => openListenable.value = !openListenable.value,
+      child: header,
     );
   }
 
@@ -483,9 +483,9 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
     return block.body is OrgContent
         ? body
         : SingleChildScrollView(
-            child: body,
             scrollDirection: Axis.horizontal,
             physics: const AlwaysScrollableScrollPhysics(),
+            child: body,
           );
   }
 }
@@ -820,16 +820,16 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               InkWell(
+                onTap: () => openListenable.value = !openListenable.value,
                 child: Text(
                   widget.drawer.header.trimRight() + (open ? '' : '...'),
                   style: drawerStyle,
                 ),
-                onTap: () => openListenable.value = !openListenable.value,
               ),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 100),
                 transitionBuilder: (child, animation) =>
-                    SizeTransition(child: child, sizeFactor: animation),
+                    SizeTransition(sizeFactor: animation, child: child),
                 child: open ? child : const SizedBox.shrink(),
               ),
               // Remove two linebreaks because we introduce two by splitting the
@@ -867,9 +867,9 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
     return widget.drawer.body is OrgContent
         ? body
         : SingleChildScrollView(
-            child: body,
             scrollDirection: Axis.horizontal,
             physics: const AlwaysScrollableScrollPhysics(),
+            child: body,
           );
   }
 }
@@ -930,6 +930,7 @@ class OrgLatexBlockWidget extends StatelessWidget {
         ConstrainedBox(
           constraints: const BoxConstraints.tightFor(width: double.infinity),
           child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
             child: TexImage(
               _content,
               displayMode: true,
@@ -943,7 +944,6 @@ class OrgLatexBlockWidget extends StatelessWidget {
                 ].join(''));
               },
             ),
-            scrollDirection: Axis.horizontal,
           ),
         ),
         // Remove two linebreaks because we introduce two by splitting the

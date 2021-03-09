@@ -223,7 +223,6 @@ class _OrgControllerState extends State<OrgController> {
         return false;
       },
       child: OrgControllerData(
-        child: widget.child,
         root: widget.root,
         nodeMap: _nodeMap,
         searchQuery: _searchQuery,
@@ -234,6 +233,7 @@ class _OrgControllerState extends State<OrgController> {
         cycleVisibility: _cycleVisibility,
         cycleVisibilityOf: _cycleVisibilityOf,
         scrollController: _scrollController,
+        child: widget.child,
       ),
     );
   }

@@ -38,10 +38,10 @@ mixin RecognizerManager<T extends StatefulWidget> on State<T> {
 }
 
 Widget listBottomSafeArea() => const SafeArea(
-      child: SizedBox.shrink(),
       top: false,
       left: false,
       right: false,
+      child: SizedBox.shrink(),
     );
 
 const _kReducedOpacity = 0.6;
