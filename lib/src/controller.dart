@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/entity.dart';
@@ -9,7 +11,6 @@ const _kDefaultHideMarkup = false;
 const _kDefaultVisibilityState = OrgVisibilityState.folded;
 
 const _kTransientStateNodeMapKey = 'node_map';
-const _kTransientStateScrollPositionKey = 'scroll_position';
 
 enum OrgVisibilityState {
   /// Just the root headline; equivalent to global "overview" state
@@ -139,35 +140,25 @@ class OrgController extends StatefulWidget {
   const OrgController({
     required Widget child,
     required OrgTree root,
-    Map<String, dynamic>? initialState,
-    OrgStateListener? stateListener,
     bool? hideMarkup,
   }) : this._(
           child: child,
           root: root,
-          initialState: initialState,
-          stateListener: stateListener,
           hideMarkup: hideMarkup,
         );
 
   const OrgController._({
     required this.child,
     required this.root,
-    this.initialState,
-    this.stateListener,
     this.inheritedNodeMap,
     this.searchQuery,
     this.hideMarkup,
     this.entityReplacements = orgDefaultEntityReplacements,
     Key? key,
-  })  : assert(!(inheritedNodeMap != null && initialState != null),
-            'Cannot supply both inheritedNodeMap and initialState'),
-        super(key: key);
+  }) : super(key: key);
 
   final OrgTree root;
   final Widget child;
-  final Map<String, dynamic>? initialState;
-  final OrgStateListener? stateListener;
   final OrgNodeMap? inheritedNodeMap;
   final Pattern? searchQuery;
   final bool? hideMarkup;
@@ -186,64 +177,58 @@ class OrgController extends StatefulWidget {
   _OrgControllerState createState() => _OrgControllerState();
 }
 
-class _OrgControllerState extends State<OrgController> {
+class _OrgControllerState extends State<OrgController> with RestorationMixin {
   OrgTree get _root => widget.root;
+  bool get _inheritNodeMap => widget.inheritedNodeMap != null;
 
   late OrgNodeMap _nodeMap;
   late Pattern _searchQuery;
   late bool _hideMarkup;
   Map<String, String> get _entityReplacements => widget.entityReplacements;
-  late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
-    final initialState = widget.initialState;
-    final nodeMapJson = initialState == null
-        ? null
-        : initialState[_kTransientStateNodeMapKey] as Map<String, dynamic>;
-    final inheritedNodeMap = widget.inheritedNodeMap;
-    _nodeMap = inheritedNodeMap != null
-        ? OrgNodeMap.inherit(inheritedNodeMap)
-        : OrgNodeMap.build(root: _root, json: nodeMapJson);
+    if (_inheritNodeMap) {
+      _nodeMap = OrgNodeMap.inherit(widget.inheritedNodeMap!);
+    }
     _searchQuery = widget.searchQuery ?? _kDefaultSearchQuery;
     _hideMarkup = widget.hideMarkup ?? _kDefaultHideMarkup;
-    final initialScrollOffset = initialState == null
-        ? 0.0
-        : initialState[_kTransientStateScrollPositionKey] as double;
-    _scrollController =
-        ScrollController(initialScrollOffset: initialScrollOffset);
+  }
+
+  @override
+  String? get restorationId => 'org_controller';
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    if (!_inheritNodeMap) {
+      final initialState = bucket?.read<String>(_kTransientStateNodeMapKey);
+      final nodeMapJson = initialState == null
+          ? null
+          : json.decode(initialState) as Map<String, dynamic>;
+      _nodeMap = OrgNodeMap.build(root: _root, json: nodeMapJson);
+    }
   }
 
   @override
   void dispose() {
     _nodeMap.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<ScrollEndNotification>(
-      onNotification: (notification) {
-        if (notification.metrics.axis == Axis.vertical) {
-          _notifyState();
-        }
-        return false;
-      },
-      child: OrgControllerData(
-        root: widget.root,
-        nodeMap: _nodeMap,
-        searchQuery: _searchQuery,
-        search: search,
-        hideMarkup: _hideMarkup,
-        entityReplacements: _entityReplacements,
-        setHideMarkup: _setHideMarkup,
-        cycleVisibility: _cycleVisibility,
-        cycleVisibilityOf: _cycleVisibilityOf,
-        scrollController: _scrollController,
-        child: widget.child,
-      ),
+    return OrgControllerData(
+      root: widget.root,
+      nodeMap: _nodeMap,
+      searchQuery: _searchQuery,
+      search: search,
+      hideMarkup: _hideMarkup,
+      entityReplacements: _entityReplacements,
+      setHideMarkup: _setHideMarkup,
+      cycleVisibility: _cycleVisibility,
+      cycleVisibilityOf: _cycleVisibilityOf,
+      child: widget.child,
     );
   }
 
@@ -311,10 +296,10 @@ class _OrgControllerState extends State<OrgController> {
     _notifyState();
   }
 
-  void _notifyState() => widget.stateListener?.call(<String, dynamic>{
-        _kTransientStateNodeMapKey: _nodeMap.toJson(),
-        _kTransientStateScrollPositionKey: _scrollController.offset,
-      });
+  void _notifyState() {
+    final nodeMapString = json.encode(_nodeMap.toJson());
+    bucket?.write<String>(_kTransientStateNodeMapKey, nodeMapString);
+  }
 
   void _setHideMarkup(bool value) => setState(() => _hideMarkup = value);
 }
@@ -331,7 +316,6 @@ class OrgControllerData extends InheritedWidget {
     required Function(bool) setHideMarkup,
     required this.cycleVisibility,
     required this.cycleVisibilityOf,
-    required this.scrollController,
     Key? key,
   })  : _nodeMap = nodeMap,
         _hideMarkup = hideMarkup,
@@ -348,7 +332,6 @@ class OrgControllerData extends InheritedWidget {
   final Function(bool) _setHideMarkup;
   final void Function() cycleVisibility;
   final void Function(OrgTree) cycleVisibilityOf;
-  final ScrollController scrollController;
 
   bool get hideMarkup => _hideMarkup;
 

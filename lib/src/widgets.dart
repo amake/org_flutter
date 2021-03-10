@@ -23,9 +23,9 @@ class OrgDocumentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      controller: OrgController.of(context).scrollController,
       padding: OrgTheme.dataOf(context).rootPadding,
       shrinkWrap: shrinkWrap,
+      physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,
       children: <Widget>[
         if (document.content != null) OrgContentWidget(document.content!),
         ...document.children.map((section) => OrgSectionWidget(section)),
