@@ -1,3 +1,10 @@
+## [1.1.0] - 2021-03-11
+
+* Support automatic [state restoration](https://flutter.dev/go/state-restoration-design)
+  * Manual state management facilities `initialState` and `stateListener` on
+    `OrgController` have been removed
+  * Instead provide `restorationId` to `Org` or `OrgController`
+
 ## [1.0.0] - 2021-03-11
 
 * Migrate to non-nullable by default
