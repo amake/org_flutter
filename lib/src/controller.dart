@@ -141,10 +141,14 @@ class OrgController extends StatefulWidget {
     required Widget child,
     required OrgTree root,
     bool? hideMarkup,
+    String? restorationId,
+    Key? key,
   }) : this._(
           child: child,
           root: root,
           hideMarkup: hideMarkup,
+          restorationId: restorationId,
+          key: key,
         );
 
   const OrgController._({
@@ -154,6 +158,7 @@ class OrgController extends StatefulWidget {
     this.searchQuery,
     this.hideMarkup,
     this.entityReplacements = orgDefaultEntityReplacements,
+    this.restorationId,
     Key? key,
   }) : super(key: key);
 
@@ -163,6 +168,7 @@ class OrgController extends StatefulWidget {
   final Pattern? searchQuery;
   final bool? hideMarkup;
   final Map<String, String> entityReplacements;
+  final String? restorationId;
 
   static OrgControllerData of(BuildContext context) {
     final data =
@@ -197,7 +203,8 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   }
 
   @override
-  String? get restorationId => 'org_controller';
+  String? get restorationId =>
+      _deriveRestorationId(widget.restorationId, 'org_controller');
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
@@ -388,3 +395,6 @@ OrgVisibilityState _subtreeState(OrgVisibilityState state) {
       return OrgVisibilityState.subtree;
   }
 }
+
+String? _deriveRestorationId(String? base, String name) =>
+    base == null ? null : '$base/$name';

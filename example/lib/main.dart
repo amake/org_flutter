@@ -31,8 +31,11 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('org_flutter'),
       ),
-      body: const Org('''* TODO [#A] foo bar
-baz buzz'''),
+      body: const Org(
+        '''* TODO [#A] foo bar
+baz buzz''',
+        restorationId: 'my_org_widget',
+      ),
     );
   }
 }

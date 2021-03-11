@@ -20,6 +20,7 @@ class Org extends StatelessWidget {
     this.onLinkTap,
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
+    this.restorationId,
     Key? key,
   }) : super(key: key);
   final String text;
@@ -29,12 +30,14 @@ class Org extends StatelessWidget {
   final Function(String)? onLinkTap;
   final Function(OrgSection)? onLocalSectionLinkTap;
   final Function(OrgSection)? onSectionLongPress;
+  final String? restorationId;
 
   @override
   Widget build(BuildContext context) {
     final doc = OrgDocument.parse(text);
     return OrgController(
       root: doc,
+      restorationId: restorationId,
       child: OrgRootWidget(
         style: style,
         lightTheme: lightTheme,
