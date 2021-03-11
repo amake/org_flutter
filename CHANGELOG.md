@@ -1,4 +1,4 @@
-## [1.0.0-nullsafety.0] - 2021-03-09
+## [1.0.0] - 2021-03-11
 
 * Migrate to non-nullable by default
 
