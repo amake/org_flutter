@@ -235,6 +235,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       setHideMarkup: _setHideMarkup,
       cycleVisibility: _cycleVisibility,
       cycleVisibilityOf: _cycleVisibilityOf,
+      restorationId: widget.restorationId,
       child: widget.child,
     );
   }
@@ -323,11 +324,13 @@ class OrgControllerData extends InheritedWidget {
     required Function(bool) setHideMarkup,
     required this.cycleVisibility,
     required this.cycleVisibilityOf,
+    String? restorationId,
     Key? key,
   })  : _nodeMap = nodeMap,
         _hideMarkup = hideMarkup,
         _entityReplacements = entityReplacements,
         _setHideMarkup = setHideMarkup,
+        _restorationId = restorationId,
         super(key: key, child: child);
 
   final OrgTree root;
@@ -339,6 +342,7 @@ class OrgControllerData extends InheritedWidget {
   final Function(bool) _setHideMarkup;
   final void Function() cycleVisibility;
   final void Function(OrgTree) cycleVisibilityOf;
+  final String? _restorationId;
 
   bool get hideMarkup => _hideMarkup;
 
@@ -350,6 +354,9 @@ class OrgControllerData extends InheritedWidget {
       _nodeMap.sectionWithTitle(title);
 
   String? prettifyEntity(String name) => _entityReplacements[name];
+
+  String? restorationIdFor(String name) =>
+      _deriveRestorationId(_restorationId, name);
 
   @override
   bool updateShouldNotify(OrgControllerData oldWidget) =>
