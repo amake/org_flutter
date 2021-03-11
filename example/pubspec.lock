@@ -73,7 +73,7 @@ packages:
       name: flutter_tex_js
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "1.2.0"
   highlight:
     dependency: transitive
     description:
@@ -108,7 +108,7 @@ packages:
       name: org_parser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0-nullsafety.0"
+    version: "1.0.0"
   path:
     dependency: transitive
     description:

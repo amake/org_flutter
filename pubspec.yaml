@@ -14,7 +14,7 @@ dependencies:
   # flutter_tex_js:
   #   path: ../flutter_tex_js
   highlight: ^0.7.0
-  org_parser: ^1.0.0-nullsafety.0
+  org_parser: ^1.0.0
   # org_parser:
   #   path: ../org_parser
 
