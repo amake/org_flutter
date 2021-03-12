@@ -57,8 +57,7 @@ class OrgSpanBuilder {
         style: style.copyWith(color: OrgTheme.dataOf(context).keywordColor),
       );
     } else if (element is OrgLink) {
-      final linkDispatcher =
-          OrgEvents.of(context)?.dispatchLinkTap ?? (_, __) {};
+      final linkDispatcher = OrgEvents.of(context).dispatchLinkTap;
       final recognizer = TapGestureRecognizer()
         ..onTap = () => linkDispatcher(context, element.location);
       recognizerHandler(recognizer);

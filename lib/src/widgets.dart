@@ -86,15 +86,12 @@ class OrgTheme extends InheritedWidget {
     Key? key,
   }) : super(key: key, child: child);
 
-  static OrgTheme? of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<OrgTheme>();
+  static OrgTheme of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<OrgTheme>()!;
 
   /// Throws an exception if OrgTheme is not found in the context.
   static OrgThemeData dataOf(BuildContext context) {
     final theme = of(context);
-    if (theme == null) {
-      throw Exception('OrgTheme was null');
-    }
     final brightness = Theme.of(context).brightness;
     switch (brightness) {
       case Brightness.dark:
@@ -125,8 +122,8 @@ class OrgEvents extends InheritedWidget {
   final Function(OrgSection)? onLocalSectionLinkTap;
   final Function(OrgSection)? onSectionLongPress;
 
-  static OrgEvents? of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<OrgEvents>();
+  static OrgEvents of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<OrgEvents>()!;
 
   void dispatchLinkTap(BuildContext context, String url) {
     if (!_handleLocalSectionLink(context, url)) {
@@ -199,7 +196,7 @@ class OrgSectionWidget extends StatelessWidget {
           InkWell(
             onTap: () => OrgController.of(context).cycleVisibilityOf(section),
             onLongPress: () =>
-                OrgEvents.of(context)?.onSectionLongPress?.call(section),
+                OrgEvents.of(context).onSectionLongPress?.call(section),
             child: OrgHeadlineWidget(
               section.headline,
               open: _openEnough(visibility),
