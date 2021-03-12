@@ -170,14 +170,8 @@ class OrgController extends StatefulWidget {
   final Map<String, String> entityReplacements;
   final String? restorationId;
 
-  static OrgControllerData of(BuildContext context) {
-    final data =
-        context.dependOnInheritedWidgetOfExactType<OrgControllerData>();
-    if (data == null) {
-      throw Exception('OrgControllerData was null');
-    }
-    return data;
-  }
+  static OrgControllerData of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<OrgControllerData>()!;
 
   @override
   _OrgControllerState createState() => _OrgControllerState();
