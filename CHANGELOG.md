@@ -1,3 +1,9 @@
+## [1.1.1] - 2021-03-14
+
+* Fix nullability issues with headline, src block
+* `OrgTheme.of`, `OrgEvents.of` now return non-nullable instances; they will
+  throw if the expected widgets are not present in the supplied context
+
 ## [1.1.0] - 2021-03-11
 
 * Support automatic [state restoration](https://flutter.dev/go/state-restoration-design)
