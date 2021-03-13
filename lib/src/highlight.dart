@@ -10,7 +10,7 @@ bool supportedSrcLanguage(String? language) =>
 Widget buildSrcHighlight(
   BuildContext context, {
   required String code,
-  required String language,
+  required String? language,
 }) =>
     HighlightView(
       code,
