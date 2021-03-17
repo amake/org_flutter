@@ -35,8 +35,8 @@ OrgVisibilityState? _orgVisibilityStateFromJson(String? json) => json == null
         (value) => value.toString() == json,
       );
 
-class OrgNodeMap {
-  factory OrgNodeMap.build({
+class OrgDataNodeMap {
+  factory OrgDataNodeMap.build({
     required OrgTree root,
     Map<String, dynamic>? json,
   }) {
@@ -50,26 +50,26 @@ class OrgNodeMap {
       return result;
     }
 
-    final data = <OrgTree, OrgNode>{};
+    final data = <OrgTree, OrgDataNode>{};
     _walk(
       root,
       (subtree) => data[subtree] =
-          OrgNode(initialVisibility: _computeVisibility(subtree)),
+          OrgDataNode(initialVisibility: _computeVisibility(subtree)),
     );
-    return OrgNodeMap._(data);
+    return OrgDataNodeMap._(data);
   }
 
-  factory OrgNodeMap.inherit(OrgNodeMap other) {
+  factory OrgDataNodeMap.inherit(OrgDataNodeMap other) {
     final data = other._data.map((tree, node) =>
-        MapEntry(tree, OrgNode(initialVisibility: node.visibility.value)));
-    return OrgNodeMap._(data);
+        MapEntry(tree, OrgDataNode(initialVisibility: node.visibility.value)));
+    return OrgDataNodeMap._(data);
   }
 
-  OrgNodeMap._(this._data);
+  OrgDataNodeMap._(this._data);
 
-  final Map<OrgTree, OrgNode> _data;
+  final Map<OrgTree, OrgDataNode> _data;
 
-  OrgNode? nodeFor(OrgTree tree) => _data[tree];
+  OrgDataNode? nodeFor(OrgTree tree) => _data[tree];
 
   Set<OrgVisibilityState> get currentVisibility =>
       _data.values.map((e) => e.visibility.value).toSet();
@@ -105,8 +105,8 @@ class OrgNodeMap {
           );
 }
 
-class OrgNode {
-  OrgNode({required OrgVisibilityState initialVisibility})
+class OrgDataNode {
+  OrgDataNode({required OrgVisibilityState initialVisibility})
       : visibility = ValueNotifier(initialVisibility);
   final ValueNotifier<OrgVisibilityState> visibility;
 
@@ -115,8 +115,8 @@ class OrgNode {
 
 void _walk(OrgTree tree, Function(OrgTree) visit) {
   visit(tree);
-  for (final child in tree.children) {
-    _walk(child, visit);
+  for (final section in tree.sections) {
+    _walk(section, visit);
   }
 }
 
@@ -164,7 +164,7 @@ class OrgController extends StatefulWidget {
 
   final OrgTree root;
   final Widget child;
-  final OrgNodeMap? inheritedNodeMap;
+  final OrgDataNodeMap? inheritedNodeMap;
   final Pattern? searchQuery;
   final bool? hideMarkup;
   final Map<String, String> entityReplacements;
@@ -181,7 +181,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   OrgTree get _root => widget.root;
   bool get _inheritNodeMap => widget.inheritedNodeMap != null;
 
-  late OrgNodeMap _nodeMap;
+  late OrgDataNodeMap _nodeMap;
   late Pattern _searchQuery;
   late bool _hideMarkup;
   Map<String, String> get _entityReplacements => widget.entityReplacements;
@@ -190,7 +190,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   void initState() {
     super.initState();
     if (_inheritNodeMap) {
-      _nodeMap = OrgNodeMap.inherit(widget.inheritedNodeMap!);
+      _nodeMap = OrgDataNodeMap.inherit(widget.inheritedNodeMap!);
     }
     _searchQuery = widget.searchQuery ?? _kDefaultSearchQuery;
     _hideMarkup = widget.hideMarkup ?? _kDefaultHideMarkup;
@@ -207,7 +207,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       final nodeMapJson = initialState == null
           ? null
           : json.decode(initialState) as Map<String, dynamic>;
-      _nodeMap = OrgNodeMap.build(root: _root, json: nodeMapJson);
+      _nodeMap = OrgDataNodeMap.build(root: _root, json: nodeMapJson);
     }
   }
 
@@ -250,8 +250,8 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       // a) prevent unnecessarily checking the same vertices twice
       // b) ensure correct visibility result
       bool _visit(OrgTree tree) {
-        final childrenMatch = tree.children.fold<bool>(false, (acc, child) {
-          final match = _visit(child);
+        final childrenMatch = tree.sections.fold<bool>(false, (acc, section) {
+          final match = _visit(section);
           return acc || match;
         });
         final anyMatch =
@@ -282,7 +282,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   void _cycleVisibilityOf(OrgTree tree) {
     final visibilityListenable = _nodeMap.nodeFor(tree)!.visibility;
     final newVisibility =
-        _cycleSubtree(visibilityListenable.value, tree.children.isEmpty);
+        _cycleSubtree(visibilityListenable.value, tree.sections.isEmpty);
     final subtreeVisibility = _subtreeState(newVisibility);
     debugPrint(
         'Cycling subtree visibility; from=${visibilityListenable.value}, '
@@ -310,7 +310,7 @@ class OrgControllerData extends InheritedWidget {
   const OrgControllerData({
     required Widget child,
     required this.root,
-    required OrgNodeMap nodeMap,
+    required OrgDataNodeMap nodeMap,
     required this.searchQuery,
     required this.search,
     required bool hideMarkup,
@@ -328,7 +328,7 @@ class OrgControllerData extends InheritedWidget {
         super(key: key, child: child);
 
   final OrgTree root;
-  final OrgNodeMap _nodeMap;
+  final OrgDataNodeMap _nodeMap;
   final Function(Pattern) search;
   final Pattern searchQuery;
   final bool _hideMarkup;
@@ -342,7 +342,7 @@ class OrgControllerData extends InheritedWidget {
 
   set hideMarkup(bool value) => _setHideMarkup(value);
 
-  OrgNode? nodeFor(OrgTree tree) => _nodeMap.nodeFor(tree);
+  OrgDataNode? nodeFor(OrgTree tree) => _nodeMap.nodeFor(tree);
 
   OrgSection? sectionWithTitle(String title) =>
       _nodeMap.sectionWithTitle(title);

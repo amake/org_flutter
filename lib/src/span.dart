@@ -3,9 +3,9 @@ import 'package:flutter/widgets.dart';
 import 'package:org_flutter/org_flutter.dart';
 import 'package:org_flutter/src/util/util.dart';
 
-typedef Transformer = String Function(OrgContentElement, String);
+typedef Transformer = String Function(OrgNode, String);
 
-String identityTransformer(OrgContentElement _, String str) => str;
+String identityTransformer(OrgNode _, String str) => str;
 
 class OrgSpanBuilder {
   OrgSpanBuilder(
@@ -21,7 +21,7 @@ class OrgSpanBuilder {
   final bool hideMarkup;
 
   InlineSpan build(
-    OrgContentElement element, {
+    OrgNode element, {
     TextStyle? style,
     Transformer transformer = identityTransformer,
   }) {
@@ -163,7 +163,7 @@ class OrgSpanBuilder {
                   ))
               .toList(growable: false));
     } else {
-      throw Exception('Unknown OrgContentElement type: $element');
+      throw Exception('Unknown OrgNode type: $element');
     }
   }
 

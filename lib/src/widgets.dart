@@ -32,7 +32,7 @@ class OrgDocumentWidget extends StatelessWidget {
       physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,
       children: <Widget>[
         if (document.content != null) OrgContentWidget(document.content!),
-        ...document.children.map((section) => OrgSectionWidget(section)),
+        ...document.sections.map((section) => OrgSectionWidget(section)),
         listBottomSafeArea(),
       ],
     );
@@ -228,7 +228,7 @@ class OrgSectionWidget extends StatelessWidget {
                         visibility == OrgVisibilityState.subtree))
                   OrgContentWidget(section.content!),
                 if (visibility != OrgVisibilityState.folded)
-                  ...section.children.map((child) => OrgSectionWidget(child)),
+                  ...section.sections.map((child) => OrgSectionWidget(child)),
               ],
             ),
           ),
@@ -246,7 +246,7 @@ class OrgContentWidget extends StatelessWidget {
     this.textAlign,
     Key? key,
   }) : super(key: key);
-  final OrgContentElement content;
+  final OrgNode content;
   final Transformer? transformer;
   final TextAlign? textAlign;
 
