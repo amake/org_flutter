@@ -48,6 +48,7 @@ class OrgRootWidget extends StatelessWidget {
     this.onLinkTap,
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
+    this.loadImage,
     Key? key,
   }) : super(key: key);
 
@@ -59,6 +60,10 @@ class OrgRootWidget extends StatelessWidget {
   final Function(OrgSection)? onLocalSectionLinkTap;
   final Function(OrgSection)? onSectionLongPress;
 
+  /// A callback for building a widget for displaying an image. Return null to
+  /// display the link text instead.
+  final Widget? Function(OrgLink)? loadImage;
+
   @override
   Widget build(BuildContext context) {
     final body = OrgTheme(
@@ -68,6 +73,7 @@ class OrgRootWidget extends StatelessWidget {
         onLinkTap: onLinkTap,
         onSectionLongPress: onSectionLongPress,
         onLocalSectionLinkTap: onLocalSectionLinkTap,
+        loadImage: loadImage,
         child: IdentityTextScale(child: child),
       ),
     );
@@ -117,12 +123,17 @@ class OrgEvents extends InheritedWidget {
     this.onLinkTap,
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
+    this.loadImage,
     Key? key,
   }) : super(key: key, child: child);
 
   final Function(String)? onLinkTap;
   final Function(OrgSection)? onLocalSectionLinkTap;
   final Function(OrgSection)? onSectionLongPress;
+
+  /// A callback for building a widget for displaying an image. Return null to
+  /// display the link text instead.
+  final Widget? Function(OrgLink)? loadImage;
 
   static OrgEvents of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<OrgEvents>()!;

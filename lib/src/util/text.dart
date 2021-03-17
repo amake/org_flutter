@@ -75,3 +75,7 @@ R Function(T) _memoize1<T, R>(R Function(T) func) {
 bool looksLikeUrl(String text) => _urlLikeRegexp.hasMatch(text);
 
 final _urlLikeRegexp = RegExp(r'^\w+://');
+
+bool looksLikeImagePath(String text) => _imagePathLikeRegexp.hasMatch(text);
+
+final _imagePathLikeRegexp = RegExp(r'\.(?:jpe?g|png|gif|webp|w?bmp)$');
