@@ -1,3 +1,8 @@
+## [1.2.0] - 2021-03-19
+
+* Support loading images via `loadImage` callback supplied to `Org` or
+  `OrgEvents`
+
 ## [1.1.1] - 2021-03-14
 
 * Fix nullability issues with headline, src block
