@@ -1,3 +1,7 @@
+## [1.3.0] - 2021-04-19
+
+* Relicense under the MIT License
+
 ## [1.2.0] - 2021-03-19
 
 * Support loading images via `loadImage` callback supplied to `Org` or
