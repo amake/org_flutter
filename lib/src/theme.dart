@@ -6,7 +6,7 @@ import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
 // These colors found by
-// 1. Finding the face used for something in an org-mode buffer
+// 1. Finding the face used for something in an Org Mode buffer
 // 2. Finding the definition of the face or its root ancestor
 // 3. Finding the color name for max colors and light/dark background
 // 4. Converting color name to hex with
