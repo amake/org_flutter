@@ -103,6 +103,18 @@ class OrgDataNodeMap {
             (section) => section!.headline.rawTitle == title,
             orElse: () => null,
           );
+
+  OrgSection? sectionWithId(String id) =>
+      _data.keys.whereType<OrgSection?>().firstWhere(
+            (section) => section!.ids.contains(id),
+            orElse: () => null,
+          );
+
+  OrgSection? sectionWithCustomId(String customId) =>
+      _data.keys.whereType<OrgSection?>().firstWhere(
+            (section) => section!.customIds.contains(customId),
+            orElse: () => null,
+          );
 }
 
 class OrgDataNode {
@@ -338,6 +350,11 @@ class OrgControllerData extends InheritedWidget {
 
   OrgSection? sectionWithTitle(String title) =>
       _nodeMap.sectionWithTitle(title);
+
+  OrgSection? sectionWithId(String id) => _nodeMap.sectionWithId(id);
+
+  OrgSection? sectionWithCustomId(String customId) =>
+      _nodeMap.sectionWithCustomId(customId);
 
   String? prettifyEntity(String name) => _entityReplacements[name];
 

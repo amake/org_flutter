@@ -139,23 +139,45 @@ class OrgEvents extends InheritedWidget {
       context.dependOnInheritedWidgetOfExactType<OrgEvents>()!;
 
   void dispatchLinkTap(BuildContext context, String url) {
-    if (!_handleLocalSectionLink(context, url)) {
+    final section = _resolveLocalSectionLink(context, url);
+    if (section != null) {
+      onLocalSectionLinkTap?.call(section);
+    } else {
       onLinkTap?.call(url);
     }
   }
 
-  bool _handleLocalSectionLink(BuildContext context, String url) {
+  OrgSection? _resolveLocalSectionLink(BuildContext context, String url) {
     if (isOrgLocalSectionUrl(url)) {
       final sectionTitle = parseOrgLocalSectionUrl(url);
       final section = OrgController.of(context).sectionWithTitle(sectionTitle);
       if (section == null) {
         debugPrint('Failed to find local section with title "$sectionTitle"');
-      } else {
-        onLocalSectionLinkTap?.call(section);
       }
-      return true;
+      return section;
+    } else if (isOrgIdUrl(url)) {
+      final sectionId = parseOrgIdUrl(url);
+      final section = OrgController.of(context).sectionWithId(sectionId);
+      if (section == null) {
+        debugPrint('Failed to find local section with ID "$sectionId"');
+      }
+      return section;
+    } else if (isOrgCustomIdUrl(url)) {
+      final sectionId = parseOrgCustomIdUrl(url);
+      final section = OrgController.of(context).sectionWithCustomId(sectionId);
+      if (section == null) {
+        debugPrint('Failed to find local section with CUSTOM_ID "$sectionId"');
+      }
+      return section;
     }
-    return false;
+    try {
+      final link = OrgFileLink.parse(url);
+      if (link.isLocal) {
+        return _resolveLocalSectionLink(context, link.extra!);
+      }
+    } on Exception {
+      return null;
+    }
   }
 
   @override
