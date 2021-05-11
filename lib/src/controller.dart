@@ -51,11 +51,11 @@ class OrgDataNodeMap {
     }
 
     final data = <OrgTree, OrgDataNode>{};
-    _walk(
-      root,
-      (subtree) => data[subtree] =
-          OrgDataNode(initialVisibility: _computeVisibility(subtree)),
-    );
+    root.visitSections((subtree) {
+      data[subtree] =
+          OrgDataNode(initialVisibility: _computeVisibility(subtree));
+      return true;
+    });
     return OrgDataNodeMap._(data);
   }
 
@@ -111,13 +111,6 @@ class OrgDataNode {
   final ValueNotifier<OrgVisibilityState> visibility;
 
   void dispose() => visibility.dispose();
-}
-
-void _walk(OrgTree tree, Function(OrgTree) visit) {
-  visit(tree);
-  for (final section in tree.sections) {
-    _walk(section, visit);
-  }
 }
 
 typedef OrgStateListener = Function(Map<String, dynamic>);
@@ -287,13 +280,12 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     debugPrint(
         'Cycling subtree visibility; from=${visibilityListenable.value}, '
         'to=$newVisibility; subtree=$subtreeVisibility');
-    _walk(
-      tree,
-      (subtree) =>
-          _nodeMap.nodeFor(subtree)!.visibility.value = subtreeVisibility,
-    );
-    // Do this last because otherwise _walk applies subtreeVisibility to this
-    // root
+    tree.visitSections((subtree) {
+      _nodeMap.nodeFor(subtree)!.visibility.value = subtreeVisibility;
+      return true;
+    });
+    // Do this last because otherwise visitSections applies subtreeVisibility to
+    // this root
     visibilityListenable.value = newVisibility;
     _notifyState();
   }
