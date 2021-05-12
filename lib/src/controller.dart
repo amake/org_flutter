@@ -356,6 +356,30 @@ class OrgControllerData extends InheritedWidget {
   OrgSection? sectionWithCustomId(String customId) =>
       _nodeMap.sectionWithCustomId(customId);
 
+  /// Find the section corresponding to [target], which may be one of
+  ///
+  /// - A section title link fragment like `*Foo bar`
+  /// - A CUSTOM_ID link fragment like `#foo-bar`
+  /// - An ID link like `id:abcd1234`
+  ///
+  /// The specified section may not exist in this tree, in which case the result
+  /// will be null.
+  ///
+  /// If [target] is none of the above three types, an [Exception] will be
+  /// thrown.
+  OrgSection? sectionForTarget(String target) {
+    if (isOrgLocalSectionUrl(target)) {
+      return sectionWithTitle(parseOrgLocalSectionUrl(target));
+    } else if (isOrgIdUrl(target)) {
+      return sectionWithId(parseOrgIdUrl(target));
+    } else if (isOrgCustomIdUrl(target)) {
+      return sectionWithCustomId(parseOrgCustomIdUrl(target));
+    } else {
+      throw Exception(
+          'Unknown target type: $target (was not a title or an ID)');
+    }
+  }
+
   String? prettifyEntity(String name) => _entityReplacements[name];
 
   String? restorationIdFor(String name) =>
