@@ -7,7 +7,7 @@
 For parsing Org Mode documents, see
 [org_parser](https://github.com/amake/org_parser). For an example application
 that displays Org Mode documents with org_parser and org_flutter, see
-[orgro](https://github.com/amake/orgro).
+[Orgro](https://orgro.org).
 
 The simplest way to display an Org Mode document in your Flutter application is
 to use the `Org` widget:
