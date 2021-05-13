@@ -1,3 +1,11 @@
+## [1.4.0] - 2021-05-13
+
+* Handle `id:` and `#custom-id` links
+* Add methods for resolving section links to `OrgControllerData`
+  * `sectionWithId`
+  * `sectionWithCustomId`
+  * `sectionForTarget`
+
 ## [1.3.0] - 2021-04-19
 
 * Relicense under the MIT License
