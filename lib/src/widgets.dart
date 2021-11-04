@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_tex_js/flutter_tex_js.dart';
 import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/highlight.dart';
