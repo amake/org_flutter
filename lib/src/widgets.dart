@@ -564,26 +564,32 @@ class OrgTableWidget extends StatelessWidget {
         // Ensure that table takes up entire width (can't have tables
         // side-by-side)
         constraints: const BoxConstraints.tightFor(width: double.infinity),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Row(
-            children: <Widget>[
-              Text(table.indent),
-              Column(
-                  children: _columnChildren(context).toList(growable: false)),
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Row(
+                children: <Widget>[
+                  Text(table.indent),
+                  _buildTable(context),
+                ],
+              ),
+            ),
+            if (table.trailing.isNotEmpty)
+              Text(removeTrailingLineBreak(table.trailing)),
+          ],
         ),
       ),
     );
   }
 
-  Iterable<Widget> _columnChildren(BuildContext context) sync* {
+  Widget _buildTable(BuildContext context) {
     final tableColor = OrgTheme.dataOf(context).tableColor;
     final borderSide =
         tableColor == null ? const BorderSide() : BorderSide(color: tableColor);
-    yield Table(
+    return Table(
       defaultColumnWidth: const IntrinsicColumnWidth(),
       defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
       textBaseline: TextBaseline.alphabetic,
@@ -594,9 +600,6 @@ class OrgTableWidget extends StatelessWidget {
       ),
       children: _tableRows(borderSide).toList(growable: false),
     );
-    if (table.trailing.isNotEmpty) {
-      yield Text(removeTrailingLineBreak(table.trailing));
-    }
   }
 
   Iterable<TableRow> _tableRows(BorderSide borderSide) sync* {
