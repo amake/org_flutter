@@ -174,8 +174,9 @@ class OrgEvents extends InheritedWidget {
         return _resolveLocalSectionLink(context, link.extra!);
       }
     } on Exception {
-      return null;
+      // Ignore
     }
+    return null;
   }
 
   @override
