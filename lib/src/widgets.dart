@@ -8,6 +8,9 @@ import 'package:org_flutter/src/theme.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
+/// The root of the actual Org Mode document itself. Assumes that
+/// [OrgRootWidget] and [OrgController] are available in the build context. See
+/// the Org widget for a more user-friendly entrypoint.
 class OrgDocumentWidget extends StatelessWidget {
   const OrgDocumentWidget(
     this.document, {
@@ -37,6 +40,8 @@ class OrgDocumentWidget extends StatelessWidget {
   }
 }
 
+/// A widget that sits above the [OrgDocumentWidget] and orchestrates [OrgTheme]
+/// and [OrgEvents].
 class OrgRootWidget extends StatelessWidget {
   const OrgRootWidget({
     required this.child,
@@ -51,15 +56,33 @@ class OrgRootWidget extends StatelessWidget {
   }) : super(key: key);
 
   final Widget child;
+
+  /// Text style to serve as a basis for all text in the document
   final TextStyle? style;
+
   final OrgThemeData? lightTheme;
   final OrgThemeData? darkTheme;
+
+  /// A callback invoked when the user taps a link. The argument is the link
+  /// URL. You might want to open this in a browser.
   final Function(String)? onLinkTap;
+
+  /// A callback invoked when the user taps on a link to a section within the
+  /// current document. The argument is the target section. You might want to
+  /// display it somehow.
   final Function(OrgSection)? onLocalSectionLinkTap;
+
+  /// A callback invoked when the user long-presses on a section headline within
+  /// the current document. The argument is the pressed section. You might want
+  /// to narrow the display to show just this section.
   final Function(OrgSection)? onSectionLongPress;
 
-  /// A callback for building a widget for displaying an image. Return null to
-  /// display the link text instead.
+  /// A callback invoked when an image should be displayed. The argument is the
+  /// [OrgLink] describing where the image data can be found. It is your
+  /// responsibility to resolve the link, fetch the data, and return a widget
+  /// for displaying the image.
+  ///
+  /// Return null instead to display the link text.
   final Widget? Function(OrgLink)? loadImage;
 
   @override
@@ -84,6 +107,7 @@ class OrgRootWidget extends StatelessWidget {
   }
 }
 
+/// The theme for the Org Mode document
 class OrgTheme extends InheritedWidget {
   const OrgTheme({
     required Widget child,
@@ -115,6 +139,8 @@ class OrgTheme extends InheritedWidget {
       light != oldWidget.light || dark != oldWidget.dark;
 }
 
+/// A widget for managing callbacks invoked upon user interaction or other
+/// document-related events.
 class OrgEvents extends InheritedWidget {
   const OrgEvents({
     required Widget child,
@@ -125,17 +151,32 @@ class OrgEvents extends InheritedWidget {
     Key? key,
   }) : super(key: key, child: child);
 
+  /// A callback invoked when the user taps a link. The argument is the link
+  /// URL. You might want to open this in a browser.
   final Function(String)? onLinkTap;
+
+  /// A callback invoked when the user taps on a link to a section within the
+  /// current document. The argument is the target section. You might want to
+  /// display it somehow.
   final Function(OrgSection)? onLocalSectionLinkTap;
+
+  /// A callback invoked when the user long-presses on a section headline within
+  /// the current document. The argument is the pressed section. You might want
+  /// to narrow the display to show just this section.
   final Function(OrgSection)? onSectionLongPress;
 
-  /// A callback for building a widget for displaying an image. Return null to
-  /// display the link text instead.
+  /// A callback invoked when an image should be displayed. The argument is the
+  /// [OrgLink] describing where the image data can be found. It is your
+  /// responsibility to resolve the link, fetch the data, and return a widget
+  /// for displaying the image.
+  ///
+  /// Return null instead to display the link text.
   final Widget? Function(OrgLink)? loadImage;
 
   static OrgEvents of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<OrgEvents>()!;
 
+  /// Invoke the appropriate handler for the given [url]
   void dispatchLinkTap(BuildContext context, String url) {
     final section = _resolveLocalSectionLink(context, url);
     if (section != null) {
@@ -185,6 +226,7 @@ class OrgEvents extends InheritedWidget {
       onSectionLongPress != oldWidget.onSectionLongPress;
 }
 
+/// An Org Mode section
 class OrgSectionWidget extends StatelessWidget {
   const OrgSectionWidget(
     this.section, {
@@ -260,6 +302,7 @@ class OrgSectionWidget extends StatelessWidget {
   }
 }
 
+/// Generic Org Mode content
 class OrgContentWidget extends StatelessWidget {
   const OrgContentWidget(
     this.content, {
@@ -285,6 +328,7 @@ class OrgContentWidget extends StatelessWidget {
   }
 }
 
+/// An Org Mode section headline
 class OrgHeadlineWidget extends StatelessWidget {
   const OrgHeadlineWidget(this.headline, {required this.open, Key? key})
       : super(key: key);
@@ -373,6 +417,7 @@ class OrgHeadlineWidget extends StatelessWidget {
   }
 }
 
+/// A utility for overriding the text scale to be 1
 class IdentityTextScale extends StatelessWidget {
   const IdentityTextScale({required this.child, Key? key}) : super(key: key);
 
@@ -387,6 +432,7 @@ class IdentityTextScale extends StatelessWidget {
   }
 }
 
+/// An Org Mode block
 class OrgBlockWidget extends StatefulWidget {
   const OrgBlockWidget(this.block, {Key? key}) : super(key: key);
   final OrgBlock block;
@@ -516,6 +562,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
   }
 }
 
+/// An Org Mode meta line
 class OrgMetaWidget extends StatelessWidget {
   const OrgMetaWidget(this.meta, {Key? key}) : super(key: key);
   final OrgMeta meta;
@@ -553,6 +600,7 @@ class OrgMetaWidget extends StatelessWidget {
   }
 }
 
+/// An Org Mode table
 class OrgTableWidget extends StatelessWidget {
   const OrgTableWidget(this.table, {Key? key}) : super(key: key);
   final OrgTable table;
@@ -634,6 +682,7 @@ class OrgTableWidget extends StatelessWidget {
   }
 }
 
+/// An Org Mode fixed-width area
 class OrgFixedWidthAreaWidget extends StatelessWidget {
   const OrgFixedWidthAreaWidget(this.fixedWidthArea, {Key? key})
       : super(key: key);
@@ -664,6 +713,7 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
   }
 }
 
+/// An Org Mode planning line
 class OrgPlanningLineWidget extends StatelessWidget {
   const OrgPlanningLineWidget(this.planningLine, {Key? key}) : super(key: key);
   final OrgPlanningLine planningLine;
@@ -699,6 +749,7 @@ class OrgPlanningLineWidget extends StatelessWidget {
   }
 }
 
+/// An Org Mode paragraph
 class OrgParagraphWidget extends StatelessWidget {
   const OrgParagraphWidget(this.paragraph, {Key? key}) : super(key: key);
   final OrgParagraph paragraph;
@@ -724,6 +775,7 @@ class OrgParagraphWidget extends StatelessWidget {
   }
 }
 
+/// An Org Mode list
 class OrgListWidget extends StatelessWidget {
   const OrgListWidget(this.list, {Key? key}) : super(key: key);
   final OrgList list;
@@ -747,6 +799,7 @@ class OrgListWidget extends StatelessWidget {
   }
 }
 
+/// An Org Mode list item
 class OrgListItemWidget extends StatelessWidget {
   const OrgListItemWidget(this.item, {Key? key}) : super(key: key);
   final OrgListItem item;
@@ -808,6 +861,7 @@ class OrgListItemWidget extends StatelessWidget {
   }
 }
 
+/// An Org Mode drawer
 class OrgDrawerWidget extends StatefulWidget {
   const OrgDrawerWidget(this.drawer, {Key? key}) : super(key: key);
   final OrgDrawer drawer;
@@ -889,6 +943,7 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
   }
 }
 
+/// An Org Mode property
 class OrgPropertyWidget extends StatelessWidget {
   const OrgPropertyWidget(this.property, {Key? key}) : super(key: key);
   final OrgProperty property;
@@ -929,6 +984,7 @@ class OrgPropertyWidget extends StatelessWidget {
   }
 }
 
+/// An Org Mode LaTeX block
 class OrgLatexBlockWidget extends StatelessWidget {
   const OrgLatexBlockWidget(this.block, {Key? key}) : super(key: key);
 
@@ -973,6 +1029,7 @@ class OrgLatexBlockWidget extends StatelessWidget {
   }
 }
 
+/// An Org Mode LaTeX inline span
 class OrgLatexInlineWidget extends StatelessWidget {
   const OrgLatexInlineWidget(this.latex, {Key? key}) : super(key: key);
 

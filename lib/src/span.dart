@@ -7,6 +7,8 @@ typedef Transformer = String Function(OrgNode, String);
 
 String identityTransformer(OrgNode _, String str) => str;
 
+/// A utility for building a complex, nested [InlineSpan] out of text runs and
+/// org_flutter widgets
 class OrgSpanBuilder {
   OrgSpanBuilder(
     this.context, {

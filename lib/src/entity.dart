@@ -7,6 +7,7 @@
 //             org-entities
 //             ",\n")
 
+/// Default prettify-symbols-mode entity replacements
 const Map<String, String> orgDefaultEntityReplacements = {
   // * Letters,
   // ** Latin,

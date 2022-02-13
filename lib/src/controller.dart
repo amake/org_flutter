@@ -35,6 +35,8 @@ OrgVisibilityState? _orgVisibilityStateFromJson(String? json) => json == null
         (value) => value.toString() == json,
       );
 
+/// A collection of temporary data about an Org Mode document used for display
+/// purposes.
 class OrgDataNodeMap {
   factory OrgDataNodeMap.build({
     required OrgTree root,
@@ -127,7 +129,14 @@ class OrgDataNode {
 
 typedef OrgStateListener = Function(Map<String, dynamic>);
 
+/// Control behavior of an Org Mode document widget. Not needed if you are using
+/// the Org widget.
+///
+/// Place this in your widget hierarchy and fetch with [OrgController.of].
 class OrgController extends StatefulWidget {
+  /// Initialize the controller with existing data. Mostly useful for displaying
+  /// a subsection of a parent document in a "narrowed" view; in such cases you
+  /// should supply the [data] and [root] from the parent OrgController.
   OrgController.defaults(
     OrgControllerData data, {
     required OrgTree root,
@@ -167,12 +176,27 @@ class OrgController extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
+  /// The Org Mode document or section this controller will control
   final OrgTree root;
+
+  /// The child widget
   final Widget child;
+
+  /// Temporary data about the nodes in [root]
   final OrgDataNodeMap? inheritedNodeMap;
+
+  /// A query for full-text search of the document
   final Pattern? searchQuery;
+
+  /// Optionally hide some kinds of markup
   final bool? hideMarkup;
+
+  /// A map of entity replacements, e.g. Agrave → À. See
+  /// [orgDefaultEntityReplacements].
   final Map<String, String> entityReplacements;
+
+  /// An ID for temporary state restoration. Supply a unique ID to ensure that
+  /// temporary state such as scroll position is preserved as appropriate.
   final String? restorationId;
 
   static OrgControllerData of(BuildContext context) =>
@@ -239,6 +263,8 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     );
   }
 
+  /// Set the search query. Seciton visibility will be updated so that sections
+  /// with hits are expanded and sections without will be collapsed.
   void search(Pattern query) {
     if (!patternEquals(_searchQuery, query)) {
       setState(() {
@@ -331,28 +357,49 @@ class OrgControllerData extends InheritedWidget {
         _restorationId = restorationId,
         super(key: key, child: child);
 
+  /// The Org Mode document or section this controller will control
   final OrgTree root;
+
   final OrgDataNodeMap _nodeMap;
+
+  /// Set the search query. Seciton visibility will be updated so that sections
+  /// with hits are expanded and sections without will be collapsed.
   final Function(Pattern) search;
+
+  /// A query for full-text search of the document
   final Pattern searchQuery;
+
   final bool _hideMarkup;
+
   final Map<String, String> _entityReplacements;
+
   final Function(bool) _setHideMarkup;
+
+  /// Cycle the visibility of the entire document
   final void Function() cycleVisibility;
+
+  /// Cycle the visibility of the specified subtree
   final void Function(OrgTree) cycleVisibilityOf;
+
   final String? _restorationId;
 
+  /// Whether some kidns of markup should be hidden
   bool get hideMarkup => _hideMarkup;
 
+  /// Optionally hide some kinds of markup
   set hideMarkup(bool value) => _setHideMarkup(value);
 
+  /// Find the temporary data node for the given subtree
   OrgDataNode? nodeFor(OrgTree tree) => _nodeMap.nodeFor(tree);
 
+  /// Find the section with the specified title
   OrgSection? sectionWithTitle(String title) =>
       _nodeMap.sectionWithTitle(title);
 
+  /// Find the section with the specified ID
   OrgSection? sectionWithId(String id) => _nodeMap.sectionWithId(id);
 
+  /// Find the section with the specified custom ID
   OrgSection? sectionWithCustomId(String customId) =>
       _nodeMap.sectionWithCustomId(customId);
 
@@ -380,6 +427,8 @@ class OrgControllerData extends InheritedWidget {
     }
   }
 
+  /// Get the prettify-symbols-mode replacement with the given [name]. The
+  /// result is obtained from [OrgController.entityReplacements].
   String? prettifyEntity(String name) => _entityReplacements[name];
 
   String? restorationIdFor(String name) =>
