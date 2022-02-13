@@ -1,3 +1,7 @@
+## [1.4.1] - 2022-02-13
+
+* Improve documentation
+
 ## [1.4.0] - 2021-05-13
 
 * Handle `id:` and `#custom-id` links
