@@ -1,3 +1,7 @@
+## [1.4.2] - 2022-02-28
+
+* Fix null dereference when applying search query
+
 ## [1.4.1] - 2022-02-13
 
 * Improve documentation
