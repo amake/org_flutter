@@ -289,10 +289,13 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
             childrenMatch || tree.contains(query, includeChildren: false);
         final newValue =
             anyMatch ? OrgVisibilityState.children : OrgVisibilityState.folded;
-        final node = _nodeMap.nodeFor(tree)!;
-        debugPrint(
-            'Changing visibility; from=${node.visibility.value}, to=$newValue');
-        node.visibility.value = newValue;
+        final node = _nodeMap.nodeFor(tree);
+        if (node != null) {
+          // Document root is not in map, so its node will be null
+          debugPrint(
+              'Changing visibility; from=${node.visibility.value}, to=$newValue');
+          node.visibility.value = newValue;
+        }
         return anyMatch;
       }
 
