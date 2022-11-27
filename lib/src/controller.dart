@@ -42,7 +42,7 @@ class OrgDataNodeMap {
     required OrgTree root,
     Map<String, dynamic>? json,
   }) {
-    OrgVisibilityState _computeVisibility(OrgTree subtree) {
+    OrgVisibilityState computeVisibility(OrgTree subtree) {
       var result = _kDefaultVisibilityState;
       if (json != null && subtree is OrgSection) {
         final title = subtree.headline.rawTitle;
@@ -55,7 +55,7 @@ class OrgDataNodeMap {
     final data = <OrgTree, OrgDataNode>{};
     root.visitSections((subtree) {
       data[subtree] =
-          OrgDataNode(initialVisibility: _computeVisibility(subtree));
+          OrgDataNode(initialVisibility: computeVisibility(subtree));
       return true;
     });
     return OrgDataNodeMap._(data);
@@ -203,7 +203,7 @@ class OrgController extends StatefulWidget {
       context.dependOnInheritedWidgetOfExactType<OrgControllerData>()!;
 
   @override
-  _OrgControllerState createState() => _OrgControllerState();
+  State<OrgController> createState() => _OrgControllerState();
 }
 
 class _OrgControllerState extends State<OrgController> with RestorationMixin {
@@ -280,9 +280,9 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       // Traverse tree from leaves to root in order to
       // a) prevent unnecessarily checking the same vertices twice
       // b) ensure correct visibility result
-      bool _visit(OrgTree tree) {
+      bool visit(OrgTree tree) {
         final childrenMatch = tree.sections.fold<bool>(false, (acc, section) {
-          final match = _visit(section);
+          final match = visit(section);
           return acc || match;
         });
         final anyMatch =
@@ -299,7 +299,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
         return anyMatch;
       }
 
-      _visit(_root);
+      visit(_root);
     }
   }
 

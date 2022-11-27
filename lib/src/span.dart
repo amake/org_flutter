@@ -91,7 +91,7 @@ class OrgSpanBuilder {
       final footnoteStyle = style.copyWith(
         color: OrgTheme.dataOf(context).footnoteColor,
       );
-      InlineSpan _highlight(String text) {
+      InlineSpan highlight(String text) {
         return highlightedSpan(
           transformer(element, text),
           style: footnoteStyle,
@@ -100,17 +100,17 @@ class OrgSpanBuilder {
 
       // TODO(aaron): Make footnote references clickable
       return TextSpan(children: [
-        _highlight(element.leading),
-        if (element.name != null) _highlight(element.name!),
+        highlight(element.leading),
+        if (element.name != null) highlight(element.name!),
         if (element.definitionDelimiter != null)
-          _highlight(element.definitionDelimiter!),
+          highlight(element.definitionDelimiter!),
         if (element.definition != null)
           build(
             element.definition!,
             style: footnoteStyle,
             transformer: transformer,
           ),
-        _highlight(element.trailing),
+        highlight(element.trailing),
       ]);
     } else if (element is OrgFootnote) {
       return TextSpan(
@@ -234,7 +234,7 @@ class FancySpanBuilder extends StatefulWidget {
   final Widget Function(BuildContext, OrgSpanBuilder) builder;
 
   @override
-  _FancySpanBuilderState createState() => _FancySpanBuilderState();
+  State<FancySpanBuilder> createState() => _FancySpanBuilderState();
 }
 
 class _FancySpanBuilderState extends State<FancySpanBuilder>

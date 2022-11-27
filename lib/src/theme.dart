@@ -313,7 +313,7 @@ class OrgThemeData {
   }
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
         todoColor,
         doneColor,
         priorityColor,

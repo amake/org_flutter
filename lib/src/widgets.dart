@@ -438,7 +438,7 @@ class OrgBlockWidget extends StatefulWidget {
   final OrgBlock block;
 
   @override
-  _OrgBlockWidgetState createState() => _OrgBlockWidgetState();
+  State<OrgBlockWidget> createState() => _OrgBlockWidgetState();
 }
 
 class _OrgBlockWidgetState extends State<OrgBlockWidget>
@@ -867,7 +867,7 @@ class OrgDrawerWidget extends StatefulWidget {
   final OrgDrawer drawer;
 
   @override
-  _OrgDrawerWidgetState createState() => _OrgDrawerWidgetState();
+  State<OrgDrawerWidget> createState() => _OrgDrawerWidgetState();
 }
 
 class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
