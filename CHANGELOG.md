@@ -1,3 +1,8 @@
+## [2.0.0] - 2022-11-27
+
+* Fix minor API issues
+* Require Flutter >=2.14.0, Dart >=2.18
+
 ## [1.4.2] - 2022-02-28
 
 * Fix null dereference when applying search query
