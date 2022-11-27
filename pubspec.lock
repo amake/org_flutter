@@ -159,10 +159,10 @@ packages:
     dependency: "direct main"
     description:
       name: org_parser
-      sha256: "96f51db7c6ed51099b803bfb31e80ddccc0db6f46af7f9dec4217bf974a6aea6"
+      sha256: "013c5f4f129542f1cab2467806c7d18dc4fefdafa8daf6883b0bd912e4e0cd0b"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.1"
+    version: "3.0.0"
   path:
     dependency: transitive
     description:
@@ -175,10 +175,10 @@ packages:
     dependency: transitive
     description:
       name: petitparser
-      sha256: "1a914995d4ef10c94ff183528c120d35ed43b5eaa8713fc6766a9be4570782e2"
+      sha256: "49392a45ced973e8d94a85fdb21293fbb40ba805fc49f2965101ae748a3683b4"
       url: "https://pub.dev"
     source: hosted
-    version: "4.4.0"
+    version: "5.1.0"
   plugin_platform_interface:
     dependency: transitive
     description:
