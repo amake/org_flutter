@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 
 mixin OpenCloseable<T extends StatefulWidget> on State<T> {
-  late ValueNotifier<bool> _openListenable;
+  late final ValueNotifier<bool> _openListenable;
   ValueNotifier<bool> get openListenable => _openListenable;
 
   bool get defaultOpen => true;
