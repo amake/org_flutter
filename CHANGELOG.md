@@ -1,3 +1,11 @@
+## [2.1.0] - 2023-01-15
+
+* Track keys for search result spans, expose via `OrgControllerData`
+
+  When performing a search with `OrgController.of(context).search`, after the
+  widget build phase is complete you can access `SearchResultKey`s in
+  `OrgController.of(context).searchResultKeys`.
+
 ## [2.0.0] - 2022-11-27
 
 * Fix minor API issues
