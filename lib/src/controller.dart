@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/entity.dart';
+import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
@@ -11,6 +12,8 @@ const _kDefaultHideMarkup = false;
 const _kDefaultVisibilityState = OrgVisibilityState.folded;
 
 const _kTransientStateNodeMapKey = 'node_map';
+
+typedef SearchResultKey = GlobalKey<SearchResultSpanState>;
 
 enum OrgVisibilityState {
   /// Just the root headline; equivalent to global "overview" state
@@ -340,7 +343,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
 }
 
 class OrgControllerData extends InheritedWidget {
-  const OrgControllerData({
+  OrgControllerData({
     required Widget child,
     required this.root,
     required OrgDataNodeMap nodeMap,
@@ -371,6 +374,15 @@ class OrgControllerData extends InheritedWidget {
 
   /// A query for full-text search of the document
   final Pattern searchQuery;
+
+  /// Keys representing individual search result spans in the document. It will
+  /// only be populated after the widget build phase, so consumers will likely
+  /// want to use e.g. a [ValueListenableBuilder] to consume it.
+  ///
+  /// Note that keys will not necessarily be in "document" order. Consumers
+  /// should sort by any relevant metric as necessary.
+  final ValueNotifier<List<SearchResultKey>> searchResultKeys =
+      ValueNotifier([]);
 
   final bool _hideMarkup;
 
@@ -437,12 +449,28 @@ class OrgControllerData extends InheritedWidget {
   String? restorationIdFor(String name) =>
       _deriveRestorationId(_restorationId, name);
 
+  SearchResultKey generateSearchResultKey({String? label}) {
+    final key = SearchResultKey(debugLabel: '$searchQuery($label)');
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      searchResultKeys.value = [
+        // Filter out unmounted keys to prevent rebuilds from adding to the list
+        // forever
+        ...searchResultKeys.value
+            .where((key) => key.currentContext?.mounted == true),
+        key,
+      ];
+    });
+    return key;
+  }
+
   @override
   bool updateShouldNotify(OrgControllerData oldWidget) =>
       root != oldWidget.root ||
       search != oldWidget.search ||
       searchQuery != oldWidget.searchQuery ||
       hideMarkup != oldWidget.hideMarkup ||
+      // Don't check searchResultKeys because rebuilding this widget will cause
+      // new keys to be make which leads to an infinite loop
       !mapEquals(_entityReplacements, oldWidget._entityReplacements);
 }
 

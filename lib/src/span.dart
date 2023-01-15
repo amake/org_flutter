@@ -1,5 +1,5 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:org_flutter/org_flutter.dart';
 import 'package:org_flutter/src/util/util.dart';
 
@@ -197,35 +197,76 @@ class OrgSpanBuilder {
       );
     }
   }
-}
 
-Iterable<InlineSpan> tokenizeTextSpan(
-  String text,
-  Pattern pattern,
-  TextStyle matchStyle,
-  String Function(String) transform,
-  GestureRecognizer? recognizer,
-) sync* {
-  var lastEnd = 0;
-  for (final match in pattern.allMatches(text)) {
-    if (match.start > lastEnd) {
+  Iterable<InlineSpan> tokenizeTextSpan(
+    String text,
+    Pattern pattern,
+    TextStyle matchStyle,
+    String Function(String) transform,
+    GestureRecognizer? recognizer,
+  ) sync* {
+    var lastEnd = 0;
+    for (final match in pattern.allMatches(text)) {
+      if (match.start > lastEnd) {
+        yield TextSpan(
+          text: transform(text.substring(lastEnd, match.start)),
+          recognizer: recognizer,
+        );
+      }
+      yield WidgetSpan(
+        child: _SearchResultSpan(
+          span: TextSpan(
+            text: transform(match.group(0)!),
+            style: matchStyle,
+            recognizer: recognizer,
+          ),
+          key: OrgController.of(context).generateSearchResultKey(),
+        ),
+      );
+      lastEnd = match.end;
+    }
+    if (lastEnd < text.length) {
       yield TextSpan(
-        text: transform(text.substring(lastEnd, match.start)),
+        text: transform(text.substring(lastEnd, text.length)),
         recognizer: recognizer,
       );
     }
-    yield TextSpan(
-      text: transform(match.group(0)!),
-      style: matchStyle,
-      recognizer: recognizer,
-    );
-    lastEnd = match.end;
   }
-  if (lastEnd < text.length) {
-    yield TextSpan(
-      text: transform(text.substring(lastEnd, text.length)),
-      recognizer: recognizer,
-    );
+}
+
+class _SearchResultSpan extends StatefulWidget {
+  const _SearchResultSpan({required this.span, Key? key}) : super(key: key);
+  final InlineSpan span;
+
+  @override
+  State<_SearchResultSpan> createState() => SearchResultSpanState();
+}
+
+/// The state object for a search result. Consumers of
+/// [OrgControllerData.searchResultKeys] can use [selected] to toggle focus
+/// highlighting.
+class SearchResultSpanState extends State<_SearchResultSpan> {
+  bool _selected = false;
+
+  set selected(bool value) {
+    setState(() => _selected = value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Text.rich(widget.span);
+    return _selected
+        ? DecoratedBox(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 0.5,
+              ),
+            ),
+            position: DecorationPosition.foreground,
+            child: text,
+          )
+        : text;
   }
 }
 
