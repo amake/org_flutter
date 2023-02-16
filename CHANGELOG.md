@@ -1,3 +1,6 @@
+## [3.0.0] - 2023-02-17
+* Require iOS 11.0+
+
 ## [2.1.0] - 2023-01-15
 
 * Track keys for search result spans, expose via `OrgControllerData`
