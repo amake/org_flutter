@@ -66,10 +66,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_lints
-      sha256: b543301ad291598523947dc534aaddc5aaad597b709d2426d3a0e0d44c5cb493
+      sha256: aeb0b80a8b3709709c9cc496cdc027c5b3216796bc0af0ce1007eaf24464fd4c
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.4"
+    version: "2.0.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -79,26 +79,26 @@ packages:
     dependency: transitive
     description:
       name: flutter_tex_js
-      sha256: "424f493b695541783159f340042463db36f2f6be630920db39f0695316ab2136"
+      sha256: "3a9afe230fbcedff11ee7864c6099541433cce41b8751977c46413c2bad9dcb0"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.17"
+    version: "2.0.0"
   flutter_tex_js_android:
     dependency: transitive
     description:
       name: flutter_tex_js_android
-      sha256: "7c547d318681c4de73229e0d2889d2c40055258f2babfa9de5904f9e99ffac91"
+      sha256: bae4ce6922e59c2c08e595376b5ca4a6571152b27f7d694940867e97968fbace
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.6"
+    version: "1.0.7"
   flutter_tex_js_ios:
     dependency: transitive
     description:
       name: flutter_tex_js_ios
-      sha256: "520cc2fc01d6797941094fa337c3405cd8e7a5449c6a87d65743063d0512ffc0"
+      sha256: f6a2c7bcc2615d253d5f751a7cfca64203dbf35e4100cab67fe201ac883ef4f8
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.6"
+    version: "2.0.0"
   flutter_tex_js_platform_interface:
     dependency: transitive
     description:
@@ -127,10 +127,10 @@ packages:
     dependency: transitive
     description:
       name: lints
-      sha256: a2c3d198cb5ea2e179926622d433331d8b58374ab8f29cdda6e863bd62fd369c
+      sha256: "5e4a9cd06d447758280a8ac2405101e0e2094d2a1dbdd3756aec3fe7775ba593"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.1"
+    version: "2.0.1"
   matcher:
     dependency: transitive
     description:
@@ -256,5 +256,5 @@ packages:
     source: hosted
     version: "2.1.4"
 sdks:
-  dart: ">=2.18.0 <4.0.0"
+  dart: ">=2.18.0 <3.0.0"
   flutter: ">=2.14.0"
