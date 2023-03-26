@@ -756,6 +756,7 @@ class OrgParagraphWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hideMarkup = OrgController.of(context).hideMarkup;
     return IndentBuilder(
       paragraph.indent,
       builder: (context, totalIndentSize) {
@@ -763,11 +764,13 @@ class OrgParagraphWidget extends StatelessWidget {
           paragraph.body,
           transformer: (elem, content) {
             final isLast = elem == paragraph.body.children.last;
-            final reflowed = reflowText(
-              deindent(content, totalIndentSize),
-              end: isLast,
-            );
-            return isLast ? removeTrailingLineBreak(reflowed) : reflowed;
+            var formattedContent = deindent(content, totalIndentSize);
+            if (hideMarkup) {
+              formattedContent = reflowText(formattedContent, end: isLast);
+            }
+            return isLast
+                ? removeTrailingLineBreak(formattedContent)
+                : formattedContent;
           },
         );
       },
