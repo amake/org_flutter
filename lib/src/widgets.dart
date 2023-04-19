@@ -811,10 +811,11 @@ class OrgListItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IndentBuilder(
       '${item.indent}${item.bullet}',
-      builder: (context, _) => FancySpanBuilder(
+      builder: (context, totalIndentSize) => FancySpanBuilder(
         builder: (context, spanBuilder) => Text.rich(
           TextSpan(
-            children: _spans(context, spanBuilder).toList(growable: false),
+            children: _spans(context, spanBuilder, totalIndentSize)
+                .toList(growable: false),
           ),
         ),
       ),
@@ -824,6 +825,7 @@ class OrgListItemWidget extends StatelessWidget {
   Iterable<InlineSpan> _spans(
     BuildContext context,
     OrgSpanBuilder builder,
+    int totalIndentSize,
   ) sync* {
     final item = this.item;
     if (item is OrgListOrderedItem && item.counterSet != null) {
@@ -854,11 +856,13 @@ class OrgListItemWidget extends StatelessWidget {
     if (item.body != null) {
       yield builder.build(item.body!, transformer: (elem, content) {
         final isLast = item.body!.children.last == elem;
-        final reflowed = reflowText(
-          content,
-          end: isLast,
-        );
-        return isLast ? removeTrailingLineBreak(reflowed) : reflowed;
+        final hideMarkup = OrgController.of(context).hideMarkup;
+        final formattedContent = hideMarkup
+            ? reflowText(content, end: isLast)
+            : deindent(content, totalIndentSize);
+        return isLast
+            ? removeTrailingLineBreak(formattedContent)
+            : formattedContent;
       });
     }
   }
