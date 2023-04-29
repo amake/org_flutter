@@ -121,7 +121,7 @@ class OrgSpanBuilder {
             .map((child) => build(
                   child,
                   style: style,
-                  transformer: transformer == identityTransformer
+                  transformer: transformer == identityTransformer && hideMarkup
                       ? (elem, text) => reflowText(
                             text,
                             end: element.content.children.last == elem,
