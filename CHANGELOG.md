@@ -1,3 +1,6 @@
+## [3.1.0-pre] - 2023-04-29
+* Text is no longer reflowed unless the `hideMarkup` option is enabled
+
 ## [3.0.0] - 2023-02-17
 * Require iOS 11.0+
 
