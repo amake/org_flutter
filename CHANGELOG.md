@@ -1,3 +1,6 @@
+## [3.1.0-pre.1] - 2023-05-07
+* The `loadImage` callback will be called for SVG links
+
 ## [3.1.0-pre] - 2023-04-29
 * Text is no longer reflowed unless the `hideMarkup` option is enabled
 
