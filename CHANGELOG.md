@@ -1,3 +1,7 @@
+## [4.0.0] - 2023-08-22
+* Upgrade to org_parser 4.0.0
+* Require Flutter >=3.13.0, Dart >=3.0.0
+
 ## [3.1.0] - 2023-07-20
 * The `loadImage` callback will be called for SVG links
 * Text is no longer reflowed unless the `hideMarkup` option is enabled
