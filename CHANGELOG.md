@@ -1,3 +1,6 @@
+## [4.0.1] - 2023-08-29
+* Fix bug in text reshaping
+
 ## [4.0.0] - 2023-08-22
 * Upgrade to org_parser 4.0.0
 * Require Flutter >=3.13.0, Dart >=3.0.0
