@@ -366,7 +366,7 @@ class OrgHeadlineWidget extends StatelessWidget {
                   spanBuilder.build(
                     headline.title!,
                     transformer: (elem, text) {
-                      if (elem == headline.title!.children.last) {
+                      if (identical(elem, headline.title!.children.last)) {
                         return text.trimRight();
                       } else {
                         return text;
@@ -765,7 +765,7 @@ class OrgParagraphWidget extends StatelessWidget {
         return OrgContentWidget(
           paragraph.body,
           transformer: (elem, content) {
-            final isLast = elem == paragraph.body.children.last;
+            final isLast = identical(elem, paragraph.body.children.last);
             var formattedContent = deindent(content, totalIndentSize);
             if (hideMarkup) {
               formattedContent = reflowText(formattedContent, end: isLast);
@@ -857,7 +857,7 @@ class OrgListItemWidget extends StatelessWidget {
     }
     if (item.body != null) {
       yield builder.build(item.body!, transformer: (elem, content) {
-        final isLast = item.body!.children.last == elem;
+        final isLast = identical(item.body!.children.last, elem);
         final hideMarkup = OrgController.of(context).hideMarkup;
         final formattedContent = hideMarkup
             ? reflowText(content, end: isLast)
