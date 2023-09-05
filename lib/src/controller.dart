@@ -55,9 +55,9 @@ class OrgDataNodeMap {
       return result;
     }
 
-    final data = <OrgTree, OrgDataNode>{};
+    final data = <String, OrgDataNode>{};
     root.visitSections((subtree) {
-      data[subtree] =
+      data[subtree.id] =
           OrgDataNode(initialVisibility: computeVisibility(subtree));
       return true;
     });
@@ -65,29 +65,32 @@ class OrgDataNodeMap {
   }
 
   factory OrgDataNodeMap.inherit(OrgDataNodeMap other) {
-    final data = other._data.map((tree, node) =>
-        MapEntry(tree, OrgDataNode(initialVisibility: node.visibility.value)));
+    final data = other._data.map((id, node) =>
+        MapEntry(id, OrgDataNode(initialVisibility: node.visibility.value)));
     return OrgDataNodeMap._(data);
   }
 
   OrgDataNodeMap._(this._data);
 
-  final Map<OrgTree, OrgDataNode> _data;
+  final Map<String, OrgDataNode> _data;
 
-  OrgDataNode? nodeFor(OrgTree tree) => _data[tree];
+  OrgDataNode? nodeFor(OrgTree tree) => _data[tree.id];
 
   Set<OrgVisibilityState> get currentVisibility =>
       _data.values.map((e) => e.visibility.value).toSet();
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson(OrgTree root) {
     final json = <String, dynamic>{};
-    for (final section in _data.keys.whereType<OrgSection>()) {
-      final title = section.headline.rawTitle;
-      if (title != null) {
-        json[title] =
-            _orgVisibilityStateToJson(_data[section]?.visibility.value);
+    root.visitSections((subtree) {
+      final node = _data[subtree.id];
+      if (node != null) {
+        final title = subtree.headline.rawTitle;
+        if (title != null) {
+          json[title] = _orgVisibilityStateToJson(node.visibility.value);
+        }
       }
-    }
+      return true;
+    });
     return json;
   }
 
@@ -102,24 +105,6 @@ class OrgDataNodeMap {
       node.visibility.value = newState;
     }
   }
-
-  OrgSection? sectionWithTitle(String title) =>
-      _data.keys.whereType<OrgSection?>().firstWhere(
-            (section) => section!.headline.rawTitle == title,
-            orElse: () => null,
-          );
-
-  OrgSection? sectionWithId(String id) =>
-      _data.keys.whereType<OrgSection?>().firstWhere(
-            (section) => section!.ids.contains(id),
-            orElse: () => null,
-          );
-
-  OrgSection? sectionWithCustomId(String customId) =>
-      _data.keys.whereType<OrgSection?>().firstWhere(
-            (section) => section!.customIds.contains(customId),
-            orElse: () => null,
-          );
 }
 
 class OrgDataNode {
@@ -335,7 +320,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   }
 
   void _notifyState() {
-    final nodeMapString = json.encode(_nodeMap.toJson());
+    final nodeMapString = json.encode(_nodeMap.toJson(_root));
     bucket?.write<String>(_kTransientStateNodeMapKey, nodeMapString);
   }
 
@@ -408,15 +393,29 @@ class OrgControllerData extends InheritedWidget {
   OrgDataNode? nodeFor(OrgTree tree) => _nodeMap.nodeFor(tree);
 
   /// Find the section with the specified title
+  OrgSection? _sectionSearch(bool Function(OrgSection) predicate) {
+    OrgSection? result;
+    root.visitSections((section) {
+      if (predicate(section)) {
+        result = section;
+        return false;
+      }
+      return true;
+    });
+    return result;
+  }
+
+  /// Find the section with the specified title
   OrgSection? sectionWithTitle(String title) =>
-      _nodeMap.sectionWithTitle(title);
+      _sectionSearch((section) => section.headline.rawTitle == title);
 
   /// Find the section with the specified ID
-  OrgSection? sectionWithId(String id) => _nodeMap.sectionWithId(id);
+  OrgSection? sectionWithId(String id) =>
+      _sectionSearch((section) => section.ids.contains(id));
 
   /// Find the section with the specified custom ID
   OrgSection? sectionWithCustomId(String customId) =>
-      _nodeMap.sectionWithCustomId(customId);
+      _sectionSearch((section) => section.customIds.contains(customId));
 
   /// Find the section corresponding to [target], which may be one of
   ///

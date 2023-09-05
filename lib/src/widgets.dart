@@ -256,7 +256,7 @@ class OrgSectionWidget extends StatelessWidget {
     final visibilityListenable =
         OrgController.of(context).nodeFor(section)?.visibility;
     if (visibilityListenable == null) {
-      return const SizedBox.shrink();
+      throw Exception('Visibility not found');
     }
     return ValueListenableBuilder<OrgVisibilityState>(
       valueListenable: visibilityListenable,
