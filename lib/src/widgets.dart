@@ -350,15 +350,20 @@ class OrgHeadlineWidget extends StatelessWidget {
           final body = Text.rich(
             TextSpan(
               children: [
-                spanBuilder.highlightedSpan(headline.stars),
+                spanBuilder.highlightedSpan(
+                    headline.stars.value + headline.stars.trailing),
                 if (headline.keyword != null)
-                  spanBuilder.highlightedSpan('${headline.keyword} ',
+                  spanBuilder.highlightedSpan(
+                      headline.keyword!.value + headline.keyword!.trailing,
                       style: DefaultTextStyle.of(context).style.copyWith(
-                          color: headline.keyword == 'DONE'
+                          color: headline.keyword!.value == 'DONE'
                               ? theme.doneColor
                               : theme.todoColor)),
                 if (headline.priority != null)
-                  spanBuilder.highlightedSpan('${headline.priority} ',
+                  spanBuilder.highlightedSpan(
+                      headline.priority!.leading +
+                          headline.priority!.value +
+                          headline.priority!.trailing,
                       style: DefaultTextStyle.of(context)
                           .style
                           .copyWith(color: theme.priorityColor)),
@@ -373,11 +378,11 @@ class OrgHeadlineWidget extends StatelessWidget {
                       }
                     },
                   ),
-                if (!open && headline.tags.isEmpty) const TextSpan(text: '...'),
+                if (!open && headline.tags == null) const TextSpan(text: '...'),
               ],
             ),
           );
-          if (headline.tags.isEmpty) {
+          if (headline.tags == null) {
             return body;
           } else {
             return LayoutBuilder(
@@ -397,7 +402,9 @@ class OrgHeadlineWidget extends StatelessWidget {
                           Flexible(
                             child: Text.rich(
                               spanBuilder.highlightedSpan(
-                                  ' :${headline.tags.join(':')}:'),
+                                  headline.tags!.leading +
+                                      headline.tags!.values.join(':') +
+                                      headline.tags!.trailing),
                               overflow: TextOverflow.fade,
                               softWrap: false,
                             ),
@@ -672,7 +679,7 @@ class OrgTableWidget extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: j < row.cellCount
                     ? OrgContentWidget(
-                        row.cells[j],
+                        row.cells[j].content,
                         textAlign: numerical[j] ? TextAlign.right : null,
                       )
                     : const SizedBox.shrink(),
@@ -851,8 +858,8 @@ class OrgListItemWidget extends StatelessWidget {
           .style
           .copyWith(fontWeight: FontWeight.bold);
       yield TextSpan(children: [
-        builder.build(item.tag!, style: style),
-        builder.highlightedSpan(item.tagDelimiter!, style: style),
+        builder.build(item.tag!.value, style: style),
+        builder.highlightedSpan(item.tag!.delimiter, style: style),
       ]);
     }
     if (item.body != null) {
