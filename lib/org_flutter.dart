@@ -27,6 +27,7 @@ class Org extends StatelessWidget {
     this.onLinkTap,
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
+    this.onListItemTap,
     this.loadImage,
     this.restorationId,
     super.key,
@@ -63,6 +64,11 @@ class Org extends StatelessWidget {
   /// Return null instead to display the link text.
   final Widget? Function(OrgLink)? loadImage;
 
+  /// A callback invoked when the user taps on a list item that has a checkbox
+  /// within the current document. The argument is the tapped item. You might
+  /// want to toggle the checkbox.
+  final Function(OrgListItem)? onListItemTap;
+
   /// An ID for temporary state restoration. Supply a unique ID to ensure that
   /// temporary state such as scroll position is preserved as appropriate.
   final String? restorationId;
@@ -80,6 +86,7 @@ class Org extends StatelessWidget {
         onLinkTap: onLinkTap,
         onLocalSectionLinkTap: onLocalSectionLinkTap,
         onSectionLongPress: onSectionLongPress,
+        onListItemTap: onListItemTap,
         loadImage: loadImage,
         child: OrgDocumentWidget(doc),
       ),

@@ -51,6 +51,7 @@ class OrgRootWidget extends StatelessWidget {
     this.onLinkTap,
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
+    this.onListItemTap,
     this.loadImage,
     super.key,
   });
@@ -77,6 +78,11 @@ class OrgRootWidget extends StatelessWidget {
   /// to narrow the display to show just this section.
   final Function(OrgSection)? onSectionLongPress;
 
+  /// A callback invoked when the user taps on a list item that has a checkbox
+  /// within the current document. The argument is the tapped item. You might
+  /// want to toggle the checkbox.
+  final Function(OrgListItem)? onListItemTap;
+
   /// A callback invoked when an image should be displayed. The argument is the
   /// [OrgLink] describing where the image data can be found. It is your
   /// responsibility to resolve the link, fetch the data, and return a widget
@@ -95,6 +101,7 @@ class OrgRootWidget extends StatelessWidget {
         onSectionLongPress: onSectionLongPress,
         onLocalSectionLinkTap: onLocalSectionLinkTap,
         loadImage: loadImage,
+        onListItemTap: onListItemTap,
         child: IdentityTextScale(child: child),
       ),
     );
@@ -147,6 +154,7 @@ class OrgEvents extends InheritedWidget {
     this.onLinkTap,
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
+    this.onListItemTap,
     this.loadImage,
     super.key,
   });
@@ -164,6 +172,11 @@ class OrgEvents extends InheritedWidget {
   /// the current document. The argument is the pressed section. You might want
   /// to narrow the display to show just this section.
   final Function(OrgSection)? onSectionLongPress;
+
+  /// A callback invoked when the user taps on a list item that has a checkbox
+  /// within the current document. The argument is the tapped item. You might
+  /// want to toggle the checkbox.
+  final Function(OrgListItem)? onListItemTap;
 
   /// A callback invoked when an image should be displayed. The argument is the
   /// [OrgLink] describing where the image data can be found. It is your
@@ -818,16 +831,23 @@ class OrgListItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IndentBuilder(
       '${item.indent}${item.bullet}',
-      builder: (context, totalIndentSize) => FancySpanBuilder(
-        builder: (context, spanBuilder) => Text.rich(
-          TextSpan(
-            children: _spans(context, spanBuilder, totalIndentSize)
-                .toList(growable: false),
+      builder: (context, totalIndentSize) => InkWell(
+        onTap: _hasCheckbox
+            ? () => OrgEvents.of(context).onListItemTap?.call(item)
+            : null,
+        child: FancySpanBuilder(
+          builder: (context, spanBuilder) => Text.rich(
+            TextSpan(
+              children: _spans(context, spanBuilder, totalIndentSize)
+                  .toList(growable: false),
+            ),
           ),
         ),
       ),
     );
   }
+
+  bool get _hasCheckbox => item.checkbox != null;
 
   Iterable<InlineSpan> _spans(
     BuildContext context,
