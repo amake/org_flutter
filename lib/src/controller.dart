@@ -161,8 +161,8 @@ class OrgController extends StatefulWidget {
     this.hideMarkup,
     this.entityReplacements = orgDefaultEntityReplacements,
     this.restorationId,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// The Org Mode document or section this controller will control
   final OrgTree root;
@@ -329,7 +329,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
 
 class OrgControllerData extends InheritedWidget {
   OrgControllerData({
-    required Widget child,
+    required super.child,
     required this.root,
     required OrgDataNodeMap nodeMap,
     required this.searchQuery,
@@ -340,13 +340,12 @@ class OrgControllerData extends InheritedWidget {
     required this.cycleVisibility,
     required this.cycleVisibilityOf,
     String? restorationId,
-    Key? key,
+    super.key,
   })  : _nodeMap = nodeMap,
         _hideMarkup = hideMarkup,
         _entityReplacements = entityReplacements,
         _setHideMarkup = setHideMarkup,
-        _restorationId = restorationId,
-        super(key: key, child: child);
+        _restorationId = restorationId;
 
   /// The Org Mode document or section this controller will control
   final OrgTree root;

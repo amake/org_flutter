@@ -29,8 +29,8 @@ class Org extends StatelessWidget {
     this.onSectionLongPress,
     this.loadImage,
     this.restorationId,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// Raw Org Mode document in text form
   final String text;

@@ -15,8 +15,8 @@ class OrgDocumentWidget extends StatelessWidget {
   const OrgDocumentWidget(
     this.document, {
     this.shrinkWrap = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final OrgDocument document;
   final bool shrinkWrap;
@@ -52,8 +52,8 @@ class OrgRootWidget extends StatelessWidget {
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
     this.loadImage,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final Widget child;
 
@@ -110,11 +110,11 @@ class OrgRootWidget extends StatelessWidget {
 /// The theme for the Org Mode document
 class OrgTheme extends InheritedWidget {
   const OrgTheme({
-    required Widget child,
+    required super.child,
     required this.light,
     required this.dark,
-    Key? key,
-  }) : super(key: key, child: child);
+    super.key,
+  });
 
   static OrgTheme of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<OrgTheme>()!;
@@ -143,13 +143,13 @@ class OrgTheme extends InheritedWidget {
 /// document-related events.
 class OrgEvents extends InheritedWidget {
   const OrgEvents({
-    required Widget child,
+    required super.child,
     this.onLinkTap,
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
     this.loadImage,
-    Key? key,
-  }) : super(key: key, child: child);
+    super.key,
+  });
 
   /// A callback invoked when the user taps a link. The argument is the link
   /// URL. You might want to open this in a browser.
@@ -232,8 +232,8 @@ class OrgSectionWidget extends StatelessWidget {
     this.section, {
     this.root = false,
     this.shrinkWrap = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
   final OrgSection section;
   final bool root;
   final bool shrinkWrap;
@@ -308,8 +308,8 @@ class OrgContentWidget extends StatelessWidget {
     this.content, {
     this.transformer,
     this.textAlign,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
   final OrgNode content;
   final Transformer? transformer;
   final TextAlign? textAlign;
@@ -330,8 +330,7 @@ class OrgContentWidget extends StatelessWidget {
 
 /// An Org Mode section headline
 class OrgHeadlineWidget extends StatelessWidget {
-  const OrgHeadlineWidget(this.headline, {required this.open, Key? key})
-      : super(key: key);
+  const OrgHeadlineWidget(this.headline, {required this.open, super.key});
   final OrgHeadline headline;
   final bool open;
 
@@ -426,7 +425,7 @@ class OrgHeadlineWidget extends StatelessWidget {
 
 /// A utility for overriding the text scale to be 1
 class IdentityTextScale extends StatelessWidget {
-  const IdentityTextScale({required this.child, Key? key}) : super(key: key);
+  const IdentityTextScale({required this.child, super.key});
 
   final Widget child;
 
@@ -443,7 +442,7 @@ class IdentityTextScale extends StatelessWidget {
 
 /// An Org Mode block
 class OrgBlockWidget extends StatefulWidget {
-  const OrgBlockWidget(this.block, {Key? key}) : super(key: key);
+  const OrgBlockWidget(this.block, {super.key});
   final OrgBlock block;
 
   @override
@@ -573,7 +572,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
 
 /// An Org Mode meta line
 class OrgMetaWidget extends StatelessWidget {
-  const OrgMetaWidget(this.meta, {Key? key}) : super(key: key);
+  const OrgMetaWidget(this.meta, {super.key});
   final OrgMeta meta;
 
   @override
@@ -611,7 +610,7 @@ class OrgMetaWidget extends StatelessWidget {
 
 /// An Org Mode table
 class OrgTableWidget extends StatelessWidget {
-  const OrgTableWidget(this.table, {Key? key}) : super(key: key);
+  const OrgTableWidget(this.table, {super.key});
   final OrgTable table;
 
   @override
@@ -693,8 +692,7 @@ class OrgTableWidget extends StatelessWidget {
 
 /// An Org Mode fixed-width area
 class OrgFixedWidthAreaWidget extends StatelessWidget {
-  const OrgFixedWidthAreaWidget(this.fixedWidthArea, {Key? key})
-      : super(key: key);
+  const OrgFixedWidthAreaWidget(this.fixedWidthArea, {super.key});
   final OrgFixedWidthArea fixedWidthArea;
 
   @override
@@ -724,7 +722,7 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
 
 /// An Org Mode planning line
 class OrgPlanningLineWidget extends StatelessWidget {
-  const OrgPlanningLineWidget(this.planningLine, {Key? key}) : super(key: key);
+  const OrgPlanningLineWidget(this.planningLine, {super.key});
   final OrgPlanningLine planningLine;
 
   @override
@@ -760,7 +758,7 @@ class OrgPlanningLineWidget extends StatelessWidget {
 
 /// An Org Mode paragraph
 class OrgParagraphWidget extends StatelessWidget {
-  const OrgParagraphWidget(this.paragraph, {Key? key}) : super(key: key);
+  const OrgParagraphWidget(this.paragraph, {super.key});
   final OrgParagraph paragraph;
 
   @override
@@ -789,7 +787,7 @@ class OrgParagraphWidget extends StatelessWidget {
 
 /// An Org Mode list
 class OrgListWidget extends StatelessWidget {
-  const OrgListWidget(this.list, {Key? key}) : super(key: key);
+  const OrgListWidget(this.list, {super.key});
   final OrgList list;
 
   @override
@@ -813,7 +811,7 @@ class OrgListWidget extends StatelessWidget {
 
 /// An Org Mode list item
 class OrgListItemWidget extends StatelessWidget {
-  const OrgListItemWidget(this.item, {Key? key}) : super(key: key);
+  const OrgListItemWidget(this.item, {super.key});
   final OrgListItem item;
 
   @override
@@ -879,7 +877,7 @@ class OrgListItemWidget extends StatelessWidget {
 
 /// An Org Mode drawer
 class OrgDrawerWidget extends StatefulWidget {
-  const OrgDrawerWidget(this.drawer, {Key? key}) : super(key: key);
+  const OrgDrawerWidget(this.drawer, {super.key});
   final OrgDrawer drawer;
 
   @override
@@ -961,7 +959,7 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
 
 /// An Org Mode property
 class OrgPropertyWidget extends StatelessWidget {
-  const OrgPropertyWidget(this.property, {Key? key}) : super(key: key);
+  const OrgPropertyWidget(this.property, {super.key});
   final OrgProperty property;
 
   @override
@@ -1002,7 +1000,7 @@ class OrgPropertyWidget extends StatelessWidget {
 
 /// An Org Mode LaTeX block
 class OrgLatexBlockWidget extends StatelessWidget {
-  const OrgLatexBlockWidget(this.block, {Key? key}) : super(key: key);
+  const OrgLatexBlockWidget(this.block, {super.key});
 
   final OrgLatexBlock block;
 
@@ -1047,7 +1045,7 @@ class OrgLatexBlockWidget extends StatelessWidget {
 
 /// An Org Mode LaTeX inline span
 class OrgLatexInlineWidget extends StatelessWidget {
-  const OrgLatexInlineWidget(this.latex, {Key? key}) : super(key: key);
+  const OrgLatexInlineWidget(this.latex, {super.key});
 
   final OrgLatexInline latex;
 

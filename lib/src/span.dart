@@ -237,7 +237,7 @@ class OrgSpanBuilder {
 }
 
 class _SearchResultSpan extends StatefulWidget {
-  const _SearchResultSpan({required this.span, Key? key}) : super(key: key);
+  const _SearchResultSpan({required this.span, super.key});
   final InlineSpan span;
 
   @override
@@ -273,7 +273,7 @@ class SearchResultSpanState extends State<_SearchResultSpan> {
 }
 
 class FancySpanBuilder extends StatefulWidget {
-  const FancySpanBuilder({required this.builder, Key? key}) : super(key: key);
+  const FancySpanBuilder({required this.builder, super.key});
   final Widget Function(BuildContext, OrgSpanBuilder) builder;
 
   @override
