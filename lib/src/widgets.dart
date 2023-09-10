@@ -15,11 +15,13 @@ class OrgDocumentWidget extends StatelessWidget {
   const OrgDocumentWidget(
     this.document, {
     this.shrinkWrap = false,
+    this.safeArea = true,
     super.key,
   });
 
   final OrgDocument document;
   final bool shrinkWrap;
+  final bool safeArea;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,7 @@ class OrgDocumentWidget extends StatelessWidget {
       children: <Widget>[
         if (document.content != null) OrgContentWidget(document.content!),
         ...document.sections.map((section) => OrgSectionWidget(section)),
-        listBottomSafeArea(),
+        if (safeArea) listBottomSafeArea(),
       ],
     );
   }
