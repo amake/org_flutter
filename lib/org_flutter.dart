@@ -18,7 +18,7 @@ export 'package:org_parser/org_parser.dart';
 /// This is the default entrypoint for org_flutter. It composes its own
 /// [OrgController], [OrgRootWidget], and [OrgDocumentWidget]. For advanced use
 /// cases you may want to arrange these on your own.
-class Org extends StatelessWidget {
+class Org extends StatefulWidget {
   const Org(
     this.text, {
     this.style,
@@ -74,21 +74,33 @@ class Org extends StatelessWidget {
   final String? restorationId;
 
   @override
+  State<Org> createState() => _OrgState();
+}
+
+class _OrgState extends State<Org> {
+  late OrgDocument _doc;
+
+  @override
+  void initState() {
+    _doc = OrgDocument.parse(widget.text);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final doc = OrgDocument.parse(text);
     return OrgController(
-      root: doc,
-      restorationId: restorationId,
+      root: _doc,
+      restorationId: widget.restorationId,
       child: OrgRootWidget(
-        style: style,
-        lightTheme: lightTheme,
-        darkTheme: darkTheme,
-        onLinkTap: onLinkTap,
-        onLocalSectionLinkTap: onLocalSectionLinkTap,
-        onSectionLongPress: onSectionLongPress,
-        onListItemTap: onListItemTap,
-        loadImage: loadImage,
-        child: OrgDocumentWidget(doc),
+        style: widget.style,
+        lightTheme: widget.lightTheme,
+        darkTheme: widget.darkTheme,
+        onLinkTap: widget.onLinkTap,
+        onLocalSectionLinkTap: widget.onLocalSectionLinkTap,
+        onSectionLongPress: widget.onSectionLongPress,
+        onListItemTap: widget.onListItemTap,
+        loadImage: widget.loadImage,
+        child: OrgDocumentWidget(_doc),
       ),
     );
   }
@@ -96,7 +108,7 @@ class Org extends StatelessWidget {
 
 /// Display an Org Mode document with minimal interaction, suitable for use as a
 /// rich equivalent to a [Text] widget.
-class OrgText extends StatelessWidget {
+class OrgText extends StatefulWidget {
   const OrgText(
     this.text, {
     this.onLinkTap,
@@ -120,18 +132,30 @@ class OrgText extends StatelessWidget {
   final Widget? Function(OrgLink)? loadImage;
 
   @override
+  State<OrgText> createState() => _OrgTextState();
+}
+
+class _OrgTextState extends State<OrgText> {
+  late OrgDocument _doc;
+
+  @override
+  void initState() {
+    _doc = OrgDocument.parse(widget.text);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final doc = OrgDocument.parse(text);
     return OrgController(
-      root: doc,
+      root: _doc,
       hideMarkup: true,
       child: OrgRootWidget(
-        onLinkTap: onLinkTap,
-        loadImage: loadImage,
+        onLinkTap: widget.onLinkTap,
+        loadImage: widget.loadImage,
         lightTheme: OrgThemeData.light().copyWith(rootPadding: EdgeInsets.zero),
         darkTheme: OrgThemeData.dark().copyWith(rootPadding: EdgeInsets.zero),
         child: OrgDocumentWidget(
-          doc,
+          _doc,
           shrinkWrap: true,
           safeArea: false,
         ),
