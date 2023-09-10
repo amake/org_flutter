@@ -251,7 +251,7 @@ class OrgThemeData {
     }
   }
 
-  OrgThemeData copyWith(
+  OrgThemeData copyWith({
     Color? todoColor,
     Color? doneColor,
     Color? priorityColor,
@@ -268,7 +268,7 @@ class OrgThemeData {
     Iterable<Color>? levelColors,
     Map<String, TextStyle>? srcTheme,
     EdgeInsets? rootPadding,
-  ) =>
+  }) =>
       OrgThemeData(
         todoColor: todoColor ?? this.todoColor,
         doneColor: doneColor ?? this.doneColor,
