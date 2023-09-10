@@ -93,3 +93,49 @@ class Org extends StatelessWidget {
     );
   }
 }
+
+/// Display an Org Mode document with minimal interaction, suitable for use as a
+/// rich equivalent to a [Text] widget.
+class OrgText extends StatelessWidget {
+  const OrgText(
+    this.text, {
+    this.onLinkTap,
+    this.loadImage,
+    super.key,
+  });
+
+  /// Raw Org Mode document in text form
+  final String text;
+
+  /// A callback invoked when the user taps a link. The argument is the link
+  /// URL. You might want to open this in a browser.
+  final Function(String)? onLinkTap;
+
+  /// A callback invoked when an image should be displayed. The argument is the
+  /// [OrgLink] describing where the image data can be found. It is your
+  /// responsibility to resolve the link, fetch the data, and return a widget
+  /// for displaying the image.
+  ///
+  /// Return null instead to display the link text.
+  final Widget? Function(OrgLink)? loadImage;
+
+  @override
+  Widget build(BuildContext context) {
+    final doc = OrgDocument.parse(text);
+    return OrgController(
+      root: doc,
+      hideMarkup: true,
+      child: OrgRootWidget(
+        onLinkTap: onLinkTap,
+        loadImage: loadImage,
+        lightTheme: OrgThemeData.light().copyWith(rootPadding: EdgeInsets.zero),
+        darkTheme: OrgThemeData.dark().copyWith(rootPadding: EdgeInsets.zero),
+        child: OrgDocumentWidget(
+          doc,
+          shrinkWrap: true,
+          safeArea: false,
+        ),
+      ),
+    );
+  }
+}
