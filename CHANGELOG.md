@@ -1,3 +1,11 @@
+## [4.1.0] - 2023-09-11
+* Editing is now supported; see the example app
+* Handle list item taps via the new `onListItemTap` callback
+* `OrgThemeData.copyWith` now uses keyword args
+* Bottom "safe area" padding on `OrgDocumentWidget` can now be disabled
+* The new `OrgText` widget allows using an Org snippet as a rich `Text`
+  equivalent
+
 ## [4.0.1] - 2023-08-29
 * Fix bug in text reshaping
 
