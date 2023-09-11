@@ -1,3 +1,6 @@
+## [4.1.1] - 2023-09-12
+* Fix Flutter SDK version requirement (3.14 beta has been required since 4.0)
+
 ## [4.1.0] - 2023-09-11
 * Editing is now supported; see the example app
 * Handle list item taps via the new `onListItemTap` callback
