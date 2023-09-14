@@ -14,6 +14,7 @@ const _kDefaultVisibilityState = OrgVisibilityState.folded;
 const _kTransientStateNodeMapKey = 'node_map';
 
 typedef SearchResultKey = GlobalKey<SearchResultSpanState>;
+typedef FootnoteKey = GlobalKey;
 
 enum OrgVisibilityState {
   /// Just the root headline; equivalent to global "overview" state
@@ -247,6 +248,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       cycleVisibility: _cycleVisibility,
       cycleVisibilityOf: _cycleVisibilityOf,
       restorationId: widget.restorationId,
+      ensureVisible: _ensureVisible,
       child: widget.child,
     );
   }
@@ -319,6 +321,15 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     _notifyState();
   }
 
+  void _ensureVisible(OrgPath path) {
+    for (final section in path.whereType<OrgTree>()) {
+      final visibilityListenable = _nodeMap.nodeFor(section);
+      if (visibilityListenable != null) {
+        visibilityListenable.visibility.value = OrgVisibilityState.children;
+      }
+    }
+  }
+
   void _notifyState() {
     final nodeMapString = json.encode(_nodeMap.toJson(_root));
     bucket?.write<String>(_kTransientStateNodeMapKey, nodeMapString);
@@ -339,6 +350,7 @@ class OrgControllerData extends InheritedWidget {
     required Function(bool) setHideMarkup,
     required this.cycleVisibility,
     required this.cycleVisibilityOf,
+    required this.ensureVisible,
     String? restorationId,
     super.key,
   })  : _nodeMap = nodeMap,
@@ -368,6 +380,11 @@ class OrgControllerData extends InheritedWidget {
   final ValueNotifier<List<SearchResultKey>> searchResultKeys =
       ValueNotifier([]);
 
+  /// Keys representing footnote references in the document. It will only be
+  /// populated after the widget build phase.
+  final ValueNotifier<Map<String, FootnoteKey>> footnoteKeys =
+      ValueNotifier({});
+
   final bool _hideMarkup;
 
   final Map<String, String> _entityReplacements;
@@ -379,6 +396,9 @@ class OrgControllerData extends InheritedWidget {
 
   /// Cycle the visibility of the specified subtree
   final void Function(OrgTree) cycleVisibilityOf;
+
+  /// Adjust visibility of sections so that the specified path is visible
+  final void Function(OrgPath) ensureVisible;
 
   final String? _restorationId;
 
@@ -457,6 +477,16 @@ class OrgControllerData extends InheritedWidget {
             .where((key) => key.currentContext?.mounted == true),
         key,
       ];
+    });
+    return key;
+  }
+
+  FootnoteKey generateFootnoteKey(String id, {String? label}) {
+    final key = FootnoteKey(debugLabel: '$searchQuery($label)');
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      footnoteKeys.value = Map.of(footnoteKeys.value)
+        ..removeWhere((_, v) => v.currentContext?.mounted != true)
+        ..[id] = key;
     });
     return key;
   }

@@ -90,7 +90,10 @@ class OrgSpanBuilder {
         ),
       );
     } else if (element is OrgFootnoteReference) {
-      return WidgetSpan(child: OrgFootnoteReferenceWidget(element));
+      final key = element.name == null
+          ? null
+          : OrgController.of(context).generateFootnoteKey(element.id);
+      return WidgetSpan(child: OrgFootnoteReferenceWidget(element, key: key));
     } else if (element is OrgFootnote) {
       return WidgetSpan(child: OrgFootnoteWidget(element));
     } else if (element is OrgMeta) {
