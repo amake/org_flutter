@@ -90,48 +90,9 @@ class OrgSpanBuilder {
         ),
       );
     } else if (element is OrgFootnoteReference) {
-      final footnoteStyle = style.copyWith(
-        color: OrgTheme.dataOf(context).footnoteColor,
-      );
-      InlineSpan highlight(String text) {
-        return highlightedSpan(
-          transformer(element, text),
-          style: footnoteStyle,
-        );
-      }
-
-      // TODO(aaron): Make footnote references clickable
-      return TextSpan(children: [
-        highlight(element.leading),
-        if (element.name != null) highlight(element.name!),
-        if (element.definitionDelimiter != null)
-          highlight(element.definitionDelimiter!),
-        if (element.definition != null)
-          build(
-            element.definition!,
-            style: footnoteStyle,
-            transformer: transformer,
-          ),
-        highlight(element.trailing),
-      ]);
+      return WidgetSpan(child: OrgFootnoteReferenceWidget(element));
     } else if (element is OrgFootnote) {
-      return TextSpan(
-        children: [
-          element.marker,
-          element.content,
-        ]
-            .map((child) => build(
-                  child,
-                  style: style,
-                  transformer: transformer == identityTransformer && hideMarkup
-                      ? (elem, text) => reflowText(
-                            text,
-                            end: element.content.children.last == elem,
-                          )
-                      : transformer,
-                ))
-            .toList(growable: false),
-      );
+      return WidgetSpan(child: OrgFootnoteWidget(element));
     } else if (element is OrgMeta) {
       return WidgetSpan(child: OrgMetaWidget(element));
     } else if (element is OrgBlock) {

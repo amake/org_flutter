@@ -585,6 +585,62 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
   }
 }
 
+class OrgFootnoteReferenceWidget extends StatelessWidget {
+  const OrgFootnoteReferenceWidget(this.reference, {super.key});
+  final OrgFootnoteReference reference;
+
+  @override
+  Widget build(BuildContext context) {
+    final defaultStyle = DefaultTextStyle.of(context).style;
+    final footnoteStyle = defaultStyle.copyWith(
+      color: OrgTheme.dataOf(context).footnoteColor,
+    );
+
+    return FancySpanBuilder(
+      builder: (context, spanBuilder) => Text.rich(
+        TextSpan(
+          children: [
+            spanBuilder.highlightedSpan(reference.leading,
+                style: footnoteStyle),
+            if (reference.name != null)
+              spanBuilder.highlightedSpan(reference.name!,
+                  style: footnoteStyle),
+            if (reference.definitionDelimiter != null)
+              spanBuilder.highlightedSpan(reference.definitionDelimiter!,
+                  style: footnoteStyle),
+            if (reference.definition != null)
+              spanBuilder.build(
+                reference.definition!,
+                style: footnoteStyle,
+              ),
+            spanBuilder.highlightedSpan(reference.trailing,
+                style: footnoteStyle),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class OrgFootnoteWidget extends StatelessWidget {
+  const OrgFootnoteWidget(this.footnote, {super.key});
+  final OrgFootnote footnote;
+
+  @override
+  Widget build(BuildContext context) {
+    return FancySpanBuilder(
+      builder: (context, spanBuilder) => Text.rich(
+        TextSpan(
+          children: [
+            spanBuilder.build(footnote.marker),
+            spanBuilder.build(footnote.content),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// An Org Mode meta line
 class OrgMetaWidget extends StatelessWidget {
   const OrgMetaWidget(this.meta, {super.key});
