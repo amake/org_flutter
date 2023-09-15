@@ -1,3 +1,7 @@
+## [4.2.0] - 2023-09-15
+* Tap footnote references to jump between footnote definition and first
+  reference
+
 ## [4.1.1] - 2023-09-12
 * Fix Flutter SDK version requirement (3.14 beta has been required since 4.0)
 
