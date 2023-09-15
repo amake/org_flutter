@@ -229,9 +229,17 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     }
   }
 
+  final ValueNotifier<List<SearchResultKey>> _searchResultKeys =
+      ValueNotifier([]);
+
+  final ValueNotifier<Map<String, FootnoteKey>> _footnoteKeys =
+      ValueNotifier({});
+
   @override
   void dispose() {
     _nodeMap.dispose();
+    _searchResultKeys.dispose();
+    _footnoteKeys.dispose();
     super.dispose();
   }
 
@@ -243,6 +251,8 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       searchQuery: _searchQuery,
       search: search,
       hideMarkup: _hideMarkup,
+      searchResultKeys: _searchResultKeys,
+      footnoteKeys: _footnoteKeys,
       entityReplacements: _entityReplacements,
       setHideMarkup: _setHideMarkup,
       cycleVisibility: _cycleVisibility,
@@ -339,13 +349,15 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
 }
 
 class OrgControllerData extends InheritedWidget {
-  OrgControllerData({
+  const OrgControllerData({
     required super.child,
     required this.root,
     required OrgDataNodeMap nodeMap,
     required this.searchQuery,
     required this.search,
     required bool hideMarkup,
+    required this.searchResultKeys,
+    required this.footnoteKeys,
     required Map<String, String> entityReplacements,
     required Function(bool) setHideMarkup,
     required this.cycleVisibility,
@@ -377,13 +389,11 @@ class OrgControllerData extends InheritedWidget {
   ///
   /// Note that keys will not necessarily be in "document" order. Consumers
   /// should sort by any relevant metric as necessary.
-  final ValueNotifier<List<SearchResultKey>> searchResultKeys =
-      ValueNotifier([]);
+  final ValueNotifier<List<SearchResultKey>> searchResultKeys;
 
   /// Keys representing footnote references in the document. It will only be
   /// populated after the widget build phase.
-  final ValueNotifier<Map<String, FootnoteKey>> footnoteKeys =
-      ValueNotifier({});
+  final ValueNotifier<Map<String, FootnoteKey>> footnoteKeys;
 
   final bool _hideMarkup;
 
