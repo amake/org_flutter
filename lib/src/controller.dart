@@ -498,7 +498,7 @@ class OrgControllerData extends InheritedWidget {
       searchQuery != oldWidget.searchQuery ||
       hideMarkup != oldWidget.hideMarkup ||
       // Don't check searchResultKeys because rebuilding this widget will cause
-      // new keys to be make which leads to an infinite loop
+      // new keys to be made which leads to an infinite loop
       !mapEquals(_entityReplacements, oldWidget._entityReplacements);
 }
 
