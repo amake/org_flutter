@@ -20,7 +20,7 @@ mixin OpenCloseable<T extends StatefulWidget> on State<T> {
   }
 }
 
-typedef RecognizerHandler = Function(GestureRecognizer);
+typedef RecognizerHandler = void Function(GestureRecognizer);
 
 mixin RecognizerManager<T extends StatefulWidget> on State<T> {
   final _recognizers = <GestureRecognizer>[];

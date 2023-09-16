@@ -116,7 +116,7 @@ class OrgDataNode {
   void dispose() => visibility.dispose();
 }
 
-typedef OrgStateListener = Function(Map<String, dynamic>);
+typedef OrgStateListener = void Function(Map<String, dynamic>);
 
 /// Control behavior of an Org Mode document widget. Not needed if you are using
 /// the Org widget.
@@ -359,7 +359,7 @@ class OrgControllerData extends InheritedWidget {
     required this.searchResultKeys,
     required this.footnoteKeys,
     required Map<String, String> entityReplacements,
-    required Function(bool) setHideMarkup,
+    required void Function(bool) setHideMarkup,
     required this.cycleVisibility,
     required this.cycleVisibilityOf,
     required this.ensureVisible,
@@ -378,7 +378,7 @@ class OrgControllerData extends InheritedWidget {
 
   /// Set the search query. Seciton visibility will be updated so that sections
   /// with hits are expanded and sections without will be collapsed.
-  final Function(Pattern) search;
+  final void Function(Pattern) search;
 
   /// A query for full-text search of the document
   final Pattern searchQuery;
@@ -399,7 +399,7 @@ class OrgControllerData extends InheritedWidget {
 
   final Map<String, String> _entityReplacements;
 
-  final Function(bool) _setHideMarkup;
+  final void Function(bool) _setHideMarkup;
 
   /// Cycle the visibility of the entire document
   final void Function() cycleVisibility;

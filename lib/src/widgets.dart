@@ -68,22 +68,22 @@ class OrgRootWidget extends StatelessWidget {
 
   /// A callback invoked when the user taps a link. The argument is the link
   /// URL. You might want to open this in a browser.
-  final Function(String)? onLinkTap;
+  final void Function(String)? onLinkTap;
 
   /// A callback invoked when the user taps on a link to a section within the
   /// current document. The argument is the target section. You might want to
   /// display it somehow.
-  final Function(OrgSection)? onLocalSectionLinkTap;
+  final void Function(OrgSection)? onLocalSectionLinkTap;
 
   /// A callback invoked when the user long-presses on a section headline within
   /// the current document. The argument is the pressed section. You might want
   /// to narrow the display to show just this section.
-  final Function(OrgSection)? onSectionLongPress;
+  final void Function(OrgSection)? onSectionLongPress;
 
   /// A callback invoked when the user taps on a list item that has a checkbox
   /// within the current document. The argument is the tapped item. You might
   /// want to toggle the checkbox.
-  final Function(OrgListItem)? onListItemTap;
+  final void Function(OrgListItem)? onListItemTap;
 
   /// A callback invoked when an image should be displayed. The argument is the
   /// [OrgLink] describing where the image data can be found. It is your
@@ -163,22 +163,22 @@ class OrgEvents extends InheritedWidget {
 
   /// A callback invoked when the user taps a link. The argument is the link
   /// URL. You might want to open this in a browser.
-  final Function(String)? onLinkTap;
+  final void Function(String)? onLinkTap;
 
   /// A callback invoked when the user taps on a link to a section within the
   /// current document. The argument is the target section. You might want to
   /// display it somehow.
-  final Function(OrgSection)? onLocalSectionLinkTap;
+  final void Function(OrgSection)? onLocalSectionLinkTap;
 
   /// A callback invoked when the user long-presses on a section headline within
   /// the current document. The argument is the pressed section. You might want
   /// to narrow the display to show just this section.
-  final Function(OrgSection)? onSectionLongPress;
+  final void Function(OrgSection)? onSectionLongPress;
 
   /// A callback invoked when the user taps on a list item that has a checkbox
   /// within the current document. The argument is the tapped item. You might
   /// want to toggle the checkbox.
-  final Function(OrgListItem)? onListItemTap;
+  final void Function(OrgListItem)? onListItemTap;
 
   /// A callback invoked when an image should be displayed. The argument is the
   /// [OrgLink] describing where the image data can be found. It is your
