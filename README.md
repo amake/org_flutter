@@ -25,6 +25,14 @@ baz buzz''');
 
 See the [example](./example/lib/main.dart) for more.
 
+## Rich text
+
+Use Org markup to create rich `Text`-equivalent widgets with `OrgText`.
+
+```dart
+OrgText('*This* is a /rich/ text label ([[https://example.com][details]])')
+```
+
 ## Advanced
 
 For more advanced usage, such as specifying link handling, use `OrgController`
@@ -56,3 +64,9 @@ IconButton(
   onPressed: OrgController.of(context).cycleVisibility,
 );
 ```
+
+## Text selection
+
+The Org Mode text is not selectable by default, but you can make it so by
+wrapping the widget in
+[`SelectionArea`](https://api.flutter.dev/flutter/material/SelectionArea-class.html).
