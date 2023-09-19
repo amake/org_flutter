@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_highlight/flutter_highlight.dart';
-import 'package:highlight/languages/all.dart';
+import 'package:flutter_highlighting/flutter_highlighting.dart';
+import 'package:highlighting/languages/all.dart';
 import 'package:org_flutter/src/widgets.dart';
 
 bool supportedSrcLanguage(String? language) =>
@@ -10,11 +10,11 @@ bool supportedSrcLanguage(String? language) =>
 Widget buildSrcHighlight(
   BuildContext context, {
   required String code,
-  required String? language,
+  required String? languageId,
 }) =>
     HighlightView(
       code,
       theme: OrgTheme.dataOf(context).srcTheme ?? {},
-      language: language,
+      languageId: languageId,
       textStyle: DefaultTextStyle.of(context).style,
     );

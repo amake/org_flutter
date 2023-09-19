@@ -10,11 +10,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_highlight: ^0.7.0
+  flutter_highlighting: ^0.9.0+11.8.0
   flutter_tex_js: ^2.0.0
   # flutter_tex_js:
   #   path: ../flutter_tex_js
-  highlight: ^0.7.0
+  highlighting: ^0.9.0+11.8.0
   org_parser: ^5.1.0
   # org_parser:
     # path: ../org_parser

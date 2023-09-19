@@ -41,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: c2b87cb7756efdf69892005af546c56c0b5037f54d2a88269b4f347a505e3ca2
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.5"
   fake_async:
     dependency: transitive
     description:
@@ -54,14 +62,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_highlight:
+  flutter_highlighting:
     dependency: "direct main"
     description:
-      name: flutter_highlight
-      sha256: "7b96333867aa07e122e245c033b8ad622e4e3a42a1a2372cbb098a2541d8782c"
+      name: flutter_highlighting
+      sha256: "426770b1453e8302f8cc58455ebcaad33e3049e73ca18f9d3c83554552bf3baf"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.0"
+    version: "0.9.0+11.8.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -115,14 +123,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.2"
-  highlight:
+  highlighting:
     dependency: "direct main"
     description:
-      name: highlight
-      sha256: "5353a83ffe3e3eca7df0abfb72dcf3fa66cc56b953728e7113ad4ad88497cf21"
+      name: highlighting
+      sha256: "196005ed9c98ee559939fcecd466fa941b9e99b3a93394691b86780ad4da50f3"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.0"
+    version: "0.9.0+11.8.0"
   lints:
     dependency: transitive
     description:
@@ -240,6 +248,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.1"
+  tuple:
+    dependency: transitive
+    description:
+      name: tuple
+      sha256: a97ce2013f240b2f3807bcbaf218765b6f301c3eff91092bcfa23a039e7dd151
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   vector_math:
     dependency: transitive
     description:

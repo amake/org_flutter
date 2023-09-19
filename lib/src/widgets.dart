@@ -560,7 +560,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
         body = buildSrcHighlight(
           context,
           code: transformer(code, code.content),
-          language: block.language,
+          languageId: block.language,
         );
       } else {
         body = OrgContentWidget(
