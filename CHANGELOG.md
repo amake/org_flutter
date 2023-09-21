@@ -1,3 +1,8 @@
+## [4.3.0] - 2023-09-22
+* Improve code block syntax highlighting (previously based on
+  [highlight.js](https://highlightjs.org/) v9.18.1; now v11.8.0)
+* Syntax-highlighted source blocks will now participate in text selection
+
 ## [4.2.0] - 2023-09-15
 * Tap footnote references to jump between footnote definition and first
   reference
