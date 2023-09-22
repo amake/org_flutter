@@ -22,6 +22,12 @@ Widget buildSrcHighlight(
 
 // Below copied from:
 // https://github.com/akvelon/dart-highlighting/blob/25bc512c66d9eead9012dd129d0a12e77393b828/flutter_highlighting/lib/flutter_highlighting.dart
+//
+// with the following changes:
+//
+// - Replace `RichText` with `Text.rich`; see
+//   https://github.com/akvelon/dart-highlighting/pull/71
+// - Fix lints
 
 /// Highlight Flutter Widget
 class HighlightView extends StatelessWidget {
@@ -55,6 +61,7 @@ class HighlightView extends StatelessWidget {
     this.padding,
     this.textStyle,
     int tabSize = 8, // TODO: https://github.com/flutter/flutter/issues/50087
+    super.key,
   }) : source = input.replaceAll('\t', ' ' * tabSize);
 
   List<TextSpan> _convert(List<Node> nodes) {
@@ -62,7 +69,7 @@ class HighlightView extends StatelessWidget {
     var currentSpans = spans;
     List<List<TextSpan>> stack = [];
 
-    _traverse(Node node) {
+    traverse(Node node) {
       if (node.value != null) {
         currentSpans.add(node.className == null
             ? TextSpan(text: node.value)
@@ -73,17 +80,17 @@ class HighlightView extends StatelessWidget {
         stack.add(currentSpans);
         currentSpans = tmp;
 
-        node.children.forEach((n) {
-          _traverse(n);
+        for (var n in node.children) {
+          traverse(n);
           if (n == node.children.last) {
             currentSpans = stack.isEmpty ? spans : stack.removeLast();
           }
-        });
+        }
       }
     }
 
     for (var node in nodes) {
-      _traverse(node);
+      traverse(node);
     }
 
     return spans;
@@ -100,21 +107,22 @@ class HighlightView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var _textStyle = TextStyle(
+    var style = TextStyle(
       fontFamily: _defaultFontFamily,
       color: theme[_rootKey]?.color ?? _defaultFontColor,
     );
     if (textStyle != null) {
-      _textStyle = _textStyle.merge(textStyle);
+      style = style.merge(textStyle);
     }
 
     return Container(
       color: theme[_rootKey]?.backgroundColor ?? _defaultBackgroundColor,
       padding: padding,
-      child: RichText(
-        text: TextSpan(
-          style: _textStyle,
+      child: Text.rich(
+        TextSpan(
+          style: style,
           children: _convert(
+            // ignore: invalid_use_of_internal_member
             highlight.highlight(languageId ?? '', source, true).nodes ?? [],
           ),
         ),
