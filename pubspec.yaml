@@ -10,7 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_highlighting: ^0.9.0+11.8.0
+  # flutter_highlighting not needed until pending issues addressed upstream; see
+  # highlight.dart
+  # flutter_highlighting: ^0.9.0+11.8.0
   flutter_tex_js: ^3.0.0
   # flutter_tex_js:
   #   path: ../flutter_tex_js/flutter_tex_js
