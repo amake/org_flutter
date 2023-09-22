@@ -1,3 +1,6 @@
+## [4.3.1] - 2023-09-22
+* Remove disused dependency
+
 ## [4.3.0] - 2023-09-22
 * Improve code block syntax highlighting (previously based on
   [highlight.js](https://highlightjs.org/) v9.18.1; now v11.8.0)
