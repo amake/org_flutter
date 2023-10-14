@@ -1,3 +1,6 @@
+## [4.4.0] - 2023-10-14
+* Expose `hideMarkup` option on `Org` and `OrgText` widgets
+
 ## [4.3.1] - 2023-09-22
 * Remove disused dependency
 
