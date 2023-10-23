@@ -1,4 +1,4 @@
-// Generated from `org-entities` in org-20200716 with:
+// Generated from `org-entities` in org 9.6.8 with:
 //
 //   (mapconcat (lambda (e)
 //               (if (listp e)
@@ -42,6 +42,8 @@ const Map<String, String> orgDefaultEntityReplacements = {
   'igrave': r'ì',
   'Iacute': r'Í',
   'iacute': r'í',
+  'Idot': r'İ',
+  'inodot': r'ı',
   'Icirc': r'Î',
   'icirc': r'î',
   'Iuml': r'Ï',
@@ -151,7 +153,7 @@ const Map<String, String> orgDefaultEntityReplacements = {
   'gimel': r'ℷ',
   'beth': r'ב',
   'dalet': r'ד',
-  // ** Dead languages,
+  // ** Icelandic,
   'ETH': r'Ð',
   'eth': r'ð',
   'THORN': r'Þ',
