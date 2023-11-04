@@ -1185,3 +1185,29 @@ class OrgLatexInlineWidget extends StatelessWidget {
     );
   }
 }
+
+class OrgLocalVariablesWidget extends StatelessWidget {
+  const OrgLocalVariablesWidget(this.variables, {super.key});
+  final OrgLocalVariables variables;
+
+  @override
+  Widget build(BuildContext context) {
+    final defaultStyle = DefaultTextStyle.of(context).style;
+    final metaStyle =
+        defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Text.rich(
+        TextSpan(children: [
+          TextSpan(text: variables.start),
+          for (final entry in variables.entries)
+            TextSpan(
+                text: [entry.prefix, entry.content, entry.suffix].join('')),
+          TextSpan(text: variables.end),
+        ]),
+        style: metaStyle,
+      ),
+    );
+  }
+}

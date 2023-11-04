@@ -121,6 +121,8 @@ class OrgSpanBuilder {
         child: OrgLatexInlineWidget(element),
         alignment: PlaceholderAlignment.middle,
       );
+    } else if (element is OrgLocalVariables) {
+      return WidgetSpan(child: OrgLocalVariablesWidget(element));
     } else if (element is OrgContent) {
       return TextSpan(
           children: element.children

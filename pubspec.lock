@@ -159,10 +159,10 @@ packages:
     dependency: "direct main"
     description:
       name: org_parser
-      sha256: "63811cdf66f70c3485c469b9c87e45f504922185ae443875788b035ed6a3e9e9"
+      sha256: e4f6208d034ce4a14d7ead7b72e677b558addfaa6d406a8dc72d0a7d5b1d9ff7
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.0"
+    version: "5.2.0"
   path:
     dependency: transitive
     description:
