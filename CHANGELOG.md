@@ -1,3 +1,11 @@
+## [4.5.0] - 2023-11-04
+* Render [local variable
+  lists](https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html)
+* Optionally interpret `org-entities-user` (or `org-entities-local`) local
+  variable definitions to customize the [entities
+  list](https://orgmode.org/manual/Special-Symbols.html); see
+  `OrgController.interpretEmbeddedSettings`
+
 ## [4.4.0] - 2023-10-14
 * Expose `hideMarkup` option on `Org` and `OrgText` widgets
 
