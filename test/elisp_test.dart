@@ -2,8 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:org_flutter/src/util/elisp.dart';
 import 'package:petit_lisp/lisp.dart';
 
-dynamic exec(String script) {
-  final env = ElispEnvironment(StandardEnvironment(NativeEnvironment()));
+dynamic exec(String script, [InterruptCallback? interrupt]) {
+  final env = ElispEnvironment(StandardEnvironment(NativeEnvironment()))
+    ..interrupt = interrupt;
   return evalString(lispParser, env, script);
 }
 
@@ -38,6 +39,16 @@ result
     expect(
       exec("(dolist (x '(1 2 3) result) (setq result (cons x result)))"),
       Cons(3, Cons(2, Cons(1))),
+    );
+  });
+  test('infinite loop', () {
+    final start = DateTime.timestamp().millisecondsSinceEpoch;
+    expect(
+      () => exec('(while t)', () {
+        final now = DateTime.timestamp().millisecondsSinceEpoch;
+        if (now - start > 200) throw StateError('interrupted');
+      }),
+      throwsStateError,
     );
   });
 }

@@ -35,6 +35,8 @@ class LocalVariablesParser extends GrammarDefinition {
 
 final localVariablesParser = LocalVariablesParser().build<List<dynamic>>();
 
+const _kExecutionTimeLimitMs = 100;
+
 Map<String, dynamic> extractLocalVariables(OrgDocument doc) {
   final lvars = doc.find<OrgLocalVariables>((_) => true);
   if (lvars == null) return {};
@@ -46,7 +48,15 @@ Map<String, dynamic> extractLocalVariables(OrgDocument doc) {
   }
 
   final entries = parsed.value.cast<({String key, dynamic value})>();
-  final env = ElispEnvironment(StandardEnvironment(NativeEnvironment()));
+
+  final start = DateTime.timestamp().millisecondsSinceEpoch;
+  final env = ElispEnvironment(StandardEnvironment(NativeEnvironment()))
+    ..interrupt = () {
+      final end = DateTime.timestamp().millisecondsSinceEpoch;
+      if (end - start > _kExecutionTimeLimitMs) {
+        throw StateError('Execution time limit exceeded');
+      }
+    };
 
   final initialKeys = List.of(env.keys);
 

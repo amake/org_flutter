@@ -182,10 +182,10 @@ packages:
     dependency: transitive
     description:
       name: petit_lisp
-      sha256: "7ff82c64228e9e5ca74944a6f08c835cff488cd2face3420ac8145ba3b7ebdbd"
+      sha256: "49d00270a66b6cc33bedd90029a343adf191dabacbc290ae43808691c20a8bba"
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.0"
+    version: "6.2.0"
   petitparser:
     dependency: transitive
     description:
