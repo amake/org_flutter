@@ -144,12 +144,14 @@ class OrgController extends StatefulWidget {
     required Widget child,
     required OrgTree root,
     bool? hideMarkup,
+    bool? interpretEmbeddedSettings,
     String? restorationId,
     Key? key,
   }) : this._(
           child: child,
           root: root,
           hideMarkup: hideMarkup,
+          interpretEmbeddedSettings: interpretEmbeddedSettings,
           restorationId: restorationId,
           key: key,
         );
@@ -161,6 +163,7 @@ class OrgController extends StatefulWidget {
     this.searchQuery,
     this.hideMarkup,
     this.entityReplacements = orgDefaultEntityReplacements,
+    this.interpretEmbeddedSettings,
     this.restorationId,
     super.key,
   });
@@ -179,6 +182,9 @@ class OrgController extends StatefulWidget {
 
   /// Optionally hide some kinds of markup
   final bool? hideMarkup;
+
+  /// Read settings included in the document itself
+  final bool? interpretEmbeddedSettings;
 
   /// A map of entity replacements, e.g. Agrave → À. See
   /// [orgDefaultEntityReplacements].
@@ -202,7 +208,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   late OrgDataNodeMap _nodeMap;
   late Pattern _searchQuery;
   late bool _hideMarkup;
-  Map<String, String> get _entityReplacements => widget.entityReplacements;
+  late Map<String, String> _entityReplacements;
 
   @override
   void initState() {
@@ -210,6 +216,13 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     if (_inheritNodeMap) {
       _nodeMap = OrgDataNodeMap.inherit(widget.inheritedNodeMap!);
     }
+    var entities = widget.entityReplacements;
+    final root = _root;
+    if (widget.interpretEmbeddedSettings == true && root is OrgDocument) {
+      final lvars = extractLocalVariables(root);
+      entities = getOrgEntities(entities, lvars);
+    }
+    _entityReplacements = entities;
     _searchQuery = widget.searchQuery ?? _kDefaultSearchQuery;
     _hideMarkup = widget.hideMarkup ?? _kDefaultHideMarkup;
   }

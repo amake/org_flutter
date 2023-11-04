@@ -171,8 +171,16 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.3"
+  petit_lisp:
+    dependency: "direct main"
+    description:
+      name: petit_lisp
+      sha256: "7ff82c64228e9e5ca74944a6f08c835cff488cd2face3420ac8145ba3b7ebdbd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.0"
   petitparser:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: petitparser
       sha256: eeb2d1428ee7f4170e2bd498827296a18d4e7fc462b71727d111c0ac7707cfa6
@@ -260,10 +268,10 @@ packages:
     dependency: transitive
     description:
       name: web
-      sha256: "14f1f70c51119012600c5f1f60ca68efda5a9b6077748163c6af2893ec5df8fc"
+      sha256: afe077240a270dcfd2aafe77602b4113645af95d0ad31128cc02bce5ac5d5152
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.1-beta"
+    version: "0.3.0"
 sdks:
-  dart: ">=3.2.0-157.0.dev <4.0.0"
+  dart: ">=3.2.0-194.0.dev <4.0.0"
   flutter: ">=3.14.0-0"

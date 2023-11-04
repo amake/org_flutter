@@ -20,6 +20,10 @@ dependencies:
   org_parser: ^5.2.0
   # org_parser:
     # path: ../org_parser
+  petitparser: ^6.0.1
+  petit_lisp: ^6.1.0
+  # petit_lisp:
+    # path: ../petit_lisp
 
 dev_dependencies:
   flutter_lints: ^3.0.0
