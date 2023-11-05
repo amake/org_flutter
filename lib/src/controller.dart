@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/entity.dart';
+import 'package:org_flutter/src/error.dart';
 import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
@@ -145,6 +146,7 @@ class OrgController extends StatefulWidget {
     required OrgTree root,
     bool? hideMarkup,
     bool? interpretEmbeddedSettings,
+    OrgErrorHandler? errorHandler,
     String? restorationId,
     Key? key,
   }) : this._(
@@ -152,6 +154,7 @@ class OrgController extends StatefulWidget {
           root: root,
           hideMarkup: hideMarkup,
           interpretEmbeddedSettings: interpretEmbeddedSettings,
+          errorHandler: errorHandler,
           restorationId: restorationId,
           key: key,
         );
@@ -164,6 +167,7 @@ class OrgController extends StatefulWidget {
     this.hideMarkup,
     this.entityReplacements = orgDefaultEntityReplacements,
     this.interpretEmbeddedSettings,
+    this.errorHandler,
     this.restorationId,
     super.key,
   });
@@ -185,6 +189,10 @@ class OrgController extends StatefulWidget {
 
   /// Read settings included in the document itself
   final bool? interpretEmbeddedSettings;
+
+  /// A callback for handling errors. Values are expected to be of type
+  /// [OrgError].
+  final OrgErrorHandler? errorHandler;
 
   /// A map of entity replacements, e.g. Agrave → À. See
   /// [orgDefaultEntityReplacements].
@@ -219,12 +227,23 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     var entities = widget.entityReplacements;
     final root = _root;
     if (widget.interpretEmbeddedSettings == true && root is OrgDocument) {
-      final lvars = extractLocalVariables(root);
-      entities = getOrgEntities(entities, lvars);
+      try {
+        final lvars = extractLocalVariables(root, _errorHandler);
+        entities = getOrgEntities(entities, lvars, _errorHandler);
+      } catch (e) {
+        _errorHandler.call(e);
+      }
     }
     _entityReplacements = entities;
     _searchQuery = widget.searchQuery ?? _kDefaultSearchQuery;
     _hideMarkup = widget.hideMarkup ?? _kDefaultHideMarkup;
+  }
+
+  OrgErrorHandler get _errorHandler =>
+      widget.errorHandler ?? _defaultErrorHandler;
+
+  void _defaultErrorHandler(dynamic e) {
+    debugPrint(e.toString());
   }
 
   @override

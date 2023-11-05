@@ -7,6 +7,7 @@ import 'package:org_flutter/src/widgets.dart';
 import 'package:org_parser/org_parser.dart';
 
 export 'package:org_flutter/src/controller.dart';
+export 'package:org_flutter/src/error.dart';
 export 'package:org_flutter/src/theme.dart';
 export 'package:org_flutter/src/util/util.dart'
     show looksLikeImagePath, looksLikeUrl;

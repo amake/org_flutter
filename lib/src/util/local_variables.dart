@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:org_flutter/org_flutter.dart';
 import 'package:org_flutter/src/util/elisp.dart';
 import 'package:petit_lisp/lisp.dart';
@@ -37,14 +36,22 @@ final localVariablesParser = LocalVariablesParser().build<List<dynamic>>();
 
 const _kExecutionTimeLimitMs = 100;
 
-Map<String, dynamic> extractLocalVariables(OrgDocument doc) {
+class _TimeoutException implements Exception {}
+
+Map<String, dynamic> extractLocalVariables(
+  OrgDocument doc,
+  OrgErrorHandler onError,
+) {
   final lvars = doc.find<OrgLocalVariables>((_) => true);
   if (lvars == null) return {};
 
   final parsed = localVariablesParser.parse(lvars.node.contentString);
   if (parsed is Failure) {
-    debugPrint('Failed to parse local variables: $parsed');
-    return {};
+    // Give up and throw now
+    throw OrgParserError(
+      '${parsed.toPositionString()}: ${parsed.message}',
+      parsed,
+    );
   }
 
   final entries = parsed.value.cast<({String key, dynamic value})>();
@@ -54,7 +61,7 @@ Map<String, dynamic> extractLocalVariables(OrgDocument doc) {
     ..interrupt = () {
       final end = DateTime.timestamp().millisecondsSinceEpoch;
       if (end - start > _kExecutionTimeLimitMs) {
-        throw StateError('Execution time limit exceeded');
+        throw _TimeoutException();
       }
     };
 
@@ -65,8 +72,19 @@ Map<String, dynamic> extractLocalVariables(OrgDocument doc) {
       case 'eval':
         try {
           eval(env, value);
+          // Don't throw because we want to continue execution
+        } on _TimeoutException {
+          onError.call(
+            OrgTimeoutError(
+              'Execution timed out',
+              value.toString(),
+              const Duration(milliseconds: _kExecutionTimeLimitMs),
+            ),
+          );
         } catch (e) {
-          debugPrint('Failed to eval $value: $e');
+          onError.call(
+            OrgExecutionError('Failed to eval', value.toString(), e),
+          );
         }
         break;
       default:
@@ -92,6 +110,7 @@ const _kOrgEntitiesUserKeys = [
 Map<String, String> getOrgEntities(
   Map<String, String> defaults,
   Map<String, dynamic> localVariables,
+  OrgErrorHandler onError,
 ) {
   if (!_kOrgEntitiesUserKeys.any(localVariables.containsKey)) return defaults;
 
@@ -114,7 +133,11 @@ Map<String, String> getOrgEntities(
         final value = entry.tail?.tail?.tail?.tail?.tail?.tail?.head;
         if (name is String && value is String) {
           result[name] = value;
+        } else {
+          onError.call(OrgArgumentError('Invalid org entity', entry));
         }
+      } else {
+        onError.call(OrgArgumentError('Invalid org entity', entry));
       }
       userEntities = userEntities.tail;
     }

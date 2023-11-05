@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:org_flutter/src/error.dart';
 import 'package:org_flutter/src/util/local_variables.dart';
 import 'package:org_parser/org_parser.dart';
 import 'package:petit_lisp/lisp.dart';
@@ -89,11 +90,12 @@ baz: 1''').value;
     });
   });
   group('extract', () {
+    void ignoreError(dynamic _) {}
     test('simple', () {
       final doc = OrgDocument.parse('''# Local Variables:
 # foo: bar
 # End:''');
-      final result = extractLocalVariables(doc);
+      final result = extractLocalVariables(doc, ignoreError);
       expect(result, {'foo': Name('bar')});
     });
     test('multiple', () {
@@ -102,7 +104,7 @@ baz: 1''').value;
 # baz: 1
 # buzz: ("a" "b")
 # End:''');
-      final result = extractLocalVariables(doc);
+      final result = extractLocalVariables(doc, ignoreError);
       expect(
         result,
         {'foo': Name('bar'), 'baz': 1, 'buzz': Cons('a', Cons('b'))},
@@ -113,8 +115,83 @@ baz: 1''').value;
 # foo: 1
 # eval: (set! foo 2)
 # End:''');
-      final result = extractLocalVariables(doc);
+      final result = extractLocalVariables(doc, ignoreError);
       expect(result, {'foo': 2});
+    });
+  });
+  group('error handling', () {
+    test('parse error', () {
+      final doc = OrgDocument.parse('''# Local Variables:
+# foo: (
+# End:''');
+      expect(
+        () => extractLocalVariables(
+            doc, (e) => fail('should not call error handler')),
+        throwsA(isA<OrgParserError>()),
+      );
+    });
+    test('execution error', () {
+      final doc = OrgDocument.parse('''# Local Variables:
+# eval: (foo)
+# End:''');
+      var called = false;
+      final lvars = extractLocalVariables(doc, (e) {
+        called = true;
+        expect(e, isA<OrgExecutionError>());
+      });
+      expect(lvars, <String, dynamic>{});
+      expect(called, isTrue);
+    });
+    test('timeout error', () {
+      final doc = OrgDocument.parse('''# Local Variables:
+# eval: (while t)
+# End:''');
+      var called = false;
+      final lvars = extractLocalVariables(doc, (e) {
+        called = true;
+        expect(e, isA<OrgTimeoutError>());
+      });
+      expect(lvars, <String, dynamic>{});
+      expect(called, isTrue);
+    });
+    group('argument error', () {
+      test('bad entities list', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-entities-user: (foo)
+# End:''');
+        final lvars = extractLocalVariables(
+          doc,
+          (e) => fail('should not call error handler'),
+        );
+        expect(lvars.length, 1);
+        var called = false;
+        final entities = getOrgEntities({}, lvars, (e) {
+          called = true;
+          expect(e, isA<OrgArgumentError>());
+        });
+        expect(entities, <String, String>{});
+        expect(called, isTrue);
+      });
+      test('bad entity', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-entities-user: (
+#   ("snowman" "[snowman]" nil "&#9731;" "[snowman]")
+#   ("avocado" "[avocado]" nil "&#129361;" "[avocado]" "[avocado]" "🥑")
+# )
+# End:''');
+        final lvars = extractLocalVariables(
+          doc,
+          (e) => fail('should not call error handler'),
+        );
+        expect(lvars.length, 1);
+        var called = false;
+        final entities = getOrgEntities({}, lvars, (e) {
+          called = true;
+          expect(e, isA<OrgArgumentError>());
+        });
+        expect(entities, {'avocado': '🥑'});
+        expect(called, isTrue);
+      });
     });
   });
 }
