@@ -1,3 +1,6 @@
+## [4.6.0] - 2023-11-06
+* Receive information about errors via `OrgController.errorHandler`
+
 ## [4.5.0] - 2023-11-04
 * Render [local variable
   lists](https://www.gnu.org/software/emacs/manual/html_node/emacs/Specifying-File-Variables.html)
