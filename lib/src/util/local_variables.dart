@@ -10,8 +10,10 @@ class LocalVariablesParser extends GrammarDefinition {
   Parser start() => ref0(entry).plus().end();
 
   Parser entry() =>
-      (ref0(symbol) & ref0(delimiter).trim() & ref0(atom) & ref0(trailing))
-          .map((items) => (key: items[0], value: items[2]));
+      ref0(entryItems).map((items) => (key: items[0], value: items[2]));
+
+  Parser entryItems() =>
+      ref0(symbol) & ref0(delimiter).trim() & ref0(atom) & ref0(trailing);
 
   Parser symbol() => ref0(symbolToken).flatten('Symbol expected');
 
