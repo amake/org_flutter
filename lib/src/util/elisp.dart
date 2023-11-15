@@ -79,17 +79,21 @@ class ElispEnvironment extends Environment {
 
 (define equal =)
 
-(define (member element list)
-  (if (null? list)
-    false
-    (or (= element (car list))
-        (member element (cdr list)))))
 
-(define (add-to-list list-var element &optional append_)
-  (if (not (member element (eval list-var)))
-      (set list-var (if (= append_ true)
-                        (append (eval list-var) (cons element null))
-                        (cons element (eval list-var))))))
+(define (member element list &optional compare-fn)
+  (if list
+    (or ((eval (or compare-fn 'equal)) element (car list))
+        (member element (cdr list) compare-fn))))
+
+(define (memq elt list)
+  (member elt list eq))
+
+(define (add-to-list list-var element &optional appendp compare-fn)
+  (if (not (member element (eval list-var) compare-fn))
+      (set list-var (if appendp
+                        (append (eval list-var) (cons element nil))
+                        (cons element (eval list-var)))))
+  (eval list-var))
 ''';
 }
 

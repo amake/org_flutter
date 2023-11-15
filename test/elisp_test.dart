@@ -11,7 +11,10 @@ dynamic exec(String script, [InterruptCallback? interrupt]) {
 void main() {
   test('member', () {
     expect(exec("(member 1 '(1 2 3))"), true);
+    expect(exec("(member 2 '(1 2 3))"), true);
+    expect(exec("(member 3 '(1 2 3))"), true);
     expect(exec("(member 4 '(1 2 3))"), false);
+    expect(exec('''(member "foo" '("bar" "foo" "baz"))'''), true);
   });
   test('eq', () {
     expect(exec('(eq 1 1)'), true);
@@ -24,8 +27,21 @@ void main() {
   });
   test('add-to-list', () {
     expect(exec("(define foo null) (add-to-list 'foo 1)"), Cons(1));
+    expect(exec("(define foo '(1)) (add-to-list 'foo 1)"), Cons(1));
     expect(exec("(define foo '(1)) (add-to-list 'foo 2)"), Cons(2, Cons(1)));
     expect(exec("(define foo '(1)) (add-to-list 'foo 2 t)"), Cons(1, Cons(2)));
+    expect(
+      exec("(define foo '(1)) (add-to-list 'foo 2 'foo)"),
+      Cons(1, Cons(2)),
+    );
+    expect(
+      exec('''(define foo '("foo")) (add-to-list 'foo "foo" nil 'equal)'''),
+      Cons("foo"),
+    );
+    expect(
+      exec('''(define foo '("foo")) (add-to-list 'foo "foo" nil 'eq)'''),
+      Cons("foo", Cons("foo")),
+    );
   });
   test('setq', () {
     expect(exec('(setq foo 1 bar 2) (cons foo bar)'), Cons(1, 2));
