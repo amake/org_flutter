@@ -13,6 +13,15 @@ void main() {
     expect(exec("(member 1 '(1 2 3))"), true);
     expect(exec("(member 4 '(1 2 3))"), false);
   });
+  test('eq', () {
+    expect(exec('(eq 1 1)'), true);
+    expect(exec('(eq 1 2)'), false);
+    expect(exec('(eq 1 1.0)'), false);
+    expect(exec('(eq 1.0 1.0)'), true);
+    expect(exec('(eq "foo" "foo")'), false);
+    expect(exec('(eq "foo" "bar")'), false);
+    expect(exec("(eq 'foo 'foo)"), true);
+  });
   test('add-to-list', () {
     expect(exec("(define foo null) (add-to-list 'foo 1)"), Cons(1));
     expect(exec("(define foo '(1)) (add-to-list 'foo 2)"), Cons(2, Cons(1)));

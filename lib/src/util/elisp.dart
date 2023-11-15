@@ -5,12 +5,19 @@ import 'package:petit_lisp/lisp.dart';
 // TODO(aaron): more accurate standard env
 class ElispEnvironment extends Environment {
   ElispEnvironment(super.owner) {
+    define(Name('eq'), _eq);
     // petit_lisp's `set!` does not evaluate the symbol
     define(Name('set'), _set);
     define(Name('setq'), _setq);
     define(Name('dolist'), _dolist);
     define(Name('debugger'), _debugger);
     evalString(lispParser, this, _standardLibrary);
+  }
+
+  static dynamic _eq(Environment env, dynamic args) {
+    final a = eval(env, args.head);
+    final b = eval(env, args.tail.head);
+    return identical(a, b);
   }
 
   static dynamic _set(Environment env, dynamic args) {
