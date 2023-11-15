@@ -75,6 +75,9 @@ class ElispEnvironment extends Environment {
 
   static const _standardLibrary = '''
 (define t true)
+(define nil null)
+
+(define equal =)
 
 (define (member element list)
   (if (null? list)
