@@ -82,15 +82,15 @@ class ElispEnvironment extends Environment {
 (define-macro (defun name args &rest body)
   `(define ,(cons name args) ,@body))
 
-(define (member element list &optional compare-fn)
+(defun member (element list &optional compare-fn)
   (if list
     (or ((eval (or compare-fn 'equal)) element (car list))
         (member element (cdr list) compare-fn))))
 
-(define (memq elt list)
+(defun memq (elt list)
   (member elt list eq))
 
-(define (add-to-list list-var element &optional appendp compare-fn)
+(defun add-to-list (list-var element &optional appendp compare-fn)
   (if (not (member element (eval list-var) compare-fn))
       (set list-var (if appendp
                         (append (eval list-var) (cons element nil))
