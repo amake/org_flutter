@@ -66,6 +66,10 @@ result
       Cons(3, Cons(2, Cons(1))),
     );
   });
+  test('defun', () {
+    expect(exec('(defun foo () 1) (foo)'), 1);
+    expect(exec('(defun bar (x) (+ 1 x)) (bar 1)'), 2);
+  });
   test('infinite loop', () {
     final start = DateTime.timestamp().millisecondsSinceEpoch;
     expect(

@@ -79,6 +79,8 @@ class ElispEnvironment extends Environment {
 
 (define equal =)
 
+(define-macro (defun name args &rest body)
+  `(define ,(cons name args) ,@body))
 
 (define (member element list &optional compare-fn)
   (if list
