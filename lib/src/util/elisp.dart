@@ -82,6 +82,9 @@ class ElispEnvironment extends Environment {
 (define-macro (defun name args &rest body)
   `(define ,(cons name args) ,@body))
 
+(define-macro (defvar name value)
+  `(define ,name ,value))
+
 (defun member (element list &optional compare-fn)
   (if list
     (or ((eval (or compare-fn 'equal)) element (car list))

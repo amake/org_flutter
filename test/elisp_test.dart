@@ -70,6 +70,10 @@ result
     expect(exec('(defun foo () 1) (foo)'), 1);
     expect(exec('(defun bar (x) (+ 1 x)) (bar 1)'), 2);
   });
+  test('defvar', () {
+    expect(exec('(defvar foo 1) foo'), 1);
+    expect(exec('(defvar foo 1) (defvar foo 2) foo'), 2);
+  });
   test('infinite loop', () {
     final start = DateTime.timestamp().millisecondsSinceEpoch;
     expect(
