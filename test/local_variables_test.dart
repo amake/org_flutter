@@ -118,6 +118,22 @@ baz: 1''').value;
       final result = extractLocalVariables(doc, ignoreError);
       expect(result, {'foo': 2});
     });
+    test('add to entities', () {
+      final doc = OrgDocument.parse('''# Local Variables:
+# eval: (
+#   add-to-list
+#   'org-entities-user
+#   '("snowman" "[snowman]" nil "&#9731;" "[snowman]")
+# )
+# End:''');
+      final result = extractLocalVariables(doc, ignoreError);
+      expect(result, {
+        'org-entities-user': Cons(Cons(
+            'snowman',
+            Cons('[snowman]',
+                Cons(Name('nil'), Cons('&#9731;', Cons('[snowman]'))))))
+      });
+    });
   });
   group('error handling', () {
     test('parse error', () {

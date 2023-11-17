@@ -60,6 +60,7 @@ Map<String, dynamic> extractLocalVariables(
 
   final start = DateTime.timestamp().millisecondsSinceEpoch;
   final env = ElispEnvironment(StandardEnvironment(NativeEnvironment()))
+    ..define(Name('org-entities-user'), null)
     ..interrupt = () {
       final end = DateTime.timestamp().millisecondsSinceEpoch;
       if (end - start > _kExecutionTimeLimitMs) {
@@ -97,6 +98,10 @@ Map<String, dynamic> extractLocalVariables(
 
   final addedKeys = List.of(env.keys)
     ..removeWhere((key) => initialKeys.contains(key));
+
+  if (env[Name('org-entities-user')] != null) {
+    addedKeys.add(Name('org-entities-user'));
+  }
 
   return addedKeys.fold<Map<String, dynamic>>(
     {},
