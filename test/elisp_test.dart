@@ -74,6 +74,12 @@ result
     expect(exec('(defvar foo 1) foo'), 1);
     expect(exec('(defvar foo 1) (defvar foo 2) foo'), 2);
   });
+  test('defmacro', () {
+    expect(
+      exec("(defmacro foo (x) `(list 'x 'was (quote ,x))) (foo a)"),
+      Cons(Name('x'), Cons(Name('was'), Cons(Name('a')))),
+    );
+  });
   test('infinite loop', () {
     final start = DateTime.timestamp().millisecondsSinceEpoch;
     expect(
