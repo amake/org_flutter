@@ -5,10 +5,16 @@ import 'package:petit_lisp/lisp.dart';
 dynamic exec(String script, [InterruptCallback? interrupt]) {
   final env = ElispEnvironment(StandardEnvironment(NativeEnvironment()))
     ..interrupt = interrupt;
-  return evalString(lispParser, env, script);
+  return evalString(elispParser, env, script);
 }
 
 void main() {
+  test('function quote', () {
+    expect(
+      elispParser.parse("#'foo").value,
+      [Cons(Name('quote'), Cons(Name('foo')))],
+    );
+  });
   test('member', () {
     expect(exec("(member 1 '(1 2 3))"), true);
     expect(exec("(member 2 '(1 2 3))"), true);
@@ -40,6 +46,10 @@ void main() {
     );
     expect(
       exec('''(define foo '("foo")) (add-to-list 'foo "foo" nil 'eq)'''),
+      Cons("foo", Cons("foo")),
+    );
+    expect(
+      exec('''(define foo '("foo")) (add-to-list 'foo "foo" nil #'eq)'''),
       Cons("foo", Cons("foo")),
     );
   });

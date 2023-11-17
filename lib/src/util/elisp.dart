@@ -1,6 +1,20 @@
 import 'dart:developer';
 
 import 'package:petit_lisp/lisp.dart';
+import 'package:petitparser/petitparser.dart';
+
+class ElispParserDefinition extends LispParserDefinition {
+  @override
+  Parser atomChoice() => super.atomChoice()
+    // # can start a symbol, so put functionQuote before symbol
+    ..replace(ref0(symbol), ref0(functionQuote) | ref0(symbol));
+
+  Parser functionQuote() =>
+      (string("#'") & ref0(atom)).map((each) => Cons.quote(each[1]));
+}
+
+final _definition = ElispParserDefinition();
+final elispParser = _definition.build();
 
 // TODO(aaron): more accurate standard env
 class ElispEnvironment extends Environment {
@@ -10,7 +24,7 @@ class ElispEnvironment extends Environment {
     define(Name('set'), _set);
     define(Name('setq'), _setq);
     define(Name('debugger'), _debugger);
-    evalString(lispParser, this, _standardLibrary);
+    evalString(elispParser, this, _standardLibrary);
   }
 
   static dynamic _eq(Environment env, dynamic args) {
