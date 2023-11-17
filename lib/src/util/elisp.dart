@@ -9,7 +9,6 @@ class ElispEnvironment extends Environment {
     // petit_lisp's `set!` does not evaluate the symbol
     define(Name('set'), _set);
     define(Name('setq'), _setq);
-    define(Name('dolist'), _dolist);
     define(Name('debugger'), _debugger);
     evalString(lispParser, this, _standardLibrary);
   }
@@ -40,33 +39,6 @@ class ElispEnvironment extends Environment {
       args = args.tail;
     }
     return result;
-  }
-
-  static dynamic _dolist(Environment env, dynamic args) {
-    if (args.head is! Cons) {
-      throw ArgumentError('Invalid dolist: $args');
-    }
-    final loopSpec = args.head as Cons;
-    if (loopSpec.head is! Name) {
-      throw ArgumentError('Invalid dolist: $args');
-    }
-    final loopVar = loopSpec.head as Name;
-    var list = eval(env, loopSpec.tail?.head);
-    if (list is! Cons) {
-      throw ArgumentError('Invalid dolist: $args');
-    }
-    final innerEnv = env.create();
-    final resultVar = loopSpec.tail!.tail?.head;
-    if (resultVar is Name) {
-      innerEnv.define(resultVar, null);
-    }
-    final body = args.tail?.head;
-    while (list is Cons) {
-      innerEnv.define(loopVar, list.head);
-      eval(innerEnv, body);
-      list = list.tail;
-    }
-    return resultVar is Name ? innerEnv[resultVar] : null;
   }
 
   static dynamic _debugger(Environment env, dynamic args) {
@@ -102,6 +74,19 @@ class ElispEnvironment extends Environment {
                         (append (eval list-var) (cons element nil))
                         (cons element (eval list-var)))))
   (eval list-var))
+
+(defmacro dolist (spec &rest body)
+  (let ((var (car spec))
+        (templist (make-symbol "list"))
+        (resultvar (caddr spec)))
+    `(let ((,templist ,(cadr spec))
+           ,var
+           ,@(when resultvar `(,resultvar)))
+       (while ,templist
+         (setq ,var (car ,templist))
+         ,@body
+         (setq ,templist (cdr ,templist)))
+       ,resultvar)))
 ''';
 }
 
