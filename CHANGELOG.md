@@ -1,3 +1,6 @@
+## [4.7.0] - 2023-11-18
+* Improved support for local variables
+
 ## [4.6.0] - 2023-11-06
 * Receive information about errors via `OrgController.errorHandler`
 
