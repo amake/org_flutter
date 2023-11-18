@@ -19,18 +19,11 @@ final elispParser = _definition.build();
 // TODO(aaron): more accurate standard env
 class ElispEnvironment extends Environment {
   ElispEnvironment(super.owner) {
-    define(Name('eq'), _eq);
     // petit_lisp's `set!` does not evaluate the symbol
     define(Name('set'), _set);
     define(Name('setq'), _setq);
     define(Name('debugger'), _debugger);
     evalString(elispParser, this, _standardLibrary);
-  }
-
-  static dynamic _eq(Environment env, dynamic args) {
-    final a = eval(env, args.head);
-    final b = eval(env, args.tail.head);
-    return identical(a, b);
   }
 
   static dynamic _set(Environment env, dynamic args) {
@@ -64,6 +57,7 @@ class ElispEnvironment extends Environment {
 (define nil null)
 
 (define equal =)
+(define eq eq?)
 
 (define-macro (defun name args &rest body)
   `(define ,(cons name args) ,@body))
@@ -74,16 +68,8 @@ class ElispEnvironment extends Environment {
 (define-macro (defmacro name args &rest body)
   `(define-macro ,(cons name args) ,@body))
 
-(defun member (element list &optional compare-fn)
-  (if list
-    (or ((eval (or compare-fn 'equal)) element (car list))
-        (member element (cdr list) compare-fn))))
-
-(defun memq (elt list)
-  (member elt list eq))
-
 (defun add-to-list (list-var element &optional appendp compare-fn)
-  (if (not (member element (eval list-var) compare-fn))
+  (if (not (member element (eval list-var) (eval compare-fn)))
       (set list-var (if appendp
                         (append (eval list-var) (cons element nil))
                         (cons element (eval list-var)))))

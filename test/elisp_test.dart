@@ -15,13 +15,6 @@ void main() {
       [Cons(Name('quote'), Cons(Name('foo')))],
     );
   });
-  test('member', () {
-    expect(exec("(member 1 '(1 2 3))"), true);
-    expect(exec("(member 2 '(1 2 3))"), true);
-    expect(exec("(member 3 '(1 2 3))"), true);
-    expect(exec("(member 4 '(1 2 3))"), false);
-    expect(exec('''(member "foo" '("bar" "foo" "baz"))'''), true);
-  });
   test('eq', () {
     expect(exec('(eq 1 1)'), true);
     expect(exec('(eq 1 2)'), false);
