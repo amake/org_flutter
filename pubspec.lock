@@ -207,10 +207,10 @@ packages:
     dependency: "direct main"
     description:
       name: petit_lisp
-      sha256: "49d00270a66b6cc33bedd90029a343adf191dabacbc290ae43808691c20a8bba"
+      sha256: "10f7d5bca66ae2718d347d0e8bb8a25b385e11252873d8751e8e916db0150a1b"
       url: "https://pub.dev"
     source: hosted
-    version: "6.2.0"
+    version: "6.3.0"
   petitparser:
     dependency: "direct main"
     description:
