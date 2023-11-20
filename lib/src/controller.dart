@@ -15,7 +15,10 @@ const _kDefaultVisibilityState = OrgVisibilityState.folded;
 const _kTransientStateNodeMapKey = 'node_map';
 
 typedef SearchResultKey = GlobalKey<SearchResultSpanState>;
-typedef FootnoteKey = GlobalKey;
+// We shouldn't have to specify <State> but not doing so sometimes results in a
+// crash here:
+// https://github.com/dart-lang/sdk/blob/d252bb11a342f011485b9c9fe7c56a246e92b12b/pkg/front_end/lib/src/fasta/kernel/body_builder.dart#L6614
+typedef FootnoteKey = GlobalKey<State>;
 
 enum OrgVisibilityState {
   /// Just the root headline; equivalent to global "overview" state
