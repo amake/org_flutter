@@ -1,3 +1,7 @@
+## [4.7.1] - 2023-11-20
+* Prevent spurious Dart tooling crash
+  ([#10](https://github.com/amake/org_flutter/issues/10))
+
 ## [4.7.0] - 2023-11-18
 * Improved support for local variables
 
