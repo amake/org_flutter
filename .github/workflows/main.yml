@@ -21,6 +21,9 @@ jobs:
     - name: Analyze
       run: flutter analyze
     - name: Run tests
-      run: flutter test test
+      continue-on-error: true
+      run: flutter test
+    - name: Clean and retry
+      run: flutter clean && flutter test
     - name: Check example
       run: cd example; flutter test
