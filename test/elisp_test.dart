@@ -24,6 +24,11 @@ void main() {
     expect(exec('(eq "foo" "bar")'), false);
     expect(exec("(eq 'foo 'foo)"), true);
   });
+  test('lambda', () {
+    expect(exec('((lambda (x &optional y) x) 1)'), 1);
+    expect(exec('((lambda (x &optional y) y) 1)'), isNull);
+    expect(exec('((lambda (x &optional y) y) 1 2)'), 2);
+  });
   test('add-to-list', () {
     expect(exec("(define foo null) (add-to-list 'foo 1)"), Cons(1));
     expect(exec("(define foo '(1)) (add-to-list 'foo 1)"), Cons(1));

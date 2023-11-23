@@ -59,6 +59,8 @@ class ElispEnvironment extends Environment {
 (define equal =)
 (define eq eq?)
 
+(define lambda lambda*)
+
 (define-macro* (defun name args . body)
   `(define* ,(cons name args) ,@body))
 
