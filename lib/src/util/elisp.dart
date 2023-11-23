@@ -59,14 +59,14 @@ class ElispEnvironment extends Environment {
 (define equal =)
 (define eq eq?)
 
-(define-macro (defun name args &rest body)
-  `(define ,(cons name args) ,@body))
+(define-macro* (defun name args . body)
+  `(define* ,(cons name args) ,@body))
 
 (define-macro (defvar name value)
   `(define ,name ,value))
 
-(define-macro (defmacro name args &rest body)
-  `(define-macro ,(cons name args) ,@body))
+(define-macro* (defmacro name args . body)
+  `(define-macro* ,(cons name args) ,@body))
 
 (defun add-to-list (list-var element &optional appendp compare-fn)
   (if (not (member element (eval list-var) (eval compare-fn)))
