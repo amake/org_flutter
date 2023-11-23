@@ -1,3 +1,6 @@
+## [4.8.0] - 2023-11-23
+* Improve Elisp compatibility, pin engine version to prevent unwanted upgrades
+
 ## [4.7.1] - 2023-11-20
 * Prevent spurious Dart tooling crash
   ([#10](https://github.com/amake/org_flutter/issues/10))
