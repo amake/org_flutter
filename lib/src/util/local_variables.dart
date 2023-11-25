@@ -152,3 +152,20 @@ Map<String, String> getOrgEntities(
 
   return result;
 }
+
+const _kOrgPrettyEntitiesKey = 'org-pretty-entities';
+
+bool? getPrettyEntities(Map<String, dynamic> localVariables) =>
+    _getBooleanValue(localVariables, _kOrgPrettyEntitiesKey);
+
+bool? _getBooleanValue(Map<String, dynamic> localVariables, String key) {
+  if (localVariables.containsKey(key)) {
+    final value = localVariables[key];
+    if (value == Name('nil')) {
+      return false;
+    } else if (value == Name('t')) {
+      return true;
+    }
+  }
+  return null;
+}

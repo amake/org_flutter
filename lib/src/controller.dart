@@ -11,6 +11,7 @@ import 'package:org_parser/org_parser.dart';
 const _kDefaultSearchQuery = '';
 const _kDefaultHideMarkup = false;
 const _kDefaultVisibilityState = OrgVisibilityState.folded;
+const _kDefaultPrettyEntities = true;
 
 const _kTransientStateNodeMapKey = 'node_map';
 
@@ -141,6 +142,7 @@ class OrgController extends StatefulWidget {
           inheritedNodeMap: data._nodeMap,
           searchQuery: data.searchQuery,
           hideMarkup: data.hideMarkup,
+          prettyEntities: data._prettyEntities,
           entityReplacements: data._entityReplacements,
           key: key,
         );
@@ -169,6 +171,7 @@ class OrgController extends StatefulWidget {
     this.inheritedNodeMap,
     this.searchQuery,
     this.hideMarkup,
+    this.prettyEntities,
     this.entityReplacements = orgDefaultEntityReplacements,
     this.interpretEmbeddedSettings,
     this.errorHandler,
@@ -190,6 +193,11 @@ class OrgController extends StatefulWidget {
 
   /// Optionally hide some kinds of markup
   final bool? hideMarkup;
+
+  /// Whether to prettify entities. By default the `org-pretty-entities` local
+  /// variable value is respected; when not present it defaults to `true`
+  /// (enabled).
+  final bool? prettyEntities;
 
   /// Read settings included in the document itself
   final bool? interpretEmbeddedSettings;
@@ -221,6 +229,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   late Pattern _searchQuery;
   late bool _hideMarkup;
   late Map<String, String> _entityReplacements;
+  late bool _prettyEntities;
 
   @override
   void initState() {
@@ -229,16 +238,19 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       _nodeMap = OrgDataNodeMap.inherit(widget.inheritedNodeMap!);
     }
     var entities = widget.entityReplacements;
+    var prettyEntities = widget.prettyEntities;
     final root = _root;
     if (widget.interpretEmbeddedSettings == true && root is OrgDocument) {
       try {
         final lvars = extractLocalVariables(root, _errorHandler);
         entities = getOrgEntities(entities, lvars, _errorHandler);
+        prettyEntities ??= getPrettyEntities(lvars);
       } catch (e) {
         _errorHandler.call(e);
       }
     }
     _entityReplacements = entities;
+    _prettyEntities = prettyEntities ?? _kDefaultPrettyEntities;
     _searchQuery = widget.searchQuery ?? _kDefaultSearchQuery;
     _hideMarkup = widget.hideMarkup ?? _kDefaultHideMarkup;
   }
@@ -289,6 +301,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       hideMarkup: _hideMarkup,
       searchResultKeys: _searchResultKeys,
       footnoteKeys: _footnoteKeys,
+      prettyEntities: _prettyEntities,
       entityReplacements: _entityReplacements,
       setHideMarkup: _setHideMarkup,
       cycleVisibility: _cycleVisibility,
@@ -394,6 +407,7 @@ class OrgControllerData extends InheritedWidget {
     required bool hideMarkup,
     required this.searchResultKeys,
     required this.footnoteKeys,
+    required bool prettyEntities,
     required Map<String, String> entityReplacements,
     required void Function(bool) setHideMarkup,
     required this.cycleVisibility,
@@ -403,6 +417,7 @@ class OrgControllerData extends InheritedWidget {
     super.key,
   })  : _nodeMap = nodeMap,
         _hideMarkup = hideMarkup,
+        _prettyEntities = prettyEntities,
         _entityReplacements = entityReplacements,
         _setHideMarkup = setHideMarkup,
         _restorationId = restorationId;
@@ -432,6 +447,8 @@ class OrgControllerData extends InheritedWidget {
   final ValueNotifier<Map<String, FootnoteKey>> footnoteKeys;
 
   final bool _hideMarkup;
+
+  final bool _prettyEntities;
 
   final Map<String, String> _entityReplacements;
 
@@ -507,8 +524,10 @@ class OrgControllerData extends InheritedWidget {
   }
 
   /// Get the prettify-symbols-mode replacement with the given [name]. The
-  /// result is obtained from [OrgController.entityReplacements].
-  String? prettifyEntity(String name) => _entityReplacements[name];
+  /// result is obtained from [OrgController.entityReplacements]. Returns null
+  /// if prettification is disabled.
+  String? prettifyEntity(String name) =>
+      _prettyEntities ? _entityReplacements[name] : null;
 
   String? restorationIdFor(String name) =>
       _deriveRestorationId(_restorationId, name);
@@ -543,6 +562,7 @@ class OrgControllerData extends InheritedWidget {
       search != oldWidget.search ||
       searchQuery != oldWidget.searchQuery ||
       hideMarkup != oldWidget.hideMarkup ||
+      _prettyEntities != oldWidget._prettyEntities ||
       // Don't check searchResultKeys because rebuilding this widget will cause
       // new keys to be made which leads to an infinite loop
       !mapEquals(_entityReplacements, oldWidget._entityReplacements);
