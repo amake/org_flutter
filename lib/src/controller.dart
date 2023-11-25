@@ -298,7 +298,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     );
   }
 
-  /// Set the search query. Seciton visibility will be updated so that sections
+  /// Set the search query. Section visibility will be updated so that sections
   /// with hits are expanded and sections without will be collapsed.
   void search(Pattern query) {
     if (!patternEquals(_searchQuery, query)) {
@@ -447,7 +447,7 @@ class OrgControllerData extends InheritedWidget {
 
   final String? _restorationId;
 
-  /// Whether some kidns of markup should be hidden
+  /// Whether some kinds of markup should be hidden
   bool get hideMarkup => _hideMarkup;
 
   /// Optionally hide some kinds of markup
