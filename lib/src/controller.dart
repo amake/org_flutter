@@ -141,6 +141,7 @@ class OrgController extends StatefulWidget {
           inheritedNodeMap: data._nodeMap,
           searchQuery: data.searchQuery,
           hideMarkup: data.hideMarkup,
+          entityReplacements: data._entityReplacements,
           key: key,
         );
 
