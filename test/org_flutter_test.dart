@@ -93,6 +93,28 @@ foo \smiley bar
         expect(find.textContaining('foo'), findsOneWidget);
         expect(find.textContaining('☺'), findsNothing);
       });
+      testWidgets('Hide markup', (tester) async {
+        final doc = OrgDocument.parse(r'''
+foo *bar* baz
+
+# Local Variables:
+# org-hide-emphasis-markers: t
+# End:
+''');
+        final widget = OrgController(
+          root: doc,
+          interpretEmbeddedSettings: true,
+          errorHandler: (e) {
+            fail(e.toString());
+          },
+          child: OrgRootWidget(
+            child: OrgDocumentWidget(doc),
+          ),
+        );
+        await tester.pumpWidget(_wrap(widget));
+        expect(find.textContaining('foo bar baz'), findsOneWidget);
+        expect(find.textContaining('foo *bar* baz'), findsNothing);
+      });
     });
   });
 }

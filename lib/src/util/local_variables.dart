@@ -158,6 +158,11 @@ const _kOrgPrettyEntitiesKey = 'org-pretty-entities';
 bool? getPrettyEntities(Map<String, dynamic> localVariables) =>
     _getBooleanValue(localVariables, _kOrgPrettyEntitiesKey);
 
+const _kOrgHideEmphasisMarkersKey = 'org-hide-emphasis-markers';
+
+bool? getHideEmphasisMarkers(Map<String, dynamic> localVariables) =>
+    _getBooleanValue(localVariables, _kOrgHideEmphasisMarkersKey);
+
 bool? _getBooleanValue(Map<String, dynamic> localVariables, String key) {
   if (localVariables.containsKey(key)) {
     final value = localVariables[key];

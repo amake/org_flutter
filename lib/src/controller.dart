@@ -191,7 +191,9 @@ class OrgController extends StatefulWidget {
   /// A query for full-text search of the document
   final Pattern? searchQuery;
 
-  /// Optionally hide some kinds of markup
+  /// Optionally hide some kinds of markup. By default the
+  /// `org-hide-emphasis-markers` local variables value is respected; when not
+  /// present it defaults to `false` (disabled).
   final bool? hideMarkup;
 
   /// Whether to prettify entities. By default the `org-pretty-entities` local
@@ -239,20 +241,22 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     }
     var entities = widget.entityReplacements;
     var prettyEntities = widget.prettyEntities;
+    var hideMarkup = widget.hideMarkup;
     final root = _root;
     if (widget.interpretEmbeddedSettings == true && root is OrgDocument) {
       try {
         final lvars = extractLocalVariables(root, _errorHandler);
         entities = getOrgEntities(entities, lvars, _errorHandler);
         prettyEntities ??= getPrettyEntities(lvars);
+        hideMarkup ??= getHideEmphasisMarkers(lvars);
       } catch (e) {
         _errorHandler.call(e);
       }
     }
     _entityReplacements = entities;
     _prettyEntities = prettyEntities ?? _kDefaultPrettyEntities;
+    _hideMarkup = hideMarkup ?? _kDefaultHideMarkup;
     _searchQuery = widget.searchQuery ?? _kDefaultSearchQuery;
-    _hideMarkup = widget.hideMarkup ?? _kDefaultHideMarkup;
   }
 
   OrgErrorHandler get _errorHandler =>
