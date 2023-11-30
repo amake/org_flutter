@@ -2,12 +2,14 @@ library org_flutter;
 
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/controller.dart';
+import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/theme.dart';
 import 'package:org_flutter/src/widgets.dart';
 import 'package:org_parser/org_parser.dart';
 
 export 'package:org_flutter/src/controller.dart';
 export 'package:org_flutter/src/error.dart';
+export 'package:org_flutter/src/settings.dart';
 export 'package:org_flutter/src/theme.dart';
 export 'package:org_flutter/src/util/util.dart'
     show looksLikeImagePath, looksLikeUrl;
@@ -25,7 +27,7 @@ class Org extends StatefulWidget {
     this.style,
     this.lightTheme,
     this.darkTheme,
-    this.hideMarkup,
+    this.settings,
     this.onLinkTap,
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
@@ -44,15 +46,8 @@ class Org extends StatefulWidget {
   final OrgThemeData? lightTheme;
   final OrgThemeData? darkTheme;
 
-  /// When true, adjust the document display to be less faithful to the raw
-  /// markup and more pleasant for reading. Default is off. Changes include:
-  ///
-  /// - Hide emphasis markers like *asterisks* and /slashes/ (like
-  ///   org-hide-emphasis-markers)
-  /// - Reflow text to wrap at widget width
-  /// - Reduce opacity of meta lines
-  /// - Truncate block headers at screen width
-  final bool? hideMarkup;
+  /// A collection of settings that affect the appearance of the document
+  final OrgSettings? settings;
 
   /// A callback invoked when the user taps a link. The argument is the link
   /// URL. You might want to open this in a browser.
@@ -102,7 +97,7 @@ class _OrgState extends State<Org> {
   Widget build(BuildContext context) {
     return OrgController(
       root: _doc,
-      hideMarkup: widget.hideMarkup,
+      settings: widget.settings,
       restorationId: widget.restorationId,
       child: OrgRootWidget(
         style: widget.style,
@@ -126,22 +121,15 @@ class OrgText extends StatefulWidget {
     this.text, {
     this.onLinkTap,
     this.loadImage,
-    this.hideMarkup,
+    this.settings,
     super.key,
   });
 
   /// Raw Org Mode document in text form
   final String text;
 
-  /// When true, adjust the document display to be less faithful to the raw
-  /// markup and more pleasant for reading. Default is on. Changes include:
-  ///
-  /// - Hide emphasis markers like *asterisks* and /slashes/ (like
-  ///   org-hide-emphasis-markers)
-  /// - Reflow text to wrap at widget width
-  /// - Reduce opacity of meta lines
-  /// - Truncate block headers at screen width
-  final bool? hideMarkup;
+  /// A collection of settings that affect the appearance of the document
+  final OrgSettings? settings;
 
   /// A callback invoked when the user taps a link. The argument is the link
   /// URL. You might want to open this in a browser.
@@ -172,7 +160,7 @@ class _OrgTextState extends State<OrgText> {
   Widget build(BuildContext context) {
     return OrgController(
       root: _doc,
-      hideMarkup: widget.hideMarkup ?? true,
+      settings: widget.settings ?? OrgSettings.hideMarkup,
       child: OrgRootWidget(
         onLinkTap: widget.onLinkTap,
         loadImage: widget.loadImage,

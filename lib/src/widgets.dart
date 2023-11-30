@@ -3,6 +3,7 @@ import 'package:flutter_tex_js/flutter_tex_js.dart';
 import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/highlight.dart';
 import 'package:org_flutter/src/indent.dart';
+import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/theme.dart';
 import 'package:org_flutter/src/util/util.dart';
@@ -469,7 +470,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    openListenable.value = !OrgController.of(context).hideBlockStartup;
+    openListenable.value = !OrgController.of(context).settings.hideBlockStartup;
   }
 
   @override
@@ -477,7 +478,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
     final defaultStyle = DefaultTextStyle.of(context).style;
     final metaStyle =
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
-    final hideMarkup = OrgController.of(context).hideMarkup;
+    final hideMarkup = OrgController.of(context).settings.deemphasizeMarkup;
     return IndentBuilder(
       widget.block.indent,
       builder: (context, totalIndentSize) {
@@ -696,7 +697,7 @@ class OrgMetaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hideMarkup = OrgController.of(context).hideMarkup;
+    final hideMarkup = OrgController.of(context).settings.deemphasizeMarkup;
     final body = DefaultTextStyle.merge(
       style: TextStyle(color: OrgTheme.dataOf(context).metaColor),
       child: IndentBuilder(
@@ -882,7 +883,7 @@ class OrgParagraphWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hideMarkup = OrgController.of(context).hideMarkup;
+    final reflow = OrgController.of(context).settings.reflowText;
     return IndentBuilder(
       paragraph.indent,
       builder: (context, totalIndentSize) {
@@ -891,7 +892,7 @@ class OrgParagraphWidget extends StatelessWidget {
           transformer: (elem, content) {
             final isLast = identical(elem, paragraph.body.children.last);
             var formattedContent = deindent(content, totalIndentSize);
-            if (hideMarkup) {
+            if (reflow) {
               formattedContent = reflowText(formattedContent, end: isLast);
             }
             return isLast
@@ -989,8 +990,8 @@ class OrgListItemWidget extends StatelessWidget {
     if (item.body != null) {
       yield builder.build(item.body!, transformer: (elem, content) {
         final isLast = identical(item.body!.children.last, elem);
-        final hideMarkup = OrgController.of(context).hideMarkup;
-        final formattedContent = hideMarkup
+        final reflow = OrgController.of(context).settings.reflowText;
+        final formattedContent = reflow
             ? reflowText(content, end: isLast)
             : deindent(content, totalIndentSize);
         return isLast
@@ -1064,7 +1065,10 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
         );
       },
     );
-    return reduceOpacity(body, enabled: OrgController.of(context).hideMarkup);
+    return reduceOpacity(
+      body,
+      enabled: OrgController.of(context).settings.deemphasizeMarkup,
+    );
   }
 
   Widget _body(Transformer transformer) {

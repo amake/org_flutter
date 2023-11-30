@@ -2,17 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:org_flutter/src/entity.dart';
 import 'package:org_flutter/src/error.dart';
+import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
 const _kDefaultSearchQuery = '';
-const _kDefaultHideMarkup = false;
 const _kDefaultVisibilityState = OrgVisibilityState.folded;
-const _kDefaultPrettyEntities = true;
-const _kDefaultHideBlockStartup = false;
 
 const _kTransientStateNodeMapKey = 'node_map';
 
@@ -134,6 +131,7 @@ class OrgController extends StatefulWidget {
   /// should supply the [data] and [root] from the parent OrgController.
   OrgController.defaults(
     OrgControllerData data, {
+    OrgSettings? settings,
     required OrgTree root,
     required Widget child,
     Key? key,
@@ -142,25 +140,24 @@ class OrgController extends StatefulWidget {
           root: root,
           inheritedNodeMap: data._nodeMap,
           searchQuery: data.searchQuery,
-          hideMarkup: data.hideMarkup,
-          prettyEntities: data._prettyEntities,
-          entityReplacements: data._entityReplacements,
+          settings: settings ?? data._callerSettings,
+          embeddedSettings: data._embeddedSettings,
           key: key,
         );
 
   const OrgController({
     required Widget child,
     required OrgTree root,
-    bool? hideMarkup,
     bool? interpretEmbeddedSettings,
+    OrgSettings? settings,
     OrgErrorHandler? errorHandler,
     String? restorationId,
     Key? key,
   }) : this._(
           child: child,
           root: root,
-          hideMarkup: hideMarkup,
           interpretEmbeddedSettings: interpretEmbeddedSettings,
+          settings: settings,
           errorHandler: errorHandler,
           restorationId: restorationId,
           key: key,
@@ -169,13 +166,11 @@ class OrgController extends StatefulWidget {
   const OrgController._({
     required this.child,
     required this.root,
+    required this.settings,
     this.inheritedNodeMap,
     this.searchQuery,
-    this.hideMarkup,
-    this.prettyEntities,
-    this.hideBlockStartup,
-    this.entityReplacements = orgDefaultEntityReplacements,
     this.interpretEmbeddedSettings,
+    this.embeddedSettings,
     this.errorHandler,
     this.restorationId,
     super.key,
@@ -193,31 +188,17 @@ class OrgController extends StatefulWidget {
   /// A query for full-text search of the document
   final Pattern? searchQuery;
 
-  /// Optionally hide some kinds of markup. By default the
-  /// `org-hide-emphasis-markers` local variables value is respected; when not
-  /// present it defaults to `false` (disabled).
-  final bool? hideMarkup;
-
-  /// Whether to prettify entities. By default the `org-pretty-entities` local
-  /// variable value is respected; when not present it defaults to `true`
-  /// (enabled).
-  final bool? prettyEntities;
-
-  /// Whether blocks should start folded. By default the
-  /// `org-hide-block-startup` local variable value is respected; when not
-  /// present it defaults to `false` (disabled).
-  final bool? hideBlockStartup;
-
   /// Read settings included in the document itself
   final bool? interpretEmbeddedSettings;
+
+  /// Settings controlling how the document is displayed
+  final OrgSettings? settings;
+
+  final OrgSettings? embeddedSettings;
 
   /// A callback for handling errors. Values are expected to be of type
   /// [OrgError].
   final OrgErrorHandler? errorHandler;
-
-  /// A map of entity replacements, e.g. Agrave → À. See
-  /// [orgDefaultEntityReplacements].
-  final Map<String, String> entityReplacements;
 
   /// An ID for temporary state restoration. Supply a unique ID to ensure that
   /// temporary state such as scroll position is preserved as appropriate.
@@ -233,13 +214,14 @@ class OrgController extends StatefulWidget {
 class _OrgControllerState extends State<OrgController> with RestorationMixin {
   OrgTree get _root => widget.root;
   bool get _inheritNodeMap => widget.inheritedNodeMap != null;
+  List<OrgSettings> get _settings => [
+        if (widget.settings != null) widget.settings!,
+        if (_embeddedSettings != null) _embeddedSettings!
+      ];
 
   late OrgDataNodeMap _nodeMap;
   late Pattern _searchQuery;
-  late bool _hideMarkup;
-  late Map<String, String> _entityReplacements;
-  late bool _prettyEntities;
-  late bool _hideBlockStartup;
+  OrgSettings? _embeddedSettings;
 
   @override
   void initState() {
@@ -247,26 +229,11 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     if (_inheritNodeMap) {
       _nodeMap = OrgDataNodeMap.inherit(widget.inheritedNodeMap!);
     }
-    var entities = widget.entityReplacements;
-    var prettyEntities = widget.prettyEntities;
-    var hideMarkup = widget.hideMarkup;
-    var hideBlockStartup = widget.hideBlockStartup;
     final root = _root;
+    _embeddedSettings = widget.embeddedSettings;
     if (widget.interpretEmbeddedSettings == true && root is OrgDocument) {
-      try {
-        final lvars = extractLocalVariables(root, _errorHandler);
-        entities = getOrgEntities(entities, lvars, _errorHandler);
-        prettyEntities ??= getPrettyEntities(lvars);
-        hideMarkup ??= getHideEmphasisMarkers(lvars);
-        hideBlockStartup ??= getHideBlockStartup(lvars);
-      } catch (e) {
-        _errorHandler.call(e);
-      }
+      _embeddedSettings ??= OrgSettings.fromDocument(root, _errorHandler);
     }
-    _entityReplacements = entities;
-    _prettyEntities = prettyEntities ?? _kDefaultPrettyEntities;
-    _hideMarkup = hideMarkup ?? _kDefaultHideMarkup;
-    _hideBlockStartup = hideBlockStartup ?? _kDefaultHideBlockStartup;
     _searchQuery = widget.searchQuery ?? _kDefaultSearchQuery;
   }
 
@@ -313,13 +280,10 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       nodeMap: _nodeMap,
       searchQuery: _searchQuery,
       search: search,
-      hideMarkup: _hideMarkup,
       searchResultKeys: _searchResultKeys,
       footnoteKeys: _footnoteKeys,
-      prettyEntities: _prettyEntities,
-      hideBlockStartup: _hideBlockStartup,
-      entityReplacements: _entityReplacements,
-      setHideMarkup: _setHideMarkup,
+      embeddedSettings: _embeddedSettings,
+      callerSettings: widget.settings,
       cycleVisibility: _cycleVisibility,
       cycleVisibilityOf: _cycleVisibilityOf,
       restorationId: widget.restorationId,
@@ -409,35 +373,32 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     final nodeMapString = json.encode(_nodeMap.toJson(_root));
     bucket?.write<String>(_kTransientStateNodeMapKey, nodeMapString);
   }
-
-  void _setHideMarkup(bool value) => setState(() => _hideMarkup = value);
 }
 
 class OrgControllerData extends InheritedWidget {
-  const OrgControllerData({
+  OrgControllerData({
     required super.child,
     required this.root,
     required OrgDataNodeMap nodeMap,
     required this.searchQuery,
     required this.search,
-    required bool hideMarkup,
-    required this.hideBlockStartup,
     required this.searchResultKeys,
     required this.footnoteKeys,
-    required bool prettyEntities,
-    required Map<String, String> entityReplacements,
-    required void Function(bool) setHideMarkup,
     required this.cycleVisibility,
     required this.cycleVisibilityOf,
     required this.ensureVisible,
+    required OrgSettings? callerSettings,
+    required OrgSettings? embeddedSettings,
     String? restorationId,
     super.key,
   })  : _nodeMap = nodeMap,
-        _hideMarkup = hideMarkup,
-        _prettyEntities = prettyEntities,
-        _entityReplacements = entityReplacements,
-        _setHideMarkup = setHideMarkup,
-        _restorationId = restorationId;
+        _restorationId = restorationId,
+        _callerSettings = callerSettings,
+        _embeddedSettings = embeddedSettings,
+        settings = [
+          if (callerSettings != null) callerSettings,
+          if (embeddedSettings != null) embeddedSettings
+        ];
 
   /// The Org Mode document or section this controller will control
   final OrgTree root;
@@ -451,6 +412,11 @@ class OrgControllerData extends InheritedWidget {
   /// A query for full-text search of the document
   final Pattern searchQuery;
 
+  final OrgSettings? _callerSettings;
+  final OrgSettings? _embeddedSettings;
+
+  final List<OrgSettings> settings;
+
   /// Keys representing individual search result spans in the document. It will
   /// only be populated after the widget build phase, so consumers will likely
   /// want to use e.g. a [ValueListenableBuilder] to consume it.
@@ -463,16 +429,6 @@ class OrgControllerData extends InheritedWidget {
   /// populated after the widget build phase.
   final ValueNotifier<Map<String, FootnoteKey>> footnoteKeys;
 
-  final bool _hideMarkup;
-
-  final bool _prettyEntities;
-
-  final bool hideBlockStartup;
-
-  final Map<String, String> _entityReplacements;
-
-  final void Function(bool) _setHideMarkup;
-
   /// Cycle the visibility of the entire document
   final void Function() cycleVisibility;
 
@@ -483,12 +439,6 @@ class OrgControllerData extends InheritedWidget {
   final void Function(OrgPath) ensureVisible;
 
   final String? _restorationId;
-
-  /// Whether some kinds of markup should be hidden
-  bool get hideMarkup => _hideMarkup;
-
-  /// Optionally hide some kinds of markup
-  set hideMarkup(bool value) => _setHideMarkup(value);
 
   /// Find the temporary data node for the given subtree
   OrgDataNode? nodeFor(OrgTree tree) => _nodeMap.nodeFor(tree);
@@ -546,7 +496,7 @@ class OrgControllerData extends InheritedWidget {
   /// result is obtained from [OrgController.entityReplacements]. Returns null
   /// if prettification is disabled.
   String? prettifyEntity(String name) =>
-      _prettyEntities ? _entityReplacements[name] : null;
+      settings.prettyEntities ? settings.entityReplacements[name] : null;
 
   String? restorationIdFor(String name) =>
       _deriveRestorationId(_restorationId, name);
@@ -580,12 +530,9 @@ class OrgControllerData extends InheritedWidget {
       root != oldWidget.root ||
       search != oldWidget.search ||
       searchQuery != oldWidget.searchQuery ||
-      hideMarkup != oldWidget.hideMarkup ||
-      _prettyEntities != oldWidget._prettyEntities ||
-      hideBlockStartup != oldWidget.hideBlockStartup ||
       // Don't check searchResultKeys because rebuilding this widget will cause
       // new keys to be made which leads to an infinite loop
-      !mapEquals(_entityReplacements, oldWidget._entityReplacements);
+      !listEquals(settings, oldWidget.settings);
 }
 
 OrgVisibilityState _cycleGlobal(OrgVisibilityState state) {

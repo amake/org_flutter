@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:org_flutter/org_flutter.dart';
+import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/util/util.dart';
 
 typedef Transformer = String Function(OrgNode, String);
@@ -14,13 +15,13 @@ class OrgSpanBuilder {
     this.context, {
     required this.recognizerHandler,
     required this.highlight,
-    required this.hideMarkup,
+    required this.hideEmphasisMarkers,
   });
 
   final BuildContext context;
   final RecognizerHandler recognizerHandler;
   final Pattern highlight;
-  final bool hideMarkup;
+  final bool hideEmphasisMarkers;
 
   InlineSpan build(
     OrgNode element, {
@@ -37,7 +38,7 @@ class OrgSpanBuilder {
       return highlightedSpan(
         transformer(
           element,
-          hideMarkup
+          hideEmphasisMarkers
               ? element.content
               : '${element.leadingDecoration}${element.content}${element.trailingDecoration}',
         ),
@@ -257,7 +258,7 @@ class _FancySpanBuilderState extends State<FancySpanBuilder>
         context,
         recognizerHandler: registerRecognizer,
         highlight: controller.searchQuery,
-        hideMarkup: controller.hideMarkup,
+        hideEmphasisMarkers: controller.settings.hideEmphasisMarkers,
       ),
     );
   }
