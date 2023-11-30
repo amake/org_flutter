@@ -10,7 +10,6 @@ import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
 const _kDefaultSearchQuery = '';
-const _kDefaultVisibilityState = OrgVisibilityState.folded;
 
 const _kTransientStateNodeMapKey = 'node_map';
 
@@ -25,10 +24,11 @@ typedef FootnoteKey = GlobalKey<State>;
 class OrgDataNodeMap {
   factory OrgDataNodeMap.build({
     required OrgTree root,
+    required OrgVisibilityState defaultState,
     Map<String, dynamic>? json,
   }) {
     OrgVisibilityState computeVisibility(OrgTree subtree) {
-      var result = _kDefaultVisibilityState;
+      var result = defaultState;
       if (json != null && subtree is OrgSection) {
         final title = subtree.headline.rawTitle;
         final fromJson =
@@ -234,7 +234,11 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       final nodeMapJson = initialState == null
           ? null
           : json.decode(initialState) as Map<String, dynamic>;
-      _nodeMap = OrgDataNodeMap.build(root: _root, json: nodeMapJson);
+      _nodeMap = OrgDataNodeMap.build(
+        root: _root,
+        defaultState: _settings.startupFolded,
+        json: nodeMapJson,
+      );
     }
   }
 

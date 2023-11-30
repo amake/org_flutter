@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:org_flutter/src/entity.dart';
 import 'package:org_flutter/src/error.dart';
+import 'package:org_flutter/src/folding.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
@@ -11,12 +12,14 @@ const _kDefaultDeemphasizeMarkup = false;
 const _kDefaultPrettyEntities = true;
 const _kDefaultHideBlockStartup = false;
 const _kDefaultHideEmphasisMarkers = false;
+const _kDefaultVisibilityState = OrgVisibilityState.folded;
 
 /// A collection of settings that affect the appearance of the document
 class OrgSettings {
   static OrgSettings get defaults => const OrgSettings(
         reflowText: _kDefaultReflowText,
         deemphasizeMarkup: _kDefaultDeemphasizeMarkup,
+        startupFolded: _kDefaultVisibilityState,
         prettyEntities: _kDefaultPrettyEntities,
         hideBlockStartup: _kDefaultHideBlockStartup,
         hideEmphasisMarkers: _kDefaultHideEmphasisMarkers,
@@ -52,6 +55,7 @@ class OrgSettings {
       prettyEntities = getPrettyEntities(lvars);
       hideEmphasisMarkers = getHideEmphasisMarkers(lvars);
       hideBlockStartup = getHideBlockStartup(lvars);
+      // TODO(aaron): Read `org-startup-folded`
     } catch (e) {
       errorHandler.call(e);
     }
@@ -66,6 +70,7 @@ class OrgSettings {
   const OrgSettings({
     this.reflowText,
     this.deemphasizeMarkup,
+    this.startupFolded,
     this.hideEmphasisMarkers,
     this.prettyEntities,
     this.hideBlockStartup,
@@ -80,6 +85,9 @@ class OrgSettings {
   /// Whether to make various markup less noticeable. Does not map to any actual
   /// Org Mode settings. When not present it defaults to `false` (disabled).
   final bool? deemphasizeMarkup;
+
+  /// The initial folding state for sections. Like `org-startup-folded`.
+  final OrgVisibilityState? startupFolded;
 
   /// Whether to prettify entities. By default the `org-hide-emphasis-markers`
   /// local variable value is respected; when not present it defaults to `false`
@@ -105,6 +113,7 @@ class OrgSettings {
       other is OrgSettings &&
       reflowText == other.reflowText &&
       deemphasizeMarkup == other.deemphasizeMarkup &&
+      startupFolded == other.startupFolded &&
       hideEmphasisMarkers == other.hideEmphasisMarkers &&
       prettyEntities == other.prettyEntities &&
       hideBlockStartup == other.hideBlockStartup &&
@@ -114,6 +123,7 @@ class OrgSettings {
   int get hashCode => Object.hash(
         reflowText,
         deemphasizeMarkup,
+        startupFolded,
         hideEmphasisMarkers,
         prettyEntities,
         hideBlockStartup,
@@ -153,6 +163,10 @@ extension LayeredOrgSettings on List<OrgSettings> {
   bool get deemphasizeMarkup =>
       firstWhere((layer) => layer.deemphasizeMarkup != null,
           orElse: () => OrgSettings.defaults).deemphasizeMarkup!;
+
+  OrgVisibilityState get startupFolded =>
+      firstWhere((layer) => layer.startupFolded != null,
+          orElse: () => OrgSettings.defaults).startupFolded!;
 
   bool get hideEmphasisMarkers =>
       firstWhere((layer) => layer.hideEmphasisMarkers != null,
