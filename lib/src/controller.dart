@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/error.dart';
+import 'package:org_flutter/src/folding.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/util/util.dart';
@@ -19,29 +20,6 @@ typedef SearchResultKey = GlobalKey<SearchResultSpanState>;
 // https://github.com/dart-lang/sdk/blob/d252bb11a342f011485b9c9fe7c56a246e92b12b/pkg/front_end/lib/src/fasta/kernel/body_builder.dart#L6614
 typedef FootnoteKey = GlobalKey<State>;
 
-enum OrgVisibilityState {
-  /// Just the root headline; equivalent to global "overview" state
-  folded,
-
-  /// All headlines of all levels
-  contents,
-
-  /// All immediate children (subtrees folded)
-  children,
-
-  /// Everything
-  subtree,
-}
-
-String? _orgVisibilityStateToJson(OrgVisibilityState? value) =>
-    value?.toString();
-
-OrgVisibilityState? _orgVisibilityStateFromJson(String? json) => json == null
-    ? null
-    : OrgVisibilityState.values.singleWhere(
-        (value) => value.toString() == json,
-      );
-
 /// A collection of temporary data about an Org Mode document used for display
 /// purposes.
 class OrgDataNodeMap {
@@ -53,7 +31,8 @@ class OrgDataNodeMap {
       var result = _kDefaultVisibilityState;
       if (json != null && subtree is OrgSection) {
         final title = subtree.headline.rawTitle;
-        final fromJson = _orgVisibilityStateFromJson(json[title] as String?);
+        final fromJson =
+            OrgVisibilityStateJson.fromJson(json[title] as String?);
         result = fromJson ?? result;
       }
       return result;
@@ -90,7 +69,7 @@ class OrgDataNodeMap {
       if (node != null) {
         final title = subtree.headline.rawTitle;
         if (title != null) {
-          json[title] = _orgVisibilityStateToJson(node.visibility.value);
+          json[title] = node.visibility.value.toJson();
         }
       }
       return true;
@@ -335,7 +314,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   void _cycleVisibility() {
     final currentStates = _nodeMap.currentVisibility;
     final newState = currentStates.length == 1
-        ? _cycleGlobal(currentStates.single)
+        ? currentStates.single.cycleGlobal
         : OrgVisibilityState.folded;
     debugPrint('Cycling global visibility; from=$currentStates, to=$newState');
     _nodeMap.setAllVisibilities(newState);
@@ -345,8 +324,8 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   void _cycleVisibilityOf(OrgTree tree) {
     final visibilityListenable = _nodeMap.nodeFor(tree)!.visibility;
     final newVisibility =
-        _cycleSubtree(visibilityListenable.value, tree.sections.isEmpty);
-    final subtreeVisibility = _subtreeState(newVisibility);
+        visibilityListenable.value.cycleSubtree(tree.sections.isEmpty);
+    final subtreeVisibility = newVisibility.subtreeState;
     debugPrint(
         'Cycling subtree visibility; from=${visibilityListenable.value}, '
         'to=$newVisibility; subtree=$subtreeVisibility');
@@ -533,42 +512,6 @@ class OrgControllerData extends InheritedWidget {
       // Don't check searchResultKeys because rebuilding this widget will cause
       // new keys to be made which leads to an infinite loop
       !listEquals(settings, oldWidget.settings);
-}
-
-OrgVisibilityState _cycleGlobal(OrgVisibilityState state) {
-  switch (state) {
-    case OrgVisibilityState.folded:
-      return OrgVisibilityState.contents;
-    case OrgVisibilityState.contents:
-      return OrgVisibilityState.subtree;
-    case OrgVisibilityState.subtree:
-    case OrgVisibilityState.children:
-      return OrgVisibilityState.folded;
-  }
-}
-
-OrgVisibilityState _cycleSubtree(OrgVisibilityState state, bool empty) {
-  switch (state) {
-    case OrgVisibilityState.folded:
-      return OrgVisibilityState.children;
-    case OrgVisibilityState.contents:
-      return empty ? OrgVisibilityState.subtree : OrgVisibilityState.folded;
-    case OrgVisibilityState.children:
-      return empty ? OrgVisibilityState.folded : OrgVisibilityState.subtree;
-    case OrgVisibilityState.subtree:
-      return OrgVisibilityState.folded;
-  }
-}
-
-OrgVisibilityState _subtreeState(OrgVisibilityState state) {
-  switch (state) {
-    case OrgVisibilityState.folded: // fallthrough
-    case OrgVisibilityState.contents: // fallthrough
-    case OrgVisibilityState.children:
-      return OrgVisibilityState.folded;
-    case OrgVisibilityState.subtree:
-      return OrgVisibilityState.subtree;
-  }
 }
 
 String? _deriveRestorationId(String? base, String name) =>
