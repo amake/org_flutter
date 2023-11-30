@@ -467,6 +467,12 @@ class OrgBlockWidget extends StatefulWidget {
 class _OrgBlockWidgetState extends State<OrgBlockWidget>
     with OpenCloseable<OrgBlockWidget> {
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    openListenable.value = !OrgController.of(context).hideBlockStartup;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final defaultStyle = DefaultTextStyle.of(context).style;
     final metaStyle =

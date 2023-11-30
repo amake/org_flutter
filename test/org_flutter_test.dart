@@ -115,6 +115,29 @@ foo *bar* baz
         expect(find.textContaining('foo bar baz'), findsOneWidget);
         expect(find.textContaining('foo *bar* baz'), findsNothing);
       });
+      testWidgets('Blocks start closed', (tester) async {
+        final doc = OrgDocument.parse(r'''
+#+begin_example
+foo bar
+#+end_example
+
+# Local Variables:
+# org-hide-block-startup: t
+# End:
+''');
+        final widget = OrgController(
+          root: doc,
+          interpretEmbeddedSettings: true,
+          errorHandler: (e) {
+            fail(e.toString());
+          },
+          child: OrgRootWidget(
+            child: OrgDocumentWidget(doc),
+          ),
+        );
+        await tester.pumpWidget(_wrap(widget));
+        expect(find.textContaining('foo bar'), findsNothing);
+      });
     });
   });
 }

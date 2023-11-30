@@ -12,6 +12,7 @@ const _kDefaultSearchQuery = '';
 const _kDefaultHideMarkup = false;
 const _kDefaultVisibilityState = OrgVisibilityState.folded;
 const _kDefaultPrettyEntities = true;
+const _kDefaultHideBlockStartup = false;
 
 const _kTransientStateNodeMapKey = 'node_map';
 
@@ -172,6 +173,7 @@ class OrgController extends StatefulWidget {
     this.searchQuery,
     this.hideMarkup,
     this.prettyEntities,
+    this.hideBlockStartup,
     this.entityReplacements = orgDefaultEntityReplacements,
     this.interpretEmbeddedSettings,
     this.errorHandler,
@@ -200,6 +202,11 @@ class OrgController extends StatefulWidget {
   /// variable value is respected; when not present it defaults to `true`
   /// (enabled).
   final bool? prettyEntities;
+
+  /// Whether blocks should start folded. By default the
+  /// `org-hide-block-startup` local variable value is respected; when not
+  /// present it defaults to `false` (disabled).
+  final bool? hideBlockStartup;
 
   /// Read settings included in the document itself
   final bool? interpretEmbeddedSettings;
@@ -232,6 +239,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   late bool _hideMarkup;
   late Map<String, String> _entityReplacements;
   late bool _prettyEntities;
+  late bool _hideBlockStartup;
 
   @override
   void initState() {
@@ -242,6 +250,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     var entities = widget.entityReplacements;
     var prettyEntities = widget.prettyEntities;
     var hideMarkup = widget.hideMarkup;
+    var hideBlockStartup = widget.hideBlockStartup;
     final root = _root;
     if (widget.interpretEmbeddedSettings == true && root is OrgDocument) {
       try {
@@ -249,6 +258,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
         entities = getOrgEntities(entities, lvars, _errorHandler);
         prettyEntities ??= getPrettyEntities(lvars);
         hideMarkup ??= getHideEmphasisMarkers(lvars);
+        hideBlockStartup ??= getHideBlockStartup(lvars);
       } catch (e) {
         _errorHandler.call(e);
       }
@@ -256,6 +266,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     _entityReplacements = entities;
     _prettyEntities = prettyEntities ?? _kDefaultPrettyEntities;
     _hideMarkup = hideMarkup ?? _kDefaultHideMarkup;
+    _hideBlockStartup = hideBlockStartup ?? _kDefaultHideBlockStartup;
     _searchQuery = widget.searchQuery ?? _kDefaultSearchQuery;
   }
 
@@ -306,6 +317,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       searchResultKeys: _searchResultKeys,
       footnoteKeys: _footnoteKeys,
       prettyEntities: _prettyEntities,
+      hideBlockStartup: _hideBlockStartup,
       entityReplacements: _entityReplacements,
       setHideMarkup: _setHideMarkup,
       cycleVisibility: _cycleVisibility,
@@ -409,6 +421,7 @@ class OrgControllerData extends InheritedWidget {
     required this.searchQuery,
     required this.search,
     required bool hideMarkup,
+    required this.hideBlockStartup,
     required this.searchResultKeys,
     required this.footnoteKeys,
     required bool prettyEntities,
@@ -453,6 +466,8 @@ class OrgControllerData extends InheritedWidget {
   final bool _hideMarkup;
 
   final bool _prettyEntities;
+
+  final bool hideBlockStartup;
 
   final Map<String, String> _entityReplacements;
 
@@ -567,6 +582,7 @@ class OrgControllerData extends InheritedWidget {
       searchQuery != oldWidget.searchQuery ||
       hideMarkup != oldWidget.hideMarkup ||
       _prettyEntities != oldWidget._prettyEntities ||
+      hideBlockStartup != oldWidget.hideBlockStartup ||
       // Don't check searchResultKeys because rebuilding this widget will cause
       // new keys to be made which leads to an infinite loop
       !mapEquals(_entityReplacements, oldWidget._entityReplacements);
