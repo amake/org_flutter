@@ -11,6 +11,7 @@ const _kDefaultReflowText = false;
 const _kDefaultDeemphasizeMarkup = false;
 const _kDefaultPrettyEntities = true;
 const _kDefaultHideBlockStartup = false;
+const _kDefaultHideDrawerStartup = true;
 const _kDefaultHideEmphasisMarkers = false;
 const _kDefaultVisibilityState = OrgVisibilityState.folded;
 
@@ -22,6 +23,7 @@ class OrgSettings {
         startupFolded: _kDefaultVisibilityState,
         prettyEntities: _kDefaultPrettyEntities,
         hideBlockStartup: _kDefaultHideBlockStartup,
+        hideDrawerStartup: _kDefaultHideDrawerStartup,
         hideEmphasisMarkers: _kDefaultHideEmphasisMarkers,
         entityReplacements: orgDefaultEntityReplacements,
       );
@@ -48,6 +50,7 @@ class OrgSettings {
     bool? prettyEntities;
     bool? hideEmphasisMarkers;
     bool? hideBlockStartup;
+    bool? hideDrawerStartup;
     try {
       final lvars = extractLocalVariables(doc, errorHandler);
       entityReplacements =
@@ -55,6 +58,7 @@ class OrgSettings {
       prettyEntities = getPrettyEntities(lvars);
       hideEmphasisMarkers = getHideEmphasisMarkers(lvars);
       hideBlockStartup = getHideBlockStartup(lvars);
+      hideDrawerStartup = getHideDrawerStartup(lvars);
       // TODO(aaron): Read `org-startup-folded`
     } catch (e) {
       errorHandler.call(e);
@@ -63,6 +67,7 @@ class OrgSettings {
       hideEmphasisMarkers: hideEmphasisMarkers,
       prettyEntities: prettyEntities,
       hideBlockStartup: hideBlockStartup,
+      hideDrawerStartup: hideDrawerStartup,
       entityReplacements: entityReplacements,
     );
   }
@@ -74,6 +79,7 @@ class OrgSettings {
     this.hideEmphasisMarkers,
     this.prettyEntities,
     this.hideBlockStartup,
+    this.hideDrawerStartup,
     this.entityReplacements,
   });
 
@@ -104,6 +110,11 @@ class OrgSettings {
   /// present it defaults to `false` (disabled).
   final bool? hideBlockStartup;
 
+  /// Whether drawers should start folded. By default the
+  /// `org-hide-drawer-startup` local variable value is respected; when not
+  /// present it defaults to `true` (enabled).
+  final bool? hideDrawerStartup;
+
   /// A map of entity replacements, e.g. Agrave → À. See
   /// [orgDefaultEntityReplacements].
   final Map<String, String>? entityReplacements;
@@ -117,6 +128,7 @@ class OrgSettings {
       hideEmphasisMarkers == other.hideEmphasisMarkers &&
       prettyEntities == other.prettyEntities &&
       hideBlockStartup == other.hideBlockStartup &&
+      hideDrawerStartup == other.hideDrawerStartup &&
       mapEquals(entityReplacements, other.entityReplacements);
 
   @override
@@ -127,6 +139,7 @@ class OrgSettings {
         hideEmphasisMarkers,
         prettyEntities,
         hideBlockStartup,
+        hideDrawerStartup,
         entityReplacements,
       );
 
@@ -178,6 +191,10 @@ extension LayeredOrgSettings on List<OrgSettings> {
   bool get hideBlockStartup =>
       firstWhere((layer) => layer.hideBlockStartup != null,
           orElse: () => OrgSettings.defaults).hideBlockStartup!;
+
+  bool get hideDrawerStartup =>
+      firstWhere((layer) => layer.hideDrawerStartup != null,
+          orElse: () => OrgSettings.defaults).hideDrawerStartup!;
 
   Map<String, String> get entityReplacements =>
       firstWhere((layer) => layer.entityReplacements != null,

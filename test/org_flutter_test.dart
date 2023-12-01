@@ -138,6 +138,29 @@ foo bar
         await tester.pumpWidget(_wrap(widget));
         expect(find.textContaining('foo bar'), findsNothing);
       });
+      testWidgets('Drawers start open', (tester) async {
+        final doc = OrgDocument.parse(r'''
+:PROPERTIES:
+:foo: bar
+:END:
+
+# Local Variables:
+# org-hide-drawer-startup: nil
+# End:
+''');
+        final widget = OrgController(
+          root: doc,
+          interpretEmbeddedSettings: true,
+          errorHandler: (e) {
+            fail(e.toString());
+          },
+          child: OrgRootWidget(
+            child: OrgDocumentWidget(doc),
+          ),
+        );
+        await tester.pumpWidget(_wrap(widget));
+        expect(find.textContaining(':foo: bar'), findsOneWidget);
+      });
     });
   });
 }
