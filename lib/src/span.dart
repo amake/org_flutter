@@ -1,9 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:org_flutter/org_flutter.dart';
+import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/events.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/util/util.dart';
+import 'package:org_flutter/src/widgets.dart';
+import 'package:org_parser/org_parser.dart';
 
 typedef Transformer = String Function(OrgNode, String);
 
