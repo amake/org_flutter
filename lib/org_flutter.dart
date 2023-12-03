@@ -31,6 +31,7 @@ class Org extends StatefulWidget {
     this.onLinkTap,
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
+    this.onSectionSlide,
     this.onListItemTap,
     this.loadImage,
     this.restorationId,
@@ -62,6 +63,12 @@ class Org extends StatefulWidget {
   /// the current document. The argument is the pressed section. You might want
   /// to narrow the display to show just this section.
   final void Function(OrgSection)? onSectionLongPress;
+
+  /// A callback invoked to build a list of actions revealed when the user
+  /// slides a section. The argument is the section being slid. Consider
+  /// supplying instances of `SlidableAction` from the
+  /// [flutter_slidable](https://pub.dev/packages/flutter_slidable) package.
+  final List<Widget> Function(OrgSection)? onSectionSlide;
 
   /// A callback invoked when an image should be displayed. The argument is the
   /// [OrgLink] describing where the image data can be found. It is your
@@ -106,6 +113,7 @@ class _OrgState extends State<Org> {
         onLinkTap: widget.onLinkTap,
         onLocalSectionLinkTap: widget.onLocalSectionLinkTap,
         onSectionLongPress: widget.onSectionLongPress,
+        onSectionSlide: widget.onSectionSlide,
         onListItemTap: widget.onListItemTap,
         loadImage: widget.loadImage,
         child: OrgDocumentWidget(_doc),

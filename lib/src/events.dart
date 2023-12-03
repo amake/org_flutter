@@ -10,6 +10,7 @@ class OrgEvents extends InheritedWidget {
     this.onLinkTap,
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
+    this.onSectionSlide,
     this.onListItemTap,
     this.loadImage,
     super.key,
@@ -28,6 +29,12 @@ class OrgEvents extends InheritedWidget {
   /// the current document. The argument is the pressed section. You might want
   /// to narrow the display to show just this section.
   final void Function(OrgSection)? onSectionLongPress;
+
+  /// A callback invoked to build a list of actions revealed when the user
+  /// slides a section. The argument is the section being slid. Consider
+  /// supplying instances of `SlidableAction` from the
+  /// [flutter_slidable](https://pub.dev/packages/flutter_slidable) package.
+  final List<Widget> Function(OrgSection)? onSectionSlide;
 
   /// A callback invoked when the user taps on a list item that has a checkbox
   /// within the current document. The argument is the tapped item. You might

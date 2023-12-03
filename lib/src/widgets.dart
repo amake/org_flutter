@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_tex_js/flutter_tex_js.dart';
 import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/events.dart';
@@ -55,6 +56,7 @@ class OrgRootWidget extends StatelessWidget {
     this.onLinkTap,
     this.onLocalSectionLinkTap,
     this.onSectionLongPress,
+    this.onSectionSlide,
     this.onListItemTap,
     this.loadImage,
     super.key,
@@ -82,6 +84,12 @@ class OrgRootWidget extends StatelessWidget {
   /// to narrow the display to show just this section.
   final void Function(OrgSection)? onSectionLongPress;
 
+  /// A callback invoked to build a list of actions revealed when the user
+  /// slides a section. The argument is the section being slid. Consider
+  /// supplying instances of `SlidableAction` from the
+  /// [flutter_slidable](https://pub.dev/packages/flutter_slidable) package.
+  final List<Widget> Function(OrgSection)? onSectionSlide;
+
   /// A callback invoked when the user taps on a list item that has a checkbox
   /// within the current document. The argument is the tapped item. You might
   /// want to toggle the checkbox.
@@ -103,6 +111,7 @@ class OrgRootWidget extends StatelessWidget {
       child: OrgEvents(
         onLinkTap: onLinkTap,
         onSectionLongPress: onSectionLongPress,
+        onSectionSlide: onSectionSlide,
         onLocalSectionLinkTap: onLocalSectionLinkTap,
         loadImage: loadImage,
         onListItemTap: onListItemTap,
@@ -182,7 +191,7 @@ class OrgSectionWidget extends StatelessWidget {
     if (visibilityListenable == null) {
       throw Exception('Visibility not found');
     }
-    return ValueListenableBuilder<OrgVisibilityState>(
+    final widget = ValueListenableBuilder<OrgVisibilityState>(
       valueListenable: visibilityListenable,
       builder: (context, visibility, child) => ListView(
         shrinkWrap: shrinkWrap || !root,
@@ -222,6 +231,19 @@ class OrgSectionWidget extends StatelessWidget {
           if (root) listBottomSafeArea(),
         ],
       ),
+    );
+    return _withSlideActions(context, widget);
+  }
+
+  Widget _withSlideActions(BuildContext context, Widget child) {
+    final actions = OrgEvents.of(context).onSectionSlide?.call(section);
+    if (actions == null) return child;
+    return Slidable(
+      endActionPane: ActionPane(
+        motion: const ScrollMotion(),
+        children: actions,
+      ),
+      child: child,
     );
   }
 }
