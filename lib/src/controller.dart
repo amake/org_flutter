@@ -277,6 +277,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
 
   /// Set the search query. Section visibility will be updated so that sections
   /// with hits are expanded and sections without will be collapsed.
+  // TODO(aaron): Should this be a declarative API?
   void search(Pattern query) {
     if (!patternEquals(_searchQuery, query)) {
       setState(() {
@@ -413,6 +414,7 @@ class OrgControllerData extends InheritedWidget {
   final ValueNotifier<Map<String, FootnoteKey>> footnoteKeys;
 
   /// Cycle the visibility of the entire document
+  // TODO(aaron): Should this be a declarative API?
   final void Function() cycleVisibility;
 
   /// Cycle the visibility of the specified subtree
