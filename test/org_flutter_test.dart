@@ -120,6 +120,35 @@ bar
       });
     });
   });
+  group('OrgText widget', () {
+    group('Events', () {
+      testWidgets('Load images', (tester) async {
+        var invoked = false;
+        await tester.pumpWidget(_wrap(OrgText(
+          'file:./foo.png',
+          loadImage: (link) {
+            invoked = true;
+            expect(link.location, 'file:./foo.png');
+            return null;
+          },
+        )));
+        expect(invoked, isTrue);
+      });
+      testWidgets('Tap link', (tester) async {
+        var invoked = false;
+        await tester.pumpWidget(_wrap(OrgText(
+          '[[http://example.com][example]]',
+          onLinkTap: (link) {
+            invoked = true;
+            expect(link, 'http://example.com');
+          },
+        )));
+        await tester.tap(find.text('example'));
+        await tester.pump();
+        expect(invoked, isTrue);
+      });
+    });
+  });
   group('Local variables', () {
     testWidgets('Custom entities', (tester) async {
       final doc = OrgDocument.parse(r'''
