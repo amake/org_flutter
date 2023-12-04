@@ -228,6 +228,31 @@ biz baz
         expect(find.textContaining(':foo: bar'), findsOneWidget);
         expect(find.textContaining('biz baz'), findsOneWidget);
       });
+      testWidgets('Hide stars', (tester) async {
+        final doc = OrgDocument.parse(r'''
+* foo
+** bar
+*** baz
+
+#+STARTUP: showeverything hidestars
+''');
+        final widget = OrgController(
+          root: doc,
+          interpretEmbeddedSettings: true,
+          errorHandler: (e) {
+            fail(e.toString());
+          },
+          child: OrgRootWidget(
+            child: OrgDocumentWidget(doc),
+          ),
+        );
+        await tester.pumpWidget(_wrap(widget));
+        expect(find.textContaining('* foo'), findsOneWidget);
+        expect(find.textContaining('** bar'), findsNothing);
+        expect(find.textContaining(' * bar'), findsOneWidget);
+        expect(find.textContaining('*** baz'), findsNothing);
+        expect(find.textContaining('  * baz'), findsOneWidget);
+      });
     });
   });
 }

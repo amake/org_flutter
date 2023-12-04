@@ -12,6 +12,7 @@ const _kDefaultDeemphasizeMarkup = false;
 const _kDefaultPrettyEntities = true;
 const _kDefaultHideBlockStartup = false;
 const _kDefaultHideDrawerStartup = true;
+const _kDefaultHideStars = false;
 const _kDefaultHideEmphasisMarkers = false;
 const _kDefaultVisibilityState = OrgVisibilityState.folded;
 
@@ -24,6 +25,7 @@ class OrgSettings {
         prettyEntities: _kDefaultPrettyEntities,
         hideBlockStartup: _kDefaultHideBlockStartup,
         hideDrawerStartup: _kDefaultHideDrawerStartup,
+        hideStars: _kDefaultHideStars,
         hideEmphasisMarkers: _kDefaultHideEmphasisMarkers,
         entityReplacements: orgDefaultEntityReplacements,
       );
@@ -51,6 +53,7 @@ class OrgSettings {
     bool? hideEmphasisMarkers;
     bool? hideBlockStartup;
     bool? hideDrawerStartup;
+    bool? hideStars;
     OrgVisibilityState? startupFolded;
     var showEverything = false;
     final startupSettings = getStartupSettings(doc);
@@ -67,6 +70,12 @@ class OrgSettings {
           break;
         case 'nohidedrawers':
           hideDrawerStartup = false;
+          break;
+        case 'hidestars':
+          hideStars = true;
+          break;
+        case 'showstars':
+          hideStars = false;
           break;
         case 'fold':
         case 'overview':
@@ -113,6 +122,7 @@ class OrgSettings {
       prettyEntities: prettyEntities,
       hideBlockStartup: hideBlockStartup,
       hideDrawerStartup: hideDrawerStartup,
+      hideStars: hideStars,
       entityReplacements: entityReplacements,
     );
   }
@@ -125,6 +135,7 @@ class OrgSettings {
     this.prettyEntities,
     this.hideBlockStartup,
     this.hideDrawerStartup,
+    this.hideStars,
     this.entityReplacements,
   });
 
@@ -160,6 +171,11 @@ class OrgSettings {
   /// (enabled).
   final bool? hideDrawerStartup;
 
+  /// Whether to hide all but one of headline stars. By default the
+  /// `hidestars`/`showstars` #+STARTUP keyword is respected; when not present
+  /// it defaults to `false` (disabled).
+  final bool? hideStars;
+
   /// A map of entity replacements, e.g. Agrave → À. See
   /// [orgDefaultEntityReplacements].
   final Map<String, String>? entityReplacements;
@@ -174,6 +190,7 @@ class OrgSettings {
       prettyEntities == other.prettyEntities &&
       hideBlockStartup == other.hideBlockStartup &&
       hideDrawerStartup == other.hideDrawerStartup &&
+      hideStars == other.hideStars &&
       mapEquals(entityReplacements, other.entityReplacements);
 
   @override
@@ -185,6 +202,7 @@ class OrgSettings {
         prettyEntities,
         hideBlockStartup,
         hideDrawerStartup,
+        hideStars,
         entityReplacements,
       );
 
@@ -240,6 +258,9 @@ extension LayeredOrgSettings on List<OrgSettings> {
   bool get hideDrawerStartup =>
       firstWhere((layer) => layer.hideDrawerStartup != null,
           orElse: () => OrgSettings.defaults).hideDrawerStartup!;
+
+  bool get hideStars => firstWhere((layer) => layer.hideStars != null,
+      orElse: () => OrgSettings.defaults).hideStars!;
 
   Map<String, String> get entityReplacements =>
       firstWhere((layer) => layer.entityReplacements != null,

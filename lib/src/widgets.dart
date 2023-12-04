@@ -295,8 +295,7 @@ class OrgHeadlineWidget extends StatelessWidget {
           final body = Text.rich(
             TextSpan(
               children: [
-                spanBuilder.highlightedSpan(
-                    headline.stars.value + headline.stars.trailing),
+                spanBuilder.highlightedSpan(_starsText(context)),
                 if (headline.keyword != null)
                   spanBuilder.highlightedSpan(
                       headline.keyword!.value + headline.keyword!.trailing,
@@ -366,6 +365,14 @@ class OrgHeadlineWidget extends StatelessWidget {
         },
       ),
     );
+  }
+
+  String _starsText(BuildContext context) {
+    final hideStars = OrgController.of(context).settings.hideStars;
+    final stars = hideStars
+        ? '${' ' * (headline.stars.value.length - 1)}*'
+        : headline.stars.value;
+    return stars + headline.stars.trailing;
   }
 }
 
