@@ -63,7 +63,8 @@ class OrgSpanBuilder {
         style: style.copyWith(color: OrgTheme.dataOf(context).keywordColor),
       );
     } else if (element is OrgLink) {
-      if (looksLikeImagePath(element.location)) {
+      if (looksLikeImagePath(element.location) &&
+          OrgController.of(context).settings.inlineImages) {
         final imageWidget = OrgEvents.of(context).loadImage?.call(element);
         if (imageWidget != null) {
           return WidgetSpan(child: imageWidget);

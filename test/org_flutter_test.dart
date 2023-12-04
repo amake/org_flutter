@@ -49,6 +49,20 @@ bazinga''')));
         expect(find.text('bazinga'), findsOneWidget);
       });
     });
+    group('Events', () {
+      testWidgets('Load images', (tester) async {
+        var invoked = false;
+        await tester.pumpWidget(_wrap(Org(
+          'file:./foo.png',
+          loadImage: (link) {
+            invoked = true;
+            expect(link.location, 'file:./foo.png');
+            return null;
+          },
+        )));
+        expect(invoked, isTrue);
+      });
+    });
     group('Local variables', () {
       testWidgets('Custom entities', (tester) async {
         final doc = OrgDocument.parse(r'''
@@ -272,6 +286,25 @@ foo \smiley bar
         await tester.pumpWidget(_wrap(widget));
         expect(find.textContaining('foo'), findsOneWidget);
         expect(find.textContaining('☺'), findsNothing);
+      });
+      testWidgets('Disable inline images', (tester) async {
+        final doc = OrgDocument.parse(r'''
+file:./foo.png
+
+#+STARTUP: noinlineimages
+''');
+        final widget = OrgController(
+          root: doc,
+          interpretEmbeddedSettings: true,
+          errorHandler: (e) {
+            fail(e.toString());
+          },
+          child: OrgRootWidget(
+            loadImage: (_) => fail('Should not be invoked'),
+            child: OrgDocumentWidget(doc),
+          ),
+        );
+        await tester.pumpWidget(_wrap(widget));
       });
     });
   });

@@ -14,6 +14,7 @@ const _kDefaultHideBlockStartup = false;
 const _kDefaultHideDrawerStartup = true;
 const _kDefaultHideStars = false;
 const _kDefaultHideEmphasisMarkers = false;
+const _kDefaultInlineImages = true;
 const _kDefaultVisibilityState = OrgVisibilityState.folded;
 
 /// A collection of settings that affect the appearance of the document
@@ -26,6 +27,7 @@ class OrgSettings {
         hideBlockStartup: _kDefaultHideBlockStartup,
         hideDrawerStartup: _kDefaultHideDrawerStartup,
         hideStars: _kDefaultHideStars,
+        inlineImages: _kDefaultInlineImages,
         hideEmphasisMarkers: _kDefaultHideEmphasisMarkers,
         entityReplacements: orgDefaultEntityReplacements,
       );
@@ -54,6 +56,7 @@ class OrgSettings {
     bool? hideBlockStartup;
     bool? hideDrawerStartup;
     bool? hideStars;
+    bool? inlineImages;
     OrgVisibilityState? startupFolded;
     var showEverything = false;
     final startupSettings = getStartupSettings(doc);
@@ -82,6 +85,12 @@ class OrgSettings {
           break;
         case 'entitiesplain':
           prettyEntities = false;
+          break;
+        case 'inlineimages':
+          inlineImages = true;
+          break;
+        case 'noinlineimages':
+          inlineImages = false;
           break;
         case 'fold':
         case 'overview':
@@ -129,6 +138,7 @@ class OrgSettings {
       hideBlockStartup: hideBlockStartup,
       hideDrawerStartup: hideDrawerStartup,
       hideStars: hideStars,
+      inlineImages: inlineImages,
       entityReplacements: entityReplacements,
     );
   }
@@ -142,6 +152,7 @@ class OrgSettings {
     this.hideBlockStartup,
     this.hideDrawerStartup,
     this.hideStars,
+    this.inlineImages,
     this.entityReplacements,
   });
 
@@ -183,6 +194,14 @@ class OrgSettings {
   /// it defaults to `false` (disabled).
   final bool? hideStars;
 
+  /// Whether to show inline images. By default the `[no]inlineimages` #+STARTUP
+  /// keyword is respected; when not present it defaults to `true` (enabled).
+  ///
+  /// Note however that org_flutter does not handle loading images directly;
+  /// when this is enabled, the [Org.loadImage] callback will be invoked for the
+  /// caller to handle.
+  final bool? inlineImages;
+
   /// A map of entity replacements, e.g. Agrave → À. See
   /// [orgDefaultEntityReplacements].
   final Map<String, String>? entityReplacements;
@@ -198,6 +217,7 @@ class OrgSettings {
       hideBlockStartup == other.hideBlockStartup &&
       hideDrawerStartup == other.hideDrawerStartup &&
       hideStars == other.hideStars &&
+      inlineImages == other.inlineImages &&
       mapEquals(entityReplacements, other.entityReplacements);
 
   @override
@@ -210,6 +230,7 @@ class OrgSettings {
         hideBlockStartup,
         hideDrawerStartup,
         hideStars,
+        inlineImages,
         entityReplacements,
       );
 
@@ -268,6 +289,9 @@ extension LayeredOrgSettings on List<OrgSettings> {
 
   bool get hideStars => firstWhere((layer) => layer.hideStars != null,
       orElse: () => OrgSettings.defaults).hideStars!;
+
+  bool get inlineImages => firstWhere((layer) => layer.inlineImages != null,
+      orElse: () => OrgSettings.defaults).inlineImages!;
 
   Map<String, String> get entityReplacements =>
       firstWhere((layer) => layer.entityReplacements != null,
