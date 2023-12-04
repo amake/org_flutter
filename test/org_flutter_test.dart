@@ -62,6 +62,62 @@ bazinga''')));
         )));
         expect(invoked, isTrue);
       });
+      testWidgets('Tap link', (tester) async {
+        var invoked = false;
+        await tester.pumpWidget(_wrap(Org(
+          '[[http://example.com][example]]',
+          onLinkTap: (link) {
+            invoked = true;
+            expect(link, 'http://example.com');
+          },
+        )));
+        await tester.tap(find.text('example'));
+        await tester.pump();
+        expect(invoked, isTrue);
+      });
+      testWidgets('Tap local section link', (tester) async {
+        var invoked = false;
+        await tester.pumpWidget(_wrap(Org(
+          '''
+[[*Foo][link]]
+* Foo
+bar
+''',
+          onLocalSectionLinkTap: (section) {
+            invoked = true;
+            expect(section.toMarkup(), '* Foo\nbar\n');
+          },
+        )));
+        await tester.tap(find.text('link'));
+        await tester.pump();
+        expect(invoked, isTrue);
+      });
+      testWidgets('Long press section', (tester) async {
+        var invoked = false;
+        await tester.pumpWidget(_wrap(Org(
+          '* Foo',
+          onSectionLongPress: (section) {
+            invoked = true;
+            expect(section.toMarkup(), '* Foo');
+          },
+        )));
+        await tester.longPress(find.text('* Foo'));
+        await tester.pump();
+        expect(invoked, isTrue);
+      });
+      testWidgets('List item tap', (tester) async {
+        var invoked = false;
+        await tester.pumpWidget(_wrap(Org(
+          '- [ ] foo',
+          onListItemTap: (item) {
+            invoked = true;
+            expect(item.toMarkup(), '- [ ] foo');
+          },
+        )));
+        await tester.tap(find.textContaining('[ ]'));
+        await tester.pump();
+        expect(invoked, isTrue);
+      });
     });
     group('Local variables', () {
       testWidgets('Custom entities', (tester) async {
