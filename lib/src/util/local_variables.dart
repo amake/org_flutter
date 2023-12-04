@@ -163,16 +163,6 @@ const _kOrgHideEmphasisMarkersKey = 'org-hide-emphasis-markers';
 bool? getHideEmphasisMarkers(Map<String, dynamic> localVariables) =>
     _getBooleanValue(localVariables, _kOrgHideEmphasisMarkersKey);
 
-const _kOrgHideBlockStartupKey = 'org-hide-block-startup';
-
-bool? getHideBlockStartup(Map<String, dynamic> localVariables) =>
-    _getBooleanValue(localVariables, _kOrgHideBlockStartupKey);
-
-const _kOrgHideDrawerStartupKey = 'org-hide-drawer-startup';
-
-bool? getHideDrawerStartup(Map<String, dynamic> localVariables) =>
-    _getBooleanValue(localVariables, _kOrgHideDrawerStartupKey);
-
 bool? _getBooleanValue(Map<String, dynamic> localVariables, String key) {
   if (localVariables.containsKey(key)) {
     final value = localVariables[key];

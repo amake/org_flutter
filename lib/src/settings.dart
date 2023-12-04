@@ -57,9 +57,8 @@ class OrgSettings {
           getOrgEntities(orgDefaultEntityReplacements, lvars, errorHandler);
       prettyEntities = getPrettyEntities(lvars);
       hideEmphasisMarkers = getHideEmphasisMarkers(lvars);
-      hideBlockStartup = getHideBlockStartup(lvars);
-      hideDrawerStartup = getHideDrawerStartup(lvars);
-      // TODO(aaron): Read `org-startup-folded`
+      // org-hide-{block,drawer}-startup, org-startup-folded are not respected
+      // when set as local variables.
     } catch (e) {
       errorHandler.call(e);
     }
