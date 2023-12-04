@@ -77,6 +77,12 @@ class OrgSettings {
         case 'showstars':
           hideStars = false;
           break;
+        case 'entitiespretty':
+          prettyEntities = true;
+          break;
+        case 'entitiesplain':
+          prettyEntities = false;
+          break;
         case 'fold':
         case 'overview':
           startupFolded = OrgVisibilityState.folded;
@@ -109,7 +115,7 @@ class OrgSettings {
       final lvars = extractLocalVariables(doc, errorHandler);
       entityReplacements =
           getOrgEntities(orgDefaultEntityReplacements, lvars, errorHandler);
-      prettyEntities = getPrettyEntities(lvars);
+      prettyEntities ??= getPrettyEntities(lvars);
       hideEmphasisMarkers = getHideEmphasisMarkers(lvars);
       // org-hide-{block,drawer}-startup, org-startup-folded are not respected
       // when set as local variables.
@@ -156,9 +162,10 @@ class OrgSettings {
   /// (disabled).
   final bool? hideEmphasisMarkers;
 
-  /// Whether to prettify entities. By default the `org-pretty-entities` local
-  /// variable value is respected; when not present it defaults to `true`
-  /// (enabled).
+  /// Whether to prettify entities. By default the
+  /// `entitiesplain`/`entitiespretty` #+STARTUP keywords and
+  /// `org-pretty-entities` local variable value is respected; when not present
+  /// it defaults to `true` (enabled).
   final bool? prettyEntities;
 
   /// Whether blocks should start folded. By default the `[no]hideblocks`

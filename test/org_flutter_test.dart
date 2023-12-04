@@ -253,6 +253,26 @@ biz baz
         expect(find.textContaining('*** baz'), findsNothing);
         expect(find.textContaining('  * baz'), findsOneWidget);
       });
+      testWidgets('Disable entities', (tester) async {
+        final doc = OrgDocument.parse(r'''
+foo \smiley bar
+
+#+STARTUP: entitiesplain
+''');
+        final widget = OrgController(
+          root: doc,
+          interpretEmbeddedSettings: true,
+          errorHandler: (e) {
+            fail(e.toString());
+          },
+          child: OrgRootWidget(
+            child: OrgDocumentWidget(doc),
+          ),
+        );
+        await tester.pumpWidget(_wrap(widget));
+        expect(find.textContaining('foo'), findsOneWidget);
+        expect(find.textContaining('☺'), findsNothing);
+      });
     });
   });
 }
