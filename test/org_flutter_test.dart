@@ -19,7 +19,7 @@ void main() {
       expect(find.text('foo bar'), findsOneWidget);
     });
     group('Visibility cycling', () {
-      testWidgets('Section', (tester) async {
+      testWidgets('Headline tap', (tester) async {
         await tester.pumpWidget(_wrap(const Org('''
 foo bar
 * headline
@@ -30,7 +30,7 @@ baz buzz''')));
         await tester.pump();
         expect(find.text('baz buzz'), findsOneWidget);
       });
-      testWidgets('Nested sections', (tester) async {
+      testWidgets('Nested sections headline tap', (tester) async {
         await tester.pumpWidget(_wrap(const Org('''
 foo bar
 * headline 1
@@ -39,14 +39,64 @@ baz buzz
 bazinga''')));
         expect(find.text('foo bar'), findsOneWidget);
         expect(find.text('baz buzz'), findsNothing);
+        expect(find.textContaining('headline 2'), findsNothing);
         expect(find.text('bazinga'), findsNothing);
         await tester.tap(find.byType(OrgHeadlineWidget).first);
         await tester.pump();
         expect(find.text('baz buzz'), findsOneWidget);
+        expect(find.textContaining('headline 2'), findsOneWidget);
         expect(find.text('bazinga'), findsNothing);
         await tester.tap(find.byType(OrgHeadlineWidget).first);
         await tester.pump();
         expect(find.text('bazinga'), findsOneWidget);
+      });
+      testWidgets('Whole document', (tester) async {
+        await tester.pumpWidget(_wrap(const Org('''
+foo bar
+* headline 1
+baz buzz
+** headline 2
+bazinga''')));
+        expect(find.text('foo bar'), findsOneWidget);
+        expect(find.text('baz buzz'), findsNothing);
+        expect(find.textContaining('headline 2'), findsNothing);
+        expect(find.text('bazinga'), findsNothing);
+        final controller =
+            OrgController.of(tester.element(find.textContaining('foo bar')));
+        controller.cycleVisibility();
+        await tester.pump();
+        expect(find.text('baz buzz'), findsNothing);
+        expect(find.text('bazinga'), findsNothing);
+        expect(find.textContaining('headline 2'), findsOneWidget);
+        controller.cycleVisibility();
+        await tester.pump();
+        expect(find.text('baz buzz'), findsOneWidget);
+        expect(find.text('bazinga'), findsOneWidget);
+        expect(find.textContaining('headline 2'), findsOneWidget);
+      });
+      testWidgets('Drawer', (tester) async {
+        await tester.pumpWidget(_wrap(const Org('''
+:PROPERTIES:
+:foo: bar
+:END:''')));
+        expect(find.text(':foo: bar'), findsNothing);
+        await tester.tap(find.text(':PROPERTIES:...'));
+        await tester.pump();
+        expect(find.text(':PROPERTIES:...'), findsNothing);
+        expect(find.text(':foo: bar'), findsOneWidget);
+        expect(find.text(':END:'), findsOneWidget);
+      });
+      testWidgets('Block', (tester) async {
+        await tester.pumpWidget(_wrap(const Org('''#+begin_example
+  foo bar
+#+end_example''')));
+        expect(find.textContaining('foo bar'), findsOneWidget);
+        expect(find.text('#+end_example'), findsOneWidget);
+        await tester.tap(find.text('#+begin_example'));
+        await tester.pumpAndSettle();
+        expect(find.textContaining('#+begin_example...'), findsOneWidget);
+        expect(find.textContaining('foo bar'), findsNothing);
+        expect(find.textContaining('#+end_example'), findsNothing);
       });
     });
     group('Events', () {
@@ -75,22 +125,68 @@ bazinga''')));
         await tester.pump();
         expect(invoked, isTrue);
       });
-      testWidgets('Tap local section link', (tester) async {
-        var invoked = false;
-        await tester.pumpWidget(_wrap(Org(
-          '''
+      group('Tap local sections link', () {
+        testWidgets('By title', (tester) async {
+          var invoked = false;
+          await tester.pumpWidget(_wrap(Org(
+            '''
 [[*Foo][link]]
 * Foo
 bar
 ''',
-          onLocalSectionLinkTap: (section) {
-            invoked = true;
-            expect(section.toMarkup(), '* Foo\nbar\n');
-          },
-        )));
-        await tester.tap(find.text('link'));
-        await tester.pump();
-        expect(invoked, isTrue);
+            onLocalSectionLinkTap: (section) {
+              invoked = true;
+              expect(section.toMarkup(), '* Foo\nbar\n');
+            },
+          )));
+          await tester.tap(find.text('link'));
+          await tester.pump();
+          expect(invoked, isTrue);
+        });
+        testWidgets('By ID', (tester) async {
+          var invoked = false;
+          await tester.pumpWidget(_wrap(Org(
+            '''
+[[id:foo][link]]
+* Bar
+:PROPERTIES:
+:ID: foo
+:END:
+''',
+            onLocalSectionLinkTap: (section) {
+              invoked = true;
+              expect(
+                section.toMarkup(),
+                '* Bar\n:PROPERTIES:\n:ID: foo\n:END:\n',
+              );
+            },
+          )));
+          await tester.tap(find.text('link'));
+          await tester.pump();
+          expect(invoked, isTrue);
+        });
+        testWidgets('By custom ID', (tester) async {
+          var invoked = false;
+          await tester.pumpWidget(_wrap(Org(
+            '''
+[[#foo123][link]]
+* Bar
+:PROPERTIES:
+:CUSTOM_ID: foo123
+:END:
+''',
+            onLocalSectionLinkTap: (section) {
+              invoked = true;
+              expect(
+                section.toMarkup(),
+                '* Bar\n:PROPERTIES:\n:CUSTOM_ID: foo123\n:END:\n',
+              );
+            },
+          )));
+          await tester.tap(find.text('link'));
+          await tester.pump();
+          expect(invoked, isTrue);
+        });
       });
       testWidgets('Long press section', (tester) async {
         var invoked = false;
@@ -105,6 +201,28 @@ bar
         await tester.pump();
         expect(invoked, isTrue);
       });
+      testWidgets('Slide section', (tester) async {
+        var onSectionSlideInvoked = false;
+        var onPressedInvoked = false;
+        await tester.pumpWidget(_wrap(Org(
+          '* Foo',
+          onSectionSlide: (section) {
+            onSectionSlideInvoked = true;
+            expect(section.toMarkup(), '* Foo');
+            return [
+              IconButton(
+                icon: const Icon(Icons.abc),
+                onPressed: () => onPressedInvoked = true,
+              )
+            ];
+          },
+        )));
+        await tester.drag(find.text('* Foo'), const Offset(-100, 0));
+        await tester.pump();
+        await tester.tap(find.byIcon(Icons.abc));
+        expect(onSectionSlideInvoked, isTrue);
+        expect(onPressedInvoked, isTrue);
+      });
       testWidgets('List item tap', (tester) async {
         var invoked = false;
         await tester.pumpWidget(_wrap(Org(
@@ -117,6 +235,59 @@ bar
         await tester.tap(find.textContaining('[ ]'));
         await tester.pump();
         expect(invoked, isTrue);
+      });
+    });
+    group('Search', () {
+      testWidgets('Results', (tester) async {
+        await tester.pumpWidget(_wrap(const Org('foo bar baz')));
+        final controller = OrgController.of(
+            tester.element(find.textContaining('foo bar baz')));
+        expect(controller.searchResultKeys.value.length, 0);
+        controller.search('bar');
+        await tester.pump();
+        expect(controller.searchResultKeys.value.length, 1);
+        controller.search(RegExp('ba[rz]'));
+        await tester.pump();
+        expect(controller.searchResultKeys.value.length, 2);
+      });
+      testWidgets('Result visibility', (tester) async {
+        await tester.pumpWidget(_wrap(const Org('''foo1
+* bar
+foo2
+** baz
+foo3''')));
+        expect(find.textContaining('foo1'), findsOneWidget);
+        expect(find.textContaining('foo2'), findsNothing);
+        expect(find.textContaining('foo3'), findsNothing);
+        final controller =
+            OrgController.of(tester.element(find.textContaining('foo1')));
+        controller.search(RegExp('foo[123]'));
+        await tester.pump();
+        expect(find.textContaining('foo1'), findsOneWidget);
+        expect(find.textContaining('foo2'), findsOneWidget);
+        expect(find.textContaining('foo3'), findsOneWidget);
+      });
+    });
+    group('Footnotes', () {
+      testWidgets('Keys', (tester) async {
+        await tester.pumpWidget(_wrap(const Org('''
+foo[fn:1]
+
+[fn:1] bar baz''')));
+        final controller =
+            OrgController.of(tester.element(find.textContaining('foo')));
+        expect(controller.footnoteKeys.value.length, 2);
+      });
+      testWidgets('Visibility', (tester) async {
+        await tester.pumpWidget(_wrap(const Org('''
+foo[fn:1]
+
+* bar baz
+[fn:1] bazinga''')));
+        expect(find.textContaining('bazinga'), findsNothing);
+        await tester.tap(find.textContaining('fn:1').first);
+        await tester.pump();
+        expect(find.textContaining('bazinga'), findsOneWidget);
       });
     });
   });
@@ -238,6 +409,27 @@ foo bar
       await tester.pumpWidget(_wrap(widget));
       expect(find.textContaining('foo bar'), findsNothing);
     });
+    testWidgets('Blocks start open', (tester) async {
+      final doc = OrgDocument.parse(r'''
+#+begin_example
+foo bar
+#+end_example
+
+#+STARTUP: nohideblocks
+''');
+      final widget = OrgController(
+        root: doc,
+        interpretEmbeddedSettings: true,
+        errorHandler: (e) {
+          fail(e.toString());
+        },
+        child: OrgRootWidget(
+          child: OrgDocumentWidget(doc),
+        ),
+      );
+      await tester.pumpWidget(_wrap(widget));
+      expect(find.textContaining('foo bar'), findsOneWidget);
+    });
     testWidgets('Drawers start open', (tester) async {
       final doc = OrgDocument.parse(r'''
 :PROPERTIES:
@@ -258,6 +450,27 @@ foo bar
       );
       await tester.pumpWidget(_wrap(widget));
       expect(find.textContaining(':foo: bar'), findsOneWidget);
+    });
+    testWidgets('Drawers start closed', (tester) async {
+      final doc = OrgDocument.parse(r'''
+:PROPERTIES:
+:foo: bar
+:END:
+
+#+STARTUP: hidedrawers
+''');
+      final widget = OrgController(
+        root: doc,
+        interpretEmbeddedSettings: true,
+        errorHandler: (e) {
+          fail(e.toString());
+        },
+        child: OrgRootWidget(
+          child: OrgDocumentWidget(doc),
+        ),
+      );
+      await tester.pumpWidget(_wrap(widget));
+      expect(find.textContaining(':foo: bar'), findsNothing);
     });
     testWidgets('Sections start open', (tester) async {
       final doc = OrgDocument.parse(r'''
