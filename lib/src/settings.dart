@@ -51,6 +51,51 @@ class OrgSettings {
     bool? hideEmphasisMarkers;
     bool? hideBlockStartup;
     bool? hideDrawerStartup;
+    OrgVisibilityState? startupFolded;
+    var showEverything = false;
+    final startupSettings = getStartupSettings(doc);
+    for (final setting in startupSettings) {
+      switch (setting) {
+        case 'hideblocks':
+          hideBlockStartup = true;
+          break;
+        case 'nohideblocks':
+          hideBlockStartup = false;
+          break;
+        case 'hidedrawers':
+          hideDrawerStartup = true;
+          break;
+        case 'nohidedrawers':
+          hideDrawerStartup = false;
+          break;
+        case 'fold':
+        case 'overview':
+          startupFolded = OrgVisibilityState.folded;
+          break;
+        case 'content':
+        // TODO(aaron): Support these levels properly
+        case 'show2levels':
+        case 'show3levels':
+        case 'show4levels':
+        case 'show5levels':
+          startupFolded = OrgVisibilityState.contents;
+          showEverything = false;
+          break;
+        case 'nofold':
+        case 'showall':
+          startupFolded = OrgVisibilityState.subtree;
+          showEverything = false;
+          break;
+        case 'showeverything':
+          startupFolded = OrgVisibilityState.subtree;
+          showEverything = true;
+          break;
+      }
+    }
+    if (showEverything) {
+      hideBlockStartup = false;
+      hideDrawerStartup = false;
+    }
     try {
       final lvars = extractLocalVariables(doc, errorHandler);
       entityReplacements =
@@ -63,6 +108,7 @@ class OrgSettings {
       errorHandler.call(e);
     }
     return OrgSettings(
+      startupFolded: startupFolded,
       hideEmphasisMarkers: hideEmphasisMarkers,
       prettyEntities: prettyEntities,
       hideBlockStartup: hideBlockStartup,
@@ -104,14 +150,14 @@ class OrgSettings {
   /// (enabled).
   final bool? prettyEntities;
 
-  /// Whether blocks should start folded. By default the
-  /// `org-hide-block-startup` local variable value is respected; when not
-  /// present it defaults to `false` (disabled).
+  /// Whether blocks should start folded. By default the `[no]hideblocks`
+  /// #+STARTUP keyword is respected; when not present it defaults to `false`
+  /// (disabled).
   final bool? hideBlockStartup;
 
-  /// Whether drawers should start folded. By default the
-  /// `org-hide-drawer-startup` local variable value is respected; when not
-  /// present it defaults to `true` (enabled).
+  /// Whether drawers should start folded. By default the `[no]hidedrawers`
+  /// #+STARTUP keyword is respected; when not present it defaults to `true`
+  /// (enabled).
   final bool? hideDrawerStartup;
 
   /// A map of entity replacements, e.g. Agrave → À. See
