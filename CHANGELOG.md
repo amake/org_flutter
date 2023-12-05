@@ -1,3 +1,22 @@
+## [5.0.0] - 2023-12-05
+* Support supplying swipe actions on `OrgSection`s: callers should provide an
+  `Org.onSectionSlide` callback that returns widgets to display in the revealed
+  region
+* The `hideMarkup` flag is replaced in favor of an `OrgSettings` class allowing
+  fine-grained control over each display effect, plus many new options
+  * Use `OrgSettings.hideMarkup` for behavior equivalent to the old flag
+* The `OrgController.of(context).hideMarkup` setter is removed; instead provide
+  `OrgSettings` declaratively at the entrypoint
+* Respect `org-pretty-entities`, `org-hide-emphasis-markers` in local variables
+  list
+* Respect `#+STARTUP` keywords:
+  * `[no]hideblocks`
+  * `[no]hidedrawers`
+  * `hidestars`/`showstars`
+  * `entitiespretty`/`entitiesplain`
+  * `inlineimages`/`noinlineimages`
+  * `[no]fold`/`overview`/`content`/`show[2..5]levels`/`showall`/`showeverything`
+
 ## [4.8.0] - 2023-11-23
 * Improve Elisp compatibility, pin engine version to prevent unwanted upgrades
 
