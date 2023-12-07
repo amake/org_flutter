@@ -1,3 +1,6 @@
+## [5.0.1] - 2023-12-08
+* Clear existing search result keys when performing a query
+
 ## [5.0.0] - 2023-12-05
 * Support supplying swipe actions on `OrgSection`s: callers should provide an
   `Org.onSectionSlide` callback that returns widgets to display in the revealed
