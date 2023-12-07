@@ -283,6 +283,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       setState(() {
         _searchQuery = query;
         _updateVisibilityForQuery(query);
+        _searchResultKeys.value = [];
       });
       debugPrint('Querying: $query');
     }
