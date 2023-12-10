@@ -1,3 +1,7 @@
+## [5.1.0] - 2023-12-10
+* `onLinkTap` now returns an `OrgLink` object instead of the URL. See
+  `OrgLink.location` for the URL.
+
 ## [5.0.1] - 2023-12-08
 * Clear existing search result keys when performing a query
 
