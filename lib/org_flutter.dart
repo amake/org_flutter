@@ -50,9 +50,10 @@ class Org extends StatefulWidget {
   /// A collection of settings that affect the appearance of the document
   final OrgSettings? settings;
 
-  /// A callback invoked when the user taps a link. The argument is the link
-  /// URL. You might want to open this in a browser.
-  final void Function(String)? onLinkTap;
+  /// A callback invoked when the user taps a link. The argument is the
+  /// [OrgLink] object; the URL is [OrgLink.location]. You might want to open
+  /// this in a browser.
+  final void Function(OrgLink)? onLinkTap;
 
   /// A callback invoked when the user taps on a link to a section within the
   /// current document. The argument is the target section. You might want to
@@ -139,9 +140,10 @@ class OrgText extends StatefulWidget {
   /// A collection of settings that affect the appearance of the document
   final OrgSettings? settings;
 
-  /// A callback invoked when the user taps a link. The argument is the link
-  /// URL. You might want to open this in a browser.
-  final void Function(String)? onLinkTap;
+  /// A callback invoked when the user taps a link. The argument is the
+  /// [OrgLink] object; the URL is [OrgLink.location]. You might want to open
+  /// this in a browser.
+  final void Function(OrgLink)? onLinkTap;
 
   /// A callback invoked when an image should be displayed. The argument is the
   /// [OrgLink] describing where the image data can be found. It is your

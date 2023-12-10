@@ -118,7 +118,7 @@ bazinga''')));
           '[[http://example.com][example]]',
           onLinkTap: (link) {
             invoked = true;
-            expect(link, 'http://example.com');
+            expect(link.location, 'http://example.com');
           },
         )));
         await tester.tap(find.text('example'));
@@ -311,7 +311,7 @@ foo[fn:1]
           '[[http://example.com][example]]',
           onLinkTap: (link) {
             invoked = true;
-            expect(link, 'http://example.com');
+            expect(link.location, 'http://example.com');
           },
         )));
         await tester.tap(find.text('example'));

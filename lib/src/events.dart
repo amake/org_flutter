@@ -16,9 +16,10 @@ class OrgEvents extends InheritedWidget {
     super.key,
   });
 
-  /// A callback invoked when the user taps a link. The argument is the link
-  /// URL. You might want to open this in a browser.
-  final void Function(String)? onLinkTap;
+  /// A callback invoked when the user taps a link. The argument is the
+  /// [OrgLink] object; the URL is [OrgLink.location]. You might want to open
+  /// this in a browser.
+  final void Function(OrgLink)? onLinkTap;
 
   /// A callback invoked when the user taps on a link to a section within the
   /// current document. The argument is the target section. You might want to
@@ -53,12 +54,12 @@ class OrgEvents extends InheritedWidget {
       context.dependOnInheritedWidgetOfExactType<OrgEvents>()!;
 
   /// Invoke the appropriate handler for the given [url]
-  void dispatchLinkTap(BuildContext context, String url) {
-    final section = _resolveLocalSectionLink(context, url);
+  void dispatchLinkTap(BuildContext context, OrgLink link) {
+    final section = _resolveLocalSectionLink(context, link.location);
     if (section != null) {
       onLocalSectionLinkTap?.call(section);
     } else {
-      onLinkTap?.call(url);
+      onLinkTap?.call(link);
     }
   }
 

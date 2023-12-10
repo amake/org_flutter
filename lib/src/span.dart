@@ -72,7 +72,7 @@ class OrgSpanBuilder {
       }
       final linkDispatcher = OrgEvents.of(context).dispatchLinkTap;
       final recognizer = TapGestureRecognizer()
-        ..onTap = () => linkDispatcher(context, element.location);
+        ..onTap = () => linkDispatcher(context, element);
       recognizerHandler(recognizer);
       final visibleContent = element is OrgBracketLink
           ? element.description ?? element.location
