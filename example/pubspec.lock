@@ -190,10 +190,10 @@ packages:
     dependency: transitive
     description:
       name: org_parser
-      sha256: e4f6208d034ce4a14d7ead7b72e677b558addfaa6d406a8dc72d0a7d5b1d9ff7
+      sha256: "5745d233316b3f8cf27ff9082987c8cdcec792c7e6d138f2203aed4a30a99238"
       url: "https://pub.dev"
     source: hosted
-    version: "5.2.0"
+    version: "5.3.0"
   path:
     dependency: transitive
     description:
