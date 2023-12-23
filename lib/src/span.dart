@@ -128,6 +128,10 @@ class OrgSpanBuilder {
       );
     } else if (element is OrgLocalVariables) {
       return WidgetSpan(child: OrgLocalVariablesWidget(element));
+    } else if (element is OrgPgpBlock) {
+      return WidgetSpan(child: OrgPgpBlockWidget(element));
+    } else if (element is OrgComment) {
+      return WidgetSpan(child: OrgCommentWidget(element));
     } else if (element is OrgContent) {
       return TextSpan(
           children: element.children

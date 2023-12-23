@@ -1163,3 +1163,48 @@ class OrgLocalVariablesWidget extends StatelessWidget {
     );
   }
 }
+
+class OrgPgpBlockWidget extends StatelessWidget {
+  const OrgPgpBlockWidget(this.block, {super.key});
+  final OrgPgpBlock block;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Text.rich(
+        TextSpan(children: [
+          TextSpan(text: block.indent),
+          TextSpan(text: block.header),
+          TextSpan(text: block.body),
+          TextSpan(text: block.footer),
+          TextSpan(text: block.trailing),
+        ]),
+      ),
+    );
+  }
+}
+
+class OrgCommentWidget extends StatelessWidget {
+  const OrgCommentWidget(this.comment, {super.key});
+  final OrgComment comment;
+
+  @override
+  Widget build(BuildContext context) {
+    final hideMarkup = OrgController.of(context).settings.deemphasizeMarkup;
+    final body = SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Text.rich(
+        TextSpan(children: [
+          TextSpan(text: comment.indent),
+          TextSpan(text: comment.start),
+          TextSpan(text: removeTrailingLineBreak(comment.content)),
+        ]),
+        style: DefaultTextStyle.of(context)
+            .style
+            .copyWith(color: OrgTheme.dataOf(context).metaColor),
+      ),
+    );
+    return reduceOpacity(body, enabled: hideMarkup);
+  }
+}
