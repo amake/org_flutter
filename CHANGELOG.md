@@ -1,3 +1,6 @@
+## [5.2.0] - 2023-12-24
+* Render PGP blocks, comment lines, decrypted content
+
 ## [5.1.0] - 2023-12-10
 * `onLinkTap` now returns an `OrgLink` object instead of the URL. See
   `OrgLink.location` for the URL.
