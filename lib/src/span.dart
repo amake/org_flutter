@@ -132,6 +132,8 @@ class OrgSpanBuilder {
       return WidgetSpan(child: OrgPgpBlockWidget(element));
     } else if (element is OrgComment) {
       return WidgetSpan(child: OrgCommentWidget(element));
+    } else if (element is OrgDecryptedContent) {
+      return WidgetSpan(child: OrgDecryptedContentWidget(element));
     } else if (element is OrgContent) {
       return TextSpan(
           children: element.children

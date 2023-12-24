@@ -1208,3 +1208,20 @@ class OrgCommentWidget extends StatelessWidget {
     return reduceOpacity(body, enabled: hideMarkup);
   }
 }
+
+class OrgDecryptedContentWidget extends StatelessWidget {
+  const OrgDecryptedContentWidget(this.content, {super.key});
+
+  final OrgDecryptedContent content;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (content.content != null) OrgContentWidget(content.content!),
+        ...content.sections.map((child) => OrgSectionWidget(child)),
+      ],
+    );
+  }
+}
