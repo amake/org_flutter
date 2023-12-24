@@ -188,10 +188,7 @@ class OrgSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final visibilityListenable =
-        OrgController.of(context).nodeFor(section)?.visibility;
-    if (visibilityListenable == null) {
-      throw Exception('Visibility not found');
-    }
+        OrgController.of(context).nodeFor(section).visibility;
     final widget = ValueListenableBuilder<OrgVisibilityState>(
       valueListenable: visibilityListenable,
       builder: (context, visibility, child) => ListView(

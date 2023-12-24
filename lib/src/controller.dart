@@ -57,7 +57,13 @@ class OrgDataNodeMap {
 
   final Map<String, OrgDataNode> _data;
 
-  OrgDataNode? nodeFor(OrgTree tree) => _data[tree.id];
+  OrgDataNode nodeFor(OrgTree tree) => _data.putIfAbsent(
+        tree.id,
+        // Trees added to the document after init will need ad hoc data nodes.
+        // Ex: an OrgPgpBlock replaced with an OrgDecryptedContent tree
+        // containing an OrgSection
+        () => OrgDataNode(initialVisibility: OrgVisibilityState.folded),
+      );
 
   Set<OrgVisibilityState> get currentVisibility =>
       _data.values.map((e) => e.visibility.value).toSet();
@@ -304,12 +310,9 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
         final newValue =
             anyMatch ? OrgVisibilityState.children : OrgVisibilityState.folded;
         final node = _nodeMap.nodeFor(tree);
-        if (node != null) {
-          // Document root is not in map, so its node will be null
-          debugPrint(
-              'Changing visibility; from=${node.visibility.value}, to=$newValue');
-          node.visibility.value = newValue;
-        }
+        debugPrint(
+            'Changing visibility; from=${node.visibility.value}, to=$newValue');
+        node.visibility.value = newValue;
         return anyMatch;
       }
 
@@ -328,7 +331,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   }
 
   void _cycleVisibilityOf(OrgTree tree) {
-    final visibilityListenable = _nodeMap.nodeFor(tree)!.visibility;
+    final visibilityListenable = _nodeMap.nodeFor(tree).visibility;
     final newVisibility =
         visibilityListenable.value.cycleSubtree(tree.sections.isEmpty);
     final subtreeVisibility = newVisibility.subtreeState;
@@ -336,7 +339,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
         'Cycling subtree visibility; from=${visibilityListenable.value}, '
         'to=$newVisibility; subtree=$subtreeVisibility');
     tree.visitSections((subtree) {
-      _nodeMap.nodeFor(subtree)!.visibility.value = subtreeVisibility;
+      _nodeMap.nodeFor(subtree).visibility.value = subtreeVisibility;
       return true;
     });
     // Do this last because otherwise visitSections applies subtreeVisibility to
@@ -348,9 +351,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   void _ensureVisible(OrgPath path) {
     for (final section in path.whereType<OrgTree>()) {
       final visibilityListenable = _nodeMap.nodeFor(section);
-      if (visibilityListenable != null) {
-        visibilityListenable.visibility.value = OrgVisibilityState.children;
-      }
+      visibilityListenable.visibility.value = OrgVisibilityState.children;
     }
   }
 
@@ -427,7 +428,7 @@ class OrgControllerData extends InheritedWidget {
   final String? _restorationId;
 
   /// Find the temporary data node for the given subtree
-  OrgDataNode? nodeFor(OrgTree tree) => _nodeMap.nodeFor(tree);
+  OrgDataNode nodeFor(OrgTree tree) => _nodeMap.nodeFor(tree);
 
   /// Find the section with the specified title
   OrgSection? _sectionSearch(bool Function(OrgSection) predicate) {
