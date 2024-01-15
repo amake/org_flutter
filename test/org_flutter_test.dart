@@ -121,7 +121,7 @@ bazinga''')));
             expect(link.location, 'http://example.com');
           },
         )));
-        await tester.tap(find.text('example'));
+        await tester.tapOnText(find.textRange.ofSubstring('example'));
         await tester.pump();
         expect(invoked, isTrue);
       });
@@ -139,7 +139,7 @@ bar
               expect(section.toMarkup(), '* Foo\nbar\n');
             },
           )));
-          await tester.tap(find.text('link'));
+          await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pump();
           expect(invoked, isTrue);
         });
@@ -161,7 +161,7 @@ bar
               );
             },
           )));
-          await tester.tap(find.text('link'));
+          await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pump();
           expect(invoked, isTrue);
         });
@@ -183,7 +183,7 @@ bar
               );
             },
           )));
-          await tester.tap(find.text('link'));
+          await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pump();
           expect(invoked, isTrue);
         });
@@ -314,7 +314,7 @@ foo[fn:1]
             expect(link.location, 'http://example.com');
           },
         )));
-        await tester.tap(find.text('example'));
+        await tester.tapOnText(find.textRange.ofSubstring('example'));
         await tester.pump();
         expect(invoked, isTrue);
       });
