@@ -68,3 +68,12 @@ extension OrgVisibilityStateCycling on OrgVisibilityState {
     }
   }
 }
+
+typedef OrgVisibilityResult = ({bool? searchHit, bool? sparseHit});
+
+extension OrgVisibilityResultUtil on OrgVisibilityResult {
+  OrgVisibilityResult or(OrgVisibilityResult other) => (
+        searchHit: searchHit == null ? null : searchHit! || other.searchHit!,
+        sparseHit: sparseHit == null ? null : sparseHit! || other.sparseHit!,
+      );
+}

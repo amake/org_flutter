@@ -284,7 +284,11 @@ class OrgContentWidget extends StatelessWidget {
 
 /// An Org Mode section headline
 class OrgHeadlineWidget extends StatelessWidget {
-  const OrgHeadlineWidget(this.headline, {required this.open, super.key});
+  const OrgHeadlineWidget(
+    this.headline, {
+    required this.open,
+    super.key,
+  });
   final OrgHeadline headline;
   final bool open;
 

@@ -9,7 +9,7 @@ import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
-const _kDefaultSearchQuery = '';
+export 'package:org_flutter/src/search.dart' show SearchResultKey;
 
 const _kTransientStateNodeMapKey = 'node_map';
 
@@ -125,6 +125,7 @@ class OrgController extends StatefulWidget {
     OrgControllerData data, {
     OrgSettings? settings,
     Pattern? searchQuery,
+    OrgQueryMatcher? sparseQuery,
     required OrgTree root,
     required Widget child,
     Key? key,
@@ -133,6 +134,7 @@ class OrgController extends StatefulWidget {
           root: root,
           inheritedNodeMap: data._nodeMap,
           searchQuery: searchQuery ?? data.searchQuery,
+          sparseQuery: sparseQuery ?? data.sparseQuery,
           settings: settings ?? data._callerSettings,
           embeddedSettings: data._embeddedSettings,
           key: key,
@@ -143,6 +145,7 @@ class OrgController extends StatefulWidget {
     required OrgTree root,
     Pattern? searchQuery,
     bool? interpretEmbeddedSettings,
+    OrgQueryMatcher? sparseQuery,
     OrgSettings? settings,
     OrgErrorHandler? errorHandler,
     String? restorationId,
@@ -152,6 +155,7 @@ class OrgController extends StatefulWidget {
           root: root,
           searchQuery: searchQuery,
           interpretEmbeddedSettings: interpretEmbeddedSettings,
+          sparseQuery: sparseQuery,
           settings: settings,
           errorHandler: errorHandler,
           restorationId: restorationId,
@@ -164,6 +168,7 @@ class OrgController extends StatefulWidget {
     required this.settings,
     this.inheritedNodeMap,
     this.searchQuery,
+    this.sparseQuery,
     this.interpretEmbeddedSettings,
     this.embeddedSettings,
     this.errorHandler,
@@ -182,6 +187,10 @@ class OrgController extends StatefulWidget {
 
   /// A query for full-text search of the document
   final Pattern? searchQuery;
+
+  /// A query for displaying the document as a "sparse tree" as in
+  /// `org-match-sparse-tree`
+  final OrgQueryMatcher? sparseQuery;
 
   /// Read settings included in the document itself
   final bool? interpretEmbeddedSettings;
@@ -216,6 +225,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
 
   late OrgDataNodeMap _nodeMap;
   Pattern? _searchQuery;
+  OrgQueryMatcher? _sparseQuery;
   OrgSettings? _embeddedSettings;
 
   @override
@@ -230,14 +240,25 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       _embeddedSettings ??= OrgSettings.fromDocument(root, _errorHandler);
     }
     _searchQuery = widget.searchQuery;
+    _sparseQuery = widget.sparseQuery;
   }
 
   @override
   void didUpdateWidget(covariant OrgController oldWidget) {
     super.didUpdateWidget(oldWidget);
 
+    var doSearch = false;
     if (!widget.searchQuery.sameAs(oldWidget.searchQuery)) {
-      _search(widget.searchQuery ?? _kDefaultSearchQuery);
+      _searchQuery = widget.searchQuery;
+      doSearch = true;
+    }
+    if (widget.sparseQuery != oldWidget.sparseQuery) {
+      _sparseQuery = widget.sparseQuery;
+      doSearch = true;
+    }
+    if (doSearch) {
+      _updateVisibilityForQuery();
+      _searchResultKeys.value = [];
     }
   }
 
@@ -265,7 +286,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
         json: nodeMapJson,
       );
       if (initialState == null) {
-        _updateVisibilityForQuery(_searchQuery);
+        _updateVisibilityForQuery();
       }
     }
   }
@@ -290,6 +311,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       root: widget.root,
       nodeMap: _nodeMap,
       searchQuery: _searchQuery,
+      sparseQuery: widget.sparseQuery,
       searchResultKeys: _searchResultKeys,
       footnoteKeys: _footnoteKeys,
       embeddedSettings: _embeddedSettings,
@@ -302,42 +324,59 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     );
   }
 
-  /// Set the search query. Section visibility will be updated so that sections
-  /// with hits are expanded and sections without will be collapsed.
-  void _search(Pattern query) {
-    if (!_searchQuery.sameAs(query)) {
-      setState(() {
-        _searchQuery = query;
-        _updateVisibilityForQuery(query);
-        _searchResultKeys.value = [];
+  void _updateVisibilityForQuery() {
+    final isEmptyPattern = _searchQuery.isEmpty;
+    if (_sparseQuery == null && isEmptyPattern) {
+      _nodeMap.unhideAll();
+      return;
+    }
+
+    debugPrint('Querying: $_searchQuery; filter: $_sparseQuery');
+    OrgVisibilityResult predicate(OrgTree sec) {
+      return (
+        sparseHit: _sparseQuery == null
+            ? null
+            : sec is OrgSection && _sparseQuery!.matches(sec),
+        searchHit: isEmptyPattern
+            ? null
+            : sec.contains(_searchQuery!, includeChildren: false)
+      );
+    }
+
+    final initialMatch = (
+      sparseHit: _sparseQuery == null ? null : false,
+      searchHit: isEmptyPattern ? null : false
+    );
+
+    // Traverse tree from leaves to root in order to
+    // a) prevent unnecessarily checking the same vertices twice
+    // b) ensure correct visibility result
+    OrgVisibilityResult visit(OrgTree tree) {
+      final childrenMatch =
+          tree.sections.fold<OrgVisibilityResult>(initialMatch, (acc, section) {
+        final match = visit(section);
+        return acc.or(match);
       });
-      debugPrint('Querying: $query');
-    }
-  }
+      final anyMatch = childrenMatch.or(predicate(tree));
+      final newValue = (() {
+        if (anyMatch.sparseHit == false &&
+            tree is OrgSection &&
+            tree.level == 2) {
+          return OrgVisibilityState.hidden;
+        }
+        if (anyMatch.searchHit == true) return OrgVisibilityState.children;
+        if (anyMatch.sparseHit == true) return OrgVisibilityState.contents;
+        return OrgVisibilityState.folded;
+      })();
 
-  void _updateVisibilityForQuery(Pattern? query) {
-    if (!query.isEmpty) {
-      // Traverse tree from leaves to root in order to
-      // a) prevent unnecessarily checking the same vertices twice
-      // b) ensure correct visibility result
-      bool visit(OrgTree tree) {
-        final childrenMatch = tree.sections.fold<bool>(false, (acc, section) {
-          final match = visit(section);
-          return acc || match;
-        });
-        final anyMatch =
-            childrenMatch || tree.contains(query!, includeChildren: false);
-        final newValue =
-            anyMatch ? OrgVisibilityState.children : OrgVisibilityState.folded;
-        final node = _nodeMap.nodeFor(tree);
-        debugPrint(
-            'Changing visibility; from=${node.visibility.value}, to=$newValue');
-        node.visibility.value = newValue;
-        return anyMatch;
-      }
-
-      visit(_root);
+      final node = _nodeMap.nodeFor(tree);
+      debugPrint(
+          'Changing visibility; from=${node.visibility.value}, to=$newValue');
+      node.visibility.value = newValue;
+      return anyMatch;
     }
+
+    visit(_root);
   }
 
   void _cycleVisibility() {
@@ -387,6 +426,7 @@ class OrgControllerData extends InheritedWidget {
     required this.root,
     required OrgDataNodeMap nodeMap,
     required this.searchQuery,
+    required this.sparseQuery,
     required this.searchResultKeys,
     required this.footnoteKeys,
     required this.cycleVisibility,
@@ -412,6 +452,10 @@ class OrgControllerData extends InheritedWidget {
 
   /// A query for full-text search of the document
   final Pattern? searchQuery;
+
+  /// A query for displaying the document as a "sparse tree" as in
+  /// `org-match-sparse-tree`
+  final OrgQueryMatcher? sparseQuery;
 
   final OrgSettings? _callerSettings;
   final OrgSettings? _embeddedSettings;

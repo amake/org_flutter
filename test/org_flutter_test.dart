@@ -183,6 +183,40 @@ bazinga''');
         expect(find.textContaining('headline 2'), findsOneWidget);
         expect(find.textContaining('inga'), findsNothing);
       });
+      testWidgets('Ignores filter on restore', (tester) async {
+        final doc = OrgDocument.parse('''foo bar
+* headline 1
+baz buzz
+** headline 2 :abcd:
+bazinga''');
+        final widget = OrgController(
+          root: doc,
+          sparseQuery: const OrgQueryTagMatcher('abcd'),
+          restorationId: 'doc',
+          child: OrgRootWidget(
+            child: OrgDocumentWidget(doc),
+          ),
+        );
+        await tester.pumpWidget(RootRestorationScope(
+          restorationId: 'root',
+          child: _wrap(widget),
+        ));
+        expect(find.text('foo bar'), findsOneWidget);
+        expect(find.text('baz buzz'), findsNothing);
+        expect(find.textContaining('headline 2'), findsOneWidget);
+        expect(find.text('bazinga'), findsNothing);
+        await tester.tap(find.byType(OrgHeadlineWidget).last);
+        await tester.pumpAndSettle();
+        expect(find.text('foo bar'), findsOneWidget);
+        expect(find.text('baz buzz'), findsNothing);
+        expect(find.textContaining('headline 2'), findsOneWidget);
+        expect(find.text('bazinga'), findsOneWidget);
+        await tester.restartAndRestore();
+        expect(find.text('foo bar'), findsOneWidget);
+        expect(find.text('baz buzz'), findsNothing);
+        expect(find.textContaining('headline 2'), findsOneWidget);
+        expect(find.text('bazinga'), findsOneWidget);
+      });
     });
     group('Events', () {
       testWidgets('Load images', (tester) async {
@@ -401,6 +435,91 @@ foo3''');
           expect(find.textContaining('foo1'), findsOneWidget);
           expect(find.textContaining('foo2'), findsOneWidget);
           expect(find.textContaining('foo3'), findsOneWidget);
+        });
+      });
+    });
+    group('Section matcher', () {
+      testWidgets('Keyword', (tester) async {
+        final doc = OrgDocument.parse('''foo1
+* foo
+** TODO bar
+foo2
+** DONE baz
+foo3''');
+        final widget = OrgController(
+          root: doc,
+          sparseQuery: OrgQueryMatcher.fromMarkup('TODO="TODO"'),
+          child: OrgRootWidget(
+            child: OrgDocumentWidget(doc),
+          ),
+        );
+        await tester.pumpWidget(_wrap(widget));
+        expect(find.textContaining('foo1'), findsOneWidget);
+        expect(find.textContaining('bar'), findsOneWidget);
+        expect(find.textContaining('foo2'), findsNothing);
+        expect(find.textContaining('foo3'), findsNothing);
+      });
+      testWidgets('Tag', (tester) async {
+        final doc = OrgDocument.parse('''foo1
+* foo
+** bar
+foo2
+** baz :buzz:
+foo3''');
+        final widget = OrgController(
+          root: doc,
+          sparseQuery: const OrgQueryTagMatcher('buzz'),
+          child: OrgRootWidget(
+            child: OrgDocumentWidget(doc),
+          ),
+        );
+        await tester.pumpWidget(_wrap(widget));
+        expect(find.textContaining('foo1'), findsOneWidget);
+        expect(find.textContaining('foo2'), findsNothing);
+        expect(find.textContaining('baz'), findsOneWidget);
+        expect(find.textContaining('foo3'), findsNothing);
+      });
+      group('With search', () {
+        testWidgets('With hit', (tester) async {
+          final doc = OrgDocument.parse('''foo1
+* foo
+** TODO bar
+foo2
+** DONE baz
+foo3''');
+          final widget = OrgController(
+            root: doc,
+            sparseQuery: OrgQueryMatcher.fromMarkup('TODO="TODO"'),
+            searchQuery: 'foo2',
+            child: OrgRootWidget(
+              child: OrgDocumentWidget(doc),
+            ),
+          );
+          await tester.pumpWidget(_wrap(widget));
+          expect(find.textContaining('foo1'), findsOneWidget);
+          expect(find.textContaining('bar'), findsOneWidget);
+          expect(find.textContaining('foo2'), findsOneWidget);
+          expect(find.textContaining('foo3'), findsNothing);
+        });
+        testWidgets('No hits', (tester) async {
+          final doc = OrgDocument.parse('''foo1
+* foo
+** TODO bar
+foo2
+** DONE baz
+foo3''');
+          final widget = OrgController(
+            root: doc,
+            sparseQuery: OrgQueryMatcher.fromMarkup('TODO="TODO"'),
+            searchQuery: 'foo3',
+            child: OrgRootWidget(
+              child: OrgDocumentWidget(doc),
+            ),
+          );
+          await tester.pumpWidget(_wrap(widget));
+          expect(find.textContaining('foo1'), findsOneWidget);
+          expect(find.textContaining('foo2'), findsNothing);
+          expect(find.textContaining('foo3'), findsNothing);
         });
       });
     });
