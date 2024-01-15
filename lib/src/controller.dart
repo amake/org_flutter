@@ -117,6 +117,7 @@ class OrgController extends StatefulWidget {
   OrgController.defaults(
     OrgControllerData data, {
     OrgSettings? settings,
+    Pattern? searchQuery,
     required OrgTree root,
     required Widget child,
     Key? key,
@@ -124,7 +125,7 @@ class OrgController extends StatefulWidget {
           child: child,
           root: root,
           inheritedNodeMap: data._nodeMap,
-          searchQuery: data.searchQuery,
+          searchQuery: searchQuery ?? data.searchQuery,
           settings: settings ?? data._callerSettings,
           embeddedSettings: data._embeddedSettings,
           key: key,
@@ -133,6 +134,7 @@ class OrgController extends StatefulWidget {
   const OrgController({
     required Widget child,
     required OrgTree root,
+    Pattern? searchQuery,
     bool? interpretEmbeddedSettings,
     OrgSettings? settings,
     OrgErrorHandler? errorHandler,
@@ -141,6 +143,7 @@ class OrgController extends StatefulWidget {
   }) : this._(
           child: child,
           root: root,
+          searchQuery: searchQuery,
           interpretEmbeddedSettings: interpretEmbeddedSettings,
           settings: settings,
           errorHandler: errorHandler,
@@ -222,6 +225,16 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     _searchQuery = widget.searchQuery ?? _kDefaultSearchQuery;
   }
 
+  @override
+  void didUpdateWidget(covariant OrgController oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final newQuery = widget.searchQuery;
+    if (!patternEquals(newQuery, oldWidget.searchQuery)) {
+      _search(newQuery ?? _kDefaultSearchQuery);
+    }
+  }
+
   OrgErrorHandler get _errorHandler =>
       widget.errorHandler ?? _defaultErrorHandler;
 
@@ -245,6 +258,9 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
         defaultState: _settings.startupFolded,
         json: nodeMapJson,
       );
+      if (initialState == null) {
+        _updateVisibilityForQuery(_searchQuery);
+      }
     }
   }
 
@@ -268,7 +284,6 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       root: widget.root,
       nodeMap: _nodeMap,
       searchQuery: _searchQuery,
-      search: search,
       searchResultKeys: _searchResultKeys,
       footnoteKeys: _footnoteKeys,
       embeddedSettings: _embeddedSettings,
@@ -283,8 +298,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
 
   /// Set the search query. Section visibility will be updated so that sections
   /// with hits are expanded and sections without will be collapsed.
-  // TODO(aaron): Should this be a declarative API?
-  void search(Pattern query) {
+  void _search(Pattern query) {
     if (!patternEquals(_searchQuery, query)) {
       setState(() {
         _searchQuery = query;
@@ -367,7 +381,6 @@ class OrgControllerData extends InheritedWidget {
     required this.root,
     required OrgDataNodeMap nodeMap,
     required this.searchQuery,
-    required this.search,
     required this.searchResultKeys,
     required this.footnoteKeys,
     required this.cycleVisibility,
@@ -390,10 +403,6 @@ class OrgControllerData extends InheritedWidget {
   final OrgTree root;
 
   final OrgDataNodeMap _nodeMap;
-
-  /// Set the search query. Seciton visibility will be updated so that sections
-  /// with hits are expanded and sections without will be collapsed.
-  final void Function(Pattern) search;
 
   /// A query for full-text search of the document
   final Pattern searchQuery;
@@ -503,7 +512,7 @@ class OrgControllerData extends InheritedWidget {
   }
 
   FootnoteKey generateFootnoteKey(String id, {String? label}) {
-    final key = FootnoteKey(debugLabel: '$searchQuery($label)');
+    final key = FootnoteKey(debugLabel: label);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       footnoteKeys.value = Map.of(footnoteKeys.value)
         ..removeWhere((_, v) => v.currentContext?.mounted != true)
@@ -515,7 +524,6 @@ class OrgControllerData extends InheritedWidget {
   @override
   bool updateShouldNotify(OrgControllerData oldWidget) =>
       root != oldWidget.root ||
-      search != oldWidget.search ||
       searchQuery != oldWidget.searchQuery ||
       // Don't check searchResultKeys because rebuilding this widget will cause
       // new keys to be made which leads to an infinite loop

@@ -238,34 +238,85 @@ bar
       });
     });
     group('Search', () {
-      testWidgets('Results', (tester) async {
-        await tester.pumpWidget(_wrap(const Org('foo bar baz')));
-        final controller = OrgController.of(
-            tester.element(find.textContaining('foo bar baz')));
-        expect(controller.searchResultKeys.value.length, 0);
-        controller.search('bar');
-        await tester.pump();
-        expect(controller.searchResultKeys.value.length, 1);
-        controller.search(RegExp('ba[rz]'));
-        await tester.pump();
-        expect(controller.searchResultKeys.value.length, 2);
+      group('Results', () {
+        testWidgets('No query', (tester) async {
+          final doc = OrgDocument.parse('foo bar baz');
+          final widget = OrgController(
+            root: doc,
+            child: OrgRootWidget(
+              child: OrgDocumentWidget(doc),
+            ),
+          );
+          await tester.pumpWidget(_wrap(widget));
+          final controller = OrgController.of(
+              tester.element(find.textContaining('foo bar baz')));
+          expect(controller.searchResultKeys.value.length, 0);
+        });
+        testWidgets('One result', (tester) async {
+          final doc = OrgDocument.parse('foo bar baz');
+          final widget = OrgController(
+            root: doc,
+            searchQuery: 'bar',
+            child: OrgRootWidget(
+              child: OrgDocumentWidget(doc),
+            ),
+          );
+          await tester.pumpWidget(_wrap(widget));
+          final controller =
+              OrgController.of(tester.element(find.textContaining('foo')));
+          expect(controller.searchResultKeys.value.length, 1);
+        });
+        testWidgets('Multiple results', (tester) async {
+          final doc = OrgDocument.parse('foo bar baz');
+          final widget = OrgController(
+            root: doc,
+            searchQuery: RegExp('ba[rz]'),
+            child: OrgRootWidget(
+              child: OrgDocumentWidget(doc),
+            ),
+          );
+          await tester.pumpWidget(_wrap(widget));
+          final controller =
+              OrgController.of(tester.element(find.textContaining('foo')));
+          expect(controller.searchResultKeys.value.length, 2);
+        });
       });
-      testWidgets('Result visibility', (tester) async {
-        await tester.pumpWidget(_wrap(const Org('''foo1
+      group('Visibility', () {
+        testWidgets('No query', (tester) async {
+          final doc = OrgDocument.parse('''foo1
 * bar
 foo2
 ** baz
-foo3''')));
-        expect(find.textContaining('foo1'), findsOneWidget);
-        expect(find.textContaining('foo2'), findsNothing);
-        expect(find.textContaining('foo3'), findsNothing);
-        final controller =
-            OrgController.of(tester.element(find.textContaining('foo1')));
-        controller.search(RegExp('foo[123]'));
-        await tester.pump();
-        expect(find.textContaining('foo1'), findsOneWidget);
-        expect(find.textContaining('foo2'), findsOneWidget);
-        expect(find.textContaining('foo3'), findsOneWidget);
+foo3''');
+          final widget = OrgController(
+            root: doc,
+            child: OrgRootWidget(
+              child: OrgDocumentWidget(doc),
+            ),
+          );
+          await tester.pumpWidget(_wrap(widget));
+          expect(find.textContaining('foo1'), findsOneWidget);
+          expect(find.textContaining('foo2'), findsNothing);
+          expect(find.textContaining('foo3'), findsNothing);
+        });
+        testWidgets('Nested hits', (tester) async {
+          final doc = OrgDocument.parse('''foo1
+* bar
+foo2
+** baz
+foo3''');
+          final widget = OrgController(
+            root: doc,
+            searchQuery: RegExp('foo[123]'),
+            child: OrgRootWidget(
+              child: OrgDocumentWidget(doc),
+            ),
+          );
+          await tester.pumpWidget(_wrap(widget));
+          expect(find.textContaining('foo1'), findsOneWidget);
+          expect(find.textContaining('foo2'), findsOneWidget);
+          expect(find.textContaining('foo3'), findsOneWidget);
+        });
       });
     });
     group('Footnotes', () {
