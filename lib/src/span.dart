@@ -23,7 +23,7 @@ class OrgSpanBuilder {
 
   final BuildContext context;
   final RecognizerHandler recognizerHandler;
-  final Pattern highlight;
+  final Pattern? highlight;
   final bool hideEmphasisMarkers;
 
   InlineSpan build(
@@ -179,11 +179,12 @@ class OrgSpanBuilder {
 
   Iterable<InlineSpan> tokenizeTextSpan(
     String text,
-    Pattern pattern,
+    Pattern? pattern,
     TextStyle matchStyle,
     String Function(String) transform,
     GestureRecognizer? recognizer,
   ) sync* {
+    pattern ??= '';
     var lastEnd = 0;
     for (final match in pattern.allMatches(text)) {
       if (match.start > lastEnd) {

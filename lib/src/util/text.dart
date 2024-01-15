@@ -20,7 +20,7 @@ bool emptyPattern(Pattern? pattern) {
   }
 }
 
-bool patternEquals(Pattern a, Pattern b) {
+bool patternEquals(Pattern? a, Pattern? b) {
   if (a == b) {
     return true;
   }

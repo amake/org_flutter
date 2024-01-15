@@ -208,7 +208,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       ];
 
   late OrgDataNodeMap _nodeMap;
-  late Pattern _searchQuery;
+  Pattern? _searchQuery;
   OrgSettings? _embeddedSettings;
 
   @override
@@ -222,7 +222,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     if (widget.interpretEmbeddedSettings == true && root is OrgDocument) {
       _embeddedSettings ??= OrgSettings.fromDocument(root, _errorHandler);
     }
-    _searchQuery = widget.searchQuery ?? _kDefaultSearchQuery;
+    _searchQuery = widget.searchQuery;
   }
 
   @override
@@ -309,7 +309,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     }
   }
 
-  void _updateVisibilityForQuery(Pattern query) {
+  void _updateVisibilityForQuery(Pattern? query) {
     if (!emptyPattern(query)) {
       // Traverse tree from leaves to root in order to
       // a) prevent unnecessarily checking the same vertices twice
@@ -320,7 +320,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
           return acc || match;
         });
         final anyMatch =
-            childrenMatch || tree.contains(query, includeChildren: false);
+            childrenMatch || tree.contains(query!, includeChildren: false);
         final newValue =
             anyMatch ? OrgVisibilityState.children : OrgVisibilityState.folded;
         final node = _nodeMap.nodeFor(tree);
@@ -405,7 +405,7 @@ class OrgControllerData extends InheritedWidget {
   final OrgDataNodeMap _nodeMap;
 
   /// A query for full-text search of the document
-  final Pattern searchQuery;
+  final Pattern? searchQuery;
 
   final OrgSettings? _callerSettings;
   final OrgSettings? _embeddedSettings;
