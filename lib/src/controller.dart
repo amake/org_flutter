@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/error.dart';
 import 'package:org_flutter/src/folding.dart';
+import 'package:org_flutter/src/search.dart';
 import 'package:org_flutter/src/settings.dart';
-import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
@@ -13,7 +13,6 @@ const _kDefaultSearchQuery = '';
 
 const _kTransientStateNodeMapKey = 'node_map';
 
-typedef SearchResultKey = GlobalKey<SearchResultSpanState>;
 // We shouldn't have to specify <State> but not doing so sometimes results in a
 // crash here:
 // https://github.com/dart-lang/sdk/blob/d252bb11a342f011485b9c9fe7c56a246e92b12b/pkg/front_end/lib/src/fasta/kernel/body_builder.dart#L6614

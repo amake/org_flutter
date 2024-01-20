@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/events.dart';
+import 'package:org_flutter/src/search.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_flutter/src/widgets.dart';
@@ -194,13 +195,13 @@ class OrgSpanBuilder {
         );
       }
       yield WidgetSpan(
-        child: _SearchResultSpan(
-          span: TextSpan(
+        child: SearchResult.of(
+          context,
+          child: Text.rich(TextSpan(
             text: transform(match.group(0)!),
             style: matchStyle,
             recognizer: recognizer,
-          ),
-          key: OrgController.of(context).generateSearchResultKey(),
+          )),
         ),
       );
       lastEnd = match.end;
@@ -211,42 +212,6 @@ class OrgSpanBuilder {
         recognizer: recognizer,
       );
     }
-  }
-}
-
-class _SearchResultSpan extends StatefulWidget {
-  const _SearchResultSpan({required this.span, super.key});
-  final InlineSpan span;
-
-  @override
-  State<_SearchResultSpan> createState() => SearchResultSpanState();
-}
-
-/// The state object for a search result. Consumers of
-/// [OrgControllerData.searchResultKeys] can use [selected] to toggle focus
-/// highlighting.
-class SearchResultSpanState extends State<_SearchResultSpan> {
-  bool _selected = false;
-
-  set selected(bool value) {
-    setState(() => _selected = value);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final text = Text.rich(widget.span);
-    return _selected
-        ? DecoratedBox(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Theme.of(context).colorScheme.outline,
-                width: 0.5,
-              ),
-            ),
-            position: DecorationPosition.foreground,
-            child: text,
-          )
-        : text;
   }
 }
 
