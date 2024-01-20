@@ -93,6 +93,14 @@ class OrgDataNodeMap {
       node.visibility.value = newState;
     }
   }
+
+  void unhideAll() {
+    for (final node in _data.values) {
+      if (node.visibility.value == OrgVisibilityState.hidden) {
+        node.visibility.value = OrgVisibilityState.folded;
+      }
+    }
+  }
 }
 
 class OrgDataNode {

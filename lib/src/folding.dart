@@ -10,6 +10,9 @@ enum OrgVisibilityState {
 
   /// Everything
   subtree,
+
+  /// Not shown; for use in sparse trees
+  hidden,
 }
 
 extension OrgVisibilityStateJson on OrgVisibilityState? {
@@ -32,6 +35,8 @@ extension OrgVisibilityStateCycling on OrgVisibilityState {
       case OrgVisibilityState.subtree:
       case OrgVisibilityState.children:
         return OrgVisibilityState.folded;
+      case OrgVisibilityState.hidden:
+        return OrgVisibilityState.hidden;
     }
   }
 
@@ -45,6 +50,8 @@ extension OrgVisibilityStateCycling on OrgVisibilityState {
         return empty ? OrgVisibilityState.folded : OrgVisibilityState.subtree;
       case OrgVisibilityState.subtree:
         return OrgVisibilityState.folded;
+      case OrgVisibilityState.hidden:
+        return OrgVisibilityState.hidden;
     }
   }
 
@@ -56,6 +63,8 @@ extension OrgVisibilityStateCycling on OrgVisibilityState {
         return OrgVisibilityState.folded;
       case OrgVisibilityState.subtree:
         return OrgVisibilityState.subtree;
+      case OrgVisibilityState.hidden:
+        return OrgVisibilityState.hidden;
     }
   }
 }

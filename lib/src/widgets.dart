@@ -182,6 +182,9 @@ class OrgSectionWidget extends StatelessWidget {
       case OrgVisibilityState.children:
       case OrgVisibilityState.subtree:
         return true;
+      case OrgVisibilityState.hidden:
+        // Not meaningful
+        return false;
     }
   }
 
@@ -191,44 +194,51 @@ class OrgSectionWidget extends StatelessWidget {
         OrgController.of(context).nodeFor(section).visibility;
     final widget = ValueListenableBuilder<OrgVisibilityState>(
       valueListenable: visibilityListenable,
-      builder: (context, visibility, child) => ListView(
-        shrinkWrap: shrinkWrap || !root,
-        physics:
-            shrinkWrap || !root ? const NeverScrollableScrollPhysics() : null,
-        // It's very important that the padding not be null here; otherwise
-        // sections inside a root document will get some extraneous padding (see
-        // discussion of padding behavior on ListView)
-        padding: root ? OrgTheme.dataOf(context).rootPadding : EdgeInsets.zero,
-        children: <Widget>[
-          InkWell(
-            onTap: () => OrgController.of(context).cycleVisibilityOf(section),
-            onLongPress: () =>
-                OrgEvents.of(context).onSectionLongPress?.call(section),
-            child: OrgHeadlineWidget(
-              section.headline,
-              open: _openEnough(visibility),
-            ),
-          ),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 100),
-            transitionBuilder: (child, animation) =>
-                SizeTransition(sizeFactor: animation, child: child),
-            child: Column(
-              key: ValueKey(visibility),
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+      builder: (context, visibility, child) => visibility ==
+              OrgVisibilityState.hidden
+          ? const SizedBox.shrink()
+          : ListView(
+              shrinkWrap: shrinkWrap || !root,
+              physics: shrinkWrap || !root
+                  ? const NeverScrollableScrollPhysics()
+                  : null,
+              // It's very important that the padding not be null here; otherwise
+              // sections inside a root document will get some extraneous padding (see
+              // discussion of padding behavior on ListView)
+              padding:
+                  root ? OrgTheme.dataOf(context).rootPadding : EdgeInsets.zero,
               children: <Widget>[
-                if (section.content != null &&
-                    (visibility == OrgVisibilityState.children ||
-                        visibility == OrgVisibilityState.subtree))
-                  OrgContentWidget(section.content!),
-                if (visibility != OrgVisibilityState.folded)
-                  ...section.sections.map((child) => OrgSectionWidget(child)),
+                InkWell(
+                  onTap: () =>
+                      OrgController.of(context).cycleVisibilityOf(section),
+                  onLongPress: () =>
+                      OrgEvents.of(context).onSectionLongPress?.call(section),
+                  child: OrgHeadlineWidget(
+                    section.headline,
+                    open: _openEnough(visibility),
+                  ),
+                ),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 100),
+                  transitionBuilder: (child, animation) =>
+                      SizeTransition(sizeFactor: animation, child: child),
+                  child: Column(
+                    key: ValueKey(visibility),
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      if (section.content != null &&
+                          (visibility == OrgVisibilityState.children ||
+                              visibility == OrgVisibilityState.subtree))
+                        OrgContentWidget(section.content!),
+                      if (visibility != OrgVisibilityState.folded)
+                        ...section.sections
+                            .map((child) => OrgSectionWidget(child)),
+                    ],
+                  ),
+                ),
+                if (root) listBottomSafeArea(),
               ],
             ),
-          ),
-          if (root) listBottomSafeArea(),
-        ],
-      ),
     );
     return _withSlideActions(context, widget);
   }
