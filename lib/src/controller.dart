@@ -229,9 +229,8 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   void didUpdateWidget(covariant OrgController oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    final newQuery = widget.searchQuery;
-    if (!patternEquals(newQuery, oldWidget.searchQuery)) {
-      _search(newQuery ?? _kDefaultSearchQuery);
+    if (!widget.searchQuery.sameAs(oldWidget.searchQuery)) {
+      _search(widget.searchQuery ?? _kDefaultSearchQuery);
     }
   }
 
@@ -299,7 +298,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   /// Set the search query. Section visibility will be updated so that sections
   /// with hits are expanded and sections without will be collapsed.
   void _search(Pattern query) {
-    if (!patternEquals(_searchQuery, query)) {
+    if (!_searchQuery.sameAs(query)) {
       setState(() {
         _searchQuery = query;
         _updateVisibilityForQuery(query);
@@ -310,7 +309,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   }
 
   void _updateVisibilityForQuery(Pattern? query) {
-    if (!emptyPattern(query)) {
+    if (!query.isEmpty) {
       // Traverse tree from leaves to root in order to
       // a) prevent unnecessarily checking the same vertices twice
       // b) ensure correct visibility result

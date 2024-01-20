@@ -10,28 +10,32 @@ String characterWrappable(String text) {
   }
 }
 
-bool emptyPattern(Pattern? pattern) {
-  if (pattern is String) {
-    return pattern.isEmpty;
-  } else if (pattern is RegExp) {
-    return pattern.pattern.isEmpty;
-  } else {
-    return pattern == null;
+extension PatternUtil on Pattern? {
+  bool get isEmpty {
+    final self = this;
+    if (self is String) {
+      return self.isEmpty;
+    } else if (self is RegExp) {
+      return self.pattern.isEmpty;
+    } else {
+      return self == null;
+    }
   }
-}
 
-bool patternEquals(Pattern? a, Pattern? b) {
-  if (a == b) {
-    return true;
+  bool sameAs(Pattern? other) {
+    final self = this;
+    if (self == other) {
+      return true;
+    }
+    if (self is RegExp && other is RegExp) {
+      return self.pattern == other.pattern &&
+          self.isCaseSensitive == other.isCaseSensitive &&
+          self.isDotAll == other.isDotAll &&
+          self.isMultiLine == other.isMultiLine &&
+          self.isUnicode == other.isUnicode;
+    }
+    return false;
   }
-  if (a is RegExp && b is RegExp) {
-    return a.pattern == b.pattern &&
-        a.isCaseSensitive == b.isCaseSensitive &&
-        a.isDotAll == b.isDotAll &&
-        a.isMultiLine == b.isMultiLine &&
-        a.isUnicode == b.isUnicode;
-  }
-  return false;
 }
 
 String reflowText(String text, {required bool end}) => text.replaceAll(

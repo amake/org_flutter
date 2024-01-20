@@ -154,7 +154,7 @@ class OrgSpanBuilder {
     GestureRecognizer? recognizer,
     bool charWrap = false,
   }) {
-    if (emptyPattern(highlight)) {
+    if (highlight.isEmpty) {
       return TextSpan(
         text: charWrap ? characterWrappable(text) : text,
         style: style,
