@@ -1,3 +1,8 @@
+## [6.0.0] - 2024-01-21
+* Remove `OrgControllerData.search`. Supply your search query declaratively to
+  `OrgController` constructors instead.
+* Support "sparse trees"; see `OrgController.sparseQuery`
+
 ## [5.2.0] - 2023-12-24
 * Render PGP blocks, comment lines, decrypted content
 
