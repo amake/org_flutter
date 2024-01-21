@@ -1,3 +1,6 @@
+## [6.0.1] - 2024-01-21
+* Fix handling of queries in `OrgController.defaults`
+
 ## [6.0.0] - 2024-01-21
 * Remove `OrgControllerData.search`. Supply your search query declaratively to
   `OrgController` constructors instead.
