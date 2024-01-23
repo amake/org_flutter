@@ -216,6 +216,8 @@ class OrgSectionWidget extends StatelessWidget {
                   child: OrgHeadlineWidget(
                     section.headline,
                     open: _openEnough(visibility),
+                    highlighted:
+                        OrgController.of(context).sparseQuery?.matches(section),
                   ),
                 ),
                 AnimatedSwitcher(
@@ -287,10 +289,12 @@ class OrgHeadlineWidget extends StatelessWidget {
   const OrgHeadlineWidget(
     this.headline, {
     required this.open,
+    this.highlighted,
     super.key,
   });
   final OrgHeadline headline;
   final bool open;
+  final bool? highlighted;
 
   @override
   Widget build(BuildContext context) {
@@ -307,7 +311,7 @@ class OrgHeadlineWidget extends StatelessWidget {
           final body = Text.rich(
             TextSpan(
               children: [
-                spanBuilder.highlightedSpan(_starsText(context)),
+                ..._starsSpans(context),
                 if (headline.keyword != null)
                   spanBuilder.highlightedSpan(
                       headline.keyword!.value + headline.keyword!.trailing,
@@ -379,13 +383,30 @@ class OrgHeadlineWidget extends StatelessWidget {
     );
   }
 
-  String _starsText(BuildContext context) {
+  Iterable<TextSpan> _starsSpans(BuildContext context) sync* {
     final hideStars = OrgController.of(context).settings.hideStars;
-    final stars = hideStars
-        ? '${' ' * (headline.stars.value.length - 1)}*'
-        : headline.stars.value;
-    return stars + headline.stars.trailing;
+    final style = _starStyle(context);
+    if (hideStars) {
+      yield TextSpan(
+        // Real org-mode uses stars pained with the background color to make
+        // them invisible; this is only really visible when highlighted in dark
+        // mode. Since we don't have a good way to know the actual background
+        // color here, we just use spaces instead.
+        text: ' ' * (headline.stars.value.length - 1),
+        style: style,
+      );
+      yield TextSpan(text: '*', style: style);
+    } else {
+      yield TextSpan(text: headline.stars.value, style: style);
+    }
+    yield TextSpan(text: headline.stars.trailing);
   }
+
+  TextStyle? _starStyle(BuildContext context) => highlighted == true
+      ? DefaultTextStyle.of(context)
+          .style
+          .copyWith(backgroundColor: OrgTheme.dataOf(context).highlightColor)
+      : null;
 }
 
 /// A utility for overriding the text scale to be 1
