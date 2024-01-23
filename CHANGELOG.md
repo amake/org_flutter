@@ -1,3 +1,7 @@
+## [6.0.2] - 2024-01-23
+* Highlight headlines of sparse query matches
+* Fix various sparse query matching bugs
+
 ## [6.0.1] - 2024-01-21
 * Fix handling of queries in `OrgController.defaults`
 
