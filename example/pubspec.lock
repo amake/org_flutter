@@ -193,7 +193,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "6.0.2"
+    version: "6.0.3"
   org_parser:
     dependency: transitive
     description:

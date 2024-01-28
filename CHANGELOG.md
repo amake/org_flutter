@@ -1,3 +1,6 @@
+## [6.0.3] - 2024-01-28
+* Improve search behavior
+
 ## [6.0.2] - 2024-01-23
 * Highlight headlines of sparse query matches
 * Fix various sparse query matching bugs
