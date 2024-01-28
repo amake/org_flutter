@@ -292,10 +292,10 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   }
 
   final ValueNotifier<List<SearchResultKey>> _searchResultKeys =
-      ValueNotifier([]);
+      SafeValueNotifier([]);
 
   final ValueNotifier<Map<String, FootnoteKey>> _footnoteKeys =
-      ValueNotifier({});
+      SafeValueNotifier({});
 
   @override
   void dispose() {
