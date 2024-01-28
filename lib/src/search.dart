@@ -30,6 +30,8 @@ class SearchResultState extends State<SearchResult> {
     _controller = OrgController.of(context);
   }
 
+  bool get selected => _selected;
+
   set selected(bool value) {
     setState(() => _selected = value);
   }
