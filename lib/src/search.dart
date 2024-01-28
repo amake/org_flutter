@@ -22,9 +22,25 @@ class SearchResult extends StatefulWidget {
 /// highlighting.
 class SearchResultState extends State<SearchResult> {
   bool _selected = false;
+  late OrgControllerData _controller;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _controller = OrgController.of(context);
+  }
 
   set selected(bool value) {
     setState(() => _selected = value);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    final key = widget.key;
+    if (key is SearchResultKey) {
+      _controller.removeSearchResultKey(key);
+    }
   }
 
   @override

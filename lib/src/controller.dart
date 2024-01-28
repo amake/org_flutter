@@ -561,6 +561,14 @@ class OrgControllerData extends InheritedWidget {
     return key;
   }
 
+  void removeSearchResultKey(SearchResultKey key) {
+    final keys = searchResultKeys as SafeValueNotifier<List<SearchResultKey>>;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (keys.disposed) return;
+      keys.value = [...keys.value..remove(key)];
+    });
+  }
+
   FootnoteKey generateFootnoteKey(String id, {String? label}) {
     final key = FootnoteKey(debugLabel: label);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
