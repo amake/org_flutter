@@ -69,19 +69,26 @@ class OrgDataNodeMap {
   Set<OrgVisibilityState> get currentVisibility =>
       _data.values.map((e) => e.visibility.value).toSet();
 
-  Map<String, dynamic> toJson(OrgTree root) {
-    final json = <String, dynamic>{};
+  Map<String, dynamic> toJson(OrgTree root) =>
+      _toTitleMap(root, (node) => node.visibility.value.toJson());
+
+  Map<String, OrgVisibilityState> toTitleMap(OrgTree root) =>
+      _toTitleMap(root, (node) => node.visibility.value);
+
+  Map<String, T> _toTitleMap<T>(
+      OrgTree root, T Function(OrgDataNode) transform) {
+    final result = <String, T>{};
     root.visitSections((subtree) {
       final node = _data[subtree.id];
       if (node != null) {
         final title = subtree.headline.rawTitle;
         if (title != null) {
-          json[title] = node.visibility.value.toJson();
+          result[title] = transform(node);
         }
       }
       return true;
     });
-    return json;
+    return result;
   }
 
   void dispose() {
@@ -323,6 +330,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       restorationId: widget.restorationId,
       ensureVisible: _ensureVisible,
       setVisibilityOf: _setVisibilityOf,
+      adaptVisibility: _adaptVisibility,
       child: widget.child,
     );
   }
@@ -427,6 +435,22 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     _notifyState();
   }
 
+  void _adaptVisibility(OrgTree tree, {OrgVisibilityState? defaultState}) {
+    final visibilityByTitle = _nodeMap.toTitleMap(_root);
+    tree.visitSections((section) {
+      final title = section.headline.rawTitle;
+      if (title != null) {
+        final visibility = visibilityByTitle[title] ?? defaultState;
+        if (visibility != null) {
+          final node = _nodeMap.nodeFor(section);
+          node.visibility.value = visibility;
+        }
+      }
+      return true;
+    });
+    _notifyState();
+  }
+
   void _notifyState() {
     final nodeMapString = json.encode(_nodeMap.toJson(_root));
     bucket?.write<String>(_kTransientStateNodeMapKey, nodeMapString);
@@ -446,6 +470,7 @@ class OrgControllerData extends InheritedWidget {
     required this.cycleVisibilityOf,
     required this.ensureVisible,
     required this.setVisibilityOf,
+    required this.adaptVisibility,
     required OrgSettings? callerSettings,
     required OrgSettings? embeddedSettings,
     String? restorationId,
@@ -500,6 +525,15 @@ class OrgControllerData extends InheritedWidget {
 
   /// Set the visibility of the specified tree
   final void Function(OrgTree, OrgVisibilitySetter) setVisibilityOf;
+
+  /// Set visibility for sections in the specified tree by best-effort matching
+  /// to known sections. This is useful for ensuring visibility continuity in
+  /// the case where the current tree has been entirely or partially replaced by
+  /// a freshly re-parsed tree in which [OrgTree.id] will no longer match.
+  //
+  // TODO(aaron): This is weirdly specific and feels hacky
+  final void Function(OrgTree, {OrgVisibilityState? defaultState})
+      adaptVisibility;
 
   final String? _restorationId;
 
