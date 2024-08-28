@@ -16,6 +16,8 @@ jobs:
     - uses: subosito/flutter-action@v2
       with:
         channel: beta
+        # Pin version due to https://github.com/letsar/flutter_slidable/issues/488
+        flutter-version: '3.24.0-0.2.pre'
     - name: Install dependencies
       run: flutter pub get
     - name: Analyze
