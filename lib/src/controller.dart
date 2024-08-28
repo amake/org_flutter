@@ -18,6 +18,8 @@ const _kTransientStateNodeMapKey = 'node_map';
 // https://github.com/dart-lang/sdk/blob/d252bb11a342f011485b9c9fe7c56a246e92b12b/pkg/front_end/lib/src/fasta/kernel/body_builder.dart#L6614
 typedef FootnoteKey = GlobalKey<State>;
 
+typedef OrgVisibilitySetter = OrgVisibilityState Function(OrgVisibilityState);
+
 /// A collection of temporary data about an Org Mode document used for display
 /// purposes.
 class OrgDataNodeMap {
@@ -320,6 +322,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       cycleVisibilityOf: _cycleVisibilityOf,
       restorationId: widget.restorationId,
       ensureVisible: _ensureVisible,
+      setVisibilityOf: _setVisibilityOf,
       child: widget.child,
     );
   }
@@ -414,6 +417,15 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     }
   }
 
+  void _setVisibilityOf(OrgTree tree, OrgVisibilitySetter setter) {
+    final node = _nodeMap.nodeFor(tree);
+    final newValue = setter(node.visibility.value);
+    debugPrint(
+        'Setting visibility; from=${node.visibility.value}, to=$newValue');
+    node.visibility.value = newValue;
+    _notifyState();
+  }
+
   void _notifyState() {
     final nodeMapString = json.encode(_nodeMap.toJson(_root));
     bucket?.write<String>(_kTransientStateNodeMapKey, nodeMapString);
@@ -432,6 +444,7 @@ class OrgControllerData extends InheritedWidget {
     required this.cycleVisibility,
     required this.cycleVisibilityOf,
     required this.ensureVisible,
+    required this.setVisibilityOf,
     required OrgSettings? callerSettings,
     required OrgSettings? embeddedSettings,
     String? restorationId,
@@ -483,6 +496,9 @@ class OrgControllerData extends InheritedWidget {
 
   /// Adjust visibility of sections so that the specified path is visible
   final void Function(OrgPath) ensureVisible;
+
+  /// Set the visibility of the specified tree
+  final void Function(OrgTree, OrgVisibilitySetter) setVisibilityOf;
 
   final String? _restorationId;
 
