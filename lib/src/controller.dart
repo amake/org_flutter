@@ -415,6 +415,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       final visibilityListenable = _nodeMap.nodeFor(section);
       visibilityListenable.visibility.value = OrgVisibilityState.children;
     }
+    _notifyState();
   }
 
   void _setVisibilityOf(OrgTree tree, OrgVisibilitySetter setter) {
