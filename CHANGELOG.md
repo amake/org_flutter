@@ -1,3 +1,6 @@
+## [6.1.0] - 2024-08-28
+* Add `setVisibilityOf`, `adaptVisibility` methods to `OrgControllerData`
+
 ## [6.0.3] - 2024-01-28
 * Improve search behavior
 
