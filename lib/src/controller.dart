@@ -558,12 +558,15 @@ class OrgControllerData extends InheritedWidget {
       _sectionSearch((section) => section.headline.rawTitle == title);
 
   /// Find the section with the specified ID
-  OrgSection? sectionWithId(String id) =>
-      _sectionSearch((section) => section.ids.contains(id));
+  OrgTree? sectionWithId(String id) => root.ids.contains(id)
+      ? root
+      : _sectionSearch((section) => section.ids.contains(id));
 
   /// Find the section with the specified custom ID
-  OrgSection? sectionWithCustomId(String customId) =>
-      _sectionSearch((section) => section.customIds.contains(customId));
+  OrgTree? sectionWithCustomId(String customId) =>
+      root.customIds.contains(customId)
+          ? root
+          : _sectionSearch((section) => section.customIds.contains(customId));
 
   /// Find the section corresponding to [target], which may be one of
   ///
@@ -576,7 +579,7 @@ class OrgControllerData extends InheritedWidget {
   ///
   /// If [target] is none of the above three types, an [Exception] will be
   /// thrown.
-  OrgSection? sectionForTarget(String target) {
+  OrgTree? sectionForTarget(String target) {
     if (isOrgLocalSectionUrl(target)) {
       return sectionWithTitle(parseOrgLocalSectionUrl(target));
     } else if (isOrgIdUrl(target)) {

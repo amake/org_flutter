@@ -306,6 +306,54 @@ bar
           await tester.pump();
           expect(invoked, isTrue);
         });
+        testWidgets('Root by ID', (tester) async {
+          var invoked = false;
+          await tester.pumpWidget(_wrap(Org(
+            '''
+:PROPERTIES:
+:ID: foo
+:END:
+* Bar
+[[id:foo][link]]
+''',
+            onLocalSectionLinkTap: (section) {
+              invoked = true;
+              expect(
+                section.toMarkup(),
+                ':PROPERTIES:\n:ID: foo\n:END:\n* Bar\n[[id:foo][link]]\n',
+              );
+            },
+          )));
+          await tester.tap(find.byType(OrgHeadlineWidget));
+          await tester.pumpAndSettle();
+          await tester.tapOnText(find.textRange.ofSubstring('link'));
+          await tester.pumpAndSettle();
+          expect(invoked, isTrue);
+        });
+        testWidgets('Root by custom ID', (tester) async {
+          var invoked = false;
+          await tester.pumpWidget(_wrap(Org(
+            '''
+:PROPERTIES:
+:CUSTOM_ID: foo123
+:END:
+* Bar
+[[#foo123][link]]
+''',
+            onLocalSectionLinkTap: (section) {
+              invoked = true;
+              expect(
+                section.toMarkup(),
+                ':PROPERTIES:\n:CUSTOM_ID: foo123\n:END:\n* Bar\n[[#foo123][link]]\n',
+              );
+            },
+          )));
+          await tester.tap(find.byType(OrgHeadlineWidget));
+          await tester.pumpAndSettle();
+          await tester.tapOnText(find.textRange.ofSubstring('link'));
+          await tester.pumpAndSettle();
+          expect(invoked, isTrue);
+        });
       });
       testWidgets('Long press section', (tester) async {
         var invoked = false;

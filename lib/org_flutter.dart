@@ -58,7 +58,7 @@ class Org extends StatefulWidget {
   /// A callback invoked when the user taps on a link to a section within the
   /// current document. The argument is the target section. You might want to
   /// display it somehow.
-  final void Function(OrgSection)? onLocalSectionLinkTap;
+  final void Function(OrgTree)? onLocalSectionLinkTap;
 
   /// A callback invoked when the user long-presses on a section headline within
   /// the current document. The argument is the pressed section. You might want
