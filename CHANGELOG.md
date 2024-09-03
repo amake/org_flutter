@@ -1,3 +1,6 @@
+## [7.0.0] - 2024-09-03
+* `onLocalSectionLinkTap` can now return the root document as well
+
 ## [6.1.0] - 2024-08-28
 * Add `setVisibilityOf`, `adaptVisibility` methods to `OrgControllerData`
 
