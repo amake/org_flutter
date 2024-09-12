@@ -1,3 +1,6 @@
+## [7.1.0] - 2024-09-13
+* Update dependencies for Flutter 3.26
+
 ## [7.0.0] - 2024-09-03
 * `onLocalSectionLinkTap` can now return the root document as well
 
