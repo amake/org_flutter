@@ -1,3 +1,9 @@
+## [7.2.0] - 2024-09-23
+* Bump org_parser to 6.0.0 with support for `#+TODO:` keywords. See the Advanced
+  example in the README.
+* Expose TODO settings on `OrgSettings.todoSettings`
+* Respect "in-progress" vs "done" keyword status in org_parser AST
+
 ## [7.1.0] - 2024-09-13
 * Update dependencies for Flutter 3.26
 

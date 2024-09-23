@@ -42,7 +42,11 @@ in concert with `OrgRootWidget`:
 import 'package:org_flutter/org_flutter.dart';
 
 Widget build(BuildContext context) {
-  final doc = OrgDocument.parse(rawOrgModeDocString);
+  final doc = OrgDocument.parse(
+    rawOrgModeDocString,
+    // Interpret e.g. #+TODO: settings at the cost of a second parsing pass
+    interpretEmbeddedSettings: true,
+  );
   return OrgController(
     root: doc,
     child: OrgRootWidget(
