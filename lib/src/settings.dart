@@ -19,7 +19,7 @@ const _kDefaultVisibilityState = OrgVisibilityState.folded;
 
 /// A collection of settings that affect the appearance of the document
 class OrgSettings {
-  static OrgSettings get defaults => const OrgSettings(
+  static OrgSettings get defaults => OrgSettings(
         reflowText: _kDefaultReflowText,
         deemphasizeMarkup: _kDefaultDeemphasizeMarkup,
         startupFolded: _kDefaultVisibilityState,
@@ -30,6 +30,7 @@ class OrgSettings {
         inlineImages: _kDefaultInlineImages,
         hideEmphasisMarkers: _kDefaultHideEmphasisMarkers,
         entityReplacements: orgDefaultEntityReplacements,
+        todoSettings: [defaultTodoStates],
       );
 
   /// Equivalent to the old "hideMarkup" setting
@@ -43,6 +44,7 @@ class OrgSettings {
   /// specifically:
   ///
   /// - `#+STARTUP:` keywords
+  /// - `#+TODO:` (and related) keywords
   /// - Local variable list settings for relevant Org Mode variables
   ///
   /// Errors encountered during processing will be reported to [errorHandler].
@@ -131,6 +133,12 @@ class OrgSettings {
     } catch (e) {
       errorHandler.call(e);
     }
+
+    final extractedTodoStates = extractTodoSettings(doc);
+    final todoSettings = extractedTodoStates.isNotEmpty
+        ? extractedTodoStates
+        : [defaultTodoStates];
+
     return OrgSettings(
       startupFolded: startupFolded,
       hideEmphasisMarkers: hideEmphasisMarkers,
@@ -140,6 +148,7 @@ class OrgSettings {
       hideStars: hideStars,
       inlineImages: inlineImages,
       entityReplacements: entityReplacements,
+      todoSettings: todoSettings,
     );
   }
 
@@ -154,6 +163,7 @@ class OrgSettings {
     this.hideStars,
     this.inlineImages,
     this.entityReplacements,
+    this.todoSettings,
   });
 
   /// Whether to reflow text to remove intra-paragraph line breaks. Does not map
@@ -206,6 +216,10 @@ class OrgSettings {
   /// [orgDefaultEntityReplacements].
   final Map<String, String>? entityReplacements;
 
+  /// The TODO states as defined by `#+TODO:` and related keywords. Defaults to
+  /// [defaultTodoStates], i.e. `#+TODO: TODO | DONE`.
+  final List<OrgTodoStates>? todoSettings;
+
   @override
   bool operator ==(Object other) =>
       other is OrgSettings &&
@@ -218,7 +232,8 @@ class OrgSettings {
       hideDrawerStartup == other.hideDrawerStartup &&
       hideStars == other.hideStars &&
       inlineImages == other.inlineImages &&
-      mapEquals(entityReplacements, other.entityReplacements);
+      mapEquals(entityReplacements, other.entityReplacements) &&
+      listEquals(todoSettings, other.todoSettings);
 
   @override
   int get hashCode => Object.hash(
@@ -231,7 +246,13 @@ class OrgSettings {
         hideDrawerStartup,
         hideStars,
         inlineImages,
-        entityReplacements,
+        entityReplacements == null
+            ? null
+            : Object.hashAll(entityReplacements!.keys),
+        entityReplacements == null
+            ? null
+            : Object.hashAll(entityReplacements!.values),
+        todoSettings == null ? null : Object.hashAll(todoSettings!),
       );
 
   OrgSettings copyWith({
@@ -245,6 +266,7 @@ class OrgSettings {
     bool? hideStars,
     bool? inlineImages,
     Map<String, String>? entityReplacements,
+    List<OrgTodoStates>? todoSettings,
   }) =>
       OrgSettings(
         reflowText: reflowText ?? this.reflowText,
@@ -257,6 +279,7 @@ class OrgSettings {
         hideStars: hideStars ?? this.hideStars,
         inlineImages: inlineImages ?? this.inlineImages,
         entityReplacements: entityReplacements ?? this.entityReplacements,
+        todoSettings: todoSettings ?? this.todoSettings,
       );
 }
 
@@ -296,4 +319,8 @@ extension LayeredOrgSettings on List<OrgSettings> {
   Map<String, String> get entityReplacements =>
       firstWhere((layer) => layer.entityReplacements != null,
           orElse: () => OrgSettings.defaults).entityReplacements!;
+
+  List<OrgTodoStates> get todoSettings =>
+      firstWhere((layer) => layer.todoSettings != null,
+          orElse: () => OrgSettings.defaults).todoSettings!;
 }
