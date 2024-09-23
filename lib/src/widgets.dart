@@ -316,7 +316,7 @@ class OrgHeadlineWidget extends StatelessWidget {
                   spanBuilder.highlightedSpan(
                       headline.keyword!.value + headline.keyword!.trailing,
                       style: DefaultTextStyle.of(context).style.copyWith(
-                          color: headline.keyword!.value == 'DONE'
+                          color: headline.keyword!.done
                               ? theme.doneColor
                               : theme.todoColor)),
                 if (headline.priority != null)
