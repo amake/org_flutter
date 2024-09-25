@@ -58,6 +58,7 @@ class OrgRootWidget extends StatelessWidget {
     this.onSectionLongPress,
     this.onSectionSlide,
     this.onListItemTap,
+    this.onCitationTap,
     this.loadImage,
     super.key,
   });
@@ -96,6 +97,9 @@ class OrgRootWidget extends StatelessWidget {
   /// want to toggle the checkbox.
   final void Function(OrgListItem)? onListItemTap;
 
+  /// A callback invoked when the user taps on a citation.
+  final void Function(OrgCitation)? onCitationTap;
+
   /// A callback invoked when an image should be displayed. The argument is the
   /// [OrgLink] describing where the image data can be found. It is your
   /// responsibility to resolve the link, fetch the data, and return a widget
@@ -116,6 +120,7 @@ class OrgRootWidget extends StatelessWidget {
         onLocalSectionLinkTap: onLocalSectionLinkTap,
         loadImage: loadImage,
         onListItemTap: onListItemTap,
+        onCitationTap: onCitationTap,
         child: IdentityTextScale(child: child),
       ),
     );
@@ -658,6 +663,47 @@ class OrgFootnoteWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+class OrgCitationWidget extends StatelessWidget {
+  const OrgCitationWidget(this.citation, {super.key});
+  final OrgCitation citation;
+
+  @override
+  Widget build(BuildContext context) {
+    final defaultStyle = DefaultTextStyle.of(context).style;
+    final citationStyle = defaultStyle.copyWith(
+      color: OrgTheme.dataOf(context).citationColor,
+    );
+
+    return FancySpanBuilder(
+      builder: (context, spanBuilder) => InkWell(
+        onTap: () => _onTap(context),
+        child: Text.rich(
+          TextSpan(
+            children: [
+              spanBuilder.highlightedSpan(citation.leading,
+                  style: citationStyle),
+              if (citation.style != null)
+                spanBuilder.highlightedSpan(citation.style!.leading,
+                    style: citationStyle),
+              if (citation.style != null)
+                spanBuilder.highlightedSpan(citation.style!.value,
+                    style: citationStyle),
+              spanBuilder.highlightedSpan(citation.delimiter,
+                  style: citationStyle),
+              spanBuilder.highlightedSpan(citation.body, style: citationStyle),
+              spanBuilder.highlightedSpan(citation.trailing,
+                  style: citationStyle),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _onTap(BuildContext context) =>
+      OrgEvents.of(context).onCitationTap?.call(citation);
 }
 
 /// An Org Mode meta line

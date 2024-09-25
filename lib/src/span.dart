@@ -102,6 +102,8 @@ class OrgSpanBuilder {
       return WidgetSpan(child: OrgFootnoteReferenceWidget(element, key: key));
     } else if (element is OrgFootnote) {
       return WidgetSpan(child: OrgFootnoteWidget(element));
+    } else if (element is OrgCitation) {
+      return WidgetSpan(child: OrgCitationWidget(element));
     } else if (element is OrgMeta) {
       return WidgetSpan(child: OrgMetaWidget(element));
     } else if (element is OrgBlock) {

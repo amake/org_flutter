@@ -12,6 +12,7 @@ class OrgEvents extends InheritedWidget {
     this.onSectionLongPress,
     this.onSectionSlide,
     this.onListItemTap,
+    this.onCitationTap,
     this.loadImage,
     super.key,
   });
@@ -41,6 +42,9 @@ class OrgEvents extends InheritedWidget {
   /// within the current document. The argument is the tapped item. You might
   /// want to toggle the checkbox.
   final void Function(OrgListItem)? onListItemTap;
+
+  /// A callback invoked when the user taps on a citation.
+  final void Function(OrgCitation)? onCitationTap;
 
   /// A callback invoked when an image should be displayed. The argument is the
   /// [OrgLink] describing where the image data can be found. It is your

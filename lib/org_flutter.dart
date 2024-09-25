@@ -33,6 +33,7 @@ class Org extends StatefulWidget {
     this.onSectionLongPress,
     this.onSectionSlide,
     this.onListItemTap,
+    this.onCitationTap,
     this.loadImage,
     this.restorationId,
     super.key,
@@ -84,6 +85,9 @@ class Org extends StatefulWidget {
   /// want to toggle the checkbox.
   final void Function(OrgListItem)? onListItemTap;
 
+  /// A callback invoked when the user taps on a citation.
+  final void Function(OrgCitation)? onCitationTap;
+
   /// An ID for temporary state restoration. Supply a unique ID to ensure that
   /// temporary state such as scroll position is preserved as appropriate.
   final String? restorationId;
@@ -116,6 +120,7 @@ class _OrgState extends State<Org> {
         onSectionLongPress: widget.onSectionLongPress,
         onSectionSlide: widget.onSectionSlide,
         onListItemTap: widget.onListItemTap,
+        onCitationTap: widget.onCitationTap,
         loadImage: widget.loadImage,
         child: OrgDocumentWidget(_doc),
       ),

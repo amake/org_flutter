@@ -39,6 +39,7 @@ const _orgTableColorLight = Color(0xff0000ff);
 const _orgKeywordColorLight = Color(0xffa020f0);
 const _orgHighlightColorLight = Color(0xffffff00);
 const _orgFootnoteColorLight = Color(0xffa020f0);
+const _orgCitationColorLight = Color(0xff3a5fcd);
 
 const _orgLevelColorsDark = [
   Color(0xff87cefa),
@@ -63,6 +64,7 @@ const _orgTableColorDark = Color(0xff87cefa);
 const _orgKeywordColorDark = Color(0xff00ffff);
 const _orgHighlightColorDark = Color(0xff4a708b);
 const _orgFootnoteColorDark = Color(0xff00ffff);
+const _orgCitationColorDark = Color(0xff00ffff);
 
 const _orgRootPadding = EdgeInsets.all(8);
 
@@ -166,6 +168,7 @@ class OrgThemeData {
           keywordColor: _orgKeywordColorLight,
           highlightColor: _orgHighlightColorLight,
           footnoteColor: _orgFootnoteColorLight,
+          citationColor: _orgCitationColorLight,
           levelColors: _orgLevelColorsLight,
           srcTheme: _orgSrcThemeLight,
           rootPadding: _orgRootPadding,
@@ -186,6 +189,7 @@ class OrgThemeData {
           keywordColor: _orgKeywordColorDark,
           highlightColor: _orgHighlightColorDark,
           footnoteColor: _orgFootnoteColorDark,
+          citationColor: _orgCitationColorDark,
           levelColors: _orgLevelColorsDark,
           srcTheme: _orgSrcThemeDark,
           rootPadding: _orgRootPadding,
@@ -205,6 +209,7 @@ class OrgThemeData {
     this.keywordColor,
     this.highlightColor,
     this.footnoteColor,
+    this.citationColor,
     this.rootPadding,
     Iterable<Color>? levelColors,
     Map<String, TextStyle>? srcTheme,
@@ -225,6 +230,7 @@ class OrgThemeData {
   final Color? keywordColor;
   final Color? highlightColor;
   final Color? footnoteColor;
+  final Color? citationColor;
   final List<Color>? levelColors;
   final Map<String, TextStyle>? srcTheme;
 
@@ -265,6 +271,7 @@ class OrgThemeData {
     Color? keywordColor,
     Color? highlightColor,
     Color? footnoteColor,
+    Color? citationColor,
     Iterable<Color>? levelColors,
     Map<String, TextStyle>? srcTheme,
     EdgeInsets? rootPadding,
@@ -283,6 +290,7 @@ class OrgThemeData {
         keywordColor: keywordColor ?? this.keywordColor,
         highlightColor: highlightColor ?? this.highlightColor,
         footnoteColor: footnoteColor ?? this.footnoteColor,
+        citationColor: citationColor ?? this.citationColor,
         levelColors: levelColors ?? this.levelColors,
         srcTheme: srcTheme ?? this.srcTheme,
         rootPadding: rootPadding ?? this.rootPadding,
@@ -307,6 +315,7 @@ class OrgThemeData {
         keywordColor == other.keywordColor &&
         highlightColor == other.highlightColor &&
         footnoteColor == other.footnoteColor &&
+        citationColor == other.citationColor &&
         listEquals(levelColors, other.levelColors) &&
         mapEquals(srcTheme, other.srcTheme) &&
         rootPadding == other.rootPadding;
@@ -327,6 +336,7 @@ class OrgThemeData {
         keywordColor,
         highlightColor,
         footnoteColor,
+        citationColor,
         levelColors == null ? null : Object.hashAll(levelColors!),
         srcTheme == null ? null : Object.hashAll(srcTheme!.keys),
         srcTheme == null ? null : Object.hashAll(srcTheme!.values),
@@ -352,6 +362,7 @@ class OrgThemeData {
       keywordColor: Color.lerp(a?.keywordColor, b?.keywordColor, t),
       highlightColor: Color.lerp(a?.highlightColor, b?.highlightColor, t),
       footnoteColor: Color.lerp(a?.footnoteColor, b?.footnoteColor, t),
+      citationColor: Color.lerp(a?.citationColor, b?.citationColor, t),
       levelColors: _lerpColorLists(a?.levelColors, b?.levelColors, t),
       srcTheme: _lerpSrcThemes(a?.srcTheme, b?.srcTheme, t),
       rootPadding: EdgeInsets.lerp(a?.rootPadding, b?.rootPadding, t),
