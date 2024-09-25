@@ -327,8 +327,9 @@ class OrgThemeData {
         keywordColor,
         highlightColor,
         footnoteColor,
-        levelColors,
-        srcTheme,
+        levelColors == null ? null : Object.hashAll(levelColors!),
+        srcTheme == null ? null : Object.hashAll(srcTheme!.keys),
+        srcTheme == null ? null : Object.hashAll(srcTheme!.values),
         rootPadding,
       );
 
