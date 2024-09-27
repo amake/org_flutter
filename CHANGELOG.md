@@ -1,3 +1,8 @@
+## [7.3.0] - 2024-09-27
+* Bump org_parser to 6.1.0 with support for Org Cite `[cite:@key]` citations
+  * Provide an `onCitationTap` callback to `Org` etc., to handle taps
+  * Customize the color with `OrgThemeData.citationColor`
+
 ## [7.2.0] - 2024-09-23
 * Bump org_parser to 6.0.0 with support for `#+TODO:` keywords. See the Advanced
   example in the README.
