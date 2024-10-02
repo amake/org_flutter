@@ -31,6 +31,7 @@ class OrgSpanBuilder {
     OrgNode element, {
     TextStyle? style,
     Transformer transformer = identityTransformer,
+    bool inlineImages = true,
   }) {
     style ??= DefaultTextStyle.of(context).style;
     if (element is OrgPlainText) {
@@ -65,7 +66,8 @@ class OrgSpanBuilder {
       );
     } else if (element is OrgLink) {
       if (looksLikeImagePath(element.location) &&
-          OrgController.of(context).settings.inlineImages) {
+          OrgController.of(context).settings.inlineImages &&
+          inlineImages) {
         final imageWidget = OrgEvents.of(context).loadImage?.call(element);
         if (imageWidget != null) {
           return WidgetSpan(child: imageWidget);
