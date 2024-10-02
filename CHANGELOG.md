@@ -1,3 +1,6 @@
+## [7.4.0] - 2024-10-02
+* Add `OrgLinkWidget`
+
 ## [7.3.0] - 2024-09-27
 * Bump org_parser to 6.1.0 with support for Org Cite `[cite:@key]` citations
   * Provide an `onCitationTap` callback to `Org` etc., to handle taps
