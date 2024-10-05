@@ -1007,9 +1007,10 @@ class OrgListItemWidget extends StatelessWidget {
       yield builder.build(item.body!, transformer: (elem, content) {
         final isLast = identical(item.body!.children.last, elem);
         final reflow = OrgController.of(context).settings.reflowText;
-        final formattedContent = reflow
-            ? reflowText(content, end: isLast)
-            : deindent(content, totalIndentSize);
+        var formattedContent = deindent(content, totalIndentSize);
+        if (reflow) {
+          formattedContent = reflowText(formattedContent, end: isLast);
+        }
         return isLast
             ? removeTrailingLineBreak(formattedContent)
             : formattedContent;
