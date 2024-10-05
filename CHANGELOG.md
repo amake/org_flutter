@@ -1,3 +1,7 @@
+## [7.4.1] - 2024-10-05
+* Fix layout of inline widgets, especially images
+* Fix indentation of list bodies when not using text reflow
+
 ## [7.4.0] - 2024-10-02
 * Add `OrgLinkWidget`
 
