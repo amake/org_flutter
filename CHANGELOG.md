@@ -1,3 +1,6 @@
+## [7.4.2] - 2024-10-09
+* Fix extra space under drawers
+
 ## [7.4.1] - 2024-10-05
 * Fix layout of inline widgets, especially images
 * Fix indentation of list bodies when not using text reflow
