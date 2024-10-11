@@ -1251,6 +1251,7 @@ class OrgLatexInlineWidget extends StatelessWidget {
   }
 }
 
+/// An Org Local Variables block
 class OrgLocalVariablesWidget extends StatelessWidget {
   const OrgLocalVariablesWidget(this.variables, {super.key});
   final OrgLocalVariables variables;
@@ -1277,6 +1278,7 @@ class OrgLocalVariablesWidget extends StatelessWidget {
   }
 }
 
+/// An Org PGP block
 class OrgPgpBlockWidget extends StatelessWidget {
   const OrgPgpBlockWidget(this.block, {super.key});
   final OrgPgpBlock block;
@@ -1298,6 +1300,7 @@ class OrgPgpBlockWidget extends StatelessWidget {
   }
 }
 
+/// An Org comment
 class OrgCommentWidget extends StatelessWidget {
   const OrgCommentWidget(this.comment, {super.key});
   final OrgComment comment;
@@ -1322,6 +1325,7 @@ class OrgCommentWidget extends StatelessWidget {
   }
 }
 
+/// A widget representing content decrypted from an [OrgPgpBlock]
 class OrgDecryptedContentWidget extends StatelessWidget {
   const OrgDecryptedContentWidget(this.content, {super.key});
 
