@@ -97,6 +97,18 @@ class OrgSpanBuilder {
           decoration: TextDecoration.underline,
         ),
       );
+    } else if (element is OrgSuperscript) {
+      if (OrgController.of(context).settings.prettyEntities) {
+        return WidgetSpan(child: OrgSuperscriptWidget(element));
+      } else {
+        return highlightedSpan(element.leading + element.body);
+      }
+    } else if (element is OrgSubscript) {
+      if (OrgController.of(context).settings.prettyEntities) {
+        return WidgetSpan(child: OrgSubscriptWidget(element));
+      } else {
+        return highlightedSpan(element.leading + element.body);
+      }
     } else if (element is OrgFootnoteReference) {
       final key = element.name == null
           ? null

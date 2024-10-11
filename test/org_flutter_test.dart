@@ -18,6 +18,13 @@ void main() {
       await tester.pumpWidget(_wrap(const Org('foo bar')));
       expect(find.text('foo bar'), findsOneWidget);
     });
+    testWidgets('Pretty', (tester) async {
+      await tester.pumpWidget(_wrap(const Org(r'foo \smiley bar^{2}')));
+      expect(find.textContaining('☺'), findsOneWidget);
+      expect(find.textContaining(r'\smiley'), findsNothing);
+      expect(find.textContaining('2'), findsOneWidget);
+      expect(find.textContaining('{2}'), findsNothing);
+    });
     group('Visibility cycling', () {
       testWidgets('Headline tap', (tester) async {
         await tester.pumpWidget(_wrap(const Org('''
@@ -645,9 +652,9 @@ foo \pineapple bar
       await tester.pumpWidget(_wrap(widget));
       expect(find.textContaining('foo \u{1f34d} bar'), findsOneWidget);
     });
-    testWidgets('Disable entities', (tester) async {
+    testWidgets('Disable pretty', (tester) async {
       final doc = OrgDocument.parse(r'''
-foo \smiley bar
+foo \smiley bar^{2}
 
 # Local Variables:
 # org-pretty-entities: nil
@@ -665,6 +672,7 @@ foo \smiley bar
       );
       await tester.pumpWidget(_wrap(widget));
       expect(find.textContaining('foo'), findsOneWidget);
+      expect(find.textContaining('^{2}'), findsOneWidget);
       expect(find.textContaining('☺'), findsNothing);
     });
     testWidgets('Hide markup', (tester) async {
@@ -871,7 +879,7 @@ biz baz
     });
     testWidgets('Disable entities', (tester) async {
       final doc = OrgDocument.parse(r'''
-foo \smiley bar
+foo \smiley bar^{2}
 
 #+STARTUP: entitiesplain
 ''');
@@ -887,6 +895,7 @@ foo \smiley bar
       );
       await tester.pumpWidget(_wrap(widget));
       expect(find.textContaining('foo'), findsOneWidget);
+      expect(find.textContaining('^{2}'), findsOneWidget);
       expect(find.textContaining('☺'), findsNothing);
     });
     testWidgets('Disable inline images', (tester) async {
