@@ -1264,15 +1264,18 @@ class OrgLocalVariablesWidget extends StatelessWidget {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Text.rich(
-        TextSpan(children: [
-          TextSpan(text: variables.start),
-          for (final entry in variables.entries)
-            TextSpan(
-                text: [entry.prefix, entry.content, entry.suffix].join('')),
-          TextSpan(text: variables.end),
-        ]),
-        style: metaStyle,
+      child: FancySpanBuilder(
+        builder: (context, spanBuilder) => Text.rich(
+          TextSpan(children: [
+            spanBuilder.highlightedSpan(variables.start, style: metaStyle),
+            for (final entry in variables.entries)
+              spanBuilder.highlightedSpan(
+                entry.prefix + entry.content + entry.suffix,
+                style: metaStyle,
+              ),
+            spanBuilder.highlightedSpan(variables.end, style: metaStyle),
+          ]),
+        ),
       ),
     );
   }
@@ -1287,14 +1290,16 @@ class OrgPgpBlockWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Text.rich(
-        TextSpan(children: [
-          TextSpan(text: block.indent),
-          TextSpan(text: block.header),
-          TextSpan(text: block.body),
-          TextSpan(text: block.footer),
-          TextSpan(text: block.trailing),
-        ]),
+      child: FancySpanBuilder(
+        builder: (context, spanBuilder) => Text.rich(
+          TextSpan(children: [
+            spanBuilder.highlightedSpan(block.indent),
+            spanBuilder.highlightedSpan(block.header),
+            spanBuilder.highlightedSpan(block.body),
+            spanBuilder.highlightedSpan(block.footer),
+            spanBuilder.highlightedSpan(block.trailing),
+          ]),
+        ),
       ),
     );
   }
@@ -1310,15 +1315,22 @@ class OrgCommentWidget extends StatelessWidget {
     final hideMarkup = OrgController.of(context).settings.deemphasizeMarkup;
     final body = SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Text.rich(
-        TextSpan(children: [
-          TextSpan(text: comment.indent),
-          TextSpan(text: comment.start),
-          TextSpan(text: removeTrailingLineBreak(comment.content)),
-        ]),
-        style: DefaultTextStyle.of(context)
-            .style
-            .copyWith(color: OrgTheme.dataOf(context).metaColor),
+      child: FancySpanBuilder(
+        builder: (context, spanBuilder) {
+          final metaStyle = DefaultTextStyle.of(context)
+              .style
+              .copyWith(color: OrgTheme.dataOf(context).metaColor);
+          return Text.rich(
+            TextSpan(children: [
+              spanBuilder.highlightedSpan(comment.indent, style: metaStyle),
+              spanBuilder.highlightedSpan(comment.start, style: metaStyle),
+              spanBuilder.highlightedSpan(
+                removeTrailingLineBreak(comment.content),
+                style: metaStyle,
+              ),
+            ]),
+          );
+        },
       ),
     );
     return reduceOpacity(body, enabled: hideMarkup);
