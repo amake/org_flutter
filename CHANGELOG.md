@@ -1,3 +1,8 @@
+## [7.5.0] - 2024-10-12
+* Render superscripts and subscripts. These are controlled by the same flags as
+  entities.
+* Local variables blocks, PGP blogs, and comments are now searchable
+
 ## [7.4.2] - 2024-10-09
 * Fix extra space under drawers
 
