@@ -1,5 +1,3 @@
-library org_flutter;
-
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/settings.dart';
