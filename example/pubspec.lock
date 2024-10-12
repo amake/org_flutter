@@ -187,6 +187,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.15.0"
+  more:
+    dependency: transitive
+    description:
+      name: more
+      sha256: b9372ef11909cb88a7a29e221d96fbe17eb04394f022e374a4299a6c72946108
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.0"
   org_flutter:
     dependency: "direct main"
     description:
@@ -198,10 +206,10 @@ packages:
     dependency: transitive
     description:
       name: org_parser
-      sha256: c7fe4b3f58dfbbd959e9248492ed264cab3e035fff635864047471b5bb2d6c31
+      sha256: b3abfd157484e939e99de16c2b931b6f15a8db6eb1180457155ccefcd80fcebe
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.1"
+    version: "6.2.2"
   path:
     dependency: transitive
     description:
