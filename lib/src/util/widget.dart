@@ -48,3 +48,20 @@ const _kReducedOpacity = 0.6;
 
 Widget reduceOpacity(Widget child, {bool enabled = true}) =>
     enabled ? Opacity(opacity: _kReducedOpacity, child: child) : child;
+
+/// A utility for overriding the text scale to be 1
+class IdentityTextScale extends StatelessWidget {
+  const IdentityTextScale({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        textScaler: const TextScaler.linear(1),
+      ),
+      child: child,
+    );
+  }
+}
