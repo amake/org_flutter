@@ -366,12 +366,12 @@ class OrgHeadlineWidget extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text.rich(
-                              spanBuilder.highlightedSpan(
-                                  headline.tags!.leading +
-                                      headline.tags!.values.join(':') +
-                                      headline.tags!.trailing),
-                              overflow: TextOverflow.fade,
-                              softWrap: false,
+                              spanBuilder.highlightedSpan(headline
+                                      .tags!.leading +
+                                  headline.tags!.values.join('\u200b:\u200b') +
+                                  headline.tags!.trailing),
+                              overflow: open ? null : TextOverflow.fade,
+                              softWrap: open ? true : false,
                             ),
                           ),
                           if (!open) const Text('...'),
