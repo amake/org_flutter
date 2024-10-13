@@ -393,7 +393,7 @@ class OrgHeadlineWidget extends StatelessWidget {
     final style = _starStyle(context);
     if (hideStars) {
       yield TextSpan(
-        // Real org-mode uses stars pained with the background color to make
+        // Real org-mode uses stars painted with the background color to make
         // them invisible; this is only really visible when highlighted in dark
         // mode. Since we don't have a good way to know the actual background
         // color here, we just use spaces instead.
