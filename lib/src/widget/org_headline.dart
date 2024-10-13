@@ -27,79 +27,98 @@ class OrgHeadlineWidget extends StatelessWidget {
         fontWeight: FontWeight.bold,
         height: 1.8,
       ),
-      child: FancySpanBuilder(
-        builder: (context, spanBuilder) {
-          final body = Text.rich(
-            TextSpan(
+      child: FancySpanBuilder(builder: (context, spanBuilder) {
+        final body = _Body(
+          headline,
+          spanBuilder,
+          open: open,
+          highlighted: highlighted,
+        );
+        if (headline.tags == null) {
+          return body;
+        }
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ..._starsSpans(context),
-                if (headline.keyword != null)
-                  spanBuilder.highlightedSpan(
-                      headline.keyword!.value + headline.keyword!.trailing,
-                      style: DefaultTextStyle.of(context).style.copyWith(
-                          color: headline.keyword!.done
-                              ? theme.doneColor
-                              : theme.todoColor)),
-                if (headline.priority != null)
-                  spanBuilder.highlightedSpan(
-                      headline.priority!.leading +
-                          headline.priority!.value +
-                          headline.priority!.trailing,
-                      style: DefaultTextStyle.of(context)
-                          .style
-                          .copyWith(color: theme.priorityColor)),
-                if (headline.title != null)
-                  spanBuilder.build(
-                    headline.title!,
-                    transformer: (elem, text) {
-                      if (identical(elem, headline.title!.children.last)) {
-                        return text.trimRight();
-                      } else {
-                        return text;
-                      }
-                    },
-                  ),
-                if (!open && headline.tags == null) const TextSpan(text: '...'),
-              ],
-            ),
-          );
-          if (headline.tags == null) {
-            return body;
-          } else {
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: body),
-                    const SizedBox(width: 16),
-                    ConstrainedBox(
-                      constraints:
-                          BoxConstraints(maxWidth: constraints.maxWidth / 3),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Flexible(
-                            child: Text.rich(
-                              spanBuilder.highlightedSpan(headline
-                                      .tags!.leading +
-                                  headline.tags!.values.join('\u200b:\u200b') +
-                                  headline.tags!.trailing),
-                              overflow: open ? null : TextOverflow.fade,
-                              softWrap: open ? true : false,
-                            ),
-                          ),
-                          if (!open) const Text('...'),
-                        ],
+                Expanded(child: body),
+                const SizedBox(width: 16),
+                ConstrainedBox(
+                  constraints:
+                      BoxConstraints(maxWidth: constraints.maxWidth / 3),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text.rich(
+                          _tags(headline, spanBuilder),
+                          overflow: open ? null : TextOverflow.fade,
+                          softWrap: open ? true : false,
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              },
+                      if (!open) const Text('...'),
+                    ],
+                  ),
+                ),
+              ],
             );
-          }
-        },
+          },
+        );
+      }),
+    );
+  }
+}
+
+class _Body extends StatelessWidget {
+  const _Body(
+    this.headline,
+    this.spanBuilder, {
+    required this.open,
+    this.highlighted,
+  });
+
+  final OrgHeadline headline;
+  final OrgSpanBuilder spanBuilder;
+  final bool open;
+  final bool? highlighted;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = OrgTheme.dataOf(context);
+    return Text.rich(
+      TextSpan(
+        children: [
+          ..._starsSpans(context),
+          if (headline.keyword != null)
+            spanBuilder.highlightedSpan(
+                headline.keyword!.value + headline.keyword!.trailing,
+                style: DefaultTextStyle.of(context).style.copyWith(
+                    color: headline.keyword!.done
+                        ? theme.doneColor
+                        : theme.todoColor)),
+          if (headline.priority != null)
+            spanBuilder.highlightedSpan(
+                headline.priority!.leading +
+                    headline.priority!.value +
+                    headline.priority!.trailing,
+                style: DefaultTextStyle.of(context)
+                    .style
+                    .copyWith(color: theme.priorityColor)),
+          if (headline.title != null)
+            spanBuilder.build(
+              headline.title!,
+              transformer: (elem, text) {
+                if (identical(elem, headline.title!.children.last)) {
+                  return text.trimRight();
+                } else {
+                  return text;
+                }
+              },
+            ),
+          if (!open && headline.tags == null) const TextSpan(text: '...'),
+        ],
       ),
     );
   }
@@ -129,3 +148,8 @@ class OrgHeadlineWidget extends StatelessWidget {
           .copyWith(backgroundColor: OrgTheme.dataOf(context).highlightColor)
       : null;
 }
+
+InlineSpan _tags(OrgHeadline headline, OrgSpanBuilder spanBuilder) =>
+    spanBuilder.highlightedSpan(headline.tags!.leading +
+        headline.tags!.values.join('\u200b:\u200b') +
+        headline.tags!.trailing);
