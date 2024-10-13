@@ -28,13 +28,20 @@ class OrgHeadlineWidget extends StatelessWidget {
         height: 1.8,
       ),
       child: FancySpanBuilder(builder: (context, spanBuilder) {
+        final fancyLayout = OrgController.of(context).settings.reflowText;
+        final haveTags = headline.tags != null;
+        final tagsInBody = haveTags && !fancyLayout;
+        final needEllipsis = !open;
+        final ellipsisInBody = needEllipsis && tagsInBody;
         final body = _Body(
           headline,
           spanBuilder,
           open: open,
           highlighted: highlighted,
+          includeTags: tagsInBody,
+          includeEllipsis: ellipsisInBody,
         );
-        if (headline.tags == null) {
+        if (tagsInBody || !haveTags) {
           return body;
         }
         return LayoutBuilder(
@@ -58,7 +65,7 @@ class OrgHeadlineWidget extends StatelessWidget {
                           softWrap: open ? true : false,
                         ),
                       ),
-                      if (!open) const Text('...'),
+                      if (needEllipsis) const Text('...'),
                     ],
                   ),
                 ),
@@ -76,12 +83,16 @@ class _Body extends StatelessWidget {
     this.headline,
     this.spanBuilder, {
     required this.open,
-    this.highlighted,
+    required this.includeTags,
+    required this.includeEllipsis,
+    required this.highlighted,
   });
 
   final OrgHeadline headline;
   final OrgSpanBuilder spanBuilder;
   final bool open;
+  final bool includeTags;
+  final bool includeEllipsis;
   final bool? highlighted;
 
   @override
@@ -110,14 +121,16 @@ class _Body extends StatelessWidget {
             spanBuilder.build(
               headline.title!,
               transformer: (elem, text) {
-                if (identical(elem, headline.title!.children.last)) {
+                if (!includeTags &&
+                    identical(elem, headline.title!.children.last)) {
                   return text.trimRight();
                 } else {
                   return text;
                 }
               },
             ),
-          if (!open && headline.tags == null) const TextSpan(text: '...'),
+          if (includeTags) _tags(headline, spanBuilder),
+          if (includeEllipsis) const TextSpan(text: '...'),
         ],
       ),
     );
