@@ -1,3 +1,9 @@
+## [7.6.0] - 2024-10-14
+* Support entities in superscripts and subscripts
+* All headline tags are now shown when the headline is open
+* Headlines are rendered without special layout (tags aligned to the right) when
+  text reflow is disabled
+
 ## [7.5.0] - 2024-10-12
 * Render superscripts and subscripts. These are controlled by the same flags as
   entities.
