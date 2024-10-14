@@ -101,13 +101,21 @@ class OrgSpanBuilder {
       if (OrgController.of(context).settings.prettyEntities) {
         return WidgetSpan(child: OrgSuperscriptWidget(element));
       } else {
-        return highlightedSpan(element.leading + element.body);
+        return TextSpan(children: [
+          highlightedSpan(element.leading),
+          build(element.body, transformer: transformer, style: style),
+          highlightedSpan(element.trailing)
+        ]);
       }
     } else if (element is OrgSubscript) {
       if (OrgController.of(context).settings.prettyEntities) {
         return WidgetSpan(child: OrgSubscriptWidget(element));
       } else {
-        return highlightedSpan(element.leading + element.body);
+        return TextSpan(children: [
+          highlightedSpan(element.leading),
+          build(element.body, transformer: transformer, style: style),
+          highlightedSpan(element.trailing)
+        ]);
       }
     } else if (element is OrgFootnoteReference) {
       final key = element.name == null

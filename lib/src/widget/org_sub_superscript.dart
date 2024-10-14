@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:org_flutter/src/span.dart';
+import 'package:org_flutter/src/widget/org_content.dart';
 import 'package:org_parser/org_parser.dart';
 
 const _kSubSuperScriptScale = 0.7;
@@ -13,21 +13,13 @@ class OrgSuperscriptWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = DefaultTextStyle.of(context).style;
-    final body =
-        superscript.body.startsWith('{') && superscript.body.endsWith('}')
-            ? superscript.body.substring(1, superscript.body.length - 1)
-            : superscript.body;
-    return FancySpanBuilder(
-      builder: (context, spanBuilder) => Transform.translate(
+    return DefaultTextStyle(
+      style: style.copyWith(
+        fontSize: style.fontSize! * _kSubSuperScriptScale,
+      ),
+      child: Transform.translate(
         offset: Offset(0, style.fontSize! * -0.5),
-        child: Text.rich(
-          spanBuilder.highlightedSpan(
-            body,
-            style: style.copyWith(
-              fontSize: style.fontSize! * _kSubSuperScriptScale,
-            ),
-          ),
-        ),
+        child: OrgContentWidget(superscript.body),
       ),
     );
   }
@@ -42,20 +34,13 @@ class OrgSubscriptWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = DefaultTextStyle.of(context).style;
-    final body = subscript.body.startsWith('{') && subscript.body.endsWith('}')
-        ? subscript.body.substring(1, subscript.body.length - 1)
-        : subscript.body;
-    return FancySpanBuilder(
-      builder: (context, spanBuilder) => Transform.translate(
+    return DefaultTextStyle(
+      style: style.copyWith(
+        fontSize: style.fontSize! * _kSubSuperScriptScale,
+      ),
+      child: Transform.translate(
         offset: Offset(0, style.fontSize! * 0.3),
-        child: Text.rich(
-          spanBuilder.highlightedSpan(
-            body,
-            style: style.copyWith(
-              fontSize: style.fontSize! * _kSubSuperScriptScale,
-            ),
-          ),
-        ),
+        child: OrgContentWidget(subscript.body),
       ),
     );
   }
