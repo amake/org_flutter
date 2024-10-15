@@ -1,3 +1,6 @@
+## [7.7.0] - 2024-10-16
+* Detect `#+LANGUAGE:` and set locale appropriately
+
 ## [7.6.0] - 2024-10-14
 * Support entities in superscripts and subscripts
 * All headline tags are now shown when the headline is open
