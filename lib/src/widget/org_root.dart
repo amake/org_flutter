@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/events.dart';
+import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/theme.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_flutter/src/widget/org_theme.dart';
@@ -70,7 +72,7 @@ class OrgRootWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final body = OrgTheme(
+    Widget body = OrgTheme(
       light: lightTheme ?? OrgThemeData.light(),
       dark: darkTheme ?? OrgThemeData.dark(),
       child: OrgEvents(
@@ -84,6 +86,14 @@ class OrgRootWidget extends StatelessWidget {
         child: IdentityTextScale(child: child),
       ),
     );
+    final locale = OrgController.of(context).settings.locale;
+    if (locale != null) {
+      body = Localizations.override(
+        context: context,
+        locale: locale,
+        child: body,
+      );
+    }
     return style == null
         ? body
         : DefaultTextStyle.merge(

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:org_flutter/src/entity.dart';
 import 'package:org_flutter/src/error.dart';
 import 'package:org_flutter/src/folding.dart';
@@ -139,6 +140,8 @@ class OrgSettings {
         ? extractedTodoStates
         : [defaultTodoStates];
 
+    final locale = extractLocale(doc);
+
     return OrgSettings(
       startupFolded: startupFolded,
       hideEmphasisMarkers: hideEmphasisMarkers,
@@ -149,6 +152,7 @@ class OrgSettings {
       inlineImages: inlineImages,
       entityReplacements: entityReplacements,
       todoSettings: todoSettings,
+      locale: locale,
     );
   }
 
@@ -164,6 +168,7 @@ class OrgSettings {
     this.inlineImages,
     this.entityReplacements,
     this.todoSettings,
+    this.locale,
   });
 
   /// Whether to reflow text to remove intra-paragraph line breaks. Does not map
@@ -220,6 +225,9 @@ class OrgSettings {
   /// [defaultTodoStates], i.e. `#+TODO: TODO | DONE`.
   final List<OrgTodoStates>? todoSettings;
 
+  /// The locale of the document. Set by `#+LANGUAGE:`.
+  final Locale? locale;
+
   @override
   bool operator ==(Object other) =>
       other is OrgSettings &&
@@ -233,7 +241,8 @@ class OrgSettings {
       hideStars == other.hideStars &&
       inlineImages == other.inlineImages &&
       mapEquals(entityReplacements, other.entityReplacements) &&
-      listEquals(todoSettings, other.todoSettings);
+      listEquals(todoSettings, other.todoSettings) &&
+      locale == other.locale;
 
   @override
   int get hashCode => Object.hash(
@@ -253,6 +262,7 @@ class OrgSettings {
             ? null
             : Object.hashAll(entityReplacements!.values),
         todoSettings == null ? null : Object.hashAll(todoSettings!),
+        locale,
       );
 
   OrgSettings copyWith({
@@ -267,6 +277,7 @@ class OrgSettings {
     bool? inlineImages,
     Map<String, String>? entityReplacements,
     List<OrgTodoStates>? todoSettings,
+    Locale? locale,
   }) =>
       OrgSettings(
         reflowText: reflowText ?? this.reflowText,
@@ -280,6 +291,7 @@ class OrgSettings {
         inlineImages: inlineImages ?? this.inlineImages,
         entityReplacements: entityReplacements ?? this.entityReplacements,
         todoSettings: todoSettings ?? this.todoSettings,
+        locale: locale ?? this.locale,
       );
 }
 
@@ -323,4 +335,7 @@ extension LayeredOrgSettings on List<OrgSettings> {
   List<OrgTodoStates> get todoSettings =>
       firstWhere((layer) => layer.todoSettings != null,
           orElse: () => OrgSettings.defaults).todoSettings!;
+
+  Locale? get locale => firstWhere((layer) => layer.locale != null,
+      orElse: () => OrgSettings.defaults).locale;
 }
