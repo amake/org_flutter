@@ -1,3 +1,7 @@
+## [7.7.1] - 2024-10-19
+* Fold whitespace between headline title and tags when the headline would not
+  fit the available width as-is
+
 ## [7.7.0] - 2024-10-16
 * Detect `#+LANGUAGE:` and set locale appropriately
 
