@@ -94,43 +94,60 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = OrgTheme.dataOf(context);
-    return Text.rich(
-      TextSpan(
-        children: [
-          ..._starsSpans(context),
-          if (headline.keyword != null)
-            spanBuilder.highlightedSpan(
-                headline.keyword!.value + headline.keyword!.trailing,
-                style: DefaultTextStyle.of(context).style.copyWith(
-                    color: headline.keyword!.done
-                        ? theme.doneColor
-                        : theme.todoColor)),
-          if (headline.priority != null)
-            spanBuilder.highlightedSpan(
-                headline.priority!.leading +
-                    headline.priority!.value +
-                    headline.priority!.trailing,
-                style: DefaultTextStyle.of(context)
-                    .style
-                    .copyWith(color: theme.priorityColor)),
-          if (headline.title != null)
-            spanBuilder.build(
-              headline.title!,
-              transformer: (elem, text) {
-                if (!includeTags &&
-                    identical(elem, headline.title!.children.last)) {
-                  return text.trimRight();
-                } else {
+    return LayoutBuilder(builder: (context, constraints) {
+      final theme = OrgTheme.dataOf(context);
+      return Text.rich(
+        TextSpan(
+          children: [
+            ..._starsSpans(context),
+            if (headline.keyword != null)
+              spanBuilder.highlightedSpan(
+                  headline.keyword!.value + headline.keyword!.trailing,
+                  style: DefaultTextStyle.of(context).style.copyWith(
+                      color: headline.keyword!.done
+                          ? theme.doneColor
+                          : theme.todoColor)),
+            if (headline.priority != null)
+              spanBuilder.highlightedSpan(
+                  headline.priority!.leading +
+                      headline.priority!.value +
+                      headline.priority!.trailing,
+                  style: DefaultTextStyle.of(context)
+                      .style
+                      .copyWith(color: theme.priorityColor)),
+            if (headline.title != null)
+              spanBuilder.build(
+                headline.title!,
+                transformer: (elem, text) {
+                  if (identical(elem, headline.title!.children.last)) {
+                    if (!includeTags) return text.trimRight();
+                    if (_willOverflowWidth(context, constraints)) {
+                      return '${text.trimRight()} ';
+                    }
+                  }
                   return text;
-                }
-              },
-            ),
-          if (includeTags) _tags(headline, spanBuilder),
-          if (includeEllipsis) const TextSpan(text: '...'),
-        ],
+                },
+              ),
+            if (includeTags) _tags(headline, spanBuilder),
+            if (includeEllipsis) const TextSpan(text: '...'),
+          ],
+        ),
+      );
+    });
+  }
+
+  bool _willOverflowWidth(BuildContext context, BoxConstraints constraints) {
+    final idealBounds = _renderedBounds(
+      context,
+      const BoxConstraints(),
+      RichText(
+        text: TextSpan(
+          text: headline.toMarkup(),
+          style: DefaultTextStyle.of(context).style,
+        ),
       ),
     );
+    return idealBounds.width > constraints.maxWidth;
   }
 
   Iterable<TextSpan> _starsSpans(BuildContext context) sync* {
@@ -163,3 +180,16 @@ InlineSpan _tags(OrgHeadline headline, OrgSpanBuilder spanBuilder) =>
     spanBuilder.highlightedSpan(headline.tags!.leading +
         headline.tags!.values.join('\u200b:\u200b') +
         headline.tags!.trailing);
+
+Rect _renderedBounds(
+  BuildContext context,
+  BoxConstraints constraints,
+  RichText text,
+) {
+  final renderObject = text.createRenderObject(context);
+  renderObject.layout(constraints);
+  final boxes = renderObject.getBoxesForSelection(
+    TextSelection(baseOffset: 0, extentOffset: text.text.toPlainText().length),
+  );
+  return boxes.fold(Rect.zero, (acc, val) => acc.expandToInclude(val.toRect()));
+}
