@@ -36,7 +36,6 @@ class OrgHeadlineWidget extends StatelessWidget {
         final body = _Body(
           headline,
           spanBuilder,
-          open: open,
           highlighted: highlighted,
           includeTags: tagsInBody,
           includeEllipsis: ellipsisInBody,
@@ -82,7 +81,6 @@ class _Body extends StatelessWidget {
   const _Body(
     this.headline,
     this.spanBuilder, {
-    required this.open,
     required this.includeTags,
     required this.includeEllipsis,
     required this.highlighted,
@@ -90,7 +88,6 @@ class _Body extends StatelessWidget {
 
   final OrgHeadline headline;
   final OrgSpanBuilder spanBuilder;
-  final bool open;
   final bool includeTags;
   final bool includeEllipsis;
   final bool? highlighted;
