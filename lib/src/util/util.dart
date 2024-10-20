@@ -1,3 +1,4 @@
+export 'package:org_flutter/src/util/bidi.dart';
 export 'package:org_flutter/src/util/collection.dart';
 export 'package:org_flutter/src/util/keywords.dart';
 export 'package:org_flutter/src/util/local_variables.dart';

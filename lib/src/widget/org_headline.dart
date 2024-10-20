@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/span.dart';
+import 'package:org_flutter/src/util/util.dart';
 import 'package:org_flutter/src/widget/org_theme.dart';
 import 'package:org_parser/org_parser.dart';
 
@@ -33,12 +34,14 @@ class OrgHeadlineWidget extends StatelessWidget {
         final tagsInBody = haveTags && !fancyLayout;
         final needEllipsis = !open;
         final ellipsisInBody = needEllipsis && tagsInBody;
+        final textDirection = _textDirection();
         final body = _Body(
           headline,
           spanBuilder,
           highlighted: highlighted,
           includeTags: tagsInBody,
           includeEllipsis: ellipsisInBody,
+          textDirection: textDirection,
         );
         if (tagsInBody || !haveTags) {
           return body;
@@ -48,6 +51,7 @@ class OrgHeadlineWidget extends StatelessWidget {
             return Row(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
+              textDirection: textDirection,
               children: [
                 Expanded(child: body),
                 const SizedBox(width: 16),
@@ -75,6 +79,8 @@ class OrgHeadlineWidget extends StatelessWidget {
       }),
     );
   }
+
+  TextDirection? _textDirection() => headline.toMarkup().detectTextDirection();
 }
 
 class _Body extends StatelessWidget {
@@ -84,6 +90,7 @@ class _Body extends StatelessWidget {
     required this.includeTags,
     required this.includeEllipsis,
     required this.highlighted,
+    required this.textDirection,
   });
 
   final OrgHeadline headline;
@@ -91,6 +98,7 @@ class _Body extends StatelessWidget {
   final bool includeTags;
   final bool includeEllipsis;
   final bool? highlighted;
+  final TextDirection? textDirection;
 
   @override
   Widget build(BuildContext context) {
@@ -132,6 +140,7 @@ class _Body extends StatelessWidget {
             if (includeEllipsis) const TextSpan(text: '...'),
           ],
         ),
+        textDirection: textDirection,
       );
     });
   }

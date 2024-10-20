@@ -32,10 +32,22 @@ class OrgDocumentWidget extends StatelessWidget {
       shrinkWrap: shrinkWrap,
       physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,
       children: <Widget>[
-        if (document.content != null) OrgContentWidget(document.content!),
+        if (document.content != null) ..._contentWidgets(),
         ...document.sections.map((section) => OrgSectionWidget(section)),
         if (safeArea) listBottomSafeArea(),
       ],
     );
+  }
+
+  Iterable<Widget> _contentWidgets() sync* {
+    for (final child in document.content!.children) {
+      Widget widget = OrgContentWidget(child);
+      final markup = child.toMarkup();
+      final textDirection = markup.detectTextDirection();
+      if (textDirection != null) {
+        widget = Directionality(textDirection: textDirection, child: widget);
+      }
+      yield widget;
+    }
   }
 }
