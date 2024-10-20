@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:org_flutter/org_flutter.dart';
 import 'package:org_flutter/src/util/elisp.dart';
 import 'package:petit_lisp/lisp.dart';
@@ -170,6 +171,20 @@ bool? _getBooleanValue(Map<String, dynamic> localVariables, String key) {
       return false;
     } else if (value == Name('t')) {
       return true;
+    }
+  }
+  return null;
+}
+
+const _kEmacsBidiParagraphDirectionKey = 'bidi-paragraph-direction';
+
+TextDirection? getTextDirection(Map<String, dynamic> localVariables) {
+  if (localVariables.containsKey(_kEmacsBidiParagraphDirectionKey)) {
+    final value = localVariables[_kEmacsBidiParagraphDirectionKey];
+    if (value == Name('right-to-left')) {
+      return TextDirection.rtl;
+    } else if (value == Name('left-to-right')) {
+      return TextDirection.ltr;
     }
   }
   return null;

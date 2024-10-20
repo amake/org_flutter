@@ -34,7 +34,7 @@ class OrgHeadlineWidget extends StatelessWidget {
         final tagsInBody = haveTags && !fancyLayout;
         final needEllipsis = !open;
         final ellipsisInBody = needEllipsis && tagsInBody;
-        final textDirection = _textDirection();
+        final textDirection = _textDirection(context);
         final body = _Body(
           headline,
           spanBuilder,
@@ -80,7 +80,9 @@ class OrgHeadlineWidget extends StatelessWidget {
     );
   }
 
-  TextDirection? _textDirection() => headline.toMarkup().detectTextDirection();
+  TextDirection? _textDirection(BuildContext context) =>
+      OrgController.of(context).settings.textDirection ??
+      headline.toMarkup().detectTextDirection();
 }
 
 class _Body extends StatelessWidget {

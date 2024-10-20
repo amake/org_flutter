@@ -123,12 +123,14 @@ class OrgSettings {
       hideBlockStartup = false;
       hideDrawerStartup = false;
     }
+    TextDirection? textDirection;
     try {
       final lvars = extractLocalVariables(doc, errorHandler);
       entityReplacements =
           getOrgEntities(orgDefaultEntityReplacements, lvars, errorHandler);
       prettyEntities ??= getPrettyEntities(lvars);
       hideEmphasisMarkers = getHideEmphasisMarkers(lvars);
+      textDirection = getTextDirection(lvars);
       // org-hide-{block,drawer}-startup, org-startup-folded are not respected
       // when set as local variables.
     } catch (e) {
@@ -153,6 +155,7 @@ class OrgSettings {
       entityReplacements: entityReplacements,
       todoSettings: todoSettings,
       locale: locale,
+      textDirection: textDirection,
     );
   }
 
@@ -169,6 +172,7 @@ class OrgSettings {
     this.entityReplacements,
     this.todoSettings,
     this.locale,
+    this.textDirection,
   });
 
   /// Whether to reflow text to remove intra-paragraph line breaks. Does not map
@@ -228,6 +232,9 @@ class OrgSettings {
   /// The locale of the document. Set by `#+LANGUAGE:`.
   final Locale? locale;
 
+  /// The text direction of the document. Set by `bidi-paragraph-direction`.
+  final TextDirection? textDirection;
+
   @override
   bool operator ==(Object other) =>
       other is OrgSettings &&
@@ -242,7 +249,8 @@ class OrgSettings {
       inlineImages == other.inlineImages &&
       mapEquals(entityReplacements, other.entityReplacements) &&
       listEquals(todoSettings, other.todoSettings) &&
-      locale == other.locale;
+      locale == other.locale &&
+      textDirection == other.textDirection;
 
   @override
   int get hashCode => Object.hash(
@@ -263,6 +271,7 @@ class OrgSettings {
             : Object.hashAll(entityReplacements!.values),
         todoSettings == null ? null : Object.hashAll(todoSettings!),
         locale,
+        textDirection,
       );
 
   OrgSettings copyWith({
@@ -278,6 +287,7 @@ class OrgSettings {
     Map<String, String>? entityReplacements,
     List<OrgTodoStates>? todoSettings,
     Locale? locale,
+    TextDirection? textDirection,
   }) =>
       OrgSettings(
         reflowText: reflowText ?? this.reflowText,
@@ -292,6 +302,7 @@ class OrgSettings {
         entityReplacements: entityReplacements ?? this.entityReplacements,
         todoSettings: todoSettings ?? this.todoSettings,
         locale: locale ?? this.locale,
+        textDirection: textDirection ?? this.textDirection,
       );
 }
 
@@ -338,4 +349,8 @@ extension LayeredOrgSettings on List<OrgSettings> {
 
   Locale? get locale => firstWhere((layer) => layer.locale != null,
       orElse: () => OrgSettings.defaults).locale;
+
+  TextDirection? get textDirection =>
+      firstWhere((layer) => layer.textDirection != null,
+          orElse: () => OrgSettings.defaults).textDirection;
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:org_flutter/src/controller.dart';
+import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_flutter/src/widget/org_content.dart';
 import 'package:org_flutter/src/widget/org_section.dart';
@@ -32,18 +33,18 @@ class OrgDocumentWidget extends StatelessWidget {
       shrinkWrap: shrinkWrap,
       physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,
       children: <Widget>[
-        if (document.content != null) ..._contentWidgets(),
+        if (document.content != null) ..._contentWidgets(context),
         ...document.sections.map((section) => OrgSectionWidget(section)),
         if (safeArea) listBottomSafeArea(),
       ],
     );
   }
 
-  Iterable<Widget> _contentWidgets() sync* {
+  Iterable<Widget> _contentWidgets(BuildContext context) sync* {
     for (final child in document.content!.children) {
       Widget widget = OrgContentWidget(child);
-      final markup = child.toMarkup();
-      final textDirection = markup.detectTextDirection();
+      final textDirection = OrgController.of(context).settings.textDirection ??
+          child.toMarkup().detectTextDirection();
       if (textDirection != null) {
         widget = Directionality(textDirection: textDirection, child: widget);
       }

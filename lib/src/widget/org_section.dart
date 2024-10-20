@@ -80,7 +80,7 @@ class OrgSectionWidget extends StatelessWidget {
                       if (section.content != null &&
                           (visibility == OrgVisibilityState.children ||
                               visibility == OrgVisibilityState.subtree))
-                        ..._contentWidgets(),
+                        ..._contentWidgets(context),
                       if (visibility != OrgVisibilityState.folded)
                         ...section.sections
                             .map((child) => OrgSectionWidget(child)),
@@ -94,11 +94,11 @@ class OrgSectionWidget extends StatelessWidget {
     return _withSlideActions(context, widget);
   }
 
-  Iterable<Widget> _contentWidgets() sync* {
+  Iterable<Widget> _contentWidgets(BuildContext context) sync* {
     for (final child in section.content!.children) {
       Widget widget = OrgContentWidget(child);
-      final markup = child.toMarkup();
-      final textDirection = markup.detectTextDirection();
+      final textDirection = OrgController.of(context).settings.textDirection ??
+          child.toMarkup().detectTextDirection();
       if (textDirection != null) {
         widget = Directionality(textDirection: textDirection, child: widget);
       }
