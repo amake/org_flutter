@@ -82,7 +82,7 @@ class OrgHeadlineWidget extends StatelessWidget {
 
   TextDirection? _textDirection(BuildContext context) =>
       OrgController.of(context).settings.textDirection ??
-      headline.toMarkup().detectTextDirection();
+      headline.detectTextDirection();
 }
 
 class _Body extends StatelessWidget {

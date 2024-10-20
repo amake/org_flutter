@@ -98,7 +98,7 @@ class OrgSectionWidget extends StatelessWidget {
     for (final child in section.content!.children) {
       Widget widget = OrgContentWidget(child);
       final textDirection = OrgController.of(context).settings.textDirection ??
-          child.toMarkup().detectTextDirection();
+          child.detectTextDirection();
       if (textDirection != null) {
         widget = Directionality(textDirection: textDirection, child: widget);
       }
