@@ -1,3 +1,7 @@
+## [7.8.0] - 2024-10-22
+* Detect text direction automatically
+* Respect the `bidi-paragraph-direction` local variable
+
 ## [7.7.1] - 2024-10-19
 * Fold whitespace between headline title and tags when the headline would not
   fit the available width as-is
