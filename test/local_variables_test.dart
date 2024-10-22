@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:org_flutter/src/error.dart';
 import 'package:org_flutter/src/util/local_variables.dart';
@@ -90,12 +91,11 @@ baz: 1''').value;
     });
   });
   group('extract', () {
-    void ignoreError(dynamic _) {}
     test('simple', () {
       final doc = OrgDocument.parse('''# Local Variables:
 # foo: bar
 # End:''');
-      final result = extractLocalVariables(doc, ignoreError);
+      final result = extractLocalVariables(doc, expectNoError);
       expect(result, {'foo': Name('bar')});
     });
     test('multiple', () {
@@ -104,7 +104,7 @@ baz: 1''').value;
 # baz: 1
 # buzz: ("a" "b")
 # End:''');
-      final result = extractLocalVariables(doc, ignoreError);
+      final result = extractLocalVariables(doc, expectNoError);
       expect(
         result,
         {'foo': Name('bar'), 'baz': 1, 'buzz': Cons('a', Cons('b'))},
@@ -115,7 +115,7 @@ baz: 1''').value;
 # foo: 1
 # eval: (set! foo 2)
 # End:''');
-      final result = extractLocalVariables(doc, ignoreError);
+      final result = extractLocalVariables(doc, expectNoError);
       expect(result, {'foo': 2});
     });
     test('add to entities', () {
@@ -126,7 +126,7 @@ baz: 1''').value;
 #   '("snowman" "[snowman]" nil "&#9731;" "[snowman]")
 # )
 # End:''');
-      final result = extractLocalVariables(doc, ignoreError);
+      final result = extractLocalVariables(doc, expectNoError);
       expect(result, {
         'org-entities-user': Cons(Cons(
             'snowman',
@@ -141,8 +141,7 @@ baz: 1''').value;
 # foo: (
 # End:''');
       expect(
-        () => extractLocalVariables(
-            doc, (e) => fail('should not call error handler')),
+        () => extractLocalVariables(doc, expectNoError),
         throwsA(isA<OrgParserError>()),
       );
     });
@@ -170,15 +169,71 @@ baz: 1''').value;
       expect(lvars, <String, dynamic>{});
       expect(called, isTrue);
     });
-    group('argument error', () {
+  });
+  group('interpreting', () {
+    group('entity', () {
+      test('regular entity', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-entities-user: (
+#   ("avocado" "[avocado]" nil "&#129361;" "[avocado]" "[avocado]" "🥑")
+# )
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final entities = getOrgEntities({}, lvars, expectNoError);
+        expect(entities, {'avocado': '🥑'});
+      });
+      test('regular entity in local key', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-entities-local: (
+#   ("avocado" "[avocado]" nil "&#129361;" "[avocado]" "[avocado]" "🥑")
+# )
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final entities = getOrgEntities({}, lvars, expectNoError);
+        expect(entities, {'avocado': '🥑'});
+      });
+      test('regular entity in user and local keys', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-entities-user: (
+#   ("avocado" "[avocado]" nil "&#129361;" "[avocado]" "[avocado]" "🥑")
+# )
+# org-entities-local: (
+#   ("snowman" "[snowman]" nil "&#9731;" "[snowman]" "[snowman]" "☃")
+# )
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 2);
+        final entities = getOrgEntities({}, lvars, expectNoError);
+        expect(entities, {'avocado': '🥑', 'snowman': '☃'});
+      });
+      test('evaluated entity', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# eval: (add-to-list 'org-entities-user '("snowman" "[snowman]" nil "&#9731;" "[snowman]" "[snowman]" "☃"))
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final entities = getOrgEntities({}, lvars, expectNoError);
+        expect(entities, {'snowman': '☃'});
+      });
+      test('regular and evaluated entities', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-entities-user: (
+#   ("avocado" "[avocado]" nil "&#129361;" "[avocado]" "[avocado]" "🥑")
+# )
+# eval: (add-to-list 'org-entities-user '("snowman" "[snowman]" nil "&#9731;" "[snowman]" "[snowman]" "☃"))
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final entities = getOrgEntities({}, lvars, expectNoError);
+        expect(entities, {'snowman': '☃', 'avocado': '🥑'});
+      });
       test('bad entities list', () {
         final doc = OrgDocument.parse('''# Local Variables:
 # org-entities-user: (foo)
 # End:''');
-        final lvars = extractLocalVariables(
-          doc,
-          (e) => fail('should not call error handler'),
-        );
+        final lvars = extractLocalVariables(doc, expectNoError);
         expect(lvars.length, 1);
         var called = false;
         final entities = getOrgEntities({}, lvars, (e) {
@@ -188,26 +243,164 @@ baz: 1''').value;
         expect(entities, <String, String>{});
         expect(called, isTrue);
       });
-      test('bad entity', () {
-        final doc = OrgDocument.parse('''# Local Variables:
+      group('entities', () {
+        test('bad entities list', () {
+          final doc = OrgDocument.parse('''# Local Variables:
+# org-entities-user: (foo)
+# End:''');
+          final lvars = extractLocalVariables(doc, expectNoError);
+          expect(lvars.length, 1);
+          var called = false;
+          final entities = getOrgEntities({}, lvars, (e) {
+            called = true;
+            expect(e, isA<OrgArgumentError>());
+          });
+          expect(entities, <String, String>{});
+          expect(called, isTrue);
+        });
+        test('bad entity', () {
+          final doc = OrgDocument.parse('''# Local Variables:
 # org-entities-user: (
 #   ("snowman" "[snowman]" nil "&#9731;" "[snowman]")
 #   ("avocado" "[avocado]" nil "&#129361;" "[avocado]" "[avocado]" "🥑")
 # )
 # End:''');
-        final lvars = extractLocalVariables(
-          doc,
-          (e) => fail('should not call error handler'),
-        );
-        expect(lvars.length, 1);
-        var called = false;
-        final entities = getOrgEntities({}, lvars, (e) {
-          called = true;
-          expect(e, isA<OrgArgumentError>());
+          final lvars = extractLocalVariables(doc, expectNoError);
+          expect(lvars.length, 1);
+          var called = false;
+          final entities = getOrgEntities({}, lvars, (e) {
+            called = true;
+            expect(e, isA<OrgArgumentError>());
+          });
+          expect(entities, {'avocado': '🥑'});
+          expect(called, isTrue);
         });
-        expect(entities, {'avocado': '🥑'});
-        expect(called, isTrue);
+      });
+    });
+    group('pretty entities setting', () {
+      test('enabled', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-pretty-entities: t
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getPrettyEntities(lvars);
+        expect(value, isTrue);
+      });
+      test('disabled', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-pretty-entities: nil
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getPrettyEntities(lvars);
+        expect(value, isFalse);
+      });
+      test('other value', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-pretty-entities: foo
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getPrettyEntities(lvars);
+        expect(value, isNull);
+      });
+      test('not present', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# foo: foo
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getPrettyEntities(lvars);
+        expect(value, isNull);
+      });
+    });
+    group('emphasis markers setting', () {
+      test('enabled', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-hide-emphasis-markers: t
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getHideEmphasisMarkers(lvars);
+        expect(value, isTrue);
+      });
+      test('disabled', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-hide-emphasis-markers: nil
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getHideEmphasisMarkers(lvars);
+        expect(value, isFalse);
+      });
+      test('other value', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-hide-emphasis-markers: foo
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getHideEmphasisMarkers(lvars);
+        expect(value, isNull);
+      });
+      test('not present', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# foo: foo
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getHideEmphasisMarkers(lvars);
+        expect(value, isNull);
+      });
+    });
+    group('text direction setting', () {
+      test('left-to-right', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# bidi-paragraph-direction: left-to-right
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getTextDirection(lvars);
+        expect(value, TextDirection.ltr);
+      });
+      test('right-to-left', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# bidi-paragraph-direction: right-to-left
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getTextDirection(lvars);
+        expect(value, TextDirection.rtl);
+      });
+      test('auto', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# bidi-paragraph-direction: nil
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getTextDirection(lvars);
+        expect(value, isNull);
+      });
+      test('other value', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# bidi-paragraph-direction: foo
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getTextDirection(lvars);
+        expect(value, isNull);
+      });
+      test('not present', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# foo: foo
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getTextDirection(lvars);
+        expect(value, isNull);
       });
     });
   });
 }
+
+void expectNoError(dynamic _) => fail('should not call error handler');
