@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:more/char_matcher.dart';
 import 'package:org_flutter/org_flutter.dart';
-import 'package:org_flutter/src/util/more_bidi.dart';
 
 extension BidiUtil on OrgNode {
   TextDirection? detectTextDirection() {
