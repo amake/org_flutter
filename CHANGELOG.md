@@ -1,3 +1,6 @@
+## [7.8.1] - 2024-10-23
+* Upgrade dependencies
+
 ## [7.8.0] - 2024-10-22
 * Detect text direction automatically
 * Respect the `bidi-paragraph-direction` local variable
