@@ -188,7 +188,7 @@ packages:
     source: hosted
     version: "1.15.0"
   more:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: more
       sha256: b9372ef11909cb88a7a29e221d96fbe17eb04394f022e374a4299a6c72946108
