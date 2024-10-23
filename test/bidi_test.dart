@@ -19,4 +19,14 @@ void main() {
     final textDirection = node.detectTextDirection();
     expect(textDirection, isNull);
   });
+  test('detect forced rtl', () {
+    final node = OrgPlainText('\u200f123');
+    final textDirection = node.detectTextDirection();
+    expect(textDirection, TextDirection.rtl);
+  });
+  test('detect forced ltr', () {
+    final node = OrgPlainText('\u200e123');
+    final textDirection = node.detectTextDirection();
+    expect(textDirection, TextDirection.ltr);
+  });
 }
