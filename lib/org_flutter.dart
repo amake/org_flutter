@@ -104,6 +104,14 @@ class _OrgState extends State<Org> {
   }
 
   @override
+  void didUpdateWidget(covariant Org oldWidget) {
+    if (oldWidget.text != widget.text) {
+      _doc = OrgDocument.parse(widget.text);
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return OrgController(
       root: _doc,
@@ -167,6 +175,14 @@ class _OrgTextState extends State<OrgText> {
   void initState() {
     _doc = OrgDocument.parse(widget.text);
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant OrgText oldWidget) {
+    if (oldWidget.text != widget.text) {
+      _doc = OrgDocument.parse(widget.text);
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override

@@ -9,6 +9,33 @@ Widget _wrap(Widget child) {
   );
 }
 
+class _TextProvider extends StatefulWidget {
+  const _TextProvider({required this.text, required this.builder});
+
+  final Widget Function(String) builder;
+  final String text;
+
+  @override
+  State<_TextProvider> createState() => _TextProviderState();
+}
+
+class _TextProviderState extends State<_TextProvider> {
+  late String _text;
+
+  set text(String text) => setState(() => _text = text);
+
+  @override
+  void initState() {
+    super.initState();
+    _text = widget.text;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(_text);
+  }
+}
+
 void main() {
   test('create widget', () {
     const Org('foo');
@@ -17,6 +44,20 @@ void main() {
     testWidgets('Simple', (tester) async {
       await tester.pumpWidget(_wrap(const Org('foo bar')));
       expect(find.text('foo bar'), findsOneWidget);
+    });
+    testWidgets('Text changes', (tester) async {
+      final widget = _TextProvider(
+        text: 'foo bar',
+        builder: (text) => _wrap(Org(text)),
+      );
+      await tester.pumpWidget(widget);
+      expect(find.text('foo bar'), findsOneWidget);
+      final state =
+          tester.state(find.byType(_TextProvider)) as _TextProviderState;
+      state.text = 'baz buzz';
+      await tester.pump();
+      expect(find.text('foo bar'), findsNothing);
+      expect(find.text('baz buzz'), findsOneWidget);
     });
     testWidgets('Pretty', (tester) async {
       await tester
@@ -605,6 +646,25 @@ foo[fn:1]
     });
   });
   group('OrgText widget', () {
+    testWidgets('Simple', (tester) async {
+      await tester.pumpWidget(_wrap(const OrgText('foo bar')));
+      expect(find.text('foo bar'), findsOneWidget);
+    });
+    testWidgets('Text changes', (tester) async {
+      final widget = _TextProvider(
+        text: 'foo bar',
+        builder: (text) => _wrap(OrgText(text)),
+      );
+      await tester.pumpWidget(widget);
+      expect(find.text('foo bar'), findsOneWidget);
+      final state =
+          tester.state(find.byType(_TextProvider)) as _TextProviderState;
+      state.text = 'baz buzz';
+      await tester.pump();
+      expect(find.text('foo bar'), findsNothing);
+      expect(find.text('baz buzz'), findsOneWidget);
+    });
+
     group('Events', () {
       testWidgets('Load images', (tester) async {
         var invoked = false;
