@@ -19,11 +19,16 @@ class OrgDrawerWidget extends StatefulWidget {
 
 class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
     with OpenCloseable<OrgDrawerWidget> {
+  bool _inited = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    openListenable.value =
-        !OrgController.of(context).settings.hideDrawerStartup;
+    if (!_inited) {
+      openListenable.value =
+          !OrgController.of(context).settings.hideDrawerStartup;
+      _inited = true;
+    }
   }
 
   @override

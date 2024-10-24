@@ -20,10 +20,16 @@ class OrgBlockWidget extends StatefulWidget {
 
 class _OrgBlockWidgetState extends State<OrgBlockWidget>
     with OpenCloseable<OrgBlockWidget> {
+  bool _inited = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    openListenable.value = !OrgController.of(context).settings.hideBlockStartup;
+    if (!_inited) {
+      openListenable.value =
+          !OrgController.of(context).settings.hideBlockStartup;
+      _inited = true;
+    }
   }
 
   @override
