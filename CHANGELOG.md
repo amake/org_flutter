@@ -1,3 +1,6 @@
+## [7.8.2] - 2024-10-27
+* Bug fixes
+
 ## [7.8.1] - 2024-10-23
 * Upgrade dependencies
 
