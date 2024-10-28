@@ -1,3 +1,6 @@
+## [7.8.3] - 2024-10-29
+* Allow specifying a new `restorationId` in `OrgController.defaults`
+
 ## [7.8.2] - 2024-10-27
 * Bug fixes
 
