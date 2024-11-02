@@ -97,6 +97,31 @@ class OrgSpanBuilder {
           decoration: TextDecoration.underline,
         ),
       );
+    } else if (element is OrgStatisticsPercentageCookie) {
+      final color = element.done
+          ? OrgTheme.dataOf(context).doneColor
+          : OrgTheme.dataOf(context).todoColor;
+      final progressStyle =
+          style.copyWith(color: color, fontWeight: FontWeight.bold);
+      return TextSpan(children: [
+        highlightedSpan(element.leading, style: progressStyle),
+        highlightedSpan(element.percentage, style: progressStyle),
+        highlightedSpan(element.suffix, style: progressStyle),
+        highlightedSpan(element.trailing, style: progressStyle),
+      ]);
+    } else if (element is OrgStatisticsFractionCookie) {
+      final color = element.done
+          ? OrgTheme.dataOf(context).doneColor
+          : OrgTheme.dataOf(context).todoColor;
+      final progressStyle =
+          style.copyWith(color: color, fontWeight: FontWeight.bold);
+      return TextSpan(children: [
+        highlightedSpan(element.leading, style: progressStyle),
+        highlightedSpan(element.numerator, style: progressStyle),
+        highlightedSpan(element.separator, style: progressStyle),
+        highlightedSpan(element.denominator, style: progressStyle),
+        highlightedSpan(element.trailing, style: progressStyle),
+      ]);
     } else if (element is OrgSuperscript) {
       if (OrgController.of(context).settings.prettyEntities) {
         return WidgetSpan(child: OrgSuperscriptWidget(element));
