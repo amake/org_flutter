@@ -206,10 +206,10 @@ packages:
     dependency: transitive
     description:
       name: org_parser
-      sha256: a9f94baecb1ae976651b6126af3637e34261f6b2aba0ab672bde614b40a94a96
+      sha256: a358a47ca34b2416f3cbe2a4ad8a97a231565cd8245eaa2c81de1662d3d59998
       url: "https://pub.dev"
     source: hosted
-    version: "6.4.3"
+    version: "6.5.0"
   path:
     dependency: transitive
     description:
