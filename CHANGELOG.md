@@ -1,3 +1,6 @@
+## [7.9.0] - 2024-11-03
+* Support statistics cookies
+
 ## [7.8.3] - 2024-10-29
 * Allow specifying a new `restorationId` in `OrgController.defaults`
 
