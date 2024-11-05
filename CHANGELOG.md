@@ -1,3 +1,6 @@
+## [7.10.1] - 2024-11-05
+* Identify document info meta lines case-insensitively
+
 ## [7.10.0] - 2024-11-05
 * Style "document info" meta lines (`#+TITLE:`, etc.) accurately
 * Allow scrolling meta lines when `OrgSettings.deemphasizeMarkup` is enabled
