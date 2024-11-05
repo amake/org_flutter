@@ -46,7 +46,8 @@ class OrgMetaWidget extends StatelessWidget {
     );
   }
 
-  bool get _isDocInfoKeyword => _kDocInfoKeywords.contains(meta.keyword);
+  bool get _isDocInfoKeyword =>
+      _kDocInfoKeywords.contains(meta.keyword.toUpperCase());
 
   TextStyle? _keywordStyle(BuildContext context) => _isDocInfoKeyword
       ? TextStyle(color: OrgTheme.dataOf(context).codeColor)
@@ -55,7 +56,8 @@ class OrgMetaWidget extends StatelessWidget {
   TextStyle? _valueStyle(BuildContext context) => _isDocInfoKeyword
       ? TextStyle(
           color: OrgTheme.dataOf(context).infoColor,
-          fontWeight: meta.keyword == '#+TITLE:' ? FontWeight.bold : null,
+          fontWeight:
+              meta.keyword.toUpperCase() == '#+TITLE:' ? FontWeight.bold : null,
         )
       : TextStyle(color: OrgTheme.dataOf(context).metaColor);
 
