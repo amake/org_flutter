@@ -34,6 +34,7 @@ const _orgDateColorLight = Color(0xffa020f0);
 const _orgCodeColorLight = Color(0xff7f7f7f);
 const _orgLinkColorLight = Color(0xff3a5fcd);
 const _orgMetaColorLight = Color(0xffb22222);
+const _orgInfoColorLight = Color(0xff191970);
 const _orgMacroColorLight = Color(0xff8b4513);
 const _orgTableColorLight = Color(0xff0000ff);
 const _orgKeywordColorLight = Color(0xffa020f0);
@@ -59,6 +60,7 @@ const _orgDateColorDark = Color(0xff00ffff);
 const _orgCodeColorDark = Color(0xffb3b3b3);
 const _orgLinkColorDark = Color(0xff00ffff);
 const _orgMetaColorDark = Color(0xffff7f24);
+const _orgInfoColorDark = Color(0xffafeeee);
 const _orgMacroColorDark = Color(0xffdeb887);
 const _orgTableColorDark = Color(0xff87cefa);
 const _orgKeywordColorDark = Color(0xff00ffff);
@@ -163,6 +165,7 @@ class OrgThemeData {
           codeColor: _orgCodeColorLight,
           linkColor: _orgLinkColorLight,
           metaColor: _orgMetaColorLight,
+          infoColor: _orgInfoColorLight,
           macroColor: _orgMacroColorLight,
           tableColor: _orgTableColorLight,
           keywordColor: _orgKeywordColorLight,
@@ -184,6 +187,7 @@ class OrgThemeData {
           codeColor: _orgCodeColorDark,
           linkColor: _orgLinkColorDark,
           metaColor: _orgMetaColorDark,
+          infoColor: _orgInfoColorDark,
           macroColor: _orgMacroColorDark,
           tableColor: _orgTableColorDark,
           keywordColor: _orgKeywordColorDark,
@@ -204,6 +208,7 @@ class OrgThemeData {
     this.codeColor,
     this.linkColor,
     this.metaColor,
+    this.infoColor,
     this.macroColor,
     this.tableColor,
     this.keywordColor,
@@ -225,6 +230,7 @@ class OrgThemeData {
   final Color? codeColor;
   final Color? linkColor;
   final Color? metaColor;
+  final Color? infoColor;
   final Color? macroColor;
   final Color? tableColor;
   final Color? keywordColor;
@@ -266,6 +272,7 @@ class OrgThemeData {
     Color? codeColor,
     Color? linkColor,
     Color? metaColor,
+    Color? infoColor,
     Color? macroColor,
     Color? tableColor,
     Color? keywordColor,
@@ -285,6 +292,7 @@ class OrgThemeData {
         codeColor: codeColor ?? this.codeColor,
         linkColor: linkColor ?? this.linkColor,
         metaColor: metaColor ?? this.metaColor,
+        infoColor: infoColor ?? this.infoColor,
         macroColor: macroColor ?? this.macroColor,
         tableColor: tableColor ?? this.tableColor,
         keywordColor: keywordColor ?? this.keywordColor,
@@ -310,6 +318,7 @@ class OrgThemeData {
         codeColor == other.codeColor &&
         linkColor == other.linkColor &&
         metaColor == other.metaColor &&
+        infoColor == other.infoColor &&
         macroColor == other.macroColor &&
         tableColor == other.tableColor &&
         keywordColor == other.keywordColor &&
@@ -331,6 +340,7 @@ class OrgThemeData {
         codeColor,
         linkColor,
         metaColor,
+        infoColor,
         macroColor,
         tableColor,
         keywordColor,
@@ -357,6 +367,7 @@ class OrgThemeData {
       codeColor: Color.lerp(a?.codeColor, b?.codeColor, t),
       linkColor: Color.lerp(a?.linkColor, b?.linkColor, t),
       metaColor: Color.lerp(a?.metaColor, b?.metaColor, t),
+      infoColor: Color.lerp(a?.infoColor, b?.infoColor, t),
       macroColor: Color.lerp(a?.macroColor, b?.macroColor, t),
       tableColor: Color.lerp(a?.tableColor, b?.tableColor, t),
       keywordColor: Color.lerp(a?.keywordColor, b?.keywordColor, t),
