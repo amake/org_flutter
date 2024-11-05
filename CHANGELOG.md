@@ -1,3 +1,7 @@
+## [7.10.0] - 2024-11-05
+* Style "document info" meta lines (`#+TITLE:`, etc.) accurately
+* Allow scrolling meta lines when `OrgSettings.deemphasizeMarkup` is enabled
+
 ## [7.9.0] - 2024-11-03
 * Support statistics cookies
 
