@@ -13,6 +13,7 @@ class OrgEvents extends InheritedWidget {
     this.onSectionSlide,
     this.onListItemTap,
     this.onCitationTap,
+    this.onTimestampTap,
     this.loadImage,
     super.key,
   });
@@ -45,6 +46,9 @@ class OrgEvents extends InheritedWidget {
 
   /// A callback invoked when the user taps on a citation.
   final void Function(OrgCitation)? onCitationTap;
+
+  /// A callback invoked when the user taps on a timestamp.
+  final void Function(OrgNode)? onTimestampTap;
 
   /// A callback invoked when an image should be displayed. The argument is the
   /// [OrgLink] describing where the image data can be found. It is your

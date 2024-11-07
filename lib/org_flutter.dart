@@ -32,6 +32,7 @@ class Org extends StatefulWidget {
     this.onSectionSlide,
     this.onListItemTap,
     this.onCitationTap,
+    this.onTimestampTap,
     this.loadImage,
     this.restorationId,
     super.key,
@@ -86,6 +87,9 @@ class Org extends StatefulWidget {
   /// A callback invoked when the user taps on a citation.
   final void Function(OrgCitation)? onCitationTap;
 
+  /// A callback invoked when the user taps on a timestamp.
+  final void Function(OrgNode)? onTimestampTap;
+
   /// An ID for temporary state restoration. Supply a unique ID to ensure that
   /// temporary state such as scroll position is preserved as appropriate.
   final String? restorationId;
@@ -127,6 +131,7 @@ class _OrgState extends State<Org> {
         onSectionSlide: widget.onSectionSlide,
         onListItemTap: widget.onListItemTap,
         onCitationTap: widget.onCitationTap,
+        onTimestampTap: widget.onTimestampTap,
         loadImage: widget.loadImage,
         child: OrgDocumentWidget(_doc),
       ),

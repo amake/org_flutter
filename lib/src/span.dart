@@ -89,7 +89,7 @@ class OrgSpanBuilder {
         ),
         charWrap: looksLikeUrl(visibleContent),
       );
-    } else if (element is OrgTimestamp) {
+    } else if (element is OrgDiaryTimestamp) {
       return highlightedSpan(
         transformer(element, element.content),
         style: style.copyWith(
@@ -97,6 +97,40 @@ class OrgSpanBuilder {
           decoration: TextDecoration.underline,
         ),
       );
+    } else if (element is OrgSimpleTimestamp) {
+      final onTap = OrgEvents.of(context).onTimestampTap;
+      final recognizer = onTap == null
+          ? null
+          : (TapGestureRecognizer()..onTap = () => onTap(element));
+      if (recognizer != null) recognizerHandler(recognizer);
+      return highlightedSpan(
+        transformer(element, element.toMarkup()),
+        recognizer: recognizer,
+        style: style.copyWith(
+          color: OrgTheme.dataOf(context).dateColor,
+          decoration: TextDecoration.underline,
+        ),
+      );
+    } else if (element is OrgTimeRangeTimestamp) {
+      final onTap = OrgEvents.of(context).onTimestampTap;
+      final recognizer = onTap == null
+          ? null
+          : (TapGestureRecognizer()..onTap = () => onTap(element));
+      if (recognizer != null) recognizerHandler(recognizer);
+      return highlightedSpan(
+        transformer(element, element.toMarkup()),
+        recognizer: recognizer,
+        style: style.copyWith(
+          color: OrgTheme.dataOf(context).dateColor,
+          decoration: TextDecoration.underline,
+        ),
+      );
+    } else if (element is OrgDateRangeTimestamp) {
+      return TextSpan(children: [
+        build(element.start),
+        highlightedSpan(element.delimiter),
+        build(element.end),
+      ]);
     } else if (element is OrgStatisticsPercentageCookie) {
       final color = element.done
           ? OrgTheme.dataOf(context).doneColor
