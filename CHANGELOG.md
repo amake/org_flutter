@@ -1,3 +1,7 @@
+## [7.11.0] - 2024-11-07
+* Add `onTimestampTap` callback
+* Fixed diary timestamp rendering
+
 ## [7.10.1] - 2024-11-05
 * Identify document info meta lines case-insensitively
 
