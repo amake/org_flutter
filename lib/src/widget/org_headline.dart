@@ -29,11 +29,14 @@ class OrgHeadlineWidget extends StatelessWidget {
         height: 1.8,
       ),
       child: FancySpanBuilder(builder: (context, spanBuilder) {
-        final fancyLayout = OrgController.of(context).settings.reflowText;
+        final allowFancyLayout = OrgController.of(context).settings.reflowText;
         final haveTags = headline.tags != null;
-        final tagsInBody = haveTags && !fancyLayout;
+        final simpleLayout = !haveTags || !allowFancyLayout;
+        // We don't need to check whether the section has content, because that
+        // is already encoded in [open].
         final needEllipsis = !open;
-        final ellipsisInBody = needEllipsis && tagsInBody;
+        final tagsInBody = simpleLayout && haveTags;
+        final ellipsisInBody = simpleLayout && needEllipsis;
         final textDirection = _textDirection(context);
         final body = _Body(
           headline,
@@ -43,7 +46,7 @@ class OrgHeadlineWidget extends StatelessWidget {
           includeEllipsis: ellipsisInBody,
           textDirection: textDirection,
         );
-        if (tagsInBody || !haveTags) {
+        if (simpleLayout) {
           return body;
         }
         return LayoutBuilder(
