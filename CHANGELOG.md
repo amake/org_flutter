@@ -1,3 +1,6 @@
+## [7.12.0] - 2024-11-18
+* Render horizontal rules
+
 ## [7.11.1] - 2024-11-15
 * Fix headline ellipses for headlines with no tags
 
