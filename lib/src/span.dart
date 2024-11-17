@@ -191,6 +191,11 @@ class OrgSpanBuilder {
       return WidgetSpan(child: OrgBlockWidget(element));
     } else if (element is OrgTable) {
       return WidgetSpan(child: OrgTableWidget(element));
+    } else if (element is OrgHorizontalRule) {
+      return WidgetSpan(
+        child: OrgHorizontalRuleWidget(element),
+        alignment: PlaceholderAlignment.middle,
+      );
     } else if (element is OrgFixedWidthArea) {
       return WidgetSpan(child: OrgFixedWidthAreaWidget(element));
     } else if (element is OrgParagraph) {
