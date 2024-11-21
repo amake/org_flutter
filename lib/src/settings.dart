@@ -11,6 +11,8 @@ export 'package:org_flutter/src/folding.dart' show OrgVisibilityState;
 const _kDefaultReflowText = false;
 const _kDefaultDeemphasizeMarkup = false;
 const _kDefaultPrettyEntities = true;
+const _kDefaultSubSuperscripts = true;
+const _kDefaultStrictSubSuperscripts = false;
 const _kDefaultHideBlockStartup = false;
 const _kDefaultHideDrawerStartup = true;
 const _kDefaultHideStars = false;
@@ -25,6 +27,8 @@ class OrgSettings {
         deemphasizeMarkup: _kDefaultDeemphasizeMarkup,
         startupFolded: _kDefaultVisibilityState,
         prettyEntities: _kDefaultPrettyEntities,
+        subSuperscripts: _kDefaultSubSuperscripts,
+        strictSubSuperscripts: _kDefaultStrictSubSuperscripts,
         hideBlockStartup: _kDefaultHideBlockStartup,
         hideDrawerStartup: _kDefaultHideDrawerStartup,
         hideStars: _kDefaultHideStars,
@@ -124,6 +128,8 @@ class OrgSettings {
       hideDrawerStartup = false;
     }
     TextDirection? textDirection;
+    bool? subSuperscripts;
+    bool? strictSubSuperscripts;
     try {
       final lvars = extractLocalVariables(doc, errorHandler);
       entityReplacements =
@@ -131,6 +137,8 @@ class OrgSettings {
       prettyEntities ??= getPrettyEntities(lvars);
       hideEmphasisMarkers = getHideEmphasisMarkers(lvars);
       textDirection = getTextDirection(lvars);
+      subSuperscripts = getSubSuperscripts(lvars);
+      strictSubSuperscripts = getStrictSubSuperscripts(lvars);
       // org-hide-{block,drawer}-startup, org-startup-folded are not respected
       // when set as local variables.
     } catch (e) {
@@ -148,6 +156,8 @@ class OrgSettings {
       startupFolded: startupFolded,
       hideEmphasisMarkers: hideEmphasisMarkers,
       prettyEntities: prettyEntities,
+      subSuperscripts: subSuperscripts,
+      strictSubSuperscripts: strictSubSuperscripts,
       hideBlockStartup: hideBlockStartup,
       hideDrawerStartup: hideDrawerStartup,
       hideStars: hideStars,
@@ -165,6 +175,8 @@ class OrgSettings {
     this.startupFolded,
     this.hideEmphasisMarkers,
     this.prettyEntities,
+    this.subSuperscripts,
+    this.strictSubSuperscripts,
     this.hideBlockStartup,
     this.hideDrawerStartup,
     this.hideStars,
@@ -197,6 +209,19 @@ class OrgSettings {
   /// `org-pretty-entities` local variable value is respected; when not present
   /// it defaults to `true` (enabled).
   final bool? prettyEntities;
+
+  /// Whether to render subscripts and superscripts. By default the
+  /// `org-pretty-entities-include-sub-superscripts` local variable value is
+  /// respected; when not present it defaults to `true` (enabled). However in
+  /// order to take effect [prettyEntities] must also be enabled.
+  final bool? subSuperscripts;
+
+  /// Whether to require braces (`{` and `}`) surrounding subscripts and
+  /// superscripts. By default the `org-use-sub-superscripts` local variable
+  /// value is respected; when not present it defaults to `false`, meaning
+  /// braces are not required. Note that [prettyEntities] and [subSuperscripts]
+  /// must both be enabled for this to have an effect.
+  final bool? strictSubSuperscripts;
 
   /// Whether blocks should start folded. By default the `[no]hideblocks`
   /// #+STARTUP keyword is respected; when not present it defaults to `false`
@@ -243,6 +268,8 @@ class OrgSettings {
       startupFolded == other.startupFolded &&
       hideEmphasisMarkers == other.hideEmphasisMarkers &&
       prettyEntities == other.prettyEntities &&
+      subSuperscripts == other.subSuperscripts &&
+      strictSubSuperscripts == other.strictSubSuperscripts &&
       hideBlockStartup == other.hideBlockStartup &&
       hideDrawerStartup == other.hideDrawerStartup &&
       hideStars == other.hideStars &&
@@ -259,6 +286,8 @@ class OrgSettings {
         startupFolded,
         hideEmphasisMarkers,
         prettyEntities,
+        subSuperscripts,
+        strictSubSuperscripts,
         hideBlockStartup,
         hideDrawerStartup,
         hideStars,
@@ -280,6 +309,8 @@ class OrgSettings {
     OrgVisibilityState? startupFolded,
     bool? hideEmphasisMarkers,
     bool? prettyEntities,
+    bool? subSuperscripts,
+    bool? strictSubSuperscripts,
     bool? hideBlockStartup,
     bool? hideDrawerStartup,
     bool? hideStars,
@@ -295,6 +326,9 @@ class OrgSettings {
         startupFolded: startupFolded ?? this.startupFolded,
         hideEmphasisMarkers: hideEmphasisMarkers ?? this.hideEmphasisMarkers,
         prettyEntities: prettyEntities ?? this.prettyEntities,
+        subSuperscripts: subSuperscripts ?? this.subSuperscripts,
+        strictSubSuperscripts:
+            strictSubSuperscripts ?? this.strictSubSuperscripts,
         hideBlockStartup: hideBlockStartup ?? this.hideBlockStartup,
         hideDrawerStartup: hideDrawerStartup ?? this.hideDrawerStartup,
         hideStars: hideStars ?? this.hideStars,
@@ -324,6 +358,14 @@ extension LayeredOrgSettings on List<OrgSettings> {
 
   bool get prettyEntities => firstWhere((layer) => layer.prettyEntities != null,
       orElse: () => OrgSettings.defaults).prettyEntities!;
+
+  bool get subSuperscripts =>
+      firstWhere((layer) => layer.subSuperscripts != null,
+          orElse: () => OrgSettings.defaults).subSuperscripts!;
+
+  bool get strictSubSuperscripts =>
+      firstWhere((layer) => layer.strictSubSuperscripts != null,
+          orElse: () => OrgSettings.defaults).strictSubSuperscripts!;
 
   bool get hideBlockStartup =>
       firstWhere((layer) => layer.hideBlockStartup != null,

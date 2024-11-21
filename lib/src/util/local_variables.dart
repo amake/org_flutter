@@ -164,6 +164,11 @@ const _kOrgHideEmphasisMarkersKey = 'org-hide-emphasis-markers';
 bool? getHideEmphasisMarkers(Map<String, dynamic> localVariables) =>
     _getBooleanValue(localVariables, _kOrgHideEmphasisMarkersKey);
 
+const _kOrgSubSuperscriptsKey = 'org-pretty-entities-include-sub-superscripts';
+
+bool? getSubSuperscripts(Map<String, dynamic> localVariables) =>
+    _getBooleanValue(localVariables, _kOrgSubSuperscriptsKey);
+
 bool? _getBooleanValue(Map<String, dynamic> localVariables, String key) {
   if (localVariables.containsKey(key)) {
     final value = localVariables[key];
@@ -185,6 +190,26 @@ TextDirection? getTextDirection(Map<String, dynamic> localVariables) {
       return TextDirection.rtl;
     } else if (value == Name('left-to-right')) {
       return TextDirection.ltr;
+    }
+  }
+  return null;
+}
+
+const _kOrgStrictSubSuperscriptsKey = 'org-use-sub-superscripts';
+
+/// We return the opposite of the meaning of `org-use-sub-superscripts`:
+/// - `t` means "loose" sub/superscripts, so we return false (not strict)
+/// - Otherwise we return `true` to indicate strict sub/superscripts
+///
+/// Real org-mode considers the symbol `{}` specially, but not in a way that we
+/// care about here.
+bool? getStrictSubSuperscripts(Map<String, dynamic> localVariables) {
+  if (localVariables.containsKey(_kOrgStrictSubSuperscriptsKey)) {
+    final value = localVariables[_kOrgStrictSubSuperscriptsKey];
+    if (value == Name('t')) {
+      return false;
+    } else {
+      return true;
     }
   }
   return null;

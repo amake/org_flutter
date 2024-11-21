@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:org_flutter/src/controller.dart';
+import 'package:org_flutter/src/entity.dart';
 import 'package:org_flutter/src/events.dart';
 import 'package:org_flutter/src/search.dart';
 import 'package:org_flutter/src/settings.dart';
@@ -157,7 +158,7 @@ class OrgSpanBuilder {
         highlightedSpan(element.trailing, style: progressStyle),
       ]);
     } else if (element is OrgSuperscript) {
-      if (OrgController.of(context).settings.prettyEntities) {
+      if (shouldPrettifySubSuperscript(context, element)) {
         return WidgetSpan(child: OrgSuperscriptWidget(element));
       } else {
         return TextSpan(children: [
@@ -167,7 +168,7 @@ class OrgSpanBuilder {
         ]);
       }
     } else if (element is OrgSubscript) {
-      if (OrgController.of(context).settings.prettyEntities) {
+      if (shouldPrettifySubSuperscript(context, element)) {
         return WidgetSpan(child: OrgSubscriptWidget(element));
       } else {
         return TextSpan(children: [

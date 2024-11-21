@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:org_flutter/org_flutter.dart';
+
 // Generated from `org-entities` in org 9.6.8 with:
 //
 //   (mapconcat (lambda (e)
@@ -447,3 +450,12 @@ const Map<String, String> orgDefaultEntityReplacements = {
   '_                   ': r'                   ',
   '_                    ': r'                    '
 };
+
+bool shouldPrettifySubSuperscript(
+    BuildContext context, OrgSubSuperscript element) {
+  final settings = OrgController.of(context).settings;
+  if (!settings.prettyEntities) return false;
+  if (!settings.subSuperscripts) return false;
+  if (!settings.strictSubSuperscripts) return true;
+  return element.leading.endsWith('{') && element.trailing.startsWith('}');
+}
