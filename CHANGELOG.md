@@ -1,3 +1,9 @@
+## [7.13.0] - 2024-11-22
+* Respect the `org-pretty-entities-include-sub-superscripts` and
+  `org-use-sub-superscripts` local variables
+  * See also equivalent settings `subSuperscritps` and `strictSubSuperscripts`
+    on `OrgSettings`
+
 ## [7.12.0] - 2024-11-18
 * Render horizontal rules
 
