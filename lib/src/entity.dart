@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:org_flutter/org_flutter.dart';
 
-// Generated from `org-entities` in org 9.6.8 with:
+// Generated from `org-entities` in org 9.7.11 with:
 //
 //   (mapconcat (lambda (e)
 //               (if (listp e)
@@ -194,6 +194,8 @@ const Map<String, String> orgDefaultEntityReplacements = {
   'brvbar': r'¦',
   'S': r'§',
   'sect': r'§',
+  'P': r'¶',
+  'para': r'¶',
   'amp': r'&',
   'lt': r'<',
   'gt': r'>',
@@ -402,7 +404,6 @@ const Map<String, String> orgDefaultEntityReplacements = {
   'check': r'✓',
   'checkmark': r'✓',
   // ** Miscellaneous (seldom used),
-  'para': r'¶',
   'ordf': r'ª',
   'ordm': r'º',
   'cedil': r'¸',
