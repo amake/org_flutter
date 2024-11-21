@@ -174,7 +174,7 @@ const Map<String, String> orgDefaultEntityReplacements = {
   'ndash': r'–',
   'mdash': r'—',
   // ** Quotations,
-  'quot': r'\"',
+  'quot': r'"',
   'acute': r'´',
   'ldquo': r'“',
   'rdquo': r'”',
