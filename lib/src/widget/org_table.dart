@@ -59,12 +59,20 @@ class OrgTableWidget extends StatelessWidget {
     final columnCount = table.columnCount;
     final numerical = List<bool>.generate(columnCount, table.columnIsNumeric);
     for (var i = 0; i < table.rows.length; i++) {
+      final prevRow = i > 0 ? table.rows[i - 1] : null;
       final row = table.rows[i];
       final nextRow = i + 1 < table.rows.length ? table.rows[i + 1] : null;
       if (row is OrgTableCellRow) {
-        // Peek at next row, add bottom border if it's a divider
-        final decoration = nextRow is OrgTableDividerRow
-            ? BoxDecoration(border: Border(bottom: borderSide))
+        // Peek at surrounding rows, add borders for dividers
+        final topBorder =
+            i == 1 && prevRow is OrgTableDividerRow ? borderSide : null;
+        final bottomBorder = nextRow is OrgTableDividerRow ? borderSide : null;
+        final decoration = topBorder != null || bottomBorder != null
+            ? BoxDecoration(
+                border: Border(
+                top: topBorder ?? BorderSide.none,
+                bottom: bottomBorder ?? BorderSide.none,
+              ))
             : null;
         yield TableRow(
           decoration: decoration,
