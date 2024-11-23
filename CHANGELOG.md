@@ -1,3 +1,6 @@
+## [7.13.1] - 2024-11-23
+* Improve table rendering
+
 ## [7.13.0] - 2024-11-22
 * Respect the `org-pretty-entities-include-sub-superscripts` and
   `org-use-sub-superscripts` local variables
