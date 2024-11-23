@@ -89,6 +89,11 @@ class OrgTableWidget extends StatelessWidget {
               ),
           ],
         );
+      } else if (prevRow is OrgTableDividerRow && row is OrgTableDividerRow) {
+        yield TableRow(
+          decoration: BoxDecoration(border: Border(bottom: borderSide)),
+          children: List.filled(columnCount, const SizedBox(height: 8)),
+        );
       }
     }
   }
