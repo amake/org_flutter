@@ -1,3 +1,6 @@
+## [7.13.2]
+* Minor optimization
+
 ## [7.13.1] - 2024-11-23
 * Improve table rendering
 
