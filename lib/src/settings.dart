@@ -22,7 +22,7 @@ const _kDefaultVisibilityState = OrgVisibilityState.folded;
 
 /// A collection of settings that affect the appearance of the document
 class OrgSettings {
-  static OrgSettings get defaults => OrgSettings(
+  static OrgSettings get defaults => const OrgSettings(
         reflowText: _kDefaultReflowText,
         deemphasizeMarkup: _kDefaultDeemphasizeMarkup,
         startupFolded: _kDefaultVisibilityState,

@@ -201,15 +201,15 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "7.13.0"
+    version: "7.13.1"
   org_parser:
     dependency: transitive
     description:
       name: org_parser
-      sha256: acb9b38dbde48ec6479a68fa1c82d6ed2371153656ba9ecd44afaf73880ff39a
+      sha256: efe5476eeac060a84d4182ebde3a0d2103a9afaaccd0746e0365909f0f0250d8
       url: "https://pub.dev"
     source: hosted
-    version: "7.1.0"
+    version: "7.1.1"
   path:
     dependency: transitive
     description:
