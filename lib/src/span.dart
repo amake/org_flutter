@@ -90,6 +90,41 @@ class OrgSpanBuilder {
         ),
         charWrap: looksLikeUrl(visibleContent),
       );
+    } else if (element is OrgRadioLink) {
+      final recognizer = TapGestureRecognizer()
+        ..onTap = () => debugPrint('TODO(aaron): implement');
+      return highlightedSpan(
+        transformer(element, element.content),
+        recognizer: recognizer,
+        style: style.copyWith(
+          color: OrgTheme.dataOf(context).linkColor,
+          decoration: TextDecoration.underline,
+        ),
+      );
+    } else if (element is OrgRadioTarget) {
+      // TODO(aaron): Figure out what is supposed to happen when tapping a radio
+      // target
+      return TextSpan(
+        children: [
+          highlightedSpan(transformer(element, element.leading)),
+          highlightedSpan(
+            transformer(element, element.body),
+            style: style.copyWith(
+              color: OrgTheme.dataOf(context).linkColor,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+          highlightedSpan(transformer(element, element.trailing)),
+        ],
+        style: style.copyWith(decoration: TextDecoration.underline),
+      );
+    } else if (element is OrgLinkTarget) {
+      return highlightedSpan(
+        transformer(element, element.toMarkup()),
+        style: style.copyWith(
+          decoration: TextDecoration.underline,
+        ),
+      );
     } else if (element is OrgDiaryTimestamp) {
       return highlightedSpan(
         transformer(element, element.content),
