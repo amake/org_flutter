@@ -17,6 +17,7 @@ const _kTransientStateNodeMapKey = 'node_map';
 // crash here:
 // https://github.com/dart-lang/sdk/blob/d252bb11a342f011485b9c9fe7c56a246e92b12b/pkg/front_end/lib/src/fasta/kernel/body_builder.dart#L6614
 typedef FootnoteKey = GlobalKey<State>;
+typedef RadioTargetKey = GlobalKey<State>;
 
 typedef OrgVisibilitySetter = OrgVisibilityState Function(OrgVisibilityState);
 
@@ -308,11 +309,15 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   final ValueNotifier<Map<String, FootnoteKey>> _footnoteKeys =
       SafeValueNotifier({});
 
+  final ValueNotifier<Map<String, RadioTargetKey>> _radioTargetKeys =
+      SafeValueNotifier({});
+
   @override
   void dispose() {
     _nodeMap.dispose();
     _searchResultKeys.dispose();
     _footnoteKeys.dispose();
+    _radioTargetKeys.dispose();
     super.dispose();
   }
 
@@ -325,6 +330,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       sparseQuery: widget.sparseQuery,
       searchResultKeys: _searchResultKeys,
       footnoteKeys: _footnoteKeys,
+      radioTargetKeys: _radioTargetKeys,
       embeddedSettings: _embeddedSettings,
       callerSettings: widget.settings,
       cycleVisibility: _cycleVisibility,
@@ -468,6 +474,7 @@ class OrgControllerData extends InheritedWidget {
     required this.sparseQuery,
     required this.searchResultKeys,
     required this.footnoteKeys,
+    required this.radioTargetKeys,
     required this.cycleVisibility,
     required this.cycleVisibilityOf,
     required this.ensureVisible,
@@ -514,6 +521,10 @@ class OrgControllerData extends InheritedWidget {
   /// Keys representing footnote references in the document. It will only be
   /// populated after the widget build phase.
   final ValueNotifier<Map<String, FootnoteKey>> footnoteKeys;
+
+  /// Keys representing radio targets in the document. It will only be
+  /// populated after the widget build phase.
+  final ValueNotifier<Map<String, RadioTargetKey>> radioTargetKeys;
 
   /// Cycle the visibility of the entire document
   // TODO(aaron): Should this be a declarative API?
@@ -629,6 +640,16 @@ class OrgControllerData extends InheritedWidget {
     final key = FootnoteKey(debugLabel: label);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       footnoteKeys.value = Map.of(footnoteKeys.value)
+        ..removeWhere((_, v) => v.currentContext?.mounted != true)
+        ..[id] = key;
+    });
+    return key;
+  }
+
+  RadioTargetKey generateRadioTargetKey(String id, {String? label}) {
+    final key = RadioTargetKey(debugLabel: label);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      radioTargetKeys.value = Map.of(radioTargetKeys.value)
         ..removeWhere((_, v) => v.currentContext?.mounted != true)
         ..[id] = key;
     });

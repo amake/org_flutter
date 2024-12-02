@@ -92,7 +92,45 @@ class OrgSpanBuilder {
       );
     } else if (element is OrgRadioLink) {
       final recognizer = TapGestureRecognizer()
-        ..onTap = () => debugPrint('TODO(aaron): implement');
+        ..onTap = () {
+          final controller = OrgController.of(context);
+          final result = controller.root.find<OrgRadioTarget>((target) =>
+              target.body.toLowerCase() == element.content.toLowerCase());
+          if (result == null) return;
+
+          void makeVisible(RadioTargetKey key) {
+            final targetContext = key.currentContext;
+            if (targetContext == null || !targetContext.mounted) return;
+            Scrollable.ensureVisible(
+              targetContext,
+              duration: const Duration(milliseconds: 100),
+            );
+          }
+
+          final targetKeys = controller.radioTargetKeys;
+          final key = targetKeys.value[result.node.body.toLowerCase()];
+          if (key != null && key.currentContext?.mounted == true) {
+            makeVisible(key);
+            return;
+          }
+
+          // Target widget is probably not currently visible, so make it visible and
+          // then listen for its key to become available.
+          controller.ensureVisible(result.path);
+
+          void listenForKey() {
+            final key = targetKeys.value[result.node.body.toLowerCase()];
+            if (key != null && key.currentContext?.mounted == true) {
+              Future.delayed(
+                const Duration(milliseconds: 100),
+                () => makeVisible(key),
+              );
+            }
+            targetKeys.removeListener(listenForKey);
+          }
+
+          targetKeys.addListener(listenForKey);
+        };
       return highlightedSpan(
         transformer(element, element.content),
         recognizer: recognizer,
@@ -104,20 +142,9 @@ class OrgSpanBuilder {
     } else if (element is OrgRadioTarget) {
       // TODO(aaron): Figure out what is supposed to happen when tapping a radio
       // target
-      return TextSpan(
-        children: [
-          highlightedSpan(transformer(element, element.leading)),
-          highlightedSpan(
-            transformer(element, element.body),
-            style: style.copyWith(
-              color: OrgTheme.dataOf(context).linkColor,
-              decoration: TextDecoration.underline,
-            ),
-          ),
-          highlightedSpan(transformer(element, element.trailing)),
-        ],
-        style: style.copyWith(decoration: TextDecoration.underline),
-      );
+      final key = OrgController.of(context)
+          .generateRadioTargetKey(element.body.toLowerCase());
+      return WidgetSpan(child: OrgRadioTargetWidget(element, key: key));
     } else if (element is OrgLinkTarget) {
       return highlightedSpan(
         transformer(element, element.toMarkup()),

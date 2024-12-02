@@ -20,6 +20,7 @@ export './widget/org_paragraph.dart';
 export './widget/org_pgp_block.dart';
 export './widget/org_planning_line.dart';
 export './widget/org_property.dart';
+export './widget/org_radio_target.dart';
 export './widget/org_root.dart';
 export './widget/org_section.dart';
 export './widget/org_sub_superscript.dart';
