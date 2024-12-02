@@ -18,6 +18,8 @@ const _kTransientStateNodeMapKey = 'node_map';
 // https://github.com/dart-lang/sdk/blob/d252bb11a342f011485b9c9fe7c56a246e92b12b/pkg/front_end/lib/src/fasta/kernel/body_builder.dart#L6614
 typedef FootnoteKey = GlobalKey<State>;
 typedef RadioTargetKey = GlobalKey<State>;
+typedef LinkTargetKey = GlobalKey<State>;
+typedef NameKey = GlobalKey<State>;
 
 typedef OrgVisibilitySetter = OrgVisibilityState Function(OrgVisibilityState);
 
@@ -312,12 +314,19 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   final ValueNotifier<Map<String, RadioTargetKey>> _radioTargetKeys =
       SafeValueNotifier({});
 
+  final ValueNotifier<Map<String, LinkTargetKey>> _linkTargetKeys =
+      SafeValueNotifier({});
+
+  final ValueNotifier<Map<String, NameKey>> _nameKeys = SafeValueNotifier({});
+
   @override
   void dispose() {
     _nodeMap.dispose();
     _searchResultKeys.dispose();
     _footnoteKeys.dispose();
     _radioTargetKeys.dispose();
+    _linkTargetKeys.dispose();
+    _nameKeys.dispose();
     super.dispose();
   }
 
@@ -331,6 +340,8 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       searchResultKeys: _searchResultKeys,
       footnoteKeys: _footnoteKeys,
       radioTargetKeys: _radioTargetKeys,
+      linkTargetKeys: _linkTargetKeys,
+      nameKeys: _nameKeys,
       embeddedSettings: _embeddedSettings,
       callerSettings: widget.settings,
       cycleVisibility: _cycleVisibility,
@@ -475,6 +486,8 @@ class OrgControllerData extends InheritedWidget {
     required this.searchResultKeys,
     required this.footnoteKeys,
     required this.radioTargetKeys,
+    required this.linkTargetKeys,
+    required this.nameKeys,
     required this.cycleVisibility,
     required this.cycleVisibilityOf,
     required this.ensureVisible,
@@ -525,6 +538,14 @@ class OrgControllerData extends InheritedWidget {
   /// Keys representing radio targets in the document. It will only be
   /// populated after the widget build phase.
   final ValueNotifier<Map<String, RadioTargetKey>> radioTargetKeys;
+
+  /// Keys representing link targets in the document. It will only be
+  /// populated after the widget build phase.
+  final ValueNotifier<Map<String, LinkTargetKey>> linkTargetKeys;
+
+  /// Keys representing named objectes in the document. It will only be
+  /// populated after the widget build phase.
+  final ValueNotifier<Map<String, NameKey>> nameKeys;
 
   /// Cycle the visibility of the entire document
   // TODO(aaron): Should this be a declarative API?
@@ -676,19 +697,81 @@ class OrgControllerData extends InheritedWidget {
     return key;
   }
 
-  bool jumpToRadioTarget(OrgRadioLink radioLink) {
-    final result = root.find<OrgRadioTarget>((target) =>
-        target.body.toLowerCase() == radioLink.content.toLowerCase());
+  Future<bool> jumpToRadioTarget(OrgRadioLink radioLink) async {
+    final id = radioLink.content.toLowerCase();
+    final result =
+        root.find<OrgRadioTarget>((target) => target.body.toLowerCase() == id);
     if (result == null) return false;
 
-    final key = radioTargetKeys.value[result.node.body.toLowerCase()];
-    if (_makeVisible(key)) return true;
+    final key = radioTargetKeys.value[id];
+    if (await _makeVisible(key)) return true;
 
     // Target widget is probably not currently visible, so make it visible and
     // then listen for its key to become available.
     ensureVisible(result.path);
     radioTargetKeys.listenOnce(() {
-      final key = radioTargetKeys.value[result.node.body.toLowerCase()];
+      final key = radioTargetKeys.value[id];
+      _makeVisible(key);
+    });
+
+    return true;
+  }
+
+  LinkTargetKey generateLinkTargetKey(String id, {String? label}) {
+    final key = LinkTargetKey(debugLabel: label);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      linkTargetKeys.value = Map.of(linkTargetKeys.value)
+        ..removeWhere((_, v) => v.currentContext?.mounted != true)
+        ..[id] = key;
+    });
+    return key;
+  }
+
+  Future<bool> jumpToLinkTarget(String body) async {
+    final keyId = body.toLowerCase();
+    final result = root
+        .find<OrgLinkTarget>((target) => target.body.toLowerCase() == keyId);
+    if (result == null) return false;
+
+    final key = linkTargetKeys.value[keyId];
+    if (await _makeVisible(key)) return true;
+
+    // Target widget is probably not currently visible, so make it visible and
+    // then listen for its key to become available.
+    ensureVisible(result.path);
+    linkTargetKeys.listenOnce(() {
+      final key = linkTargetKeys.value[keyId];
+      _makeVisible(key);
+    });
+
+    return true;
+  }
+
+  NameKey generateNameKey(String id, {String? label}) {
+    final key = NameKey(debugLabel: label);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      nameKeys.value = Map.of(nameKeys.value)
+        ..removeWhere((_, v) => v.currentContext?.mounted != true)
+        ..[id] = key;
+    });
+    return key;
+  }
+
+  Future<bool> jumpToName(String name) async {
+    final keyId = name.toLowerCase();
+    final result = root.find<OrgMeta>((target) =>
+        target.keyword.toUpperCase() == '#+NAME:' &&
+        target.trailing.trim().toLowerCase() == keyId);
+    if (result == null) return false;
+
+    final key = nameKeys.value[keyId];
+    if (await _makeVisible(key)) return true;
+
+    // Target widget is probably not currently visible, so make it visible and
+    // then listen for its key to become available.
+    ensureVisible(result.path);
+    nameKeys.listenOnce(() {
+      final key = nameKeys.value[keyId];
       _makeVisible(key);
     });
 

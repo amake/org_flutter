@@ -6,6 +6,7 @@ import 'package:org_flutter/src/events.dart';
 import 'package:org_flutter/src/search.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/util/util.dart';
+import 'package:org_flutter/src/widget/org_link_target.dart';
 import 'package:org_flutter/src/widgets.dart';
 import 'package:org_parser/org_parser.dart';
 
@@ -108,12 +109,9 @@ class OrgSpanBuilder {
           .generateRadioTargetKey(element.body.toLowerCase());
       return WidgetSpan(child: OrgRadioTargetWidget(element, key: key));
     } else if (element is OrgLinkTarget) {
-      return highlightedSpan(
-        transformer(element, element.toMarkup()),
-        style: style.copyWith(
-          decoration: TextDecoration.underline,
-        ),
-      );
+      final key = OrgController.of(context)
+          .generateLinkTargetKey(element.body.toLowerCase());
+      return WidgetSpan(child: OrgLinkTargetWidget(element, key: key));
     } else if (element is OrgDiaryTimestamp) {
       return highlightedSpan(
         transformer(element, element.content),
@@ -211,7 +209,11 @@ class OrgSpanBuilder {
     } else if (element is OrgCitation) {
       return WidgetSpan(child: OrgCitationWidget(element));
     } else if (element is OrgMeta) {
-      return WidgetSpan(child: OrgMetaWidget(element));
+      final key = element.keyword.toUpperCase() == '#+NAME:'
+          ? OrgController.of(context)
+              .generateNameKey(element.trailing.trim().toLowerCase())
+          : null;
+      return WidgetSpan(child: OrgMetaWidget(element, key: key));
     } else if (element is OrgBlock) {
       return WidgetSpan(child: OrgBlockWidget(element));
     } else if (element is OrgTable) {
