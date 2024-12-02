@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:org_flutter/src/controller.dart';
+import 'package:org_flutter/src/flash.dart';
 import 'package:org_flutter/src/indent.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_flutter/src/widget/org_theme.dart';
 import 'package:org_parser/org_parser.dart';
+
+typedef NameKey = GlobalKey<OrgMetaWidgetState>;
 
 const _kDocInfoKeywords = {
   '#+TITLE:',
@@ -16,23 +19,35 @@ const _kDocInfoKeywords = {
 };
 
 /// An Org Mode meta line
-class OrgMetaWidget extends StatelessWidget {
+class OrgMetaWidget extends StatefulWidget {
   const OrgMetaWidget(this.meta, {super.key});
   final OrgMeta meta;
+
+  @override
+  State<OrgMetaWidget> createState() => OrgMetaWidgetState();
+}
+
+class OrgMetaWidgetState extends State<OrgMetaWidget> {
+  bool _cookie = true;
+
+  void doHighlight() => setState(() => _cookie = !_cookie);
 
   @override
   Widget build(BuildContext context) {
     final deemphasize = !_isDocInfoKeyword &&
         OrgController.of(context).settings.deemphasizeMarkup;
     return IndentBuilder(
-      meta.indent,
+      widget.meta.indent,
       builder: (context, _) {
         Widget body = FancySpanBuilder(
-          builder: (context, spanBuilder) => Text.rich(
-            TextSpan(
-              children: _spans(context, spanBuilder).toList(growable: false),
+          builder: (context, spanBuilder) => AnimatedTextFlash(
+            cookie: _cookie,
+            child: Text.rich(
+              TextSpan(
+                children: _spans(context, spanBuilder).toList(growable: false),
+              ),
+              softWrap: !deemphasize,
             ),
-            softWrap: !deemphasize,
           ),
         );
         if (deemphasize) {
@@ -47,7 +62,7 @@ class OrgMetaWidget extends StatelessWidget {
   }
 
   bool get _isDocInfoKeyword =>
-      _kDocInfoKeywords.contains(meta.keyword.toUpperCase());
+      _kDocInfoKeywords.contains(widget.meta.keyword.toUpperCase());
 
   TextStyle? _keywordStyle(BuildContext context) => _isDocInfoKeyword
       ? TextStyle(color: OrgTheme.dataOf(context).codeColor)
@@ -56,15 +71,17 @@ class OrgMetaWidget extends StatelessWidget {
   TextStyle? _valueStyle(BuildContext context) => _isDocInfoKeyword
       ? TextStyle(
           color: OrgTheme.dataOf(context).infoColor,
-          fontWeight:
-              meta.keyword.toUpperCase() == '#+TITLE:' ? FontWeight.bold : null,
+          fontWeight: widget.meta.keyword.toUpperCase() == '#+TITLE:'
+              ? FontWeight.bold
+              : null,
         )
       : TextStyle(color: OrgTheme.dataOf(context).metaColor);
 
   Iterable<InlineSpan> _spans(
       BuildContext context, OrgSpanBuilder builder) sync* {
-    yield builder.highlightedSpan(meta.keyword, style: _keywordStyle(context));
-    final trailing = removeTrailingLineBreak(meta.trailing);
+    yield builder.highlightedSpan(widget.meta.keyword,
+        style: _keywordStyle(context));
+    final trailing = removeTrailingLineBreak(widget.meta.trailing);
     if (trailing.isNotEmpty) {
       yield builder.highlightedSpan(trailing, style: _valueStyle(context));
     }

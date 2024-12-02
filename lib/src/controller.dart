@@ -4,22 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/error.dart';
 import 'package:org_flutter/src/folding.dart';
-import 'package:org_flutter/src/search.dart';
+import 'package:org_flutter/src/locatable.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
-export 'package:org_flutter/src/search.dart' show SearchResultKey;
+export 'package:org_flutter/src/locatable.dart';
 
 const _kTransientStateNodeMapKey = 'node_map';
-
-// We shouldn't have to specify <State> but not doing so sometimes results in a
-// crash here:
-// https://github.com/dart-lang/sdk/blob/d252bb11a342f011485b9c9fe7c56a246e92b12b/pkg/front_end/lib/src/fasta/kernel/body_builder.dart#L6614
-typedef FootnoteKey = GlobalKey<State>;
-typedef RadioTargetKey = GlobalKey<State>;
-typedef LinkTargetKey = GlobalKey<State>;
-typedef NameKey = GlobalKey<State>;
 
 typedef OrgVisibilitySetter = OrgVisibilityState Function(OrgVisibilityState);
 
@@ -674,14 +666,19 @@ class OrgControllerData extends InheritedWidget {
     if (result == null) return false;
 
     final key = footnoteKeys.value[result.node.id];
-    if (await _makeVisible(key)) return true;
+    if (await _makeVisible(key)) {
+      key!.currentState?.doHighlight();
+      return true;
+    }
 
     // Target widget is probably not currently visible, so make it visible and
     // then listen for its key to become available.
     ensureVisible(result.path);
-    footnoteKeys.listenOnce(() {
+    footnoteKeys.listenOnce(() async {
       final key = footnoteKeys.value[result.node.id];
-      _makeVisible(key);
+      if (await _makeVisible(key)) {
+        key!.currentState?.doHighlight();
+      }
     });
 
     return true;
@@ -704,14 +701,19 @@ class OrgControllerData extends InheritedWidget {
     if (result == null) return false;
 
     final key = radioTargetKeys.value[id];
-    if (await _makeVisible(key)) return true;
+    if (await _makeVisible(key)) {
+      key!.currentState?.doHighlight();
+      return true;
+    }
 
     // Target widget is probably not currently visible, so make it visible and
     // then listen for its key to become available.
     ensureVisible(result.path);
-    radioTargetKeys.listenOnce(() {
+    radioTargetKeys.listenOnce(() async {
       final key = radioTargetKeys.value[id];
-      _makeVisible(key);
+      if (await _makeVisible(key)) {
+        key!.currentState?.doHighlight();
+      }
     });
 
     return true;
@@ -734,14 +736,19 @@ class OrgControllerData extends InheritedWidget {
     if (result == null) return false;
 
     final key = linkTargetKeys.value[keyId];
-    if (await _makeVisible(key)) return true;
+    if (await _makeVisible(key)) {
+      key!.currentState?.doHighlight();
+      return true;
+    }
 
     // Target widget is probably not currently visible, so make it visible and
     // then listen for its key to become available.
     ensureVisible(result.path);
-    linkTargetKeys.listenOnce(() {
+    linkTargetKeys.listenOnce(() async {
       final key = linkTargetKeys.value[keyId];
-      _makeVisible(key);
+      if (await _makeVisible(key)) {
+        key!.currentState?.doHighlight();
+      }
     });
 
     return true;
@@ -765,14 +772,19 @@ class OrgControllerData extends InheritedWidget {
     if (result == null) return false;
 
     final key = nameKeys.value[keyId];
-    if (await _makeVisible(key)) return true;
+    if (await _makeVisible(key)) {
+      key!.currentState?.doHighlight();
+      return true;
+    }
 
     // Target widget is probably not currently visible, so make it visible and
     // then listen for its key to become available.
     ensureVisible(result.path);
-    nameKeys.listenOnce(() {
+    nameKeys.listenOnce(() async {
       final key = nameKeys.value[keyId];
-      _makeVisible(key);
+      if (await _makeVisible(key)) {
+        key!.currentState?.doHighlight();
+      }
     });
 
     return true;
