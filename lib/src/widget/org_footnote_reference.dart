@@ -64,8 +64,11 @@ class OrgFootnoteReferenceWidget extends StatelessWidget {
 
     void listenForKey() {
       final key = footnoteKeys.value[result.node.id];
-      if (key != null) {
-        _makeVisible(key);
+      if (key != null && key.currentContext?.mounted == true) {
+        Future.delayed(
+          const Duration(milliseconds: 100),
+          () => _makeVisible(key),
+        );
       }
       footnoteKeys.removeListener(listenForKey);
     }
@@ -75,7 +78,7 @@ class OrgFootnoteReferenceWidget extends StatelessWidget {
 
   void _makeVisible(FootnoteKey key) {
     final targetContext = key.currentContext;
-    if (targetContext == null) return;
+    if (targetContext == null || !targetContext.mounted) return;
     Scrollable.ensureVisible(
       targetContext,
       duration: const Duration(milliseconds: 100),
