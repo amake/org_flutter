@@ -53,7 +53,7 @@ class OrgFootnoteReferenceWidget extends StatelessWidget {
 
     final footnoteKeys = controller.footnoteKeys;
     final key = footnoteKeys.value[result.node.id];
-    if (key != null) {
+    if (key != null && key.currentContext?.mounted == true) {
       _makeVisible(key);
       return;
     }
