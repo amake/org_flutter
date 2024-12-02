@@ -92,45 +92,7 @@ class OrgSpanBuilder {
       );
     } else if (element is OrgRadioLink) {
       final recognizer = TapGestureRecognizer()
-        ..onTap = () {
-          final controller = OrgController.of(context);
-          final result = controller.root.find<OrgRadioTarget>((target) =>
-              target.body.toLowerCase() == element.content.toLowerCase());
-          if (result == null) return;
-
-          void makeVisible(RadioTargetKey key) {
-            final targetContext = key.currentContext;
-            if (targetContext == null || !targetContext.mounted) return;
-            Scrollable.ensureVisible(
-              targetContext,
-              duration: const Duration(milliseconds: 100),
-            );
-          }
-
-          final targetKeys = controller.radioTargetKeys;
-          final key = targetKeys.value[result.node.body.toLowerCase()];
-          if (key != null && key.currentContext?.mounted == true) {
-            makeVisible(key);
-            return;
-          }
-
-          // Target widget is probably not currently visible, so make it visible and
-          // then listen for its key to become available.
-          controller.ensureVisible(result.path);
-
-          void listenForKey() {
-            final key = targetKeys.value[result.node.body.toLowerCase()];
-            if (key != null && key.currentContext?.mounted == true) {
-              Future.delayed(
-                const Duration(milliseconds: 100),
-                () => makeVisible(key),
-              );
-            }
-            targetKeys.removeListener(listenForKey);
-          }
-
-          targetKeys.addListener(listenForKey);
-        };
+        ..onTap = () => OrgController.of(context).jumpToRadioTarget(element);
       return highlightedSpan(
         transformer(element, element.content),
         recognizer: recognizer,

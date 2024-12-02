@@ -676,6 +676,25 @@ class OrgControllerData extends InheritedWidget {
     return key;
   }
 
+  bool jumpToRadioTarget(OrgRadioLink radioLink) {
+    final result = root.find<OrgRadioTarget>((target) =>
+        target.body.toLowerCase() == radioLink.content.toLowerCase());
+    if (result == null) return false;
+
+    final key = radioTargetKeys.value[result.node.body.toLowerCase()];
+    if (_makeVisible(key)) return true;
+
+    // Target widget is probably not currently visible, so make it visible and
+    // then listen for its key to become available.
+    ensureVisible(result.path);
+    radioTargetKeys.listenOnce(() {
+      final key = radioTargetKeys.value[result.node.body.toLowerCase()];
+      _makeVisible(key);
+    });
+
+    return true;
+  }
+
   @override
   bool updateShouldNotify(OrgControllerData oldWidget) =>
       root != oldWidget.root ||
