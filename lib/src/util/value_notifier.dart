@@ -13,3 +13,14 @@ class SafeValueNotifier<T> extends ValueNotifier<T> {
     _disposed = true;
   }
 }
+
+extension ValueNotifierUtil<T> on ValueNotifier<T> {
+  void listenOnce(VoidCallback callback) {
+    void listener() {
+      callback();
+      removeListener(listener);
+    }
+
+    addListener(listener);
+  }
+}

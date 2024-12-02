@@ -17,7 +17,9 @@ class OrgFootnoteReferenceWidget extends StatelessWidget {
 
     return FancySpanBuilder(
       builder: (context, spanBuilder) => InkWell(
-        onTap: reference.name == null ? null : () => _onTap(context),
+        onTap: reference.name == null
+            ? null
+            : () => OrgController.of(context).jumpToFootnote(reference),
         child: Text.rich(
           TextSpan(
             children: [
@@ -40,48 +42,6 @@ class OrgFootnoteReferenceWidget extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  void _onTap(BuildContext context) {
-    final controller = OrgController.of(context);
-    final result = controller.root.find<OrgFootnoteReference>((ref) {
-      return ref.name == reference.name &&
-          ref.isDefinition != reference.isDefinition;
-    });
-    if (result == null) return;
-
-    final footnoteKeys = controller.footnoteKeys;
-    final key = footnoteKeys.value[result.node.id];
-    if (key != null && key.currentContext?.mounted == true) {
-      _makeVisible(key);
-      return;
-    }
-
-    // Target widget is probably not currently visible, so make it visible and
-    // then listen for its key to become available.
-    controller.ensureVisible(result.path);
-
-    void listenForKey() {
-      final key = footnoteKeys.value[result.node.id];
-      if (key != null && key.currentContext?.mounted == true) {
-        Future.delayed(
-          const Duration(milliseconds: 100),
-          () => _makeVisible(key),
-        );
-      }
-      footnoteKeys.removeListener(listenForKey);
-    }
-
-    footnoteKeys.addListener(listenForKey);
-  }
-
-  void _makeVisible(FootnoteKey key) {
-    final targetContext = key.currentContext;
-    if (targetContext == null || !targetContext.mounted) return;
-    Scrollable.ensureVisible(
-      targetContext,
-      duration: const Duration(milliseconds: 100),
     );
   }
 }

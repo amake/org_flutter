@@ -646,6 +646,26 @@ class OrgControllerData extends InheritedWidget {
     return key;
   }
 
+  Future<bool> jumpToFootnote(OrgFootnoteReference reference) async {
+    final result = root.find<OrgFootnoteReference>((ref) =>
+        ref.name == reference.name &&
+        ref.isDefinition != reference.isDefinition);
+    if (result == null) return false;
+
+    final key = footnoteKeys.value[result.node.id];
+    if (await _makeVisible(key)) return true;
+
+    // Target widget is probably not currently visible, so make it visible and
+    // then listen for its key to become available.
+    ensureVisible(result.path);
+    footnoteKeys.listenOnce(() {
+      final key = footnoteKeys.value[result.node.id];
+      _makeVisible(key);
+    });
+
+    return true;
+  }
+
   RadioTargetKey generateRadioTargetKey(String id, {String? label}) {
     final key = RadioTargetKey(debugLabel: label);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -663,6 +683,22 @@ class OrgControllerData extends InheritedWidget {
       // Don't check searchResultKeys because rebuilding this widget will cause
       // new keys to be made which leads to an infinite loop
       !listEquals(settings, oldWidget.settings);
+}
+
+Future<bool> _makeVisible(GlobalKey? key) async {
+  final context = key?.currentContext;
+  if (context == null || !context.mounted) return false;
+
+  // Delay by enough to make sure any opening animations have finished
+  await Future.delayed(const Duration(milliseconds: 100), () async {
+    if (!context.mounted) return;
+    await Scrollable.ensureVisible(
+      context,
+      duration: const Duration(milliseconds: 100),
+    );
+  });
+
+  return true;
 }
 
 String? _deriveRestorationId(String? base, String name) =>
