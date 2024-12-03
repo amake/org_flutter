@@ -1,3 +1,6 @@
+## [8.0.1]
+- Improve jumping behavior
+
 ## [8.0.0]
 - Render radio targets and link targets
 - Linkify radio links; jump to radio targets when opened
