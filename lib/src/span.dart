@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/entity.dart';
 import 'package:org_flutter/src/events.dart';
+import 'package:org_flutter/src/locator.dart';
 import 'package:org_flutter/src/search.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/util/util.dart';
@@ -93,7 +94,7 @@ class OrgSpanBuilder {
       );
     } else if (element is OrgRadioLink) {
       final recognizer = TapGestureRecognizer()
-        ..onTap = () => OrgController.of(context).jumpToRadioTarget(element);
+        ..onTap = () => OrgLocator.of(context)?.jumpToRadioTarget(element);
       return highlightedSpan(
         transformer(element, element.content),
         recognizer: recognizer,
@@ -105,12 +106,12 @@ class OrgSpanBuilder {
     } else if (element is OrgRadioTarget) {
       // TODO(aaron): Figure out what is supposed to happen when tapping a radio
       // target
-      final key = OrgController.of(context)
-          .generateRadioTargetKey(element.body.toLowerCase());
+      final key = OrgLocator.of(context)
+          ?.generateRadioTargetKey(element.body.toLowerCase());
       return WidgetSpan(child: OrgRadioTargetWidget(element, key: key));
     } else if (element is OrgLinkTarget) {
-      final key = OrgController.of(context)
-          .generateLinkTargetKey(element.body.toLowerCase());
+      final key = OrgLocator.of(context)
+          ?.generateLinkTargetKey(element.body.toLowerCase());
       return WidgetSpan(child: OrgLinkTargetWidget(element, key: key));
     } else if (element is OrgDiaryTimestamp) {
       return highlightedSpan(
@@ -202,7 +203,7 @@ class OrgSpanBuilder {
     } else if (element is OrgFootnoteReference) {
       final key = element.name == null
           ? null
-          : OrgController.of(context).generateFootnoteKey(element.id);
+          : OrgLocator.of(context)?.generateFootnoteKey(element.id);
       return WidgetSpan(child: OrgFootnoteReferenceWidget(element, key: key));
     } else if (element is OrgFootnote) {
       return WidgetSpan(child: OrgFootnoteWidget(element));
@@ -210,8 +211,8 @@ class OrgSpanBuilder {
       return WidgetSpan(child: OrgCitationWidget(element));
     } else if (element is OrgMeta) {
       final key = element.keyword.toUpperCase() == '#+NAME:'
-          ? OrgController.of(context)
-              .generateNameKey(element.trailing.trim().toLowerCase())
+          ? OrgLocator.of(context)
+              ?.generateNameKey(element.trailing.trim().toLowerCase())
           : null;
       return WidgetSpan(child: OrgMetaWidget(element, key: key));
     } else if (element is OrgBlock) {

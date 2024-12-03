@@ -10,9 +10,9 @@ void main() {
 foo[fn:1]
 
 [fn:1] bar baz''')));
-      final controller =
-          OrgController.of(tester.element(find.textContaining('foo')));
-      expect(controller.footnoteKeys.value.length, 2);
+      final locator =
+          OrgLocator.of(tester.element(find.textContaining('foo')))!;
+      expect(locator.footnoteKeys.value.length, 2);
     });
     testWidgets('Visibility', (tester) async {
       await tester.pumpWidget(wrap(const Org('''
@@ -22,7 +22,7 @@ foo[fn:1]
 [fn:1] bazinga''')));
       expect(find.textContaining('bazinga'), findsNothing);
       await tester.tap(find.textContaining('fn:1').first);
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.textContaining('bazinga'), findsOneWidget);
     });
   });

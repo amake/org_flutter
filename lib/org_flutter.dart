@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/controller.dart';
+import 'package:org_flutter/src/locator.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/theme.dart';
 import 'package:org_flutter/src/widgets.dart';
@@ -7,6 +8,7 @@ import 'package:org_parser/org_parser.dart';
 
 export 'package:org_flutter/src/controller.dart';
 export 'package:org_flutter/src/error.dart';
+export 'package:org_flutter/src/locator.dart';
 export 'package:org_flutter/src/settings.dart';
 export 'package:org_flutter/src/theme.dart';
 export 'package:org_flutter/src/util/util.dart'
@@ -121,19 +123,21 @@ class _OrgState extends State<Org> {
       root: _doc,
       settings: widget.settings,
       restorationId: widget.restorationId,
-      child: OrgRootWidget(
-        style: widget.style,
-        lightTheme: widget.lightTheme,
-        darkTheme: widget.darkTheme,
-        onLinkTap: widget.onLinkTap,
-        onLocalSectionLinkTap: widget.onLocalSectionLinkTap,
-        onSectionLongPress: widget.onSectionLongPress,
-        onSectionSlide: widget.onSectionSlide,
-        onListItemTap: widget.onListItemTap,
-        onCitationTap: widget.onCitationTap,
-        onTimestampTap: widget.onTimestampTap,
-        loadImage: widget.loadImage,
-        child: OrgDocumentWidget(_doc),
+      child: OrgLocator(
+        child: OrgRootWidget(
+          style: widget.style,
+          lightTheme: widget.lightTheme,
+          darkTheme: widget.darkTheme,
+          onLinkTap: widget.onLinkTap,
+          onLocalSectionLinkTap: widget.onLocalSectionLinkTap,
+          onSectionLongPress: widget.onSectionLongPress,
+          onSectionSlide: widget.onSectionSlide,
+          onListItemTap: widget.onListItemTap,
+          onCitationTap: widget.onCitationTap,
+          onTimestampTap: widget.onTimestampTap,
+          loadImage: widget.loadImage,
+          child: OrgDocumentWidget(_doc),
+        ),
       ),
     );
   }

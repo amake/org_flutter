@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/flash.dart';
+import 'package:org_flutter/src/locator.dart';
 import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/widget/org_theme.dart';
 import 'package:org_parser/org_parser.dart';
@@ -33,7 +33,7 @@ class OrgFootnoteReferenceWidgetState
       builder: (context, spanBuilder) => InkWell(
         onTap: widget.reference.name == null
             ? null
-            : () => OrgController.of(context).jumpToFootnote(widget.reference),
+            : () => OrgLocator.of(context)?.jumpToFootnote(widget.reference),
         child: AnimatedTextFlash(
           cookie: _cookie,
           child: Text.rich(

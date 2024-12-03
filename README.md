@@ -49,10 +49,12 @@ Widget build(BuildContext context) {
   );
   return OrgController(
     root: doc,
-    child: OrgRootWidget(
-      style: myTextStyle,
-      onLinkTap: launch, // e.g. from url_launcher package
-      child: OrgDocumentWidget(doc),
+    child: OrgLocator( // Include OrgLocator to enable tap-to-jump on footnotes, etc.
+      child: OrgRootWidget(
+        style: myTextStyle,
+        onLinkTap: launch, // e.g. from url_launcher package
+        child: OrgDocumentWidget(doc),
+      ),
     ),
   );
 }
