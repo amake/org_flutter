@@ -258,6 +258,7 @@ Future<bool> _makeVisible(GlobalKey? key) async {
     if (!context.mounted) return;
     await Scrollable.ensureVisible(
       context,
+      alignment: 0.5,
       duration: const Duration(milliseconds: 100),
     );
   });
