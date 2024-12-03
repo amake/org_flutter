@@ -1,3 +1,11 @@
+## [8.0.0]
+- Render radio targets and link targets
+- Linkify radio links; jump to radio targets when opened
+- Introduce `OrgLocator` to allow imperative jumping to footnotes, link targets,
+  and named elements. Place it in your widget tree *under* `OrgController`.
+- Jumped-to objects are briefly highlighted
+- Jumped-to objects are more reliably made visible
+
 ## [7.13.2]
 * Minor optimization
 
