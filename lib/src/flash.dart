@@ -5,10 +5,12 @@ class AnimatedTextFlash extends StatefulWidget {
   const AnimatedTextFlash({
     required this.child,
     required this.cookie,
+    this.times = 2,
     super.key,
   });
 
   final Widget child;
+  final int times;
   final dynamic cookie;
 
   @override
@@ -43,8 +45,10 @@ class _AnimatedTextFlashState extends State<AnimatedTextFlash>
   }
 
   void _flash() async {
-    await _animation.forward();
-    await _animation.reverse();
+    for (var i = 0; i < widget.times; i++) {
+      await _animation.forward();
+      await _animation.reverse();
+    }
   }
 
   @override
