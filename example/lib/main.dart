@@ -101,11 +101,11 @@ class _ComplexTabState extends State<ComplexTab> {
       markupNode = node;
       return false; // stop visiting
     });
-    final value = int.parse(markupNode.content);
+    final value = int.parse(markupNode.content.children.single.toMarkup());
     setState(() {
       root = root
           .editNode(markupNode)!
-          .replace(OrgMarkup('~', '${value + 1}', '~', OrgStyle.code))
+          .replace(OrgMarkup.just('${value + 1}', OrgStyle.code))
           .commit() as OrgDocument;
     });
   }

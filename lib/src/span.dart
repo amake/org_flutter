@@ -43,18 +43,19 @@ class OrgSpanBuilder {
         style: style,
       );
     } else if (element is OrgMarkup) {
-      return highlightedSpan(
-        transformer(
-          element,
-          hideEmphasisMarkers
-              ? element.content
-              : '${element.leadingDecoration}${element.content}${element.trailingDecoration}',
-        ),
-        style: OrgTheme.dataOf(context).fontStyleForOrgStyle(
-          style,
-          element.style,
-        ),
+      final markupStyle = OrgTheme.dataOf(context).fontStyleForOrgStyle(
+        style,
+        element.style,
       );
+      final body =
+          build(element.content, transformer: transformer, style: markupStyle);
+      return hideEmphasisMarkers
+          ? body
+          : TextSpan(children: [
+              highlightedSpan(element.leadingDecoration, style: markupStyle),
+              body,
+              highlightedSpan(element.trailingDecoration, style: markupStyle),
+            ]);
     } else if (element is OrgEntity) {
       var text = OrgController.of(context).prettifyEntity(element.name);
       text ??= '${element.leading}${element.name}${element.trailing}';
