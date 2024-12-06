@@ -1,3 +1,6 @@
+## [8.1.0]
+- Render rich content inside markups
+
 ## [8.0.1]
 - Improve jumping behavior
 
