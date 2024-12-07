@@ -257,9 +257,19 @@ class OrgThemeData {
       case OrgStyle.italic:
         return base.copyWith(fontStyle: FontStyle.italic);
       case OrgStyle.strikeThrough:
-        return base.copyWith(decoration: TextDecoration.lineThrough);
+        return base.copyWith(
+          decoration: TextDecoration.combine([
+            TextDecoration.lineThrough,
+            if (base.decoration != null) base.decoration!
+          ]),
+        );
       case OrgStyle.underline:
-        return base.copyWith(decoration: TextDecoration.underline);
+        return base.copyWith(
+          decoration: TextDecoration.combine([
+            TextDecoration.underline,
+            if (base.decoration != null) base.decoration!
+          ]),
+        );
     }
   }
 
