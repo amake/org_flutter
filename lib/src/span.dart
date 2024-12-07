@@ -21,16 +21,17 @@ class OrgSpanBuilder {
   OrgSpanBuilder(
     this.context, {
     required this.recognizerHandler,
+    this.inlineImages = true,
   });
 
   final BuildContext context;
   final RecognizerHandler recognizerHandler;
+  final bool inlineImages;
 
   InlineSpan build(
     OrgNode element, {
     TextStyle? style,
     Transformer transformer = identityTransformer,
-    bool inlineImages = true,
     GestureRecognizer? recognizer,
   }) {
     style ??= DefaultTextStyle.of(context).style;
@@ -362,8 +363,14 @@ InlineSpan _styledWidgetSpan(
 }
 
 class FancySpanBuilder extends StatefulWidget {
-  const FancySpanBuilder({required this.builder, super.key});
+  const FancySpanBuilder({
+    required this.builder,
+    this.inlineImages = true,
+    super.key,
+  });
+
   final Widget Function(BuildContext, OrgSpanBuilder) builder;
+  final bool inlineImages;
 
   @override
   State<FancySpanBuilder> createState() => _FancySpanBuilderState();
@@ -378,6 +385,7 @@ class _FancySpanBuilderState extends State<FancySpanBuilder>
       OrgSpanBuilder(
         context,
         recognizerHandler: registerRecognizer,
+        inlineImages: widget.inlineImages,
       ),
     );
   }

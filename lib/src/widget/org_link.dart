@@ -20,9 +20,10 @@ class OrgLinkWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FancySpanBuilder(
+      inlineImages: false,
       builder: (context, spanBuilder) => InkWell(
         onTap: () => OrgEvents.of(context).onLinkTap?.call(link),
-        child: Text.rich(spanBuilder.build(link, inlineImages: false)),
+        child: Text.rich(spanBuilder.build(link)),
       ),
     );
   }
