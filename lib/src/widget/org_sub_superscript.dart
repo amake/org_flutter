@@ -16,6 +16,7 @@ class OrgSuperscriptWidget extends StatelessWidget {
     return DefaultTextStyle(
       style: style.copyWith(
         fontSize: style.fontSize! * _kSubSuperScriptScale,
+        decoration: TextDecoration.none,
       ),
       child: Transform.translate(
         offset: Offset(0, style.fontSize! * -0.5),
@@ -37,6 +38,7 @@ class OrgSubscriptWidget extends StatelessWidget {
     return DefaultTextStyle(
       style: style.copyWith(
         fontSize: style.fontSize! * _kSubSuperScriptScale,
+        decoration: TextDecoration.none,
       ),
       child: Transform.translate(
         offset: Offset(0, style.fontSize! * 0.3),
