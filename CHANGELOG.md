@@ -1,3 +1,7 @@
+## [8.2.0]
+- Render rich content inside links
+- Bug fixes
+
 ## [8.1.0]
 - Render rich content inside markups
 
