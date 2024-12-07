@@ -25,7 +25,7 @@ class OrgLocalVariablesWidget extends StatelessWidget {
                 entry.prefix + entry.content + entry.suffix,
                 style: metaStyle,
               ),
-            spanBuilder.highlightedSpan(variables.end, style: metaStyle),
+            spanBuilder.highlightedSpan(variables.trailing, style: metaStyle),
           ]),
         ),
       ),

@@ -26,7 +26,11 @@ class OrgCommentWidget extends StatelessWidget {
               spanBuilder.highlightedSpan(comment.indent, style: metaStyle),
               spanBuilder.highlightedSpan(comment.start, style: metaStyle),
               spanBuilder.highlightedSpan(
-                removeTrailingLineBreak(comment.content),
+                comment.content,
+                style: metaStyle,
+              ),
+              spanBuilder.highlightedSpan(
+                removeTrailingLineBreak(comment.trailing),
                 style: metaStyle,
               ),
             ]),

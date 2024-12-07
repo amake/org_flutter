@@ -14,6 +14,7 @@ class OrgFootnoteWidget extends StatelessWidget {
           children: [
             spanBuilder.build(footnote.marker),
             spanBuilder.build(footnote.content),
+            spanBuilder.highlightedSpan(footnote.trailing),
           ],
         ),
       ),

@@ -35,38 +35,45 @@ class OrgSpanBuilder {
     TextStyle? style,
     Transformer transformer = identityTransformer,
     bool inlineImages = true,
+    GestureRecognizer? recognizer,
   }) {
     style ??= DefaultTextStyle.of(context).style;
     if (element is OrgPlainText) {
       return highlightedSpan(
         transformer(element, element.content),
         style: style,
+        recognizer: recognizer,
       );
     } else if (element is OrgMarkup) {
       final markupStyle = OrgTheme.dataOf(context).fontStyleForOrgStyle(
         style,
         element.style,
       );
-      final body =
-          build(element.content, transformer: transformer, style: markupStyle);
+      final body = build(element.content,
+          transformer: transformer, style: markupStyle, recognizer: recognizer);
       return hideEmphasisMarkers
           ? body
           : TextSpan(children: [
-              highlightedSpan(element.leadingDecoration, style: markupStyle),
+              highlightedSpan(element.leadingDecoration,
+                  style: markupStyle, recognizer: recognizer),
               body,
-              highlightedSpan(element.trailingDecoration, style: markupStyle),
+              highlightedSpan(element.trailingDecoration,
+                  style: markupStyle, recognizer: recognizer),
             ]);
     } else if (element is OrgEntity) {
       var text = OrgController.of(context).prettifyEntity(element.name);
       text ??= '${element.leading}${element.name}${element.trailing}';
-      return highlightedSpan(transformer(element, text), style: style);
+      return highlightedSpan(transformer(element, text),
+          style: style, recognizer: recognizer);
     } else if (element is OrgMacroReference) {
       return highlightedSpan(transformer(element, element.content),
-          style: style.copyWith(color: OrgTheme.dataOf(context).macroColor));
+          style: style.copyWith(color: OrgTheme.dataOf(context).macroColor),
+          recognizer: recognizer);
     } else if (element is OrgKeyword) {
       return highlightedSpan(
         transformer(element, element.content),
         style: style.copyWith(color: OrgTheme.dataOf(context).keywordColor),
+        recognizer: recognizer,
       );
     } else if (element is OrgLink) {
       if (looksLikeImagePath(element.location) &&
@@ -74,25 +81,34 @@ class OrgSpanBuilder {
           inlineImages) {
         final imageWidget = OrgEvents.of(context).loadImage?.call(element);
         if (imageWidget != null) {
-          return WidgetSpan(child: imageWidget);
+          return _styledWidgetSpan(imageWidget, style);
         }
       }
       final linkDispatcher = OrgEvents.of(context).dispatchLinkTap;
       final recognizer = TapGestureRecognizer()
         ..onTap = () => linkDispatcher(context, element);
       recognizerHandler(recognizer);
-      final visibleContent = element is OrgBracketLink
-          ? element.description ?? element.location
-          : element.location;
-      return highlightedSpan(
-        transformer(element, visibleContent),
-        recognizer: recognizer,
-        style: style.copyWith(
-          color: OrgTheme.dataOf(context).linkColor,
-          decoration: TextDecoration.underline,
-        ),
-        charWrap: looksLikeUrl(visibleContent),
+      final linkStyle = style.copyWith(
+        color: OrgTheme.dataOf(context).linkColor,
+        decoration: TextDecoration.underline,
       );
+      if (element is OrgPlainLink ||
+          element is OrgBracketLink && element.description == null) {
+        return highlightedSpan(
+          transformer(element, element.location),
+          recognizer: recognizer,
+          style: linkStyle,
+          charWrap: looksLikeUrl(element.location),
+        );
+      }
+      if (element is OrgBracketLink && element.description != null) {
+        return build(
+          element.description!,
+          transformer: transformer,
+          style: linkStyle,
+          recognizer: recognizer,
+        );
+      }
     } else if (element is OrgRadioLink) {
       final recognizer = TapGestureRecognizer()
         ..onTap = () => OrgLocator.of(context)?.jumpToRadioTarget(element);
@@ -109,11 +125,11 @@ class OrgSpanBuilder {
       // target
       final key = OrgLocator.of(context)
           ?.generateRadioTargetKey(element.body.toLowerCase());
-      return WidgetSpan(child: OrgRadioTargetWidget(element, key: key));
+      return _styledWidgetSpan(OrgRadioTargetWidget(element, key: key), style);
     } else if (element is OrgLinkTarget) {
       final key = OrgLocator.of(context)
           ?.generateLinkTargetKey(element.body.toLowerCase());
-      return WidgetSpan(child: OrgLinkTargetWidget(element, key: key));
+      return _styledWidgetSpan(OrgLinkTargetWidget(element, key: key), style);
     } else if (element is OrgDiaryTimestamp) {
       return highlightedSpan(
         transformer(element, element.content),
@@ -121,6 +137,7 @@ class OrgSpanBuilder {
           color: OrgTheme.dataOf(context).dateColor,
           decoration: TextDecoration.underline,
         ),
+        recognizer: recognizer,
       );
     } else if (element is OrgSimpleTimestamp) {
       final onTap = OrgEvents.of(context).onTimestampTap;
@@ -152,9 +169,11 @@ class OrgSpanBuilder {
       );
     } else if (element is OrgDateRangeTimestamp) {
       return TextSpan(children: [
-        build(element.start),
-        highlightedSpan(element.delimiter),
-        build(element.end),
+        build(element.start,
+            transformer: transformer, style: style, recognizer: recognizer),
+        highlightedSpan(element.delimiter, recognizer: recognizer),
+        build(element.end,
+            transformer: transformer, style: style, recognizer: recognizer),
       ]);
     } else if (element is OrgStatisticsPercentageCookie) {
       final color = element.done
@@ -162,96 +181,90 @@ class OrgSpanBuilder {
           : OrgTheme.dataOf(context).todoColor;
       final progressStyle =
           style.copyWith(color: color, fontWeight: FontWeight.bold);
-      return TextSpan(children: [
-        highlightedSpan(element.leading, style: progressStyle),
-        highlightedSpan(element.percentage, style: progressStyle),
-        highlightedSpan(element.suffix, style: progressStyle),
-        highlightedSpan(element.trailing, style: progressStyle),
-      ]);
+      return highlightedSpan(transformer(element, element.toMarkup()),
+          style: progressStyle, recognizer: recognizer);
     } else if (element is OrgStatisticsFractionCookie) {
       final color = element.done
           ? OrgTheme.dataOf(context).doneColor
           : OrgTheme.dataOf(context).todoColor;
       final progressStyle =
           style.copyWith(color: color, fontWeight: FontWeight.bold);
-      return TextSpan(children: [
-        highlightedSpan(element.leading, style: progressStyle),
-        highlightedSpan(element.numerator, style: progressStyle),
-        highlightedSpan(element.separator, style: progressStyle),
-        highlightedSpan(element.denominator, style: progressStyle),
-        highlightedSpan(element.trailing, style: progressStyle),
-      ]);
+      return highlightedSpan(transformer(element, element.toMarkup()),
+          style: progressStyle, recognizer: recognizer);
     } else if (element is OrgSuperscript) {
       if (shouldPrettifySubSuperscript(context, element)) {
-        return WidgetSpan(child: OrgSuperscriptWidget(element));
+        return _styledWidgetSpan(OrgSuperscriptWidget(element), style);
       } else {
         return TextSpan(children: [
-          highlightedSpan(element.leading),
-          build(element.body, transformer: transformer, style: style),
-          highlightedSpan(element.trailing)
+          highlightedSpan(element.leading,
+              style: style, recognizer: recognizer),
+          build(element.body,
+              transformer: transformer, style: style, recognizer: recognizer),
+          highlightedSpan(element.trailing,
+              style: style, recognizer: recognizer)
         ]);
       }
     } else if (element is OrgSubscript) {
       if (shouldPrettifySubSuperscript(context, element)) {
-        return WidgetSpan(child: OrgSubscriptWidget(element));
+        return _styledWidgetSpan(OrgSubscriptWidget(element), style);
       } else {
         return TextSpan(children: [
-          highlightedSpan(element.leading),
-          build(element.body, transformer: transformer, style: style),
-          highlightedSpan(element.trailing)
+          highlightedSpan(element.leading,
+              style: style, recognizer: recognizer),
+          build(element.body,
+              transformer: transformer, style: style, recognizer: recognizer),
+          highlightedSpan(element.trailing,
+              style: style, recognizer: recognizer)
         ]);
       }
     } else if (element is OrgFootnoteReference) {
       final key = element.name == null
           ? null
           : OrgLocator.of(context)?.generateFootnoteKey(element.id);
-      return WidgetSpan(child: OrgFootnoteReferenceWidget(element, key: key));
+      return _styledWidgetSpan(
+          OrgFootnoteReferenceWidget(element, key: key), style);
     } else if (element is OrgFootnote) {
-      return WidgetSpan(child: OrgFootnoteWidget(element));
+      return _styledWidgetSpan(OrgFootnoteWidget(element), style);
     } else if (element is OrgCitation) {
-      return WidgetSpan(child: OrgCitationWidget(element));
+      return _styledWidgetSpan(OrgCitationWidget(element), style);
     } else if (element is OrgMeta) {
       final key = element.keyword.toUpperCase() == '#+NAME:'
           ? OrgLocator.of(context)
               ?.generateNameKey(element.trailing.trim().toLowerCase())
           : null;
-      return WidgetSpan(child: OrgMetaWidget(element, key: key));
+      return _styledWidgetSpan(OrgMetaWidget(element, key: key), style);
     } else if (element is OrgBlock) {
-      return WidgetSpan(child: OrgBlockWidget(element));
+      return _styledWidgetSpan(OrgBlockWidget(element), style);
     } else if (element is OrgTable) {
-      return WidgetSpan(child: OrgTableWidget(element));
+      return _styledWidgetSpan(OrgTableWidget(element), style);
     } else if (element is OrgHorizontalRule) {
-      return WidgetSpan(
-        child: OrgHorizontalRuleWidget(element),
-        alignment: PlaceholderAlignment.middle,
-      );
+      return _styledWidgetSpan(
+          OrgHorizontalRuleWidget(element), style, PlaceholderAlignment.middle);
     } else if (element is OrgFixedWidthArea) {
-      return WidgetSpan(child: OrgFixedWidthAreaWidget(element));
+      return _styledWidgetSpan(OrgFixedWidthAreaWidget(element), style);
     } else if (element is OrgParagraph) {
-      return WidgetSpan(child: OrgParagraphWidget(element));
+      return _styledWidgetSpan(OrgParagraphWidget(element), style);
     } else if (element is OrgPlanningLine) {
-      return WidgetSpan(child: OrgPlanningLineWidget(element));
+      return _styledWidgetSpan(OrgPlanningLineWidget(element), style);
     } else if (element is OrgList) {
-      return WidgetSpan(child: OrgListWidget(element));
+      return _styledWidgetSpan(OrgListWidget(element), style);
     } else if (element is OrgDrawer) {
-      return WidgetSpan(child: OrgDrawerWidget(element));
+      return _styledWidgetSpan(OrgDrawerWidget(element), style);
     } else if (element is OrgProperty) {
-      return WidgetSpan(child: OrgPropertyWidget(element));
+      return _styledWidgetSpan(OrgPropertyWidget(element), style);
     } else if (element is OrgLatexBlock) {
-      return WidgetSpan(child: OrgLatexBlockWidget(element));
+      return _styledWidgetSpan(OrgLatexBlockWidget(element), style);
     } else if (element is OrgLatexInline) {
-      return WidgetSpan(
-        child: OrgLatexInlineWidget(element),
-        alignment: PlaceholderAlignment.middle,
-      );
+      return _styledWidgetSpan(
+          OrgLatexInlineWidget(element), style, PlaceholderAlignment.middle);
     } else if (element is OrgLocalVariables) {
-      return WidgetSpan(child: OrgLocalVariablesWidget(element));
+      return _styledWidgetSpan(OrgLocalVariablesWidget(element), style);
     } else if (element is OrgPgpBlock) {
-      return WidgetSpan(child: OrgPgpBlockWidget(element));
+      return _styledWidgetSpan(OrgPgpBlockWidget(element), style);
     } else if (element is OrgComment) {
-      return WidgetSpan(child: OrgCommentWidget(element));
+      return _styledWidgetSpan(OrgCommentWidget(element), style);
     } else if (element is OrgDecryptedContent) {
-      return WidgetSpan(child: OrgDecryptedContentWidget(element));
+      return _styledWidgetSpan(OrgDecryptedContentWidget(element), style);
     } else if (element is OrgContent) {
       return TextSpan(
           children: element.children
@@ -259,11 +272,11 @@ class OrgSpanBuilder {
                     child,
                     transformer: transformer,
                     style: style,
+                    recognizer: recognizer,
                   ))
               .toList(growable: false));
-    } else {
-      throw Exception('Unknown OrgNode type: $element');
     }
+    throw Exception('Unknown OrgNode type: $element');
   }
 
   InlineSpan highlightedSpan(
@@ -330,6 +343,25 @@ class OrgSpanBuilder {
       );
     }
   }
+}
+
+InlineSpan _styledWidgetSpan(
+  Widget child,
+  TextStyle? style, [
+  PlaceholderAlignment? alignment,
+]) {
+  if (style != null) {
+    // Supplying the style to the WidgetSpan doesn't get the full effect
+    // because only some properties are used. We need to set it as the default
+    // to get e.g. the text color to propagate.
+    child = DefaultTextStyle(style: style, child: child);
+  }
+  return WidgetSpan(
+    child: child,
+    style: style,
+    // TODO(aaron): Somehow check that .bottom continues to be the default
+    alignment: alignment ?? PlaceholderAlignment.bottom,
+  );
 }
 
 class FancySpanBuilder extends StatefulWidget {

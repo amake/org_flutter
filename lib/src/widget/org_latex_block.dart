@@ -22,12 +22,7 @@ class OrgLatexBlockWidget extends StatelessWidget {
               displayMode: true,
               error: (context, error) {
                 debugPrint(error.toString());
-                return Text([
-                  block.leading,
-                  block.begin,
-                  block.content,
-                  block.end
-                ].join(''));
+                return Text(block.toMarkup());
               },
             ),
           ),
