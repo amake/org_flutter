@@ -21,12 +21,10 @@ class OrgSpanBuilder {
   OrgSpanBuilder(
     this.context, {
     required this.recognizerHandler,
-    required this.highlight,
   });
 
   final BuildContext context;
   final RecognizerHandler recognizerHandler;
-  final Pattern? highlight;
 
   InlineSpan build(
     OrgNode element, {
@@ -283,6 +281,7 @@ class OrgSpanBuilder {
     GestureRecognizer? recognizer,
     bool charWrap = false,
   }) {
+    final highlight = OrgController.of(context).searchQuery;
     if (highlight.isEmpty) {
       return TextSpan(
         text: charWrap ? characterWrappable(text) : text,
@@ -374,13 +373,11 @@ class _FancySpanBuilderState extends State<FancySpanBuilder>
     with RecognizerManager<FancySpanBuilder> {
   @override
   Widget build(BuildContext context) {
-    final controller = OrgController.of(context);
     return widget.builder(
       context,
       OrgSpanBuilder(
         context,
         recognizerHandler: registerRecognizer,
-        highlight: controller.searchQuery,
       ),
     );
   }
