@@ -293,7 +293,7 @@ class OrgSpanBuilder {
       style ??= DefaultTextStyle.of(context).style;
       return TextSpan(
         style: style,
-        children: tokenizeTextSpan(
+        children: _tokenizeTextSpan(
           text,
           highlight,
           style.copyWith(
@@ -306,7 +306,7 @@ class OrgSpanBuilder {
     }
   }
 
-  Iterable<InlineSpan> tokenizeTextSpan(
+  Iterable<InlineSpan> _tokenizeTextSpan(
     String text,
     Pattern? pattern,
     TextStyle matchStyle,
