@@ -22,13 +22,11 @@ class OrgSpanBuilder {
     this.context, {
     required this.recognizerHandler,
     required this.highlight,
-    required this.hideEmphasisMarkers,
   });
 
   final BuildContext context;
   final RecognizerHandler recognizerHandler;
   final Pattern? highlight;
-  final bool hideEmphasisMarkers;
 
   InlineSpan build(
     OrgNode element, {
@@ -51,7 +49,7 @@ class OrgSpanBuilder {
       );
       final body = build(element.content,
           transformer: transformer, style: markupStyle, recognizer: recognizer);
-      return hideEmphasisMarkers
+      return OrgController.of(context).settings.hideEmphasisMarkers
           ? body
           : TextSpan(children: [
               highlightedSpan(element.leadingDecoration,
@@ -383,7 +381,6 @@ class _FancySpanBuilderState extends State<FancySpanBuilder>
         context,
         recognizerHandler: registerRecognizer,
         highlight: controller.searchQuery,
-        hideEmphasisMarkers: controller.settings.hideEmphasisMarkers,
       ),
     );
   }
