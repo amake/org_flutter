@@ -1,3 +1,6 @@
+## [8.3.0]
+- Recognize .avif files as images
+
 ## [8.2.0]
 - Render rich content inside links
 - Bug fixes
