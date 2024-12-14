@@ -82,4 +82,5 @@ final _urlLikeRegexp = RegExp(r'^\w+://');
 
 bool looksLikeImagePath(String text) => _imagePathLikeRegexp.hasMatch(text);
 
-final _imagePathLikeRegexp = RegExp(r'\.(?:jpe?g|png|gif|webp|w?bmp|svg)$');
+final _imagePathLikeRegexp =
+    RegExp(r'\.(?:jpe?g|png|gif|webp|w?bmp|svg|avif)$');
