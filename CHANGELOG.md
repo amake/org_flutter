@@ -1,3 +1,7 @@
+## [8.4.0]
+- Improve parsing accuracy
+- Fix trailing blank lines
+
 ## [8.3.0]
 - Recognize .avif files as images
 
