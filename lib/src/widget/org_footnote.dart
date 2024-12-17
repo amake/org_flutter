@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:org_flutter/src/span.dart';
+import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
 class OrgFootnoteWidget extends StatelessWidget {
@@ -14,7 +15,8 @@ class OrgFootnoteWidget extends StatelessWidget {
           children: [
             spanBuilder.build(footnote.marker),
             spanBuilder.build(footnote.content),
-            spanBuilder.highlightedSpan(footnote.trailing),
+            spanBuilder
+                .highlightedSpan(removeTrailingLineBreak(footnote.trailing)),
           ],
         ),
       ),

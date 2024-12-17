@@ -38,6 +38,9 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
     final metaStyle =
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
     final hideMarkup = OrgController.of(context).settings.deemphasizeMarkup;
+    // Remove a line break because we introduce one by splitting the text into
+    // two widgets in this Column
+    final trailing = removeTrailingLineBreak(widget.block.trailing);
     return IndentBuilder(
       widget.block.indent,
       builder: (context, totalIndentSize) {
@@ -53,13 +56,10 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
                     SizeTransition(sizeFactor: animation, child: child),
                 child: open ? child : const SizedBox.shrink(),
               ),
-              // Remove two linebreaks because we introduce two by splitting the
-              // text into two widgets in this Column
-              Text(
-                removeTrailingLineBreak(
-                  removeTrailingLineBreak(widget.block.trailing),
-                ),
-              )
+              if (trailing.isNotEmpty)
+                // Remove another line break because the existence of even an
+                // empty string here takes up a line.
+                Text(removeTrailingLineBreak(trailing)),
             ],
           ),
           child: Column(

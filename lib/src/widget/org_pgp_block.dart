@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:org_flutter/src/span.dart';
+import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
 /// An Org PGP block
@@ -18,7 +19,8 @@ class OrgPgpBlockWidget extends StatelessWidget {
             spanBuilder.highlightedSpan(block.header),
             spanBuilder.highlightedSpan(block.body),
             spanBuilder.highlightedSpan(block.footer),
-            spanBuilder.highlightedSpan(block.trailing),
+            spanBuilder
+                .highlightedSpan(removeTrailingLineBreak(block.trailing)),
           ]),
         ),
       ),

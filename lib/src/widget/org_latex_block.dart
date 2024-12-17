@@ -11,6 +11,9 @@ class OrgLatexBlockWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Remove a line break because we introduce one by splitting the text into
+    // two widgets in this Column
+    final trailing = removeTrailingLineBreak(block.trailing);
     return Column(
       children: [
         ConstrainedBox(
@@ -27,9 +30,10 @@ class OrgLatexBlockWidget extends StatelessWidget {
             ),
           ),
         ),
-        // Remove two linebreaks because we introduce two by splitting the
-        // text into two widgets in this Column
-        Text(removeTrailingLineBreak(removeTrailingLineBreak(block.trailing))),
+        if (trailing.isNotEmpty)
+          // Remove another line break because the existence of even an empty
+          // string here takes up a line.
+          Text(removeTrailingLineBreak(trailing)),
       ],
     );
   }

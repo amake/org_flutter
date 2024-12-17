@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:org_flutter/src/span.dart';
+import 'package:org_flutter/src/util/util.dart';
 import 'package:org_flutter/src/widget/org_theme.dart';
 import 'package:org_parser/org_parser.dart';
 
@@ -26,7 +27,9 @@ class OrgLocalVariablesWidget extends StatelessWidget {
                 style: metaStyle,
               ),
             spanBuilder.highlightedSpan(variables.end, style: metaStyle),
-            spanBuilder.highlightedSpan(variables.trailing, style: metaStyle),
+            spanBuilder.highlightedSpan(
+                removeTrailingLineBreak(variables.trailing),
+                style: metaStyle),
           ]),
         ),
       ),
