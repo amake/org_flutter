@@ -235,8 +235,7 @@ class OrgSpanBuilder {
     } else if (element is OrgTable) {
       return _styledWidgetSpan(OrgTableWidget(element), style);
     } else if (element is OrgHorizontalRule) {
-      return _styledWidgetSpan(
-          OrgHorizontalRuleWidget(element), style, PlaceholderAlignment.middle);
+      return _styledWidgetSpan(OrgHorizontalRuleWidget(element), style);
     } else if (element is OrgFixedWidthArea) {
       return _styledWidgetSpan(OrgFixedWidthAreaWidget(element), style);
     } else if (element is OrgParagraph) {
