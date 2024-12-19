@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 class SafeValueNotifier<T> extends ValueNotifier<T> {
@@ -15,12 +17,16 @@ class SafeValueNotifier<T> extends ValueNotifier<T> {
 }
 
 extension ValueNotifierUtil<T> on ValueNotifier<T> {
-  void listenOnce(VoidCallback callback) {
+  Future<U> listenOnce<U>(FutureOr<U> Function() callback) {
+    final result = Completer<U>();
+
     void listener() {
-      callback();
+      result.complete(callback());
       removeListener(listener);
     }
 
     addListener(listener);
+
+    return result.future;
   }
 }

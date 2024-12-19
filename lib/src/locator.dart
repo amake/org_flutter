@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/locatable.dart';
@@ -84,14 +86,14 @@ class _OrgLocatorState extends State<OrgLocator> {
     // Target widget is probably not currently visible, so make it visible and
     // then listen for its key to become available.
     _controller.ensureVisible(result.path);
-    _radioTargetKeys.listenOnce(() async {
+    return await _radioTargetKeys.listenOnce(() async {
       final key = _radioTargetKeys.value[id];
       if (await _makeVisible(key)) {
         key!.currentState?.doHighlight();
+        return true;
       }
+      return false;
     });
-
-    return true;
   }
 
   Future<bool> _jumpToLinkTarget(String body) async {
@@ -109,14 +111,14 @@ class _OrgLocatorState extends State<OrgLocator> {
     // Target widget is probably not currently visible, so make it visible and
     // then listen for its key to become available.
     _controller.ensureVisible(result.path);
-    _linkTargetKeys.listenOnce(() async {
+    return await _linkTargetKeys.listenOnce(() async {
       final key = _linkTargetKeys.value[keyId];
       if (await _makeVisible(key)) {
         key!.currentState?.doHighlight();
+        return true;
       }
+      return false;
     });
-
-    return true;
   }
 
   Future<bool> _jumpToName(String name) async {
@@ -135,14 +137,14 @@ class _OrgLocatorState extends State<OrgLocator> {
     // Target widget is probably not currently visible, so make it visible and
     // then listen for its key to become available.
     _controller.ensureVisible(result.path);
-    _nameKeys.listenOnce(() async {
+    return await _nameKeys.listenOnce(() async {
       final key = _nameKeys.value[keyId];
       if (await _makeVisible(key)) {
         key!.currentState?.doHighlight();
+        return true;
       }
+      return false;
     });
-
-    return true;
   }
 
   @override
