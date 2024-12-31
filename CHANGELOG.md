@@ -1,3 +1,6 @@
+## [8.5.0]
+- Render rich content inside drawer property values
+
 ## [8.4.0]
 - Improve parsing accuracy
 - Fix trailing blank lines
