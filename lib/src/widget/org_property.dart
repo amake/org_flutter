@@ -38,7 +38,7 @@ class OrgPropertyWidget extends StatelessWidget {
           .style
           .copyWith(color: OrgTheme.dataOf(context).keywordColor),
     );
-    yield builder.highlightedSpan(property.value);
+    yield builder.build(property.value);
     final trailing = removeTrailingLineBreak(property.trailing);
     if (trailing.isNotEmpty) {
       yield builder.highlightedSpan(trailing);
