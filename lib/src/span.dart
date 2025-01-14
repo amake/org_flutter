@@ -122,6 +122,8 @@ class OrgSpanBuilder {
       final key = OrgLocator.of(context)
           ?.generateRadioTargetKey(element.body.toLowerCase());
       return _styledWidgetSpan(OrgRadioTargetWidget(element, key: key), style);
+    } else if (element is OrgInlineSrcBlock) {
+      return _styledWidgetSpan(OrgInlineSrcBlockWidget(element), style);
     } else if (element is OrgLinkTarget) {
       final key = OrgLocator.of(context)
           ?.generateLinkTargetKey(element.body.toLowerCase());

@@ -84,3 +84,10 @@ bool looksLikeImagePath(String text) => _imagePathLikeRegexp.hasMatch(text);
 
 final _imagePathLikeRegexp =
     RegExp(r'\.(?:jpe?g|png|gif|webp|w?bmp|svg|avif)$');
+
+String trimPrefSuff(String str, String prefix, String suffix) {
+  if (str.startsWith(prefix) && str.endsWith(suffix)) {
+    return str.substring(prefix.length, str.length - suffix.length);
+  }
+  return str;
+}
