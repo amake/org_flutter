@@ -7,7 +7,6 @@ import 'package:org_flutter/src/locator.dart';
 import 'package:org_flutter/src/search.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/util/util.dart';
-import 'package:org_flutter/src/widget/org_link_target.dart';
 import 'package:org_flutter/src/widgets.dart';
 import 'package:org_parser/org_parser.dart';
 

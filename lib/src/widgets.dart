@@ -13,6 +13,7 @@ export './widget/org_horizontal_rule.dart';
 export './widget/org_latex_block.dart';
 export './widget/org_latex_inline.dart';
 export './widget/org_link.dart';
+export './widget/org_link_target.dart';
 export './widget/org_list.dart';
 export './widget/org_local_variables.dart';
 export './widget/org_meta.dart';
