@@ -22,6 +22,9 @@ class OrgParagraphWidget extends StatelessWidget {
             spanBuilder.build(
               paragraph.body,
               transformer: (elem, content) {
+                // TODO(aaron): Somehow handle a leading linebreak on an
+                // intermediate element or sandwiched between two intermediate
+                // elements.
                 final isLast = identical(elem, paragraph.body.children.last);
                 var formattedContent = deindent(content, totalIndentSize);
                 if (reflow) {
