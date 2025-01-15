@@ -1,3 +1,6 @@
+## [8.6.0]
+- Support inline src blocks
+
 ## [8.5.0]
 - Render rich content inside drawer property values
 
