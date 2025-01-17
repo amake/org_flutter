@@ -222,7 +222,12 @@ class OrgSpanBuilder {
       return _styledWidgetSpan(
           OrgFootnoteReferenceWidget(element, key: key), style);
     } else if (element is OrgFootnote) {
-      return _styledWidgetSpan(OrgFootnoteWidget(element), style);
+      return TextSpan(children: [
+        build(element.marker, transformer: transformer, style: style),
+        build(element.content, transformer: transformer, style: style),
+        highlightedSpan(removeTrailingLineBreak(element.trailing),
+            style: style, recognizer: recognizer),
+      ]);
     } else if (element is OrgCitation) {
       return _styledWidgetSpan(OrgCitationWidget(element), style);
     } else if (element is OrgMeta) {

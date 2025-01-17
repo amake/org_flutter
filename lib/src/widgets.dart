@@ -6,7 +6,6 @@ export './widget/org_decrypted_content.dart';
 export './widget/org_document.dart';
 export './widget/org_drawer.dart';
 export './widget/org_fixed_width_area.dart';
-export './widget/org_footnote.dart';
 export './widget/org_footnote_reference.dart';
 export './widget/org_headline.dart';
 export './widget/org_horizontal_rule.dart';
