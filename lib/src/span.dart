@@ -14,6 +14,17 @@ typedef Transformer = String Function(OrgNode, String);
 
 String identityTransformer(OrgNode _, String str) => str;
 
+Transformer reflowingTransformer(BuildContext context, List<OrgNode> elems) {
+  final reflow = OrgController.of(context).settings.reflowText;
+  return (OrgNode elem, String content) {
+    if (reflow) {
+      final location = locationOf(elem, elems);
+      return reflowText(content, location);
+    }
+    return content;
+  };
+}
+
 /// A utility for building a complex, nested [InlineSpan] out of text runs and
 /// org_flutter widgets
 class OrgSpanBuilder {
@@ -268,6 +279,9 @@ class OrgSpanBuilder {
     } else if (element is OrgDecryptedContent) {
       return _styledWidgetSpan(OrgDecryptedContentWidget(element), style);
     } else if (element is OrgContent) {
+      if (identical(transformer, identityTransformer)) {
+        transformer = reflowingTransformer(context, element.children);
+      }
       return TextSpan(
           children: element.children
               .map((child) => build(
