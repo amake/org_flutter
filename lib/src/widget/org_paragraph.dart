@@ -22,15 +22,14 @@ class OrgParagraphWidget extends StatelessWidget {
             spanBuilder.build(
               paragraph.body,
               transformer: (elem, content) {
-                // TODO(aaron): Somehow handle a leading linebreak on an
-                // intermediate element or sandwiched between two intermediate
-                // elements.
-                final isLast = identical(elem, paragraph.body.children.last);
+                final location = locationOf(elem, paragraph.body.children);
                 var formattedContent = deindent(content, totalIndentSize);
                 if (reflow) {
-                  formattedContent = reflowText(formattedContent, end: isLast);
+                  formattedContent = reflowText(formattedContent, location);
                 }
-                if (isLast && paragraph.trailing.isEmpty) {
+                if (location == TokenLocation.end ||
+                    location == TokenLocation.only &&
+                        paragraph.trailing.isEmpty) {
                   formattedContent = removeTrailingLineBreak(formattedContent);
                 }
                 return formattedContent;

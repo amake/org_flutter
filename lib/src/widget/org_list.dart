@@ -91,13 +91,13 @@ class _OrgListItemWidget extends StatelessWidget {
     }
     if (item.body != null) {
       yield builder.build(item.body!, transformer: (elem, content) {
-        final isLast = identical(item.body!.children.last, elem);
+        final location = locationOf(elem, item.body!.children);
         final reflow = OrgController.of(context).settings.reflowText;
         var formattedContent = deindent(content, totalIndentSize);
         if (reflow) {
-          formattedContent = reflowText(formattedContent, end: isLast);
+          formattedContent = reflowText(formattedContent, location);
         }
-        if (isLast) {
+        if (location == TokenLocation.end || location == TokenLocation.only) {
           final last = removeTrailingLineBreak(formattedContent);
           // A trailing linebreak results in a line with the same height as
           // the previous line. This is bad when the previous line is
