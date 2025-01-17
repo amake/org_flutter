@@ -23,12 +23,10 @@ class OrgInlineSrcBlockWidget extends StatelessWidget {
         TextSpan(text: block.arguments, style: codeStyle),
       TextSpan(text: '{', style: codeStyle),
       if (supportedSrcLanguage(block.language))
-        WidgetSpan(
-          child: buildSrcHighlight(
-            context,
-            code: trimPrefSuff(block.body, '{', '}'),
-            languageId: block.language,
-          ),
+        buildSrcHighlightSpan(
+          context,
+          code: trimPrefSuff(block.body, '{', '}'),
+          languageId: block.language,
         )
       else
         TextSpan(text: trimPrefSuff(block.body, '{', '}'), style: codeStyle),

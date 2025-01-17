@@ -20,6 +20,18 @@ Widget buildSrcHighlight(
       textStyle: DefaultTextStyle.of(context).style,
     );
 
+TextSpan buildSrcHighlightSpan(
+  BuildContext context, {
+  required String code,
+  required String? languageId,
+}) =>
+    _highlightedSpan(
+      code,
+      languageId: languageId,
+      theme: OrgTheme.dataOf(context).srcTheme ?? {},
+      textStyle: DefaultTextStyle.of(context).style,
+    );
+
 // Below copied from:
 // https://github.com/akvelon/dart-highlighting/blob/25bc512c66d9eead9012dd129d0a12e77393b828/flutter_highlighting/lib/flutter_highlighting.dart
 //
@@ -28,6 +40,16 @@ Widget buildSrcHighlight(
 // - Replace `RichText` with `Text.rich`; see
 //   https://github.com/akvelon/dart-highlighting/pull/71
 // - Fix lints
+// - Refactor to allow obtaining just the `TextSpan`
+
+const _rootKey = 'root';
+const _defaultFontColor = Color(0xff000000);
+const _defaultBackgroundColor = Color(0xffffffff);
+
+// TODO: dart:io is not available at web platform currently
+// See: https://github.com/flutter/flutter/issues/39998
+// So we just use monospace here for now
+const _defaultFontFamily = 'monospace';
 
 /// Highlight Flutter Widget
 class HighlightView extends StatelessWidget {
@@ -64,69 +86,75 @@ class HighlightView extends StatelessWidget {
     super.key,
   }) : source = input.replaceAll('\t', ' ' * tabSize);
 
-  List<TextSpan> _convert(List<Node> nodes) {
-    List<TextSpan> spans = [];
-    var currentSpans = spans;
-    List<List<TextSpan>> stack = [];
-
-    traverse(Node node) {
-      if (node.value != null) {
-        currentSpans.add(node.className == null
-            ? TextSpan(text: node.value)
-            : TextSpan(text: node.value, style: theme[node.className]));
-      } else {
-        List<TextSpan> tmp = [];
-        currentSpans.add(TextSpan(children: tmp, style: theme[node.className]));
-        stack.add(currentSpans);
-        currentSpans = tmp;
-
-        for (var n in node.children) {
-          traverse(n);
-          if (n == node.children.last) {
-            currentSpans = stack.isEmpty ? spans : stack.removeLast();
-          }
-        }
-      }
-    }
-
-    for (var node in nodes) {
-      traverse(node);
-    }
-
-    return spans;
-  }
-
-  static const _rootKey = 'root';
-  static const _defaultFontColor = Color(0xff000000);
-  static const _defaultBackgroundColor = Color(0xffffffff);
-
-  // TODO: dart:io is not available at web platform currently
-  // See: https://github.com/flutter/flutter/issues/39998
-  // So we just use monospace here for now
-  static const _defaultFontFamily = 'monospace';
-
   @override
   Widget build(BuildContext context) {
-    var style = TextStyle(
-      fontFamily: _defaultFontFamily,
-      color: theme[_rootKey]?.color ?? _defaultFontColor,
-    );
-    if (textStyle != null) {
-      style = style.merge(textStyle);
-    }
-
     return Container(
       color: theme[_rootKey]?.backgroundColor ?? _defaultBackgroundColor,
       padding: padding,
       child: Text.rich(
-        TextSpan(
-          style: style,
-          children: _convert(
-            // ignore: invalid_use_of_internal_member
-            highlight.highlight(languageId ?? '', source, true).nodes ?? [],
-          ),
+        _highlightedSpan(
+          source,
+          languageId: languageId,
+          theme: theme,
+          textStyle: textStyle,
         ),
       ),
     );
   }
+}
+
+TextSpan _highlightedSpan(
+  String source, {
+  String? languageId,
+  Map<String, TextStyle> theme = const {},
+  TextStyle? textStyle,
+}) {
+  var style = TextStyle(
+    fontFamily: _defaultFontFamily,
+    color: theme[_rootKey]?.color ?? _defaultFontColor,
+  );
+  if (textStyle != null) {
+    style = style.merge(textStyle);
+  }
+
+  return TextSpan(
+    style: style,
+    children: _convert(
+      // ignore: invalid_use_of_internal_member
+      highlight.highlight(languageId ?? '', source, true).nodes ?? [],
+      theme,
+    ),
+  );
+}
+
+List<TextSpan> _convert(List<Node> nodes, Map<String, TextStyle> theme) {
+  List<TextSpan> spans = [];
+  var currentSpans = spans;
+  List<List<TextSpan>> stack = [];
+
+  traverse(Node node) {
+    if (node.value != null) {
+      currentSpans.add(node.className == null
+          ? TextSpan(text: node.value)
+          : TextSpan(text: node.value, style: theme[node.className]));
+    } else {
+      List<TextSpan> tmp = [];
+      currentSpans.add(TextSpan(children: tmp, style: theme[node.className]));
+      stack.add(currentSpans);
+      currentSpans = tmp;
+
+      for (var n in node.children) {
+        traverse(n);
+        if (n == node.children.last) {
+          currentSpans = stack.isEmpty ? spans : stack.removeLast();
+        }
+      }
+    }
+  }
+
+  for (var node in nodes) {
+    traverse(node);
+  }
+
+  return spans;
 }
