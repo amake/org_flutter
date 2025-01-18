@@ -227,11 +227,31 @@ class OrgSpanBuilder {
         ]);
       }
     } else if (element is OrgFootnoteReference) {
-      final key = element.name == null
-          ? null
-          : OrgLocator.of(context)?.generateFootnoteKey(element.id);
-      return _styledWidgetSpan(
-          OrgFootnoteReferenceWidget(element, key: key), style);
+      if (element.name == null) {
+        // Anonymous footnote has no "behavior" so we prefer a text span to a
+        // widget span
+        final footnoteStyle = style.copyWith(
+          color: OrgTheme.dataOf(context).footnoteColor,
+        );
+        return TextSpan(
+          children: [
+            highlightedSpan(element.leading, style: footnoteStyle),
+            if (element.definition != null)
+              highlightedSpan(element.definition!.delimiter,
+                  style: footnoteStyle),
+            if (element.definition != null)
+              build(
+                element.definition!.value,
+                style: footnoteStyle,
+              ),
+            highlightedSpan(element.trailing, style: footnoteStyle),
+          ],
+        );
+      } else {
+        final key = OrgLocator.of(context)?.generateFootnoteKey(element.id);
+        return _styledWidgetSpan(
+            OrgFootnoteReferenceWidget(element, key: key), style);
+      }
     } else if (element is OrgFootnote) {
       return TextSpan(children: [
         build(element.marker, transformer: transformer, style: style),
