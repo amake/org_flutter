@@ -180,7 +180,8 @@ class OrgSpanBuilder {
       return TextSpan(children: [
         build(element.start,
             transformer: transformer, style: style, recognizer: recognizer),
-        highlightedSpan(element.delimiter, recognizer: recognizer),
+        highlightedSpan(element.delimiter,
+            style: style, recognizer: recognizer),
         build(element.end,
             transformer: transformer, style: style, recognizer: recognizer),
       ]);
@@ -235,16 +236,20 @@ class OrgSpanBuilder {
         );
         return TextSpan(
           children: [
-            highlightedSpan(element.leading, style: footnoteStyle),
+            highlightedSpan(element.leading,
+                style: footnoteStyle, recognizer: recognizer),
             if (element.definition != null)
               highlightedSpan(element.definition!.delimiter,
-                  style: footnoteStyle),
+                  style: footnoteStyle, recognizer: recognizer),
             if (element.definition != null)
               build(
                 element.definition!.value,
+                transformer: transformer,
                 style: footnoteStyle,
+                recognizer: recognizer,
               ),
-            highlightedSpan(element.trailing, style: footnoteStyle),
+            highlightedSpan(element.trailing,
+                style: footnoteStyle, recognizer: recognizer),
           ],
         );
       } else {
@@ -254,8 +259,10 @@ class OrgSpanBuilder {
       }
     } else if (element is OrgFootnote) {
       return TextSpan(children: [
-        build(element.marker, transformer: transformer, style: style),
-        build(element.content, transformer: transformer, style: style),
+        build(element.marker,
+            transformer: transformer, style: style, recognizer: recognizer),
+        build(element.content,
+            transformer: transformer, style: style, recognizer: recognizer),
         highlightedSpan(removeTrailingLineBreak(element.trailing),
             style: style, recognizer: recognizer),
       ]);
