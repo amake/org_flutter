@@ -21,6 +21,4 @@ jobs:
     - name: Analyze
       run: flutter analyze
     - name: Run tests
-      run: flutter test
-    - name: Check example
-      run: cd example; flutter test
+      run: make test
