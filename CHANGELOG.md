@@ -1,3 +1,6 @@
+## [8.7.1]
+- Improve line wrapping
+
 ## [8.7.0]
 - Improve line wrapping and text reflow
 
