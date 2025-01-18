@@ -1,5 +1,4 @@
 export './widget/org_block.dart';
-export './widget/org_citation.dart';
 export './widget/org_comment.dart';
 export './widget/org_content.dart';
 export './widget/org_decrypted_content.dart';

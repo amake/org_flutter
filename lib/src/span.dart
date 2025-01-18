@@ -267,7 +267,29 @@ class OrgSpanBuilder {
             style: style, recognizer: recognizer),
       ]);
     } else if (element is OrgCitation) {
-      return _styledWidgetSpan(OrgCitationWidget(element), style);
+      final recognizer = TapGestureRecognizer()
+        ..onTap = () => OrgEvents.of(context).onCitationTap?.call(element);
+      final citationStyle = style.copyWith(
+        color: OrgTheme.dataOf(context).citationColor,
+      );
+      return TextSpan(
+        children: [
+          highlightedSpan(element.leading,
+              style: citationStyle, recognizer: recognizer),
+          if (element.style != null)
+            highlightedSpan(element.style!.leading,
+                style: citationStyle, recognizer: recognizer),
+          if (element.style != null)
+            highlightedSpan(element.style!.value,
+                style: citationStyle, recognizer: recognizer),
+          highlightedSpan(element.delimiter,
+              style: citationStyle, recognizer: recognizer),
+          highlightedSpan(element.body,
+              style: citationStyle, recognizer: recognizer),
+          highlightedSpan(element.trailing,
+              style: citationStyle, recognizer: recognizer),
+        ],
+      );
     } else if (element is OrgMeta) {
       final key = element.keyword.toUpperCase() == '#+NAME:'
           ? OrgLocator.of(context)
