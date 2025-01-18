@@ -1,3 +1,6 @@
+## [8.7.0]
+- Improve line wrapping and text reflow
+
 ## [8.6.0]
 - Support inline src blocks
 
