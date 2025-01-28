@@ -1,3 +1,7 @@
+## [9.0.0]
+- Render rich content in keyword lines
+- Require Flutter 3.27+
+
 ## [8.7.1]
 - Improve line wrapping
 
