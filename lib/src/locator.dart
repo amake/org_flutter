@@ -124,8 +124,8 @@ class _OrgLocatorState extends State<OrgLocator> {
   Future<bool> _jumpToName(String name) async {
     final keyId = name.toLowerCase();
     final result = _controller.root.find<OrgMeta>((target) =>
-        target.keyword.toUpperCase() == '#+NAME:' &&
-        target.trailing.trim().toLowerCase() == keyId);
+        target.key.toUpperCase() == '#+NAME:' &&
+        target.value?.toMarkup().trim().toLowerCase() == keyId);
     if (result == null) return false;
 
     final key = _nameKeys.value[keyId];

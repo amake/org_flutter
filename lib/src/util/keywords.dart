@@ -3,8 +3,8 @@ import 'package:org_flutter/org_flutter.dart';
 List<String> getStartupSettings(OrgTree tree) {
   final result = <String>[];
   tree.visit<OrgMeta>((meta) {
-    if (meta.keyword.toUpperCase() == '#+STARTUP:') {
-      for (final setting in meta.trailing.trim().split(' ')) {
+    if (meta.key.toUpperCase() == '#+STARTUP:' && meta.value != null) {
+      for (final setting in meta.value!.toMarkup().trim().split(' ')) {
         result.add(setting.toLowerCase());
       }
     }

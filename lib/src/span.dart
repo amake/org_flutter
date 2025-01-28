@@ -291,9 +291,10 @@ class OrgSpanBuilder {
         ],
       );
     } else if (element is OrgMeta) {
-      final key = element.keyword.toUpperCase() == '#+NAME:'
+      final key = element.key.toUpperCase() == '#+NAME:' &&
+              element.value != null
           ? OrgLocator.of(context)
-              ?.generateNameKey(element.trailing.trim().toLowerCase())
+              ?.generateNameKey(element.value!.toMarkup().trim().toLowerCase())
           : null;
       return _styledWidgetSpan(OrgMetaWidget(element, key: key), style);
     } else if (element is OrgBlock) {

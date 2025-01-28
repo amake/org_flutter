@@ -7,8 +7,8 @@ Locale? extractLocale(
 ) {
   Locale? result;
   tree.visit<OrgMeta>((meta) {
-    if (meta.keyword.toUpperCase() == '#+LANGUAGE:') {
-      final trailing = meta.trailing.trim();
+    if (meta.key.toUpperCase() == '#+LANGUAGE:' && meta.value != null) {
+      final trailing = meta.value!.toMarkup().trim();
       result = tryParseLocale(trailing);
       if (result != null) return false;
     }

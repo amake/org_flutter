@@ -62,7 +62,7 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
   }
 
   bool get _isDocInfoKeyword =>
-      _kDocInfoKeywords.contains(widget.meta.keyword.toUpperCase());
+      _kDocInfoKeywords.contains(widget.meta.key.toUpperCase());
 
   TextStyle? _keywordStyle(BuildContext context) => _isDocInfoKeyword
       ? TextStyle(color: OrgTheme.dataOf(context).codeColor)
@@ -71,7 +71,7 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
   TextStyle? _valueStyle(BuildContext context) => _isDocInfoKeyword
       ? TextStyle(
           color: OrgTheme.dataOf(context).infoColor,
-          fontWeight: widget.meta.keyword.toUpperCase() == '#+TITLE:'
+          fontWeight: widget.meta.key.toUpperCase() == '#+TITLE:'
               ? FontWeight.bold
               : null,
         )
@@ -79,8 +79,11 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
 
   Iterable<InlineSpan> _spans(
       BuildContext context, OrgSpanBuilder builder) sync* {
-    yield builder.highlightedSpan(widget.meta.keyword,
+    yield builder.highlightedSpan(widget.meta.key,
         style: _keywordStyle(context));
+    if (widget.meta.value != null) {
+      yield builder.build(widget.meta.value!);
+    }
     final trailing = removeTrailingLineBreak(widget.meta.trailing);
     if (trailing.isNotEmpty) {
       yield builder.highlightedSpan(trailing, style: _valueStyle(context));
