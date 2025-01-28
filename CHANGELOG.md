@@ -1,3 +1,6 @@
+## [9.0.1]
+- Fix regression on keyword value color
+
 ## [9.0.0]
 - Render rich content in keyword lines
 - Require Flutter 3.27+
