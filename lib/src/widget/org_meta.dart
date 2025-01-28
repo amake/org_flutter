@@ -82,7 +82,7 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
     yield builder.highlightedSpan(widget.meta.key,
         style: _keywordStyle(context));
     if (widget.meta.value != null) {
-      yield builder.build(widget.meta.value!);
+      yield builder.build(widget.meta.value!, style: _valueStyle(context));
     }
     final trailing = removeTrailingLineBreak(widget.meta.trailing);
     if (trailing.isNotEmpty) {
