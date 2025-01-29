@@ -27,7 +27,7 @@ class OrgBidiDetectionSerializer extends OrgSerializer {
   void write(String str) {
     if (canceled) return;
 
-    final idx = str.indexOf(UnicodeCharMatcher.bidiStrong());
+    final idx = UnicodeCharMatcher.bidiStrong().firstIndexIn(str);
     if (idx != -1) {
       canceled = true;
       strongChar = str.codeUnitAt(idx);

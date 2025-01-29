@@ -29,4 +29,9 @@ void main() {
     final textDirection = node.detectTextDirection();
     expect(textDirection, TextDirection.ltr);
   });
+  test('astral plane', () {
+    final node = OrgPlainText('🌍');
+    final textDirection = node.detectTextDirection();
+    expect(textDirection, isNull);
+  });
 }
