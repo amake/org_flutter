@@ -64,18 +64,24 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
   bool get _isDocInfoKeyword =>
       _kDocInfoKeywords.contains(widget.meta.key.toUpperCase());
 
-  TextStyle? _keywordStyle(BuildContext context) => _isDocInfoKeyword
-      ? TextStyle(color: OrgTheme.dataOf(context).codeColor)
-      : TextStyle(color: OrgTheme.dataOf(context).metaColor);
+  TextStyle? _keywordStyle(BuildContext context) {
+    final style = DefaultTextStyle.of(context).style;
+    return _isDocInfoKeyword
+        ? style.copyWith(color: OrgTheme.dataOf(context).codeColor)
+        : style.copyWith(color: OrgTheme.dataOf(context).metaColor);
+  }
 
-  TextStyle? _valueStyle(BuildContext context) => _isDocInfoKeyword
-      ? TextStyle(
-          color: OrgTheme.dataOf(context).infoColor,
-          fontWeight: widget.meta.key.toUpperCase() == '#+TITLE:'
-              ? FontWeight.bold
-              : null,
-        )
-      : TextStyle(color: OrgTheme.dataOf(context).metaColor);
+  TextStyle? _valueStyle(BuildContext context) {
+    final style = DefaultTextStyle.of(context).style;
+    return _isDocInfoKeyword
+        ? style.copyWith(
+            color: OrgTheme.dataOf(context).infoColor,
+            fontWeight: widget.meta.key.toUpperCase() == '#+TITLE:'
+                ? FontWeight.bold
+                : null,
+          )
+        : style.copyWith(color: OrgTheme.dataOf(context).metaColor);
+  }
 
   Iterable<InlineSpan> _spans(
       BuildContext context, OrgSpanBuilder builder) sync* {
