@@ -1,3 +1,6 @@
+## [9.0.3]
+- Fix error when rendering sub/superscripts in a meta line
+
 ## [9.0.2]
 - Fix error when detecting bidi direction of text with astral codepoints
 
