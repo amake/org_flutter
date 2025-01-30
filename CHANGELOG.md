@@ -1,3 +1,6 @@
+## [9.0.2]
+- Fix error when detecting bidi direction of text with astral codepoints
+
 ## [9.0.1]
 - Fix regression on keyword value color
 
