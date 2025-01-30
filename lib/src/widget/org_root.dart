@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/events.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/theme.dart';
@@ -91,7 +90,7 @@ class OrgRootWidget extends StatelessWidget {
         child: IdentityTextScale(child: child),
       ),
     );
-    final locale = OrgController.of(context).settings.locale;
+    final locale = OrgSettings.of(context).settings.locale;
     if (locale != null) {
       body = Localizations.override(
         context: context,

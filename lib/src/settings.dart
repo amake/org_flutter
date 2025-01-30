@@ -20,8 +20,40 @@ const _kDefaultHideEmphasisMarkers = false;
 const _kDefaultInlineImages = true;
 const _kDefaultVisibilityState = OrgVisibilityState.folded;
 
+class InheritedOrgSettings extends InheritedWidget {
+  static Widget merge(
+    OrgSettings settings, {
+    required Widget child,
+  }) {
+    return Builder(builder: (context) {
+      final inherited = OrgSettings.of(context);
+      return InheritedOrgSettings(
+        [settings, ...inherited.settings],
+        child: child,
+      );
+    });
+  }
+
+  const InheritedOrgSettings(this.settings, {required super.child, super.key});
+
+  final List<OrgSettings> settings;
+
+  /// Get the prettify-symbols-mode replacement with the given [name]. The
+  /// result is obtained from [OrgController.entityReplacements]. Returns null
+  /// if prettification is disabled.
+  String? prettifyEntity(String name) =>
+      settings.prettyEntities ? settings.entityReplacements[name] : null;
+
+  @override
+  bool updateShouldNotify(InheritedOrgSettings oldWidget) =>
+      !listEquals(settings, oldWidget.settings);
+}
+
 /// A collection of settings that affect the appearance of the document
 class OrgSettings {
+  static InheritedOrgSettings of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<InheritedOrgSettings>()!;
+
   static OrgSettings get defaults => const OrgSettings(
         reflowText: _kDefaultReflowText,
         deemphasizeMarkup: _kDefaultDeemphasizeMarkup,

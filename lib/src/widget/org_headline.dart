@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/util/util.dart';
@@ -29,7 +28,7 @@ class OrgHeadlineWidget extends StatelessWidget {
         height: 1.8,
       ),
       child: FancySpanBuilder(builder: (context, spanBuilder) {
-        final allowFancyLayout = OrgController.of(context).settings.reflowText;
+        final allowFancyLayout = OrgSettings.of(context).settings.reflowText;
         final haveTags = headline.tags != null;
         final simpleLayout = !haveTags || !allowFancyLayout;
         // We don't need to check whether the section has content, because that
@@ -84,7 +83,7 @@ class OrgHeadlineWidget extends StatelessWidget {
   }
 
   TextDirection? _textDirection(BuildContext context) =>
-      OrgController.of(context).settings.textDirection ??
+      OrgSettings.of(context).settings.textDirection ??
       headline.detectTextDirection();
 }
 
@@ -165,7 +164,7 @@ class _Body extends StatelessWidget {
   }
 
   Iterable<TextSpan> _starsSpans(BuildContext context) sync* {
-    final hideStars = OrgController.of(context).settings.hideStars;
+    final hideStars = OrgSettings.of(context).settings.hideStars;
     final style = _starStyle(context);
     if (hideStars) {
       yield TextSpan(

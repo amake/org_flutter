@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/indent.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/span.dart';
@@ -13,7 +12,7 @@ class OrgParagraphWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final reflow = OrgController.of(context).settings.reflowText;
+    final reflow = OrgSettings.of(context).settings.reflowText;
     return IndentBuilder(
       paragraph.indent,
       builder: (context, totalIndentSize) {

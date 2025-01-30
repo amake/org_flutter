@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/error.dart';
 import 'package:org_flutter/src/folding.dart';
@@ -323,7 +322,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       ensureVisible: _ensureVisible,
       setVisibilityOf: _setVisibilityOf,
       adaptVisibility: _adaptVisibility,
-      child: widget.child,
+      child: InheritedOrgSettings(_settings, child: widget.child),
     );
   }
 
@@ -450,7 +449,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
 }
 
 class OrgControllerData extends InheritedWidget {
-  OrgControllerData({
+  const OrgControllerData({
     required super.child,
     required this.root,
     required OrgDataNodeMap nodeMap,
@@ -469,11 +468,7 @@ class OrgControllerData extends InheritedWidget {
   })  : _nodeMap = nodeMap,
         _restorationId = restorationId,
         _callerSettings = callerSettings,
-        _embeddedSettings = embeddedSettings,
-        settings = [
-          if (callerSettings != null) callerSettings,
-          if (embeddedSettings != null) embeddedSettings
-        ];
+        _embeddedSettings = embeddedSettings;
 
   /// The Org Mode document or section this controller will control
   final OrgTree root;
@@ -489,8 +484,6 @@ class OrgControllerData extends InheritedWidget {
 
   final OrgSettings? _callerSettings;
   final OrgSettings? _embeddedSettings;
-
-  final List<OrgSettings> settings;
 
   /// Keys representing individual search result spans in the document. It will
   /// only be populated after the widget build phase, so consumers will likely
@@ -579,12 +572,6 @@ class OrgControllerData extends InheritedWidget {
     }
   }
 
-  /// Get the prettify-symbols-mode replacement with the given [name]. The
-  /// result is obtained from [OrgController.entityReplacements]. Returns null
-  /// if prettification is disabled.
-  String? prettifyEntity(String name) =>
-      settings.prettyEntities ? settings.entityReplacements[name] : null;
-
   String? restorationIdFor(String name) =>
       _deriveRestorationId(_restorationId, name);
 
@@ -612,9 +599,7 @@ class OrgControllerData extends InheritedWidget {
 
   @override
   bool updateShouldNotify(OrgControllerData oldWidget) =>
-      root != oldWidget.root ||
-      searchQuery != oldWidget.searchQuery ||
-      !listEquals(settings, oldWidget.settings);
+      root != oldWidget.root || searchQuery != oldWidget.searchQuery;
 }
 
 String? _deriveRestorationId(String? base, String name) =>

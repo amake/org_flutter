@@ -454,7 +454,7 @@ const Map<String, String> orgDefaultEntityReplacements = {
 
 bool shouldPrettifySubSuperscript(
     BuildContext context, OrgSubSuperscript element) {
-  final settings = OrgController.of(context).settings;
+  final settings = OrgSettings.of(context).settings;
   if (!settings.prettyEntities) return false;
   if (!settings.subSuperscripts) return false;
   if (!settings.strictSubSuperscripts) return true;

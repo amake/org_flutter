@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/indent.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/span.dart';
@@ -26,7 +25,7 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
     super.didChangeDependencies();
     if (!_inited) {
       openListenable.value =
-          !OrgController.of(context).settings.hideDrawerStartup;
+          !OrgSettings.of(context).settings.hideDrawerStartup;
       _inited = true;
     }
   }
@@ -79,7 +78,7 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
     );
     return reduceOpacity(
       body,
-      enabled: OrgController.of(context).settings.deemphasizeMarkup,
+      enabled: OrgSettings.of(context).settings.deemphasizeMarkup,
     );
   }
 

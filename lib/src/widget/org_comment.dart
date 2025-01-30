@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/util/util.dart';
@@ -13,7 +12,7 @@ class OrgCommentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hideMarkup = OrgController.of(context).settings.deemphasizeMarkup;
+    final hideMarkup = OrgSettings.of(context).settings.deemphasizeMarkup;
     final body = SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: FancySpanBuilder(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/flash.dart';
 import 'package:org_flutter/src/indent.dart';
 import 'package:org_flutter/src/settings.dart';
@@ -35,7 +34,7 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
   @override
   Widget build(BuildContext context) {
     final deemphasize = !_isDocInfoKeyword &&
-        OrgController.of(context).settings.deemphasizeMarkup;
+        OrgSettings.of(context).settings.deemphasizeMarkup;
     return IndentBuilder(
       widget.meta.indent,
       builder: (context, _) {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/events.dart';
 import 'package:org_flutter/src/indent.dart';
 import 'package:org_flutter/src/settings.dart';
@@ -92,7 +91,7 @@ class _OrgListItemWidget extends StatelessWidget {
     if (item.body != null) {
       yield builder.build(item.body!, transformer: (elem, content) {
         final location = locationOf(elem, item.body!.children);
-        final reflow = OrgController.of(context).settings.reflowText;
+        final reflow = OrgSettings.of(context).settings.reflowText;
         var formattedContent = deindent(content, totalIndentSize);
         if (reflow) {
           formattedContent = reflowText(formattedContent, location);

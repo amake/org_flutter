@@ -15,7 +15,7 @@ typedef Transformer = String Function(OrgNode, String);
 String identityTransformer(OrgNode _, String str) => str;
 
 Transformer reflowingTransformer(BuildContext context, List<OrgNode> elems) {
-  final reflow = OrgController.of(context).settings.reflowText;
+  final reflow = OrgSettings.of(context).settings.reflowText;
   return (OrgNode elem, String content) {
     if (reflow) {
       final location = locationOf(elem, elems);
@@ -58,7 +58,7 @@ class OrgSpanBuilder {
       );
       final body = build(element.content,
           transformer: transformer, style: markupStyle, recognizer: recognizer);
-      return OrgController.of(context).settings.hideEmphasisMarkers
+      return OrgSettings.of(context).settings.hideEmphasisMarkers
           ? body
           : TextSpan(children: [
               highlightedSpan(element.leadingDecoration,
@@ -68,7 +68,7 @@ class OrgSpanBuilder {
                   style: markupStyle, recognizer: recognizer),
             ]);
     } else if (element is OrgEntity) {
-      final text = OrgController.of(context).prettifyEntity(element.name) ??
+      final text = OrgSettings.of(context).prettifyEntity(element.name) ??
           element.toMarkup();
       return highlightedSpan(transformer(element, text),
           style: style, recognizer: recognizer);
@@ -84,7 +84,7 @@ class OrgSpanBuilder {
       );
     } else if (element is OrgLink) {
       if (looksLikeImagePath(element.location) &&
-          OrgController.of(context).settings.inlineImages &&
+          OrgSettings.of(context).settings.inlineImages &&
           inlineImages) {
         final imageWidget = OrgEvents.of(context).loadImage?.call(element);
         if (imageWidget != null) {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/highlight.dart';
 import 'package:org_flutter/src/indent.dart';
 import 'package:org_flutter/src/settings.dart';
@@ -26,8 +25,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_inited) {
-      openListenable.value =
-          !OrgController.of(context).settings.hideBlockStartup;
+      openListenable.value = !OrgSettings.of(context).settings.hideBlockStartup;
       _inited = true;
     }
   }
@@ -37,7 +35,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
     final defaultStyle = DefaultTextStyle.of(context).style;
     final metaStyle =
         defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
-    final hideMarkup = OrgController.of(context).settings.deemphasizeMarkup;
+    final hideMarkup = OrgSettings.of(context).settings.deemphasizeMarkup;
     // Remove a line break because we introduce one by splitting the text into
     // two widgets in this Column
     final trailing = removeTrailingLineBreak(widget.block.trailing);
