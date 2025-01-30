@@ -17,6 +17,11 @@ const _kDocInfoKeywords = {
   '#+DATE:'
 };
 
+const _kExportedKeywords = {
+  ..._kDocInfoKeywords,
+  '#+CAPTION:',
+};
+
 /// An Org Mode meta line
 class OrgMetaWidget extends StatefulWidget {
   const OrgMetaWidget(this.meta, {super.key});
@@ -49,6 +54,12 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
             ),
           ),
         );
+        if (!_isExportedKeyword) {
+          body = InheritedOrgSettings.merge(
+            OrgSettings(strictSubSuperscripts: true),
+            child: body,
+          );
+        }
         if (deemphasize) {
           body = reduceOpacity(SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -62,6 +73,9 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
 
   bool get _isDocInfoKeyword =>
       _kDocInfoKeywords.contains(widget.meta.key.toUpperCase());
+
+  bool get _isExportedKeyword =>
+      _kExportedKeywords.contains(widget.meta.key.toUpperCase());
 
   TextStyle? _keywordStyle(BuildContext context) {
     final style = DefaultTextStyle.of(context).style;
