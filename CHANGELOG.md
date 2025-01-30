@@ -1,3 +1,12 @@
+## [9.1.0]
+- Settings are now accessed through `OrgSettings` instead of `OrgController`
+  - Replace `OrgController.of(context).settings` with
+    `OrgSettings.of(controller).settings`
+  - Replace `OrgController.of(context).prettifyEntity` with
+    `OrgSettings.of(controller).prettifyEntity`
+- Only "strict" (delimited by `{}`) sub/superscripts are rendered in
+  non-exported keywords. Exported keywords are, e.g. TITLE, AUTHOR, CAPTION
+
 ## [9.0.3]
 - Fix error when rendering sub/superscripts in a meta line
 
