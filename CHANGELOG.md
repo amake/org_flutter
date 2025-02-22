@@ -1,3 +1,6 @@
+## [9.1.2]
+- Fix deindenting outside of src blocks
+
 ## [9.1.1]
 - Sub-indents are correctly preserved in deindented content
 
