@@ -1,3 +1,6 @@
+## [9.1.1]
+- Sub-indents are correctly preserved in deindented content
+
 ## [9.1.0]
 - Settings are now accessed through `OrgSettings` instead of `OrgController`
   - Replace `OrgController.of(context).settings` with
