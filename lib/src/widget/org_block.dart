@@ -114,20 +114,26 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
     final block = widget.block;
     Widget body;
     if (block is OrgSrcBlock) {
-      final code = widget.block.body as OrgPlainText;
+      final codeNode = block.body as OrgPlainText;
+      final code =
+          removeTrailingLineBreak(softDeindent(codeNode.content, indentSize));
       if (supportedSrcLanguage(block.language)) {
         body = buildSrcHighlight(
           context,
-          code: removeTrailingLineBreak(softDeindent(code.content, indentSize)),
+          code: code,
           languageId: block.language,
         );
       } else {
-        body = OrgContentWidget(
-          OrgMarkup.just(code.content, OrgStyle.code),
-          transformer: (_, content) =>
-              removeTrailingLineBreak(hardDeindent(content, indentSize)),
-        );
+        final defaultStyle = DefaultTextStyle.of(context).style;
+        body = Text(code,
+            style: defaultStyle.copyWith(
+                color: OrgTheme.dataOf(context).codeColor));
       }
+    } else if (block.body is OrgPlainText) {
+      final contentNode = block.body as OrgPlainText;
+      final content = removeTrailingLineBreak(
+          softDeindent(contentNode.content, indentSize));
+      body = Text(content);
     } else {
       body = OrgContentWidget(
         block.body,
