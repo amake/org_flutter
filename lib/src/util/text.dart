@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:org_flutter/src/util/collection.dart';
 
 /// If necessary, interleave runes with U+200B ZERO WIDTH SPACE to serve as a
@@ -90,8 +92,44 @@ String removeTrailingLineBreak(String text) {
   }
 }
 
-String deindent(String text, int indentSize) =>
-    text.replaceAll(_deindentPattern(indentSize), '');
+String deindent(String text, int deindentSize) {
+  if (deindentSize == 0) return text;
+  final currentIndent = detectIndent(text);
+  final effectiveDeindentSize = min(currentIndent, deindentSize);
+  return text.replaceAll(_deindentPattern(effectiveDeindentSize), '');
+}
+
+int detectIndent(String text) {
+  var result = -1;
+  for (var i = 0; i >= 0 && i < text.length;) {
+    var indent = 0;
+    while (i < text.length) {
+      final c = text.codeUnitAt(i);
+      if (c == 0x20) {
+        indent++;
+      } else {
+        // Blank line doesn't count as indent.
+        if (c == 0x0A) indent = -1;
+        break;
+      }
+      if (++i == text.length) {
+        // End of text doesn't count as indent.
+        indent = -1;
+        break;
+      }
+    }
+    if (indent != -1) {
+      if (result == -1 || indent < result) result = indent;
+    }
+    final next = i = text.indexOf('\n', i);
+    if (next == -1) {
+      break;
+    } else {
+      i = next + 1;
+    }
+  }
+  return result == -1 ? 0 : result;
+}
 
 Pattern Function(int) _deindentPattern = _memoize1((indentSize) => RegExp(
       '^ {$indentSize}',
