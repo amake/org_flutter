@@ -65,10 +65,10 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              _body((_, string) =>
-                  removeTrailingLineBreak(deindent(string, totalIndentSize))),
+              _body((_, string) => removeTrailingLineBreak(
+                  hardDeindent(string, totalIndentSize))),
               Text(
-                deindent(widget.drawer.footer, totalIndentSize),
+                hardDeindent(widget.drawer.footer, totalIndentSize),
                 style: drawerStyle,
               ),
             ],

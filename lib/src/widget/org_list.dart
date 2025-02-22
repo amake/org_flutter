@@ -92,7 +92,7 @@ class _OrgListItemWidget extends StatelessWidget {
       yield builder.build(item.body!, transformer: (elem, content) {
         final location = locationOf(elem, item.body!.children);
         final reflow = OrgSettings.of(context).settings.reflowText;
-        var formattedContent = deindent(content, totalIndentSize);
+        var formattedContent = hardDeindent(content, totalIndentSize);
         if (reflow) {
           formattedContent = reflowText(formattedContent, location);
         }

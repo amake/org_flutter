@@ -92,7 +92,14 @@ String removeTrailingLineBreak(String text) {
   }
 }
 
-String deindent(String text, int deindentSize) {
+// Remove [deindentSize] spaces from the start of each line. If a line doesn't
+// have that many spaces, it is left unchanged.
+String hardDeindent(String text, int deindentSize) =>
+    text.replaceAll(_deindentPattern(deindentSize), '');
+
+// Remove at spaces from the start of each line. The amount removed is the
+// smaller of [deindentSize] and the current indent of the entire text.
+String softDeindent(String text, int deindentSize) {
   if (deindentSize == 0) return text;
   final currentIndent = detectIndent(text);
   final effectiveDeindentSize = min(currentIndent, deindentSize);

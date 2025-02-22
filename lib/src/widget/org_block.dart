@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:org_flutter/src/highlight.dart';
 import 'package:org_flutter/src/indent.dart';
 import 'package:org_flutter/src/settings.dart';
-import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_flutter/src/widget/org_content.dart';
 import 'package:org_flutter/src/widget/org_theme.dart';
@@ -63,14 +62,10 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              _body(
-                context,
-                (_, string) =>
-                    removeTrailingLineBreak(deindent(string, totalIndentSize)),
-              ),
+              _body(context, totalIndentSize),
               reduceOpacity(
                 Text(
-                  deindent(widget.block.footer, totalIndentSize),
+                  hardDeindent(widget.block.footer, totalIndentSize),
                   style: metaStyle,
                 ),
                 enabled: hideMarkup,
@@ -115,7 +110,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
     );
   }
 
-  Widget _body(BuildContext context, Transformer transformer) {
+  Widget _body(BuildContext context, int indentSize) {
     final block = widget.block;
     Widget body;
     if (block is OrgSrcBlock) {
@@ -123,19 +118,21 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
       if (supportedSrcLanguage(block.language)) {
         body = buildSrcHighlight(
           context,
-          code: transformer(code, code.content),
+          code: removeTrailingLineBreak(softDeindent(code.content, indentSize)),
           languageId: block.language,
         );
       } else {
         body = OrgContentWidget(
           OrgMarkup.just(code.content, OrgStyle.code),
-          transformer: transformer,
+          transformer: (_, content) =>
+              removeTrailingLineBreak(hardDeindent(content, indentSize)),
         );
       }
     } else {
       body = OrgContentWidget(
         block.body,
-        transformer: transformer,
+        transformer: (_, content) =>
+            removeTrailingLineBreak(hardDeindent(content, indentSize)),
       );
     }
     // TODO(aaron): Better distinguish "greater block" from regular block

@@ -23,7 +23,7 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
             child: FancySpanBuilder(
               builder: (context, spanBuilder) => Text.rich(
                 spanBuilder.highlightedSpan(
-                  removeTrailingLineBreak(deindent(
+                  removeTrailingLineBreak(hardDeindent(
                       fixedWidthArea.content + fixedWidthArea.trailing,
                       totalIndentSize)),
                 ),

@@ -36,28 +36,52 @@ ${' '}
       expect(detectIndent(text), 0);
     });
   });
-  group('deindent', () {
+  group('soft deindent', () {
     test('deindent none', () {
       final text = 'foo';
-      expect(deindent(text, 0), text);
-      expect(deindent(text, 1), text);
-      expect(deindent(text, 2), text);
+      expect(softDeindent(text, 0), text);
+      expect(softDeindent(text, 1), text);
+      expect(softDeindent(text, 2), text);
     });
     test('deindent single line', () {
       final text = '  foo';
-      expect(deindent(text, 0), text);
-      expect(deindent(text, 1), ' foo');
-      expect(deindent(text, 2), 'foo');
-      expect(deindent(text, 3), 'foo');
+      expect(softDeindent(text, 0), text);
+      expect(softDeindent(text, 1), ' foo');
+      expect(softDeindent(text, 2), 'foo');
+      expect(softDeindent(text, 3), 'foo');
     });
     test('deindent multiple lines', () {
       final text = '''
   foo
     bar''';
-      expect(deindent(text, 0), text);
-      expect(deindent(text, 1), ' foo\n   bar');
-      expect(deindent(text, 2), 'foo\n  bar');
-      expect(deindent(text, 3), 'foo\n  bar');
+      expect(softDeindent(text, 0), text);
+      expect(softDeindent(text, 1), ' foo\n   bar');
+      expect(softDeindent(text, 2), 'foo\n  bar');
+      expect(softDeindent(text, 3), 'foo\n  bar');
+    });
+  });
+  group('hard deindent', () {
+    test('deindent none', () {
+      final text = 'foo';
+      expect(hardDeindent(text, 0), text);
+      expect(hardDeindent(text, 1), text);
+      expect(hardDeindent(text, 2), text);
+    });
+    test('deindent single line', () {
+      final text = '  foo';
+      expect(hardDeindent(text, 0), text);
+      expect(hardDeindent(text, 1), ' foo');
+      expect(hardDeindent(text, 2), 'foo');
+      expect(hardDeindent(text, 3), '  foo');
+    });
+    test('deindent multiple lines', () {
+      final text = '''
+  foo
+    bar''';
+      expect(hardDeindent(text, 0), text);
+      expect(hardDeindent(text, 1), ' foo\n   bar');
+      expect(hardDeindent(text, 2), 'foo\n  bar');
+      expect(hardDeindent(text, 3), '  foo\n bar');
     });
   });
 }

@@ -22,7 +22,7 @@ class OrgParagraphWidget extends StatelessWidget {
               paragraph.body,
               transformer: (elem, content) {
                 final location = locationOf(elem, paragraph.body.children);
-                var formattedContent = deindent(content, totalIndentSize);
+                var formattedContent = hardDeindent(content, totalIndentSize);
                 if (reflow) {
                   formattedContent = reflowText(formattedContent, location);
                 }
