@@ -1,3 +1,7 @@
+## [9.1.3]
+- Fix indenting of block bodies with "negative" indent relative to their block
+  delimiters
+
 ## [9.1.2]
 - Fix deindenting outside of src blocks
 
