@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:org_flutter/src/highlight.dart';
 import 'package:org_flutter/src/indent.dart';
@@ -135,10 +137,19 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
           softDeindent(contentNode.content, indentSize));
       body = Text(content);
     } else {
+      // This feels a bit costly, but it's the easiest way to handle scenarios
+      // where the body is indented *less* than the block delimiters.
+      indentSize = min(indentSize, detectIndent(block.body.toMarkup()));
       body = OrgContentWidget(
         block.body,
-        transformer: (_, content) =>
-            removeTrailingLineBreak(hardDeindent(content, indentSize)),
+        transformer: (elem, content) {
+          final location = locationOf(elem, block.body.children!);
+          var formattedContent = hardDeindent(content, indentSize);
+          if (location == TokenLocation.end || location == TokenLocation.only) {
+            formattedContent = removeTrailingLineBreak(formattedContent);
+          }
+          return formattedContent;
+        },
       );
     }
     // TODO(aaron): Better distinguish "greater block" from regular block
