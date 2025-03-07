@@ -214,3 +214,15 @@ bool? getStrictSubSuperscripts(Map<String, dynamic> localVariables) {
   }
   return null;
 }
+
+const _kOrgAttachIdDirKey = 'org-attach-id-dir';
+
+String? getOrgAttachIdDir(Map<String, dynamic> localVariables) {
+  if (localVariables.containsKey(_kOrgAttachIdDirKey)) {
+    final value = localVariables[_kOrgAttachIdDirKey];
+    if (value is String) {
+      return value;
+    }
+  }
+  return null;
+}

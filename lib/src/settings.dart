@@ -19,6 +19,7 @@ const _kDefaultHideStars = false;
 const _kDefaultHideEmphasisMarkers = false;
 const _kDefaultInlineImages = true;
 const _kDefaultVisibilityState = OrgVisibilityState.folded;
+const _kDefaultOrgAttachIdDir = 'data'; // Per `org-attach-id-dir`
 
 class InheritedOrgSettings extends InheritedWidget {
   static Widget merge(
@@ -68,6 +69,7 @@ class OrgSettings {
         hideEmphasisMarkers: _kDefaultHideEmphasisMarkers,
         entityReplacements: orgDefaultEntityReplacements,
         todoSettings: [defaultTodoStates],
+        orgAttachIdDir: _kDefaultOrgAttachIdDir,
       );
 
   /// Equivalent to the old "hideMarkup" setting
@@ -162,6 +164,7 @@ class OrgSettings {
     TextDirection? textDirection;
     bool? subSuperscripts;
     bool? strictSubSuperscripts;
+    String? orgAttachIdDir;
     try {
       final lvars = extractLocalVariables(doc, errorHandler);
       entityReplacements =
@@ -171,6 +174,7 @@ class OrgSettings {
       textDirection = getTextDirection(lvars);
       subSuperscripts = getSubSuperscripts(lvars);
       strictSubSuperscripts = getStrictSubSuperscripts(lvars);
+      orgAttachIdDir = getOrgAttachIdDir(lvars);
       // org-hide-{block,drawer}-startup, org-startup-folded are not respected
       // when set as local variables.
     } catch (e) {
@@ -198,6 +202,7 @@ class OrgSettings {
       todoSettings: todoSettings,
       locale: locale,
       textDirection: textDirection,
+      orgAttachIdDir: orgAttachIdDir,
     );
   }
 
@@ -217,6 +222,7 @@ class OrgSettings {
     this.todoSettings,
     this.locale,
     this.textDirection,
+    this.orgAttachIdDir,
   });
 
   /// Whether to reflow text to remove intra-paragraph line breaks. Does not map
@@ -291,6 +297,9 @@ class OrgSettings {
 
   /// The text direction of the document. Set by `bidi-paragraph-direction`.
   final TextDirection? textDirection;
+
+  /// The directory where attachments are stored. Set by `org-attach-id-dir`.
+  final String? orgAttachIdDir;
 
   @override
   bool operator ==(Object other) =>
@@ -427,4 +436,8 @@ extension LayeredOrgSettings on List<OrgSettings> {
   TextDirection? get textDirection =>
       firstWhere((layer) => layer.textDirection != null,
           orElse: () => OrgSettings.defaults).textDirection;
+
+  String get orgAttachIdDir =>
+      firstWhere((layer) => layer.orgAttachIdDir != null,
+          orElse: () => OrgSettings.defaults).orgAttachIdDir!;
 }
