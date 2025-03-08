@@ -20,7 +20,10 @@ class OrgHeadlineWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = OrgTheme.dataOf(context);
-    final color = theme.levelColor(headline.level - 1);
+    final color = headline.tags?.values.contains('ARCHIVE') == true
+        // TODO(aaron): Separate archive color from code color
+        ? theme.codeColor
+        : theme.levelColor(headline.level - 1);
     return DefaultTextStyle.merge(
       style: TextStyle(
         color: color,
@@ -182,11 +185,17 @@ class _Body extends StatelessWidget {
     yield TextSpan(text: headline.stars.trailing);
   }
 
-  TextStyle? _starStyle(BuildContext context) => highlighted == true
-      ? DefaultTextStyle.of(context)
-          .style
-          .copyWith(backgroundColor: OrgTheme.dataOf(context).highlightColor)
-      : null;
+  TextStyle? _starStyle(BuildContext context) {
+    // Stars are always the level color, even if the headline is ARCHIVEd.
+    var style = DefaultTextStyle.of(context).style.copyWith(
+          color: OrgTheme.dataOf(context).levelColor(headline.level - 1),
+        );
+    if (highlighted == true) {
+      style = style.copyWith(
+          backgroundColor: OrgTheme.dataOf(context).highlightColor);
+    }
+    return style;
+  }
 }
 
 InlineSpan _tags(OrgHeadline headline, OrgSpanBuilder spanBuilder) =>
