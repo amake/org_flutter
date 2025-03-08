@@ -22,9 +22,10 @@ class OrgDataNodeMap {
     required OrgVisibilityState defaultState,
     Map<String, dynamic>? json,
   }) {
-    OrgVisibilityState computeVisibility(OrgTree subtree) {
-      var result = defaultState;
-      if (json != null && subtree is OrgSection) {
+    OrgVisibilityState computeVisibility(OrgSection subtree, bool isArchive) {
+      // ARCHIVE tags start hidden, but we allow the JSON to override.
+      var result = isArchive ? OrgVisibilityState.folded : defaultState;
+      if (json != null) {
         final title = subtree.headline.rawTitle;
         final fromJson =
             OrgVisibilityStateJson.fromJson(json[title] as String?);
@@ -35,16 +36,30 @@ class OrgDataNodeMap {
 
     final data = <String, OrgDataNode>{};
     root.visitSections((subtree) {
-      data[subtree.id] =
-          OrgDataNode(initialVisibility: computeVisibility(subtree));
+      // ARCHIVE is case-sensitive.
+      //
+      // TODO(aaron): Expose this as a getter on OrgSection?
+      final isArchive =
+          subtree.headline.tags?.values.contains('ARCHIVE') == true;
+      data[subtree.id] = OrgDataNode(
+        initialVisibility: computeVisibility(subtree, isArchive),
+        isArchive: isArchive,
+      );
       return true;
     });
     return OrgDataNodeMap._(data);
   }
 
   factory OrgDataNodeMap.inherit(OrgDataNodeMap other) {
-    final data = other._data.map((id, node) =>
-        MapEntry(id, OrgDataNode(initialVisibility: node.visibility.value)));
+    final data = other._data.map(
+      (id, node) => MapEntry(
+        id,
+        OrgDataNode(
+          initialVisibility: node.visibility.value,
+          isArchive: node.isArchive,
+        ),
+      ),
+    );
     return OrgDataNodeMap._(data);
   }
 
@@ -57,11 +72,18 @@ class OrgDataNodeMap {
         // Trees added to the document after init will need ad hoc data nodes.
         // Ex: an OrgPgpBlock replaced with an OrgDecryptedContent tree
         // containing an OrgSection
-        () => OrgDataNode(initialVisibility: OrgVisibilityState.folded),
+        () => OrgDataNode(
+          initialVisibility: OrgVisibilityState.folded,
+          isArchive: tree is OrgSection &&
+              tree.headline.tags?.values.contains('ARCHIVE') == true,
+        ),
       );
 
-  Set<OrgVisibilityState> get currentVisibility =>
-      _data.values.map((e) => e.visibility.value).toSet();
+  Set<OrgVisibilityState> get currentVisibility => _data.values
+      // ARCHIVEd sections do not participate in global visibility cycling
+      .where((e) => !e.isArchive)
+      .map((e) => e.visibility.value)
+      .toSet();
 
   Map<String, dynamic> toJson(OrgTree root) =>
       _toTitleMap(root, (node) => node.visibility.value.toJson());
@@ -93,6 +115,10 @@ class OrgDataNodeMap {
 
   void setAllVisibilities(OrgVisibilityState newState) {
     for (final node in _data.values) {
+      if (node.isArchive &&
+          node.visibility.value == OrgVisibilityState.folded) {
+        continue;
+      }
       node.visibility.value = newState;
     }
   }
@@ -107,9 +133,12 @@ class OrgDataNodeMap {
 }
 
 class OrgDataNode {
-  OrgDataNode({required OrgVisibilityState initialVisibility})
-      : visibility = ValueNotifier(initialVisibility);
+  OrgDataNode({
+    required OrgVisibilityState initialVisibility,
+    required this.isArchive,
+  }) : visibility = ValueNotifier(initialVisibility);
   final ValueNotifier<OrgVisibilityState> visibility;
+  final bool isArchive;
 
   void dispose() => visibility.dispose();
 }
@@ -400,7 +429,13 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
         'Cycling subtree visibility; from=${visibilityListenable.value}, '
         'to=$newVisibility; subtree=$subtreeVisibility');
     tree.visitSections((subtree) {
-      _nodeMap.nodeFor(subtree).visibility.value = subtreeVisibility;
+      final node = _nodeMap.nodeFor(subtree);
+      if (node.isArchive &&
+          node.visibility.value == OrgVisibilityState.folded) {
+        // Skip
+      } else {
+        node.visibility.value = subtreeVisibility;
+      }
       return true;
     });
     // Do this last because otherwise visitSections applies subtreeVisibility to
