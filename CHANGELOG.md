@@ -1,3 +1,7 @@
+## [9.3.0]
+- Visibility cycling behavior and headline styling for archived sections now
+  matches that of Org Mode in Emacs
+
 ## [9.2.0]
 - The document's effective value of `org-attach-id-dir` is now available from
   `OrgSettings.of(controller).orgAttachIdDir`. To read this from the document's
