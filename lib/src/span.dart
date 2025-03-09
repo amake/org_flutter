@@ -299,6 +299,8 @@ class OrgSpanBuilder {
       return _styledWidgetSpan(OrgMetaWidget(element, key: key), style);
     } else if (element is OrgBlock) {
       return _styledWidgetSpan(OrgBlockWidget(element), style);
+    } else if (element is OrgDynamicBlock) {
+      return _styledWidgetSpan(OrgDynamicBlockWidget(element), style);
     } else if (element is OrgTable) {
       return _styledWidgetSpan(OrgTableWidget(element), style);
     } else if (element is OrgHorizontalRule) {

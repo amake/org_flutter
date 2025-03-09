@@ -4,6 +4,7 @@ export './widget/org_content.dart';
 export './widget/org_decrypted_content.dart';
 export './widget/org_document.dart';
 export './widget/org_drawer.dart';
+export './widget/org_dynamic_block.dart';
 export './widget/org_fixed_width_area.dart';
 export './widget/org_footnote_reference.dart';
 export './widget/org_headline.dart';
