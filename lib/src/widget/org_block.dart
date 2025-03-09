@@ -152,7 +152,14 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
         },
       );
     }
-    // TODO(aaron): Better distinguish "greater block" from regular block
+    if (block.type == 'example' || block.type == 'export') {
+      body = DefaultTextStyle(
+        style: DefaultTextStyle.of(context).style.copyWith(
+              color: OrgTheme.dataOf(context).codeColor,
+            ),
+        child: body,
+      );
+    }
     return block.body is OrgContent
         ? body
         : SingleChildScrollView(
