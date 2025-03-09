@@ -1,3 +1,7 @@
+## [9.4.0]
+- Block content rendering now better matches Org Mode in Emacs
+- Support dynamic blocks
+
 ## [9.3.0]
 - Visibility cycling behavior and headline styling for archived sections now
   matches that of Org Mode in Emacs
