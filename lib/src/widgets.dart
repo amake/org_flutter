@@ -19,7 +19,6 @@ export './widget/org_local_variables.dart';
 export './widget/org_meta.dart';
 export './widget/org_paragraph.dart';
 export './widget/org_pgp_block.dart';
-export './widget/org_planning_line.dart';
 export './widget/org_property.dart';
 export './widget/org_radio_target.dart';
 export './widget/org_root.dart';

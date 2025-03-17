@@ -76,7 +76,7 @@ class OrgSpanBuilder {
       return highlightedSpan(transformer(element, element.content),
           style: style.copyWith(color: OrgTheme.dataOf(context).macroColor),
           recognizer: recognizer);
-    } else if (element is OrgKeyword) {
+    } else if (element is OrgPlanningKeyword) {
       return highlightedSpan(
         transformer(element, element.content),
         style: style.copyWith(color: OrgTheme.dataOf(context).keywordColor),
@@ -293,6 +293,19 @@ class OrgSpanBuilder {
               style: citationStyle, recognizer: recognizer),
         ],
       );
+    } else if (element is OrgPlanningEntry) {
+      return TextSpan(
+        children: [
+          build(element.keyword,
+              transformer: transformer, style: style, recognizer: recognizer),
+          if (element.separator.isNotEmpty)
+            // Use a non-breaking space to keep the keyword and value together
+            highlightedSpan(element.separator.replaceAll(' ', '\u00A0'),
+                style: style, recognizer: recognizer),
+          build(element.value,
+              transformer: transformer, style: style, recognizer: recognizer),
+        ],
+      );
     } else if (element is OrgMeta) {
       final key = element.key.toUpperCase() == '#+NAME:' &&
               element.value != null
@@ -312,8 +325,6 @@ class OrgSpanBuilder {
       return _styledWidgetSpan(OrgFixedWidthAreaWidget(element), style);
     } else if (element is OrgParagraph) {
       return _styledWidgetSpan(OrgParagraphWidget(element), style);
-    } else if (element is OrgPlanningLine) {
-      return _styledWidgetSpan(OrgPlanningLineWidget(element), style);
     } else if (element is OrgList) {
       return _styledWidgetSpan(OrgListWidget(element), style);
     } else if (element is OrgDrawer) {
