@@ -181,7 +181,10 @@ class OrgSpanBuilder {
         build(element.start,
             transformer: transformer, style: style, recognizer: recognizer),
         highlightedSpan(element.delimiter,
-            style: style, recognizer: recognizer),
+            style: style.copyWith(
+                color: OrgTheme.dataOf(context).dateColor,
+                decoration: TextDecoration.underline),
+            recognizer: recognizer),
         build(element.end,
             transformer: transformer, style: style, recognizer: recognizer),
       ]);
