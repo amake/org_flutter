@@ -1,3 +1,7 @@
+## [9.5.0]
+- Normalize handling of Org planning entries
+- Stylize timestamp delimiter in date ranges
+
 ## [9.4.0]
 - Block content rendering now better matches Org Mode in Emacs
 - Support dynamic blocks
