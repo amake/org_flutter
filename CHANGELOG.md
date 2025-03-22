@@ -1,3 +1,7 @@
+## [9.6.1]
+- Respect `#+ATTR.*` for alignment (`#+ATTR_ORG` overrides others)
+- Handle `:center t` in addition to `:align`
+
 ## [9.6.0]
 - Respect `#+ATTR_ORG: :align` on inline images
 
