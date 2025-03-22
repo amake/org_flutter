@@ -1,3 +1,4 @@
+export './alignment.dart';
 export './bidi.dart';
 export './collection.dart';
 export './keywords.dart';

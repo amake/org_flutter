@@ -86,8 +86,16 @@ class OrgSpanBuilder {
       if (looksLikeImagePath(element.location) &&
           OrgSettings.of(context).settings.inlineImages &&
           inlineImages) {
-        final imageWidget = OrgEvents.of(context).loadImage?.call(element);
+        var imageWidget = OrgEvents.of(context).loadImage?.call(element);
         if (imageWidget != null) {
+          final alignment =
+              alignmentForNode(element, OrgController.of(context).root);
+          if (alignment != null) {
+            imageWidget = Row(
+              mainAxisAlignment: alignment.toMainAxisAlignment,
+              children: [imageWidget],
+            );
+          }
           return _styledWidgetSpan(imageWidget, style);
         }
       }
