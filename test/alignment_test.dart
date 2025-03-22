@@ -12,9 +12,44 @@ void main() {
       final node = doc.find<OrgLink>((_) => true)!.node;
       expect(alignmentForNode(node, doc), OrgAlignment.center);
     });
+    test('center', () {
+      final doc = OrgDocument.parse('''
+#+ATTR_ORG: :center t
+[[foo]]
+''');
+      final node = doc.find<OrgLink>((_) => true)!.node;
+      expect(alignmentForNode(node, doc), OrgAlignment.center);
+    });
+    test('non-authoritative', () {
+      final doc = OrgDocument.parse('''
+#+ATTR_HTML: :align center
+[[foo]]
+''');
+      final node = doc.find<OrgLink>((_) => true)!.node;
+      expect(alignmentForNode(node, doc), OrgAlignment.center);
+    });
+    test('authoritative override', () {
+      final doc = OrgDocument.parse('''
+#+ATTR_HTML: :align center
+#+ATTR_ORG: :align right
+[[foo]]
+''');
+      final node = doc.find<OrgLink>((_) => true)!.node;
+      expect(alignmentForNode(node, doc), OrgAlignment.right);
+    });
     test('case-insensitive', () {
       final doc = OrgDocument.parse('''
 #+attr_org: :ALIGN center
+[[foo]]
+''');
+      final node = doc.find<OrgLink>((_) => true)!.node;
+      expect(alignmentForNode(node, doc), OrgAlignment.center);
+    });
+    test('distant', () {
+      final doc = OrgDocument.parse('''
+#+ATTR_ORG: :align center
+#+ATTR_HTML: :foo bar
+#+ATTR_LATEX: :baz bazinga
 [[foo]]
 ''');
       final node = doc.find<OrgLink>((_) => true)!.node;
@@ -27,9 +62,17 @@ void main() {
       final node = doc.find<OrgLink>((_) => true)!.node;
       expect(alignmentForNode(node, doc), isNull);
     });
-    test('invalid value', () {
+    test('invalid align value', () {
       final doc = OrgDocument.parse('''
 #+ATTR_ORG: :align foo
+[[foo]]
+''');
+      final node = doc.find<OrgLink>((_) => true)!.node;
+      expect(alignmentForNode(node, doc), isNull);
+    });
+    test('invalid center value', () {
+      final doc = OrgDocument.parse('''
+#+ATTR_ORG: :center foo
 [[foo]]
 ''');
       final node = doc.find<OrgLink>((_) => true)!.node;
@@ -47,6 +90,14 @@ void main() {
       final doc = OrgDocument.parse('''
 #+ATTR_ORG:
 [[foo]]
+''');
+      final node = doc.find<OrgLink>((_) => true)!.node;
+      expect(alignmentForNode(node, doc), isNull);
+    });
+    test('in paragraph', () {
+      final doc = OrgDocument.parse('''
+#+ATTR_ORG: :align center
+a [[foo]] b
 ''');
       final node = doc.find<OrgLink>((_) => true)!.node;
       expect(alignmentForNode(node, doc), isNull);
