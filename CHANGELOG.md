@@ -1,3 +1,6 @@
+## [9.6.0]
+- Respect `#+ATTR_ORG: :align` on inline images
+
 ## [9.5.0]
 - Normalize handling of Org planning entries
 - Stylize timestamp delimiter in date ranges
