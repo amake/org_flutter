@@ -1,3 +1,6 @@
+## [9.6.2]
+- Don't show inline images for bracket links with descriptions
+
 ## [9.6.1]
 - Respect `#+ATTR.*` for alignment (`#+ATTR_ORG` overrides others)
 - Handle `:center t` in addition to `:align`
