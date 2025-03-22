@@ -84,6 +84,7 @@ class OrgSpanBuilder {
       );
     } else if (element is OrgLink) {
       if (looksLikeImagePath(element.location) &&
+          (element is! OrgBracketLink || element.description == null) &&
           OrgSettings.of(context).settings.inlineImages &&
           inlineImages) {
         var imageWidget = OrgEvents.of(context).loadImage?.call(element);
