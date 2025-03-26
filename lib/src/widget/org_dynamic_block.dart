@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:org_flutter/src/indent.dart';
 import 'package:org_flutter/src/settings.dart';
@@ -63,7 +61,7 @@ class _OrgDynamicBlockWidgetState extends State<OrgDynamicBlockWidget>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              _body(context, totalIndentSize),
+              OrgContentWidget(widget.block.body),
               reduceOpacity(
                 Text(
                   hardDeindent(widget.block.footer, totalIndentSize),
@@ -108,24 +106,6 @@ class _OrgDynamicBlockWidgetState extends State<OrgDynamicBlockWidget>
     return InkWell(
       onTap: () => openListenable.value = !openListenable.value,
       child: header,
-    );
-  }
-
-  Widget _body(BuildContext context, int indentSize) {
-    final block = widget.block;
-    // This feels a bit costly, but it's the easiest way to handle scenarios
-    // where the body is indented *less* than the block delimiters.
-    indentSize = min(indentSize, detectIndent(block.body.toMarkup()));
-    return OrgContentWidget(
-      block.body,
-      transformer: (elem, content) {
-        final location = locationOf(elem, block.body.children);
-        var formattedContent = hardDeindent(content, indentSize);
-        if (location == TokenLocation.end || location == TokenLocation.only) {
-          formattedContent = removeTrailingLineBreak(formattedContent);
-        }
-        return formattedContent;
-      },
     );
   }
 }
