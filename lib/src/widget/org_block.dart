@@ -159,6 +159,11 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
             ),
         child: body,
       );
+    } else if (block.type == 'verse') {
+      body = InheritedOrgSettings.merge(
+        OrgSettings(reflowText: false),
+        child: body,
+      );
     }
     return block.body is OrgContent
         ? body
