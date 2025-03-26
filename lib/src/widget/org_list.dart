@@ -23,9 +23,10 @@ class OrgListWidget extends StatelessWidget {
     for (final item in list.items) {
       yield _OrgListItemWidget(item);
     }
-    final trailing = removeTrailingLineBreak(list.trailing);
-    if (trailing.isNotEmpty) {
-      yield Text(trailing);
+    if (list.trailing.isNotEmpty) {
+      // Remove a line break because we introduce one by splitting the text into
+      // two widgets in this Column
+      yield Text(removeTrailingLineBreak(list.trailing));
     }
   }
 }
