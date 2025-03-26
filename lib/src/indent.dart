@@ -16,12 +16,14 @@ class IndentContext extends InheritedWidget {
 class IndentBuilder extends StatelessWidget {
   const IndentBuilder(
     this.indent, {
+    this.expanded = true,
     required this.builder,
     super.key,
   });
 
   final Widget Function(BuildContext, int) builder;
   final String indent;
+  final bool expanded;
 
   @override
   Widget build(BuildContext context) {
@@ -29,17 +31,16 @@ class IndentBuilder extends StatelessWidget {
     final newIndent =
         indent.length >= parentIndent ? indent.substring(parentIndent) : '';
     final totalIndentSize = parentIndent + newIndent.length;
+    Widget child = IndentContext(
+      parentIndent + newIndent.length,
+      child: builder(context, totalIndentSize),
+    );
+    if (expanded) {
+      child = Expanded(child: child);
+    }
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(newIndent),
-        Expanded(
-          child: IndentContext(
-            parentIndent + newIndent.length,
-            child: builder(context, totalIndentSize),
-          ),
-        ),
-      ],
+      children: [Text(newIndent), child],
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:org_flutter/src/indent.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_flutter/src/widget/org_content.dart';
 import 'package:org_flutter/src/widget/org_theme.dart';
@@ -23,11 +24,10 @@ class OrgTableWidget extends StatelessWidget {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               physics: const AlwaysScrollableScrollPhysics(),
-              child: Row(
-                children: <Widget>[
-                  Text(table.indent),
-                  _buildTable(context),
-                ],
+              child: IndentBuilder(
+                table.indent,
+                expanded: false,
+                builder: (context, _) => _buildTable(context),
               ),
             ),
             if (table.trailing.isNotEmpty)
