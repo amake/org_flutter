@@ -1,3 +1,6 @@
+## [9.7.0]
+- Improve block rendering
+
 ## [9.6.2]
 - Don't show inline images for bracket links with descriptions
 
