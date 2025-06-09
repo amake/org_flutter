@@ -18,6 +18,7 @@ const _kDefaultHideDrawerStartup = true;
 const _kDefaultHideStars = false;
 const _kDefaultHideEmphasisMarkers = false;
 const _kDefaultInlineImages = true;
+const _kDefaultNumMode = false;
 const _kDefaultVisibilityState = OrgVisibilityState.folded;
 const _kDefaultOrgAttachIdDir = 'data'; // Per `org-attach-id-dir`
 
@@ -66,6 +67,7 @@ class OrgSettings {
         hideDrawerStartup: _kDefaultHideDrawerStartup,
         hideStars: _kDefaultHideStars,
         inlineImages: _kDefaultInlineImages,
+        numMode: _kDefaultNumMode,
         hideEmphasisMarkers: _kDefaultHideEmphasisMarkers,
         entityReplacements: orgDefaultEntityReplacements,
         todoSettings: [defaultTodoStates],
@@ -98,6 +100,7 @@ class OrgSettings {
     bool? hideDrawerStartup;
     bool? hideStars;
     bool? inlineImages;
+    bool? numMode;
     OrgVisibilityState? startupFolded;
     var showEverything = false;
     final startupSettings = getStartupSettings(doc);
@@ -155,6 +158,12 @@ class OrgSettings {
           startupFolded = OrgVisibilityState.subtree;
           showEverything = true;
           break;
+        case 'num':
+          numMode = true;
+          break;
+        case 'nonum':
+          numMode = false;
+          break;
       }
     }
     if (showEverything) {
@@ -198,6 +207,7 @@ class OrgSettings {
       hideDrawerStartup: hideDrawerStartup,
       hideStars: hideStars,
       inlineImages: inlineImages,
+      numMode: numMode,
       entityReplacements: entityReplacements,
       todoSettings: todoSettings,
       locale: locale,
@@ -218,6 +228,7 @@ class OrgSettings {
     this.hideDrawerStartup,
     this.hideStars,
     this.inlineImages,
+    this.numMode,
     this.entityReplacements,
     this.todoSettings,
     this.locale,
@@ -284,6 +295,11 @@ class OrgSettings {
   /// caller to handle.
   final bool? inlineImages;
 
+  /// Whether to automatically number section headlines. By default the `num`
+  /// #+STARTUP keyword is respected; when not present it defaults to `false`
+  /// (disabled).
+  final bool? numMode;
+
   /// A map of entity replacements, e.g. Agrave → À. See
   /// [orgDefaultEntityReplacements].
   final Map<String, String>? entityReplacements;
@@ -315,6 +331,7 @@ class OrgSettings {
       hideDrawerStartup == other.hideDrawerStartup &&
       hideStars == other.hideStars &&
       inlineImages == other.inlineImages &&
+      numMode == other.numMode &&
       mapEquals(entityReplacements, other.entityReplacements) &&
       listEquals(todoSettings, other.todoSettings) &&
       locale == other.locale &&
@@ -334,6 +351,7 @@ class OrgSettings {
         hideDrawerStartup,
         hideStars,
         inlineImages,
+        numMode,
         entityReplacements == null
             ? null
             : Object.hashAll(entityReplacements!.keys),
@@ -358,6 +376,7 @@ class OrgSettings {
     bool? hideDrawerStartup,
     bool? hideStars,
     bool? inlineImages,
+    bool? numMode,
     Map<String, String>? entityReplacements,
     List<OrgTodoStates>? todoSettings,
     Locale? locale,
@@ -377,6 +396,7 @@ class OrgSettings {
         hideDrawerStartup: hideDrawerStartup ?? this.hideDrawerStartup,
         hideStars: hideStars ?? this.hideStars,
         inlineImages: inlineImages ?? this.inlineImages,
+        numMode: numMode ?? this.numMode,
         entityReplacements: entityReplacements ?? this.entityReplacements,
         todoSettings: todoSettings ?? this.todoSettings,
         locale: locale ?? this.locale,
@@ -425,6 +445,9 @@ extension LayeredOrgSettings on List<OrgSettings> {
 
   bool get inlineImages => firstWhere((layer) => layer.inlineImages != null,
       orElse: () => OrgSettings.defaults).inlineImages!;
+
+  bool get numMode => firstWhere((layer) => layer.numMode != null,
+      orElse: () => OrgSettings.defaults).numMode!;
 
   Map<String, String> get entityReplacements =>
       firstWhere((layer) => layer.entityReplacements != null,
