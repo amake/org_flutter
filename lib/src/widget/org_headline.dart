@@ -27,6 +27,9 @@ class OrgHeadlineWidget extends StatelessWidget {
     return DefaultTextStyle.merge(
       style: TextStyle(
         color: color,
+        // In real Org Mode only the keyword (TODO, DONE, etc.) and optional Org
+        // Num number is bolded, but we make the whole headline bolded because
+        // it looks nicer.
         fontWeight: FontWeight.bold,
         height: 1.8,
       ),
@@ -119,6 +122,12 @@ class _Body extends StatelessWidget {
               spanBuilder.highlightedSpan(
                   headline.keyword!.value + headline.keyword!.trailing,
                   style: DefaultTextStyle.of(context).style.copyWith(
+                      // In real Org Mode only the keyword (TODO, DONE, etc.)
+                      // and optional Org Num number are bolded. We bold the
+                      // entire headline, so this here is not necessary, but we
+                      // have it anyway in case we change our mind about bolding
+                      // the entire headline.
+                      fontWeight: FontWeight.bold,
                       color: headline.keyword!.done
                           ? theme.doneColor
                           : theme.todoColor)),
