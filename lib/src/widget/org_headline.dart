@@ -20,7 +20,8 @@ class OrgHeadlineWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = OrgTheme.dataOf(context);
-    final color = headline.tags?.values.contains('ARCHIVE') == true
+    final isArchive = headline.tags?.values.contains('ARCHIVE') == true;
+    final color = isArchive
         // TODO(aaron): Separate archive color from code color
         ? theme.codeColor
         : theme.levelColor(headline.level - 1);
@@ -50,6 +51,7 @@ class OrgHeadlineWidget extends StatelessWidget {
           includeTags: tagsInBody,
           includeEllipsis: ellipsisInBody,
           textDirection: textDirection,
+          isArchive: isArchive,
         );
         if (simpleLayout) {
           return body;
@@ -101,6 +103,7 @@ class _Body extends StatelessWidget {
     required this.includeEllipsis,
     required this.highlighted,
     required this.textDirection,
+    required this.isArchive,
   });
 
   final OrgHeadline headline;
@@ -109,6 +112,7 @@ class _Body extends StatelessWidget {
   final bool includeEllipsis;
   final bool? highlighted;
   final TextDirection? textDirection;
+  final bool isArchive;
 
   @override
   Widget build(BuildContext context) {
@@ -128,9 +132,11 @@ class _Body extends StatelessWidget {
                       // have it anyway in case we change our mind about bolding
                       // the entire headline.
                       fontWeight: FontWeight.bold,
-                      color: headline.keyword!.done
-                          ? theme.doneColor
-                          : theme.todoColor)),
+                      color: isArchive
+                          ? theme.codeColor
+                          : headline.keyword!.done
+                              ? theme.doneColor
+                              : theme.todoColor)),
             if (headline.priority != null)
               spanBuilder.highlightedSpan(
                   headline.priority!.leading +
