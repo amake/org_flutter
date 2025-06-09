@@ -318,7 +318,8 @@ class OrgSettings {
       mapEquals(entityReplacements, other.entityReplacements) &&
       listEquals(todoSettings, other.todoSettings) &&
       locale == other.locale &&
-      textDirection == other.textDirection;
+      textDirection == other.textDirection &&
+      orgAttachIdDir == other.orgAttachIdDir;
 
   @override
   int get hashCode => Object.hash(
@@ -342,6 +343,7 @@ class OrgSettings {
         todoSettings == null ? null : Object.hashAll(todoSettings!),
         locale,
         textDirection,
+        orgAttachIdDir,
       );
 
   OrgSettings copyWith({
@@ -360,6 +362,7 @@ class OrgSettings {
     List<OrgTodoStates>? todoSettings,
     Locale? locale,
     TextDirection? textDirection,
+    String? orgAttachIdDir,
   }) =>
       OrgSettings(
         reflowText: reflowText ?? this.reflowText,
@@ -378,6 +381,7 @@ class OrgSettings {
         todoSettings: todoSettings ?? this.todoSettings,
         locale: locale ?? this.locale,
         textDirection: textDirection ?? this.textDirection,
+        orgAttachIdDir: orgAttachIdDir ?? this.orgAttachIdDir,
       );
 }
 
