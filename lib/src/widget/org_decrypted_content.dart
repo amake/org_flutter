@@ -15,7 +15,11 @@ class OrgDecryptedContentWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (content.content != null) OrgContentWidget(content.content!),
-        ...content.sections.map((child) => OrgSectionWidget(child)),
+        for (final (i, section) in content.sections.indexed)
+          OrgSectionWidget(
+            section,
+            siblingIndex: i,
+          ),
       ],
     );
   }

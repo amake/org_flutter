@@ -122,6 +122,7 @@ class _Body extends StatelessWidget {
         TextSpan(
           children: [
             ..._starsSpans(context),
+            ..._orgNumSpans(context),
             if (headline.keyword != null)
               spanBuilder.highlightedSpan(
                   headline.keyword!.value + headline.keyword!.trailing,
@@ -210,6 +211,32 @@ class _Body extends StatelessWidget {
           backgroundColor: OrgTheme.dataOf(context).highlightColor);
     }
     return style;
+  }
+
+  Iterable<InlineSpan> _orgNumSpans(BuildContext context) sync* {
+    if (!OrgSettings.of(context).settings.numMode) return;
+
+    final numString = OrgNumData.of(context)?.numString;
+    if (numString == null || numString.isEmpty) return;
+
+    // Org Num numbers are always the level color, even if the headline is ARCHIVEd.
+    var style = DefaultTextStyle.of(context).style.copyWith(
+          color: OrgTheme.dataOf(context).levelColor(headline.level - 1),
+        );
+    if (headline.keyword != null) {
+      // In real Org Mode only the keyword (TODO, DONE, etc.) and optional Org
+      // Num number are bolded. We bold the entire headline, so this here is not
+      // necessary, but we have it anyway in case we change our mind about
+      // bolding the entire headline.
+      style = style.copyWith(
+        fontWeight: FontWeight.bold,
+      );
+    }
+
+    yield TextSpan(
+      text: '$numString ',
+      style: style,
+    );
   }
 }
 

@@ -13,6 +13,7 @@ import 'package:org_parser/org_parser.dart';
 class OrgSectionWidget extends StatelessWidget {
   const OrgSectionWidget(
     this.section, {
+    this.siblingIndex = 0,
     this.root = false,
     this.shrinkWrap = false,
     super.key,
@@ -20,6 +21,7 @@ class OrgSectionWidget extends StatelessWidget {
   final OrgSection section;
   final bool root;
   final bool shrinkWrap;
+  final int siblingIndex;
 
   // Whether the section is open "enough" to not show the trailing ellipsis
   bool _openEnough(OrgVisibilityState visibility) {
@@ -41,7 +43,7 @@ class OrgSectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final visibilityListenable =
         OrgController.of(context).nodeFor(section).visibility;
-    final widget = ValueListenableBuilder<OrgVisibilityState>(
+    Widget widget = ValueListenableBuilder<OrgVisibilityState>(
       valueListenable: visibilityListenable,
       builder: (context, visibility, child) => visibility ==
               OrgVisibilityState.hidden
@@ -82,8 +84,11 @@ class OrgSectionWidget extends StatelessWidget {
                               visibility == OrgVisibilityState.subtree))
                         ..._contentWidgets(context),
                       if (visibility != OrgVisibilityState.folded)
-                        ...section.sections
-                            .map((child) => OrgSectionWidget(child)),
+                        for (final (i, section) in section.sections.indexed)
+                          OrgSectionWidget(
+                            section,
+                            siblingIndex: i,
+                          ),
                     ],
                   ),
                 ),
@@ -91,7 +96,14 @@ class OrgSectionWidget extends StatelessWidget {
               ],
             ),
     );
-    return _withSlideActions(context, widget);
+    widget = _withSlideActions(context, widget);
+    return OrgNumData(
+      nums: {
+        ...OrgNumData.of(context)?.nums ?? {},
+        section.level: siblingIndex + 1
+      },
+      child: widget,
+    );
   }
 
   Iterable<Widget> _contentWidgets(BuildContext context) sync* {

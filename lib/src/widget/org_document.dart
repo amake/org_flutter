@@ -34,7 +34,11 @@ class OrgDocumentWidget extends StatelessWidget {
       physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,
       children: <Widget>[
         if (document.content != null) ..._contentWidgets(context),
-        ...document.sections.map((section) => OrgSectionWidget(section)),
+        for (final (i, section) in document.sections.indexed)
+          OrgSectionWidget(
+            section,
+            siblingIndex: i,
+          ),
         if (safeArea) listBottomSafeArea(),
       ],
     );
