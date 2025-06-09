@@ -39,8 +39,7 @@ class OrgDataNodeMap {
       // ARCHIVE is case-sensitive.
       //
       // TODO(aaron): Expose this as a getter on OrgSection?
-      final isArchive =
-          subtree.headline.tags?.values.contains('ARCHIVE') == true;
+      final isArchive = subtree.tags.contains('ARCHIVE');
       data[subtree.id] = OrgDataNode(
         initialVisibility: computeVisibility(subtree, isArchive),
         isArchive: isArchive,
