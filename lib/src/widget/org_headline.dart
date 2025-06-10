@@ -142,9 +142,9 @@ class _Body extends StatelessWidget {
                   headline.priority!.leading +
                       headline.priority!.value +
                       headline.priority!.trailing,
-                  style: DefaultTextStyle.of(context)
-                      .style
-                      .copyWith(color: theme.priorityColor)),
+                  style: DefaultTextStyle.of(context).style.copyWith(
+                      color:
+                          isArchive ? theme.codeColor : theme.priorityColor)),
             if (headline.title != null)
               spanBuilder.build(
                 headline.title!,
