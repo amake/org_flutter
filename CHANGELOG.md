@@ -1,3 +1,7 @@
+## [9.8.0]
+- Support Org Num mode, via `#+STARTUP: num` or directly via `OrgSettings` API
+- Fix coloring of :ARCHIVE: headlines
+
 ## [9.7.0]
 - Improve block rendering
 
