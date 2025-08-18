@@ -6,9 +6,9 @@ import 'package:petitparser/petitparser.dart';
 
 final _lispParserDef = LispParserDefinition();
 
-class LocalVariablesParser extends GrammarDefinition {
+class LocalVariablesParser extends GrammarDefinition<List<dynamic>> {
   @override
-  Parser start() => ref0(entry).plus().end();
+  Parser<List<dynamic>> start() => ref0(entry).plus().end();
 
   Parser entry() =>
       ref0(entryItems).map((items) => (key: items[0], value: items[2]));
@@ -16,7 +16,7 @@ class LocalVariablesParser extends GrammarDefinition {
   Parser entryItems() =>
       ref0(symbol) & ref0(delimiter).trim() & ref0(atom) & ref0(trailing);
 
-  Parser symbol() => ref0(symbolToken).flatten('Symbol expected');
+  Parser symbol() => ref0(symbolToken).flatten(message: 'Symbol expected');
 
   // Patterns taken from LispParserDefinition.symbolToken, but adapted here to
   // stop at the delimiter
@@ -35,7 +35,7 @@ class LocalVariablesParser extends GrammarDefinition {
   Parser endOfLine() => newline() | endOfInput();
 }
 
-final localVariablesParser = LocalVariablesParser().build<List<dynamic>>();
+final localVariablesParser = LocalVariablesParser().build();
 
 const _kExecutionTimeLimitMs = 100;
 

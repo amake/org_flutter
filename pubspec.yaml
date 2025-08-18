@@ -21,8 +21,8 @@ dependencies:
   org_parser: ^9.6.0
   # org_parser:
     # path: ../org_parser
-  petitparser: ^6.0.1
-  petit_lisp: ">=6.4.0 <6.5.0"
+  petitparser: ^7.0.1
+  petit_lisp: ^6.5.0
   # petit_lisp:
     # path: ../petit_lisp
   more: ^4.4.0
