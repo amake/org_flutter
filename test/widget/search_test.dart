@@ -33,6 +33,24 @@ void main() {
             OrgController.of(tester.element(find.textContaining('foo')));
         expect(controller.searchResultKeys.value.length, 1);
       });
+      testWidgets('In src block', (tester) async {
+        final doc = OrgDocument.parse('''
+#+begin_src sh
+  foo bar baz
+#+end_src
+''');
+        final widget = OrgController(
+          root: doc,
+          searchQuery: 'bar',
+          child: OrgRootWidget(
+            child: OrgDocumentWidget(doc),
+          ),
+        );
+        await tester.pumpWidget(wrap(widget));
+        final controller =
+            OrgController.of(tester.element(find.textContaining('foo')));
+        expect(controller.searchResultKeys.value.length, 1);
+      });
       testWidgets('Multiple results', (tester) async {
         final doc = OrgDocument.parse('foo bar baz');
         final widget = OrgController(

@@ -24,6 +24,8 @@ extension PatternUtil on Pattern? {
     }
   }
 
+  bool get isNotEmpty => !isEmpty;
+
   bool sameAs(Pattern? other) {
     final self = this;
     if (self == other) {

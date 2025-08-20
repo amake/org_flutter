@@ -1,9 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/highlight.dart';
 import 'package:org_flutter/src/indent.dart';
 import 'package:org_flutter/src/settings.dart';
+import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_flutter/src/widget/org_content.dart';
 import 'package:org_flutter/src/widget/org_theme.dart';
@@ -119,23 +121,33 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
       final codeNode = block.body as OrgPlainText;
       final code =
           removeTrailingLineBreak(softDeindent(codeNode.content, indentSize));
-      if (supportedSrcLanguage(block.language)) {
+      final searchQuery = OrgController.of(context).searchQuery;
+      final isSearchHit = searchQuery != null &&
+          searchQuery.isNotEmpty &&
+          codeNode.contains(searchQuery);
+      if (isSearchHit || !supportedSrcLanguage(block.language)) {
+        final defaultStyle = DefaultTextStyle.of(context).style;
+        body = FancySpanBuilder(
+          builder: (context, spanBuilder) => Text.rich(
+              spanBuilder.highlightedSpan(code,
+                  style: defaultStyle.copyWith(
+                      color: OrgTheme.dataOf(context).codeColor))),
+        );
+      } else {
         body = buildSrcHighlight(
           context,
           code: code,
           languageId: block.language,
         );
-      } else {
-        final defaultStyle = DefaultTextStyle.of(context).style;
-        body = Text(code,
-            style: defaultStyle.copyWith(
-                color: OrgTheme.dataOf(context).codeColor));
       }
     } else if (block.body is OrgPlainText) {
       final contentNode = block.body as OrgPlainText;
       final content = removeTrailingLineBreak(
           softDeindent(contentNode.content, indentSize));
-      body = Text(content);
+      body = FancySpanBuilder(
+        builder: (context, spanBuilder) =>
+            Text.rich(spanBuilder.highlightedSpan(content)),
+      );
     } else {
       // This feels a bit costly, but it's the easiest way to handle scenarios
       // where the body is indented *less* than the block delimiters.
