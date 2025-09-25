@@ -164,11 +164,6 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
                   child: OrgCoderefWidget(
                     text,
                     spanBuilder,
-                    // TODO(aaron): This style is often null because this is a
-                    // child of a group node that has the "main" style. When we
-                    // return a WidgetSpan, the style applied to the parent
-                    // TextSpan doesn't take effect, and we lose the intended
-                    // styling. Fix this.
                     style: style,
                     key: OrgLocator.of(context)?.generateCoderefKey(refKey),
                   ),

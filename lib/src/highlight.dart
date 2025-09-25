@@ -32,6 +32,9 @@ TextSpan buildSrcHighlightSpan(
 // - Fix lints
 // - Refactor to allow obtaining just the `TextSpan`
 // - Introduce SpanFactory to customize span creation
+// - Propagate classNames down the node tree
+//   - This is needed to allow parent node themes to apply to WidgetSpan
+//     children
 
 const _rootKey = 'root';
 const _defaultFontColor = Color(0xff000000);
@@ -129,18 +132,17 @@ List<InlineSpan> _convert(
   var currentSpans = spans;
   List<List<InlineSpan>> stack = [];
 
-  traverse(Node node) {
+  traverse(Node node, String? className) {
     if (node.value != null) {
-      currentSpans
-          .add(spanFactory(text: node.value, style: theme[node.className]));
+      currentSpans.add(spanFactory(text: node.value, style: theme[className]));
     } else {
       List<InlineSpan> tmp = [];
-      currentSpans.add(TextSpan(children: tmp, style: theme[node.className]));
+      currentSpans.add(TextSpan(children: tmp, style: theme[className]));
       stack.add(currentSpans);
       currentSpans = tmp;
 
       for (var n in node.children) {
-        traverse(n);
+        traverse(n, n.className ?? className);
         if (n == node.children.last) {
           currentSpans = stack.isEmpty ? spans : stack.removeLast();
         }
@@ -149,7 +151,7 @@ List<InlineSpan> _convert(
   }
 
   for (var node in nodes) {
-    traverse(node);
+    traverse(node, node.className);
   }
 
   return spans;
