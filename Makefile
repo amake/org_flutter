@@ -13,6 +13,11 @@ test-unit: ## Run unit tests
 test-example: ## Run example tests
 	cd example && flutter test
 
+.PHONY: test-watch
+test-watch:
+	fswatch -0 -e '*~$$' -e '/\.#' -e '#$$' lib test \
+		| xargs -0 -I {} bash -c 'flutter test $$([[ {} =~ test/.* ]] && echo {})'
+
 .PHONY: screenshot
 screenshot: ## Manually dump screenshots for layout testing purposes
 	rm -rf $(gold_dir)
