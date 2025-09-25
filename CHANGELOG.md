@@ -1,3 +1,7 @@
+## [9.10.0]
+- Support jumping to code references
+- Allow simultaneous search hits and syntax highlighting in src blocks
+
 ## [9.9.0]
 - Fix finding search hits in src blocks
 - Require latest org_parser (9.9.1)
