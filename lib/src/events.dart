@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:org_flutter/src/controller.dart';
+import 'package:org_flutter/src/locator.dart';
 import 'package:org_parser/org_parser.dart';
 
 /// A widget for managing callbacks invoked upon user interaction or other
@@ -63,6 +64,11 @@ class OrgEvents extends InheritedWidget {
 
   /// Invoke the appropriate handler for the given [url]
   void dispatchLinkTap(BuildContext context, OrgLink link) {
+    if (isCoderefUrl(link.location)) {
+      final coderef = parseCoderefUrl(link.location);
+      OrgLocator.of(context)?.jumpToCoderef(coderef);
+      return;
+    }
     final section = _resolveLocalSectionLink(context, link.location);
     if (section != null) {
       onLocalSectionLinkTap?.call(section);

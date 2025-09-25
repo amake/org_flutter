@@ -1,3 +1,4 @@
+export 'widget/org_block.dart' show CoderefKey;
 export 'widget/org_footnote_reference.dart' show FootnoteKey;
 export 'widget/org_link_target.dart' show LinkTargetKey;
 export 'widget/org_meta.dart' show NameKey;

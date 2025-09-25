@@ -35,6 +35,9 @@ class _OrgLocatorState extends State<OrgLocator> {
 
   final ValueNotifier<Map<String, NameKey>> _nameKeys = SafeValueNotifier({});
 
+  final ValueNotifier<Map<String, CoderefKey>> _coderefKeys =
+      SafeValueNotifier({});
+
   OrgControllerData get _controller => OrgController.of(context);
 
   @override
@@ -43,6 +46,7 @@ class _OrgLocatorState extends State<OrgLocator> {
     _radioTargetKeys.dispose();
     _linkTargetKeys.dispose();
     _nameKeys.dispose();
+    _coderefKeys.dispose();
     super.dispose();
   }
 
@@ -147,6 +151,30 @@ class _OrgLocatorState extends State<OrgLocator> {
     });
   }
 
+  Future<bool> _jumpToCoderef(String ref) async {
+    final result =
+        _controller.root.find<OrgSrcBlock>((target) => target.hasCoderef(ref));
+    if (result == null) return false;
+
+    final key = _coderefKeys.value[ref];
+    if (await _makeVisible(key)) {
+      key!.currentState?.doHighlight();
+      return true;
+    }
+
+    // Target widget is probably not currently visible, so make it visible and
+    // then listen for its key to become available.
+    _controller.ensureVisible(result.path);
+    return await _coderefKeys.listenOnce(() async {
+      final key = _coderefKeys.value[ref];
+      if (await _makeVisible(key)) {
+        key!.currentState?.doHighlight();
+        return true;
+      }
+      return false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return OrgLocatorData(
@@ -158,6 +186,8 @@ class _OrgLocatorState extends State<OrgLocator> {
       jumpToLinkTarget: _jumpToLinkTarget,
       nameKeys: _nameKeys,
       jumpToName: _jumpToName,
+      coderefKeys: _coderefKeys,
+      jumpToCoderef: _jumpToCoderef,
       child: widget.child,
     );
   }
@@ -174,6 +204,8 @@ class OrgLocatorData extends InheritedWidget {
     required this.jumpToLinkTarget,
     required this.nameKeys,
     required this.jumpToName,
+    required this.coderefKeys,
+    required this.jumpToCoderef,
     super.key,
   });
 
@@ -246,6 +278,24 @@ class OrgLocatorData extends InheritedWidget {
   /// Jump to the element with the specified name. If successful, will return
   /// true.
   final Future<bool> Function(String) jumpToName;
+
+  /// Keys representing src block code references in the document. It will only
+  /// be populated after the widget build phase.
+  final ValueNotifier<Map<String, CoderefKey>> coderefKeys;
+
+  CoderefKey generateCoderefKey(String ref, {String? label}) {
+    final key = CoderefKey(debugLabel: label);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      coderefKeys.value = Map.of(coderefKeys.value)
+        ..removeWhere((_, v) => v.currentContext?.mounted != true)
+        ..[ref] = key;
+    });
+    return key;
+  }
+
+  /// Jump to the source block line reference with the specified ref string. If
+  /// successful, will return true.
+  final Future<bool> Function(String) jumpToCoderef;
 
   @override
   bool updateShouldNotify(OrgLocatorData oldWidget) => false;

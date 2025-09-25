@@ -8,28 +8,18 @@ bool supportedSrcLanguage(String? language) =>
     allLanguages.containsKey(language) ||
     allLanguages.containsKey(language?.toLowerCase());
 
-Widget buildSrcHighlight(
-  BuildContext context, {
-  required String code,
-  required String? languageId,
-}) =>
-    HighlightView(
-      code,
-      theme: OrgTheme.dataOf(context).srcTheme ?? {},
-      languageId: languageId,
-      textStyle: DefaultTextStyle.of(context).style,
-    );
-
 TextSpan buildSrcHighlightSpan(
   BuildContext context, {
   required String code,
   required String? languageId,
+  SpanFactory? spanFactory,
 }) =>
     _highlightedSpan(
       code,
       languageId: languageId,
       theme: OrgTheme.dataOf(context).srcTheme ?? {},
       textStyle: DefaultTextStyle.of(context).style,
+      spanFactory: spanFactory,
     );
 
 // Below copied from:
@@ -41,6 +31,7 @@ TextSpan buildSrcHighlightSpan(
 //   https://github.com/akvelon/dart-highlighting/pull/71
 // - Fix lints
 // - Refactor to allow obtaining just the `TextSpan`
+// - Introduce SpanFactory to customize span creation
 
 const _rootKey = 'root';
 const _defaultFontColor = Color(0xff000000);
@@ -108,6 +99,7 @@ TextSpan _highlightedSpan(
   String? languageId,
   Map<String, TextStyle> theme = const {},
   TextStyle? textStyle,
+  SpanFactory? spanFactory,
 }) {
   var style = TextStyle(
     fontFamily: _defaultFontFamily,
@@ -120,25 +112,29 @@ TextSpan _highlightedSpan(
   return TextSpan(
     style: style,
     children: _convert(
-      // ignore: invalid_use_of_internal_member
-      highlight.highlight(languageId ?? '', source, true).nodes ?? [],
-      theme,
-    ),
+        // ignore: invalid_use_of_internal_member
+        highlight.highlight(languageId ?? '', source, true).nodes ?? [],
+        theme,
+        spanFactory ?? _defaultSpanFactory),
   );
 }
 
-List<TextSpan> _convert(List<Node> nodes, Map<String, TextStyle> theme) {
-  List<TextSpan> spans = [];
+typedef SpanFactory = InlineSpan Function({String? text, TextStyle? style});
+InlineSpan _defaultSpanFactory({String? text, TextStyle? style}) =>
+    TextSpan(text: text, style: style);
+
+List<InlineSpan> _convert(
+    List<Node> nodes, Map<String, TextStyle> theme, SpanFactory spanFactory) {
+  List<InlineSpan> spans = [];
   var currentSpans = spans;
-  List<List<TextSpan>> stack = [];
+  List<List<InlineSpan>> stack = [];
 
   traverse(Node node) {
     if (node.value != null) {
-      currentSpans.add(node.className == null
-          ? TextSpan(text: node.value)
-          : TextSpan(text: node.value, style: theme[node.className]));
+      currentSpans
+          .add(spanFactory(text: node.value, style: theme[node.className]));
     } else {
-      List<TextSpan> tmp = [];
+      List<InlineSpan> tmp = [];
       currentSpans.add(TextSpan(children: tmp, style: theme[node.className]));
       stack.add(currentSpans);
       currentSpans = tmp;

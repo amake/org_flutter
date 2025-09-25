@@ -5,6 +5,7 @@ export './keywords.dart';
 export './local_variables.dart';
 export './locale.dart';
 export './org_num.dart';
+export './src_block.dart';
 export './text.dart';
 export './value_notifier.dart';
 export './widget.dart';

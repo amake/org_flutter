@@ -1,15 +1,17 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:org_flutter/src/controller.dart';
+import 'package:org_flutter/src/flash.dart';
 import 'package:org_flutter/src/highlight.dart';
 import 'package:org_flutter/src/indent.dart';
+import 'package:org_flutter/src/locator.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/util/util.dart';
-import 'package:org_flutter/src/widget/org_content.dart';
-import 'package:org_flutter/src/widget/org_theme.dart';
+import 'package:org_flutter/src/widgets.dart';
 import 'package:org_parser/org_parser.dart';
+
+typedef CoderefKey = GlobalKey<OrgCoderefWidgetState>;
 
 /// An Org Mode block
 class OrgBlockWidget extends StatefulWidget {
@@ -121,25 +123,62 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
       final codeNode = block.body as OrgPlainText;
       final code =
           removeTrailingLineBreak(softDeindent(codeNode.content, indentSize));
-      final searchQuery = OrgController.of(context).searchQuery;
-      final isSearchHit = searchQuery != null &&
-          searchQuery.isNotEmpty &&
-          codeNode.contains(searchQuery);
-      if (isSearchHit || !supportedSrcLanguage(block.language)) {
-        final defaultStyle = DefaultTextStyle.of(context).style;
-        body = FancySpanBuilder(
-          builder: (context, spanBuilder) => Text.rich(
-              spanBuilder.highlightedSpan(code,
-                  style: defaultStyle.copyWith(
-                      color: OrgTheme.dataOf(context).codeColor))),
-        );
-      } else {
-        body = buildSrcHighlight(
-          context,
-          code: code,
-          languageId: block.language,
-        );
-      }
+      final refPattern = block.coderefPattern();
+      final defaultStyle = DefaultTextStyle.of(context).style;
+      body = FancySpanBuilder(
+        builder: (context, spanBuilder) {
+          InlineSpan span;
+          if (!supportedSrcLanguage(block.language)) {
+            final codeStyle = defaultStyle.copyWith(
+              color: OrgTheme.dataOf(context).codeColor,
+            );
+            span = TextSpan(
+              children: _tokenizeText(code, refPattern).map((t) {
+                return t.coderef == null
+                    ? spanBuilder.highlightedSpan(t.text, style: codeStyle)
+                    : WidgetSpan(
+                        child: OrgCoderefWidget(
+                          t.text,
+                          spanBuilder,
+                          style: codeStyle,
+                          key: OrgLocator.of(context)
+                              ?.generateCoderefKey(t.coderef!),
+                        ),
+                      );
+              }).toList(growable: false),
+            );
+          } else {
+            span = buildSrcHighlightSpan(
+              context,
+              code: code,
+              languageId: block.language,
+              spanFactory: ({String? text, TextStyle? style}) {
+                if (text == null) return const TextSpan();
+
+                final refMatch = refPattern.firstMatch(text);
+                if (refMatch == null) {
+                  return spanBuilder.highlightedSpan(text, style: style);
+                }
+                final refKey = refMatch.namedGroup('name')!;
+                return WidgetSpan(
+                  child: OrgCoderefWidget(
+                    text,
+                    spanBuilder,
+                    // TODO(aaron): This style is often null because this is a
+                    // child of a group node that has the "main" style. When we
+                    // return a WidgetSpan, the style applied to the parent
+                    // TextSpan doesn't take effect, and we lose the intended
+                    // styling. Fix this.
+                    style: style,
+                    key: OrgLocator.of(context)?.generateCoderefKey(refKey),
+                  ),
+                );
+              },
+            );
+          }
+          return Text.rich(span);
+        },
+      );
     } else if (block.body is OrgPlainText) {
       final contentNode = block.body as OrgPlainText;
       final content = removeTrailingLineBreak(
@@ -184,5 +223,49 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
             physics: const AlwaysScrollableScrollPhysics(),
             child: body,
           );
+  }
+}
+
+Iterable<({String text, String? coderef})> _tokenizeText(
+  String text,
+  RegExp pattern,
+) sync* {
+  var lastEnd = 0;
+  for (final match in pattern.allMatches(text)) {
+    if (match.start > lastEnd) {
+      yield (text: text.substring(lastEnd, match.start), coderef: null);
+    }
+    yield (text: match.group(0)!, coderef: match.namedGroup('name'));
+    lastEnd = match.end;
+  }
+  if (lastEnd < text.length) {
+    yield (text: text.substring(lastEnd), coderef: null);
+  }
+}
+
+class OrgCoderefWidget extends StatefulWidget {
+  const OrgCoderefWidget(this.text, this.spanBuilder, {this.style, super.key});
+
+  final String text;
+  final OrgSpanBuilder spanBuilder;
+  final TextStyle? style;
+
+  @override
+  State<OrgCoderefWidget> createState() => OrgCoderefWidgetState();
+}
+
+class OrgCoderefWidgetState extends State<OrgCoderefWidget> {
+  bool _cookie = true;
+
+  void doHighlight() => setState(() => _cookie = !_cookie);
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedTextFlash(
+      cookie: _cookie,
+      child: Text.rich(
+        widget.spanBuilder.highlightedSpan(widget.text, style: widget.style),
+      ),
+    );
   }
 }
