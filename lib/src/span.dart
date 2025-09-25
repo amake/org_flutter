@@ -430,7 +430,7 @@ class OrgSpanBuilder {
     }
     if (lastEnd < text.length) {
       yield TextSpan(
-        text: transform(text.substring(lastEnd, text.length)),
+        text: transform(text.substring(lastEnd)),
         recognizer: recognizer,
       );
     }
