@@ -229,7 +229,7 @@ class OrgLocatorData extends InheritedWidget {
   /// return true.
   final Future<bool> Function(String) jumpToLinkTarget;
 
-  /// Keys representing named objectes in the document. It will only be
+  /// Keys representing named objects in the document. It will only be
   /// populated after the widget build phase.
   final ValueNotifier<Map<String, NameKey>> nameKeys;
 
