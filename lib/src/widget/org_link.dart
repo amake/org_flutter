@@ -12,6 +12,8 @@ import 'package:org_parser/org_parser.dart';
 /// link as it would have been shown had it been treated as a text link.
 ///
 /// This widget will *not* attempt to render a link as an image.
+///
+/// To customize link handling, wrap this with an [OrgEvents] widget.
 class OrgLinkWidget extends StatelessWidget {
   const OrgLinkWidget(this.link, {super.key});
 
@@ -21,10 +23,7 @@ class OrgLinkWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return FancySpanBuilder(
       inlineImages: false,
-      builder: (context, spanBuilder) => InkWell(
-        onTap: () => OrgEvents.of(context).onLinkTap?.call(link),
-        child: Text.rich(spanBuilder.build(link)),
-      ),
+      builder: (context, spanBuilder) => Text.rich(spanBuilder.build(link)),
     );
   }
 }
