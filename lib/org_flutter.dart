@@ -8,6 +8,7 @@ import 'package:org_parser/org_parser.dart';
 
 export 'package:org_flutter/src/controller.dart';
 export 'package:org_flutter/src/error.dart';
+export 'package:org_flutter/src/events.dart';
 export 'package:org_flutter/src/locator.dart';
 export 'package:org_flutter/src/settings.dart';
 export 'package:org_flutter/src/theme.dart';
