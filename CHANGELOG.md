@@ -1,3 +1,7 @@
+## [9.10.1]
+- Export `OrgEvents`
+- Minor tweaks
+
 ## [9.10.0]
 - Support jumping to code references
 - Allow simultaneous search hits and syntax highlighting in src blocks
