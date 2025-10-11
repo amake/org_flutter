@@ -400,6 +400,35 @@ baz: 1''').value;
         expect(value, isNull);
       });
     });
+    group('hidden keywords setting', () {
+      test('single', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-hidden-keywords: (title)
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getHiddenKeywords(lvars);
+        expect(value, ['title']);
+      });
+      test('multiple', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-hidden-keywords: (title subtitle)
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getHiddenKeywords(lvars);
+        expect(value, ['title', 'subtitle']);
+      });
+      test('invalid', () {
+        final doc = OrgDocument.parse('''# Local Variables:
+# org-hidden-keywords: 1
+# End:''');
+        final lvars = extractLocalVariables(doc, expectNoError);
+        expect(lvars.length, 1);
+        final value = getHiddenKeywords(lvars);
+        expect(value, isNull);
+      });
+    });
   });
 }
 

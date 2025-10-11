@@ -27,5 +27,42 @@ void main() {
       expect(find.textContaining('4'), findsOneWidget);
       expect(find.textContaining('{4}'), findsNothing);
     });
+    testWidgets('Hidden', (tester) async {
+      final doc = OrgDocument.parse(r'''
+#+TITLE: A very good doc
+#+SUBTITLE: The foo story
+#+AUTHOR: That Guy
+#+EMAIL: thatguy@example.com
+#+DATE: 2024-11-05
+#+FOO: a regular meta line
+
+#+title: a VERY GOOD DOC
+
+# Local Variables:
+# org-hidden-keywords: (title subtitle foo)
+# End:
+''');
+      final widget = OrgController(
+        root: doc,
+        interpretEmbeddedSettings: true,
+        errorHandler: (e) {
+          fail(e.toString());
+        },
+        child: OrgRootWidget(
+          child: OrgDocumentWidget(doc),
+        ),
+      );
+      await tester.pumpWidget(wrap(widget));
+      expect(find.textContaining('A very good doc'), findsOneWidget);
+      expect(find.textContaining('#+TITLE:'), findsNothing);
+      expect(find.textContaining('The foo story'), findsOneWidget);
+      expect(find.textContaining('#+SUBTITLE:'), findsNothing);
+      expect(find.textContaining('That Guy'), findsOneWidget);
+      expect(find.textContaining('#+AUTHOR:'), findsOneWidget);
+      expect(find.textContaining('#+FOO:'), findsOneWidget);
+      expect(find.textContaining('a regular meta line'), findsOneWidget);
+      expect(find.textContaining('a VERY GOOD DOC'), findsOneWidget);
+      expect(find.textContaining('#+title:'), findsNothing);
+    });
   });
 }

@@ -226,3 +226,23 @@ String? getOrgAttachIdDir(Map<String, dynamic> localVariables) {
   }
   return null;
 }
+
+const _kOrgAttachDirectoryKey = 'org-hidden-keywords';
+
+List<String>? getHiddenKeywords(Map<String, dynamic> localVariables) {
+  if (localVariables.containsKey(_kOrgAttachDirectoryKey)) {
+    final value = localVariables[_kOrgAttachDirectoryKey];
+    if (value is Cons) {
+      final result = <String>[];
+      Cons? current = value;
+      while (current is Cons) {
+        final head = current.head;
+        if (head is! Name) break;
+        result.add(head.toString());
+        current = current.tail;
+      }
+      return result;
+    }
+  }
+  return null;
+}

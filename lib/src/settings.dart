@@ -21,6 +21,7 @@ const _kDefaultInlineImages = true;
 const _kDefaultNumMode = false;
 const _kDefaultVisibilityState = OrgVisibilityState.folded;
 const _kDefaultOrgAttachIdDir = 'data'; // Per `org-attach-id-dir`
+const _kDefaultHiddenKeywords = <String>[];
 
 class InheritedOrgSettings extends InheritedWidget {
   static Widget merge(
@@ -72,6 +73,7 @@ class OrgSettings {
         entityReplacements: orgDefaultEntityReplacements,
         todoSettings: [defaultTodoStates],
         orgAttachIdDir: _kDefaultOrgAttachIdDir,
+        hiddenKeywords: _kDefaultHiddenKeywords,
       );
 
   /// Equivalent to the old "hideMarkup" setting
@@ -174,6 +176,7 @@ class OrgSettings {
     bool? subSuperscripts;
     bool? strictSubSuperscripts;
     String? orgAttachIdDir;
+    List<String>? hiddenKeywords;
     try {
       final lvars = extractLocalVariables(doc, errorHandler);
       entityReplacements =
@@ -184,6 +187,7 @@ class OrgSettings {
       subSuperscripts = getSubSuperscripts(lvars);
       strictSubSuperscripts = getStrictSubSuperscripts(lvars);
       orgAttachIdDir = getOrgAttachIdDir(lvars);
+      hiddenKeywords = getHiddenKeywords(lvars);
       // org-hide-{block,drawer}-startup, org-startup-folded are not respected
       // when set as local variables.
     } catch (e) {
@@ -213,6 +217,7 @@ class OrgSettings {
       locale: locale,
       textDirection: textDirection,
       orgAttachIdDir: orgAttachIdDir,
+      hiddenKeywords: hiddenKeywords,
     );
   }
 
@@ -234,6 +239,7 @@ class OrgSettings {
     this.locale,
     this.textDirection,
     this.orgAttachIdDir,
+    this.hiddenKeywords,
   });
 
   /// Whether to reflow text to remove intra-paragraph line breaks. Does not map
@@ -317,6 +323,10 @@ class OrgSettings {
   /// The directory where attachments are stored. Set by `org-attach-id-dir`.
   final String? orgAttachIdDir;
 
+  /// Meta keywords that should be hidden from display. Set by
+  /// `org-hidden-keywords`.
+  final List<String>? hiddenKeywords;
+
   @override
   bool operator ==(Object other) =>
       other is OrgSettings &&
@@ -336,7 +346,8 @@ class OrgSettings {
       listEquals(todoSettings, other.todoSettings) &&
       locale == other.locale &&
       textDirection == other.textDirection &&
-      orgAttachIdDir == other.orgAttachIdDir;
+      orgAttachIdDir == other.orgAttachIdDir &&
+      listEquals(hiddenKeywords, other.hiddenKeywords);
 
   @override
   int get hashCode => Object.hash(
@@ -362,6 +373,7 @@ class OrgSettings {
         locale,
         textDirection,
         orgAttachIdDir,
+        hiddenKeywords == null ? null : Object.hashAll(hiddenKeywords!),
       );
 
   OrgSettings copyWith({
@@ -382,6 +394,7 @@ class OrgSettings {
     Locale? locale,
     TextDirection? textDirection,
     String? orgAttachIdDir,
+    List<String>? hiddenKeywords,
   }) =>
       OrgSettings(
         reflowText: reflowText ?? this.reflowText,
@@ -402,6 +415,7 @@ class OrgSettings {
         locale: locale ?? this.locale,
         textDirection: textDirection ?? this.textDirection,
         orgAttachIdDir: orgAttachIdDir ?? this.orgAttachIdDir,
+        hiddenKeywords: hiddenKeywords ?? this.hiddenKeywords,
       );
 }
 
@@ -467,4 +481,8 @@ extension LayeredOrgSettings on List<OrgSettings> {
   String get orgAttachIdDir =>
       firstWhere((layer) => layer.orgAttachIdDir != null,
           orElse: () => OrgSettings.defaults).orgAttachIdDir!;
+
+  List<String> get hiddenKeywords =>
+      firstWhere((layer) => layer.hiddenKeywords != null,
+          orElse: () => OrgSettings.defaults).hiddenKeywords!;
 }

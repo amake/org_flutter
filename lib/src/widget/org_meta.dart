@@ -98,8 +98,13 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
 
   Iterable<InlineSpan> _spans(
       BuildContext context, OrgSpanBuilder builder) sync* {
-    yield builder.highlightedSpan(widget.meta.key,
-        style: _keywordStyle(context));
+    final settings = OrgSettings.of(context).settings;
+    if (!_isDocInfoKeyword ||
+        !settings.hiddenKeywords.any((kw) =>
+            '#+${kw.toUpperCase()}:' == widget.meta.key.toUpperCase())) {
+      yield builder.highlightedSpan(widget.meta.key,
+          style: _keywordStyle(context));
+    }
     if (widget.meta.value != null) {
       yield builder.build(widget.meta.value!, style: _valueStyle(context));
     }
