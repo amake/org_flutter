@@ -1,3 +1,6 @@
+## [9.11.0]
+- Support hiding meta keywords via `org-hidden-keywords`
+
 ## [9.10.1]
 - Export `OrgEvents`
 - Minor tweaks
