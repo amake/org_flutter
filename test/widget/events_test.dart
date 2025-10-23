@@ -41,7 +41,7 @@ void main() {
 * Foo
 bar
 ''',
-            onLocalSectionLinkTap: (section) {
+            onLocalSectionLinkTap: (section, {searchOption}) {
               invoked = true;
               expect(section.toMarkup(), '* Foo\nbar\n');
             },
@@ -60,12 +60,35 @@ bar
 :ID: foo
 :END:
 ''',
-            onLocalSectionLinkTap: (section) {
+            onLocalSectionLinkTap: (section, {searchOption}) {
               invoked = true;
               expect(
                 section.toMarkup(),
                 '* Bar\n:PROPERTIES:\n:ID: foo\n:END:\n',
               );
+            },
+          )));
+          await tester.tapOnText(find.textRange.ofSubstring('link'));
+          await tester.pump();
+          expect(invoked, isTrue);
+        });
+        testWidgets('By ID with search option', (tester) async {
+          var invoked = false;
+          await tester.pumpWidget(wrap(Org(
+            '''
+[[id:foo::bar][link]]
+* Bar
+:PROPERTIES:
+:ID: foo
+:END:
+''',
+            onLocalSectionLinkTap: (section, {searchOption}) {
+              invoked = true;
+              expect(
+                section.toMarkup(),
+                '* Bar\n:PROPERTIES:\n:ID: foo\n:END:\n',
+              );
+              expect(searchOption, 'bar');
             },
           )));
           await tester.tapOnText(find.textRange.ofSubstring('link'));
@@ -82,7 +105,7 @@ bar
 :CUSTOM_ID: foo123
 :END:
 ''',
-            onLocalSectionLinkTap: (section) {
+            onLocalSectionLinkTap: (section, {searchOption}) {
               invoked = true;
               expect(
                 section.toMarkup(),
@@ -94,6 +117,102 @@ bar
           await tester.pump();
           expect(invoked, isTrue);
         });
+        testWidgets('By present named target', (tester) async {
+          var invoked = false;
+          await tester.pumpWidget(wrap(Org(
+            '''
+[[foo][link]]
+
+#+NAME: foo
+''',
+            onLocalSectionLinkTap: (section, {searchOption}) {
+              fail('Should not be invoked');
+            },
+            onLinkTap: (link) {
+              fail('Should not be invoked');
+            },
+          )));
+          await tester.tapOnText(find.textRange.ofSubstring('link'));
+          await tester.pumpAndSettle();
+          expect(invoked, isFalse);
+        });
+        testWidgets('By absent named/link target', (tester) async {
+          var invoked = false;
+          await tester.pumpWidget(wrap(Org(
+            '''
+[[foo][link]]
+''',
+            onLocalSectionLinkTap: (section, {searchOption}) {
+              fail('Should not be invoked');
+            },
+            onLinkTap: (link) {
+              invoked = true;
+              expect(link.location, 'foo');
+            },
+          )));
+          await tester.tapOnText(find.textRange.ofSubstring('link'));
+          await tester.pumpAndSettle();
+          expect(invoked, isTrue);
+        });
+        testWidgets('By present link target', (tester) async {
+          var invoked = false;
+          await tester.pumpWidget(wrap(Org(
+            '''
+[[foo][link]]
+
+<<foo>>
+''',
+            onLocalSectionLinkTap: (section, {searchOption}) {
+              fail('Should not be invoked');
+            },
+            onLinkTap: (link) {
+              fail('Should not be invoked');
+            },
+          )));
+          await tester.tapOnText(find.textRange.ofSubstring('link'));
+          await tester.pumpAndSettle();
+          expect(invoked, isFalse);
+        });
+        testWidgets('By present coderef target', (tester) async {
+          var invoked = false;
+          await tester.pumpWidget(wrap(Org(
+            '''
+[[(foo)][link]]
+
+#+BEGIN_SRC emacs-lisp -n -r
+  (bar)                 (ref:foo)
+#+END_SRC
+''',
+            onLocalSectionLinkTap: (section, {searchOption}) {
+              fail('Should not be invoked');
+            },
+            onLinkTap: (link) {
+              fail('Should not be invoked');
+            },
+          )));
+          await tester.tapOnText(find.textRange.ofSubstring('link'));
+          await tester.pumpAndSettle();
+          expect(invoked, isFalse);
+        });
+        testWidgets('By absent coderef target', (tester) async {
+          var invoked = false;
+          await tester.pumpWidget(wrap(Org(
+            '''
+[[(foo)][link]]
+''',
+            onLocalSectionLinkTap: (section, {searchOption}) {
+              fail('Should not be invoked');
+            },
+            onLinkTap: (link) {
+              invoked = true;
+              expect(link.location, '(foo)');
+            },
+          )));
+          await tester.tapOnText(find.textRange.ofSubstring('link'));
+          await tester.pumpAndSettle();
+          expect(invoked, isTrue);
+        });
+
         testWidgets('Root by ID', (tester) async {
           var invoked = false;
           await tester.pumpWidget(wrap(Org(
@@ -104,7 +223,7 @@ bar
 * Bar
 [[id:foo][link]]
 ''',
-            onLocalSectionLinkTap: (section) {
+            onLocalSectionLinkTap: (section, {searchOption}) {
               invoked = true;
               expect(
                 section.toMarkup(),
@@ -128,7 +247,7 @@ bar
 * Bar
 [[#foo123][link]]
 ''',
-            onLocalSectionLinkTap: (section) {
+            onLocalSectionLinkTap: (section, {searchOption}) {
               invoked = true;
               expect(
                 section.toMarkup(),

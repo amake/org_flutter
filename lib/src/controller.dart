@@ -594,12 +594,12 @@ class OrgControllerData extends InheritedWidget {
   /// If [target] is none of the above three types, an [Exception] will be
   /// thrown.
   OrgTree? sectionForTarget(String target) {
-    if (isOrgLocalSectionUrl(target)) {
-      return sectionWithTitle(parseOrgLocalSectionUrl(target));
-    } else if (isOrgIdUrl(target)) {
-      return sectionWithId(parseOrgIdUrl(target));
-    } else if (isOrgCustomIdUrl(target)) {
-      return sectionWithCustomId(parseOrgCustomIdUrl(target));
+    if (isOrgLocalSectionSearch(target)) {
+      return sectionWithTitle(parseOrgLocalSectionSearch(target));
+    } else if (isOrgIdSearch(target)) {
+      return sectionWithId(parseOrgIdSearch(target));
+    } else if (isOrgCustomIdSearch(target)) {
+      return sectionWithCustomId(parseOrgCustomIdSearch(target));
     } else {
       throw Exception(
           'Unknown target type: $target (was not a title or an ID)');

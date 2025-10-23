@@ -40,8 +40,10 @@ class OrgRootWidget extends StatelessWidget {
 
   /// A callback invoked when the user taps on a link to a section within the
   /// current document. The argument is the target section. You might want to
-  /// display it somehow.
-  final void Function(OrgTree)? onLocalSectionLinkTap;
+  /// display it somehow. If the link to the section included a [search
+  /// option](https://orgmode.org/manual/Search-Options.html), it will be
+  /// included as [searchOption].
+  final void Function(OrgTree, {String? searchOption})? onLocalSectionLinkTap;
 
   /// A callback invoked when the user long-presses on a section headline within
   /// the current document. The argument is the pressed section. You might want

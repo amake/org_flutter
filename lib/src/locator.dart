@@ -297,6 +297,25 @@ class OrgLocatorData extends InheritedWidget {
   /// successful, will return true.
   final Future<bool> Function(String) jumpToCoderef;
 
+  /// Try to jump to the specified search option, namely a (ref:...) coderef, a
+  /// &lt;&lt;dedicated target>>, or a #+NAME: name. If successful, will return
+  /// true.
+  Future<bool> jumpToSearchOption(String target) async {
+    if (isCoderefSearch(target)) {
+      final coderef = parseCoderefSearch(target);
+      if (await jumpToCoderef(coderef)) return true;
+    } else if (await jumpToLinkTarget(target)) {
+      return true;
+    } else if (await jumpToName(target)) {
+      return true;
+    }
+    // We would handle other search options here, namely line number and regexp
+    // (https://orgmode.org/manual/Search-Options.html) but we don't track line
+    // numbers and regexp search is a matter for the consumer.
+
+    return false;
+  }
+
   @override
   bool updateShouldNotify(OrgLocatorData oldWidget) => false;
 }

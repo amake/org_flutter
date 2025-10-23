@@ -26,8 +26,10 @@ class OrgEvents extends InheritedWidget {
 
   /// A callback invoked when the user taps on a link to a section within the
   /// current document. The argument is the target section. You might want to
-  /// display it somehow.
-  final void Function(OrgTree)? onLocalSectionLinkTap;
+  /// display it somehow. If the link to the section included a [search
+  /// option](https://orgmode.org/manual/Search-Options.html), it will be
+  /// included as [searchOption].
+  final void Function(OrgTree, {String? searchOption})? onLocalSectionLinkTap;
 
   /// A callback invoked when the user long-presses on a section headline within
   /// the current document. The argument is the pressed section. You might want
@@ -63,52 +65,54 @@ class OrgEvents extends InheritedWidget {
       context.dependOnInheritedWidgetOfExactType<OrgEvents>()!;
 
   /// Invoke the appropriate handler for the given [url]
-  void dispatchLinkTap(BuildContext context, OrgLink link) {
-    if (isCoderefUrl(link.location)) {
-      final coderef = parseCoderefUrl(link.location);
-      OrgLocator.of(context)?.jumpToCoderef(coderef);
-      return;
-    }
-    final section = _resolveLocalSectionLink(context, link.location);
-    if (section != null) {
-      onLocalSectionLinkTap?.call(section);
-    } else {
-      onLinkTap?.call(link);
-    }
-  }
+  void dispatchLinkTap(BuildContext context, OrgLink link) async {
+    final controller = OrgController.of(context);
 
-  OrgTree? _resolveLocalSectionLink(BuildContext context, String url) {
-    if (isOrgLocalSectionUrl(url)) {
-      final sectionTitle = parseOrgLocalSectionUrl(url);
-      final section = OrgController.of(context).sectionWithTitle(sectionTitle);
-      if (section == null) {
-        debugPrint('Failed to find local section with title "$sectionTitle"');
-      }
-      return section;
-    } else if (isOrgIdUrl(url)) {
-      final sectionId = parseOrgIdUrl(url);
-      final section = OrgController.of(context).sectionWithId(sectionId);
-      if (section == null) {
-        debugPrint('Failed to find local section with ID "$sectionId"');
-      }
-      return section;
-    } else if (isOrgCustomIdUrl(url)) {
-      final sectionId = parseOrgCustomIdUrl(url);
-      final section = OrgController.of(context).sectionWithCustomId(sectionId);
-      if (section == null) {
-        debugPrint('Failed to find local section with CUSTOM_ID "$sectionId"');
-      }
-      return section;
-    }
+    var target = link.location;
+
+    // Check if it's an ID link like `id:SECTION_ID`
     try {
-      final link = OrgFileLink.parse(url);
-      if (link.isLocal) {
-        return _resolveLocalSectionLink(context, link.extra!);
+      final fileLink = OrgFileLink.parse(target);
+      if (fileLink.scheme == 'id:') {
+        final section = controller.sectionWithId(fileLink.body);
+        if (section != null) {
+          onLocalSectionLinkTap?.call(section, searchOption: fileLink.extra);
+          return;
+        }
+      } else if (fileLink.isLocal) {
+        // The "degenerate" case where a file link points within the current file;
+        // https://orgmode.org/manual/Search-Options.html
+        target = fileLink.extra!;
       }
     } on Exception {
       // Ignore
     }
-    return null;
+
+    // First, see if it's a local section link like `*Section Title` or
+    // `#CUSTOM_ID`. We don't handle `id:SECTION_ID` here because that case is
+    // covered above.
+    if (isOrgLocalSectionSearch(target)) {
+      final sectionTitle = parseOrgLocalSectionSearch(target);
+      final section = controller.sectionWithTitle(sectionTitle);
+      if (section != null) {
+        onLocalSectionLinkTap?.call(section, searchOption: 'title');
+        return;
+      }
+    } else if (isOrgCustomIdSearch(target)) {
+      final sectionId = parseOrgCustomIdSearch(target);
+      final section = controller.sectionWithCustomId(sectionId);
+      if (section != null) {
+        onLocalSectionLinkTap?.call(section, searchOption: 'custom-id');
+        return;
+      }
+    }
+
+    final handled = await OrgLocator.of(context)?.jumpToSearchOption(target);
+    if (handled == true) return;
+
+    // If we didn't find a section or other thing to jump to, invoke the
+    // callback provided by the consumer
+    onLinkTap?.call(link);
   }
 
   @override
