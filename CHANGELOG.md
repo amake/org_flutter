@@ -1,3 +1,9 @@
+## [10.0.0]
+- Improve handling of links that point to sections or jumpable items within the
+  document
+- Return any search option alongside section in `onLocalSectionLinkTap` callback
+- Bump org_parser to 10.0.0
+
 ## [9.11.0]
 - Support hiding meta keywords via `org-hidden-keywords`
 
