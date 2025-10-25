@@ -95,14 +95,14 @@ class OrgEvents extends InheritedWidget {
       final sectionTitle = parseOrgLocalSectionSearch(target);
       final section = controller.sectionWithTitle(sectionTitle);
       if (section != null) {
-        onLocalSectionLinkTap?.call(section, searchOption: 'title');
+        onLocalSectionLinkTap?.call(section);
         return;
       }
     } else if (isOrgCustomIdSearch(target)) {
       final sectionId = parseOrgCustomIdSearch(target);
       final section = controller.sectionWithCustomId(sectionId);
       if (section != null) {
-        onLocalSectionLinkTap?.call(section, searchOption: 'custom-id');
+        onLocalSectionLinkTap?.call(section);
         return;
       }
     }

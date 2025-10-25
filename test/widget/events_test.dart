@@ -44,6 +44,7 @@ bar
             onLocalSectionLinkTap: (section, {searchOption}) {
               invoked = true;
               expect(section.toMarkup(), '* Foo\nbar\n');
+              expect(searchOption, isNull);
             },
           )));
           await tester.tapOnText(find.textRange.ofSubstring('link'));
@@ -66,6 +67,7 @@ bar
                 section.toMarkup(),
                 '* Bar\n:PROPERTIES:\n:ID: foo\n:END:\n',
               );
+              expect(searchOption, isNull);
             },
           )));
           await tester.tapOnText(find.textRange.ofSubstring('link'));
@@ -111,6 +113,7 @@ bar
                 section.toMarkup(),
                 '* Bar\n:PROPERTIES:\n:CUSTOM_ID: foo123\n:END:\n',
               );
+              expect(searchOption, isNull);
             },
           )));
           await tester.tapOnText(find.textRange.ofSubstring('link'));
@@ -229,6 +232,7 @@ bar
                 section.toMarkup(),
                 ':PROPERTIES:\n:ID: foo\n:END:\n* Bar\n[[id:foo][link]]\n',
               );
+              expect(searchOption, isNull);
             },
           )));
           await tester.tap(find.byType(OrgHeadlineWidget));
@@ -253,6 +257,7 @@ bar
                 section.toMarkup(),
                 ':PROPERTIES:\n:CUSTOM_ID: foo123\n:END:\n* Bar\n[[#foo123][link]]\n',
               );
+              expect(searchOption, isNull);
             },
           )));
           await tester.tap(find.byType(OrgHeadlineWidget));
