@@ -1,3 +1,6 @@
+## [10.0.1]
+- Fix bogus returned searchOption for section search, custom ID search
+
 ## [10.0.0]
 - Improve handling of links that point to sections or jumpable items within the
   document
