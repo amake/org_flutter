@@ -95,18 +95,18 @@ packages:
     dependency: transitive
     description:
       name: flutter_tex_js_android
-      sha256: "6c3826aa6fd4395bd9263f3a87eb3ea4681e6cf42b44d67e54e4a89e67501ac0"
+      sha256: "67673bfcf23f687a26e0f5ad75d0ab4c314dd243d377b59c9d056c545673b2fc"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.6"
+    version: "3.0.8"
   flutter_tex_js_ios:
     dependency: transitive
     description:
       name: flutter_tex_js_ios
-      sha256: "58698d24e98cfd998910add672718f95a175d297af9b420f8e3a2c80d9117cfa"
+      sha256: "64c6401d9cde0ac098c448f6317456cbcdfd67bef27b5256908fbc317b77d360"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.12"
+    version: "2.0.14"
   flutter_tex_js_platform_interface:
     dependency: transitive
     description:
