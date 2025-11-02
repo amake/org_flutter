@@ -1,3 +1,7 @@
+## [10.0.2]
+- Fix display of tables with cells containing `+`
+- Fix handling of empty local variables list
+
 ## [10.0.1]
 - Fix bogus returned searchOption for section search, custom ID search
 
