@@ -47,6 +47,7 @@ Map<String, dynamic> extractLocalVariables(
 ) {
   final lvars = doc.find<OrgLocalVariables>((_) => true);
   if (lvars == null) return {};
+  if (lvars.node.contentString.trim().isEmpty) return {};
 
   final parsed = localVariablesParser.parse(lvars.node.contentString);
   if (parsed is Failure) {

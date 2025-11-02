@@ -169,6 +169,12 @@ baz: 1''').value;
       expect(lvars, <String, dynamic>{});
       expect(called, isTrue);
     });
+    test('empty', () {
+      final doc = OrgDocument.parse('''# Local Variables:
+# End:''');
+      final lvars = extractLocalVariables(doc, expectNoError);
+      expect(lvars, <String, dynamic>{});
+    });
   });
   group('interpreting', () {
     group('entity', () {
