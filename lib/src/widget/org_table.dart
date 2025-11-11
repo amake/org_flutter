@@ -95,6 +95,9 @@ class OrgTableWidget extends StatelessWidget {
           children: List.filled(columnCount, const SizedBox(height: 8)),
         );
       }
+      // TODO(aaron): Handle edge cases like
+      // - solitary divider row
+      // - trailing content after row
     }
   }
 }
