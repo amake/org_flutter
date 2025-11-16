@@ -16,18 +16,18 @@ baz buzz
 ** headline 2
 bazinga''')),
       ));
-      expect(find.text('foo bar'), findsOneWidget);
+      expect(find.textContaining('foo bar'), findsOneWidget);
       await tester.tap(find.byType(OrgHeadlineWidget).first);
       await tester.pump();
-      expect(find.text('foo bar'), findsOneWidget);
-      expect(find.text('baz buzz'), findsOneWidget);
+      expect(find.textContaining('foo bar'), findsOneWidget);
+      expect(find.textContaining('baz buzz'), findsOneWidget);
       expect(find.textContaining('headline 2'), findsOneWidget);
-      expect(find.text('bazinga'), findsNothing);
+      expect(find.textContaining('bazinga'), findsNothing);
       await tester.restartAndRestore();
-      expect(find.text('foo bar'), findsOneWidget);
-      expect(find.text('baz buzz'), findsNothing);
+      expect(find.textContaining('foo bar'), findsOneWidget);
+      expect(find.textContaining('baz buzz'), findsNothing);
       expect(find.textContaining('headline 2'), findsNothing);
-      expect(find.text('bazinga'), findsNothing);
+      expect(find.textContaining('bazinga'), findsNothing);
     });
     testWidgets('Restores section visibility', (tester) async {
       await tester.pumpWidget(RootRestorationScope(
@@ -42,18 +42,18 @@ bazinga''',
           restorationId: 'doc',
         )),
       ));
-      expect(find.text('foo bar'), findsOneWidget);
+      expect(find.textContaining('foo bar'), findsOneWidget);
       await tester.tap(find.byType(OrgHeadlineWidget).first);
       await tester.pump();
-      expect(find.text('foo bar'), findsOneWidget);
-      expect(find.text('baz buzz'), findsOneWidget);
+      expect(find.textContaining('foo bar'), findsOneWidget);
+      expect(find.textContaining('baz buzz'), findsOneWidget);
       expect(find.textContaining('headline 2'), findsOneWidget);
-      expect(find.text('bazinga'), findsNothing);
+      expect(find.textContaining('bazinga'), findsNothing);
       await tester.restartAndRestore();
-      expect(find.text('foo bar'), findsOneWidget);
-      expect(find.text('baz buzz'), findsOneWidget);
+      expect(find.textContaining('foo bar'), findsOneWidget);
+      expect(find.textContaining('baz buzz'), findsOneWidget);
       expect(find.textContaining('headline 2'), findsOneWidget);
-      expect(find.text('bazinga'), findsNothing);
+      expect(find.textContaining('bazinga'), findsNothing);
     });
     testWidgets('Ignores search on restore', (tester) async {
       final doc = OrgDocument.parse('''foo bar
@@ -73,18 +73,18 @@ bazinga''');
         restorationId: 'root',
         child: wrap(widget),
       ));
-      expect(find.text('foo bar'), findsOneWidget);
+      expect(find.textContaining('foo bar'), findsOneWidget);
       expect(find.textContaining('buzz'), findsOneWidget);
       expect(find.textContaining('headline 2'), findsOneWidget);
       expect(find.textContaining('inga'), findsOneWidget);
       await tester.tap(find.byType(OrgHeadlineWidget).last);
       await tester.pumpAndSettle();
-      expect(find.text('foo bar'), findsOneWidget);
+      expect(find.textContaining('foo bar'), findsOneWidget);
       expect(find.textContaining('buzz'), findsOneWidget);
       expect(find.textContaining('headline 2'), findsOneWidget);
       expect(find.textContaining('inga'), findsNothing);
       await tester.restartAndRestore();
-      expect(find.text('foo bar'), findsOneWidget);
+      expect(find.textContaining('foo bar'), findsOneWidget);
       expect(find.textContaining('buzz'), findsOneWidget);
       expect(find.textContaining('headline 2'), findsOneWidget);
       expect(find.textContaining('inga'), findsNothing);
@@ -107,21 +107,21 @@ bazinga''');
         restorationId: 'root',
         child: wrap(widget),
       ));
-      expect(find.text('foo bar'), findsOneWidget);
-      expect(find.text('baz buzz'), findsNothing);
+      expect(find.textContaining('foo bar'), findsOneWidget);
+      expect(find.textContaining('baz buzz'), findsNothing);
       expect(find.textContaining('headline 2'), findsOneWidget);
-      expect(find.text('bazinga'), findsNothing);
+      expect(find.textContaining('bazinga'), findsNothing);
       await tester.tap(find.byType(OrgHeadlineWidget).last);
       await tester.pumpAndSettle();
-      expect(find.text('foo bar'), findsOneWidget);
-      expect(find.text('baz buzz'), findsNothing);
+      expect(find.textContaining('foo bar'), findsOneWidget);
+      expect(find.textContaining('baz buzz'), findsNothing);
       expect(find.textContaining('headline 2'), findsOneWidget);
-      expect(find.text('bazinga'), findsOneWidget);
+      expect(find.textContaining('bazinga'), findsOneWidget);
       await tester.restartAndRestore();
-      expect(find.text('foo bar'), findsOneWidget);
-      expect(find.text('baz buzz'), findsNothing);
+      expect(find.textContaining('foo bar'), findsOneWidget);
+      expect(find.textContaining('baz buzz'), findsNothing);
       expect(find.textContaining('headline 2'), findsOneWidget);
-      expect(find.text('bazinga'), findsOneWidget);
+      expect(find.textContaining('bazinga'), findsOneWidget);
     });
   });
 }

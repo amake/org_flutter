@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:org_flutter/src/indent.dart';
 import 'package:org_flutter/src/settings.dart';
-import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_flutter/src/widget/org_content.dart';
 import 'package:org_flutter/src/widget/org_theme.dart';
@@ -64,9 +63,12 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              _body((_, string) => removeTrailingLineBreak(
-                  hardDeindent(string, totalIndentSize))),
+            children: [
+              OrgContentWidget(
+                widget.drawer.body,
+                transformer: (_, string) => removeTrailingLineBreak(
+                    hardDeindent(string, totalIndentSize)),
+              ),
               Text(
                 hardDeindent(widget.drawer.footer, totalIndentSize),
                 style: drawerStyle,
@@ -80,21 +82,6 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
       body,
       enabled: OrgSettings.of(context).settings.deemphasizeMarkup,
     );
-  }
-
-  Widget _body(Transformer transformer) {
-    final body = OrgContentWidget(
-      widget.drawer.body,
-      transformer: transformer,
-    );
-    // TODO(aaron): Better distinguish "greater block" from regular block
-    return widget.drawer.body is OrgContent
-        ? body
-        : SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: body,
-          );
   }
 
   Widget? _trailing() {

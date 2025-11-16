@@ -106,7 +106,7 @@ class _ComplexTabState extends State<ComplexTab> {
       root = root
           .editNode(markupNode)!
           .replace(OrgMarkup.just('${value + 1}', OrgStyle.code))
-          .commit() as OrgDocument;
+          .commit<OrgDocument>();
     });
   }
 }
