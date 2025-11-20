@@ -42,46 +42,6 @@ extension PatternUtil on Pattern? {
   }
 }
 
-enum TokenLocation { start, middle, end, only }
-
-TokenLocation locationOf(Object elem, List<Object> elems) {
-  final isLast = identical(elem, elems.last);
-  final isFirst = identical(elem, elems.first);
-  return isLast && isFirst
-      ? TokenLocation.only
-      : isLast
-          ? TokenLocation.end
-          : isFirst
-              ? TokenLocation.start
-              : TokenLocation.middle;
-}
-
-String reflowText(String text, TokenLocation location) => text.replaceAll(
-      switch (location) {
-        TokenLocation.only => _unwrappableWhitespacePattern,
-        TokenLocation.start => _unwrappableStartWhitespacePattern,
-        TokenLocation.middle => _unwrappableMiddleWhitespacePattern,
-        TokenLocation.end => _unwrappableEndWhitespacePattern,
-      },
-      ' ',
-    );
-
-// Match single (CR)LF between non-whitespace chars only (preserve leading and
-// trailing linebreaks)
-final _unwrappableWhitespacePattern = RegExp(r'(?<=\S)[ \t]*\r?\n[ \t]*(?=\S)');
-// Match single (CR)LF between non-whitespace chars OR at end of text for
-// leading text run (preserve leading linebreaks)
-final _unwrappableStartWhitespacePattern =
-    RegExp(r'(?<=\S)[ \t]*\r?\n[ \t]*(?=\S|$)');
-// Match single (CR)LF between non-whitespace chars OR at edge of text for
-// "inside" text runs (preserve none)
-final _unwrappableMiddleWhitespacePattern =
-    RegExp(r'(?<=\S|^)[ \t]*\r?\n[ \t]*(?=\S|$)');
-// Match single (CR)LF between non-whitespace chars OR at start of text for
-// final text run (preserve trailing linebreaks)
-final _unwrappableEndWhitespacePattern =
-    RegExp(r'(?<=\S|^)[ \t]*\r?\n[ \t]*(?=\S)');
-
 String removeTrailingLineBreak(String text) {
   if (text.endsWith('\n')) {
     if (text.endsWith('\r\n')) {
