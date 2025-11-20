@@ -1,3 +1,6 @@
+## [10.1.0]
+- Bump org_parser to 11.0.0
+
 ## [10.0.2]
 - Fix display of tables with cells containing `+`
 - Fix handling of empty local variables list
