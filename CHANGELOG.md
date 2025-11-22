@@ -1,3 +1,6 @@
+## [10.2.0]
+- Allow skipping a visibility cycling state or cycling directly to a state
+
 ## [10.1.0]
 - Bump org_parser to 11.0.0
 
