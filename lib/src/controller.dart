@@ -409,12 +409,14 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     visit(_root);
   }
 
-  void _cycleVisibility() {
-    final currentStates = _nodeMap.currentVisibility;
-    final newState = currentStates.length == 1
-        ? currentStates.single.cycleGlobal
-        : OrgVisibilityState.folded;
-    debugPrint('Cycling global visibility; from=$currentStates, to=$newState');
+  void _cycleVisibility({OrgVisibilityState? to, OrgVisibilityState? skip}) {
+    final currentState = _nodeMap.currentVisibility.singleOrNull;
+    var newState = to ?? currentState?.cycleGlobal ?? OrgVisibilityState.folded;
+    while (newState == skip) {
+      newState = newState.cycleGlobal;
+    }
+    if (newState == currentState) return;
+    debugPrint('Cycling global visibility; from=$currentState, to=$newState');
     _nodeMap.setAllVisibilities(newState);
     _notifyState();
   }
@@ -529,7 +531,8 @@ class OrgControllerData extends InheritedWidget {
 
   /// Cycle the visibility of the entire document
   // TODO(aaron): Should this be a declarative API?
-  final void Function() cycleVisibility;
+  final void Function({OrgVisibilityState? to, OrgVisibilityState? skip})
+      cycleVisibility;
 
   /// Cycle the visibility of the specified subtree
   final void Function(OrgTree) cycleVisibilityOf;

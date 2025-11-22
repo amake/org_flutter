@@ -60,6 +60,54 @@ bazinga''')));
       expect(find.textContaining('bazinga'), findsOneWidget);
       expect(find.textContaining('headline 2'), findsOneWidget);
     });
+    testWidgets('Skip', (tester) async {
+      await tester.pumpWidget(wrap(const Org('''
+foo bar
+* headline 1
+baz buzz
+** headline 2
+bazinga''')));
+      expect(find.textContaining('foo bar'), findsOneWidget);
+      expect(find.textContaining('baz buzz'), findsNothing);
+      expect(find.textContaining('headline 2'), findsNothing);
+      expect(find.textContaining('bazinga'), findsNothing);
+      final controller =
+          OrgController.of(tester.element(find.textContaining('foo bar')));
+      controller.cycleVisibility(skip: OrgVisibilityState.subtree);
+      await tester.pump();
+      expect(find.textContaining('baz buzz'), findsNothing);
+      expect(find.textContaining('bazinga'), findsNothing);
+      expect(find.textContaining('headline 2'), findsOneWidget);
+      controller.cycleVisibility(skip: OrgVisibilityState.subtree);
+      await tester.pump();
+      expect(find.textContaining('baz buzz'), findsNothing);
+      expect(find.textContaining('bazinga'), findsNothing);
+      expect(find.textContaining('headline 2'), findsNothing);
+    });
+    testWidgets('To', (tester) async {
+      await tester.pumpWidget(wrap(const Org('''
+foo bar
+* headline 1
+baz buzz
+** headline 2
+bazinga''')));
+      expect(find.textContaining('foo bar'), findsOneWidget);
+      expect(find.textContaining('baz buzz'), findsNothing);
+      expect(find.textContaining('headline 2'), findsNothing);
+      expect(find.textContaining('bazinga'), findsNothing);
+      final controller =
+          OrgController.of(tester.element(find.textContaining('foo bar')));
+      controller.cycleVisibility(to: OrgVisibilityState.subtree);
+      await tester.pump();
+      expect(find.textContaining('baz buzz'), findsOneWidget);
+      expect(find.textContaining('bazinga'), findsOneWidget);
+      expect(find.textContaining('headline 2'), findsOneWidget);
+      controller.cycleVisibility(to: OrgVisibilityState.subtree);
+      await tester.pump();
+      expect(find.textContaining('baz buzz'), findsOneWidget);
+      expect(find.textContaining('bazinga'), findsOneWidget);
+      expect(find.textContaining('headline 2'), findsOneWidget);
+    });
     group('Archived sections', () {
       testWidgets('Global cycling', (tester) async {
         await tester.pumpWidget(wrap(const Org('''
