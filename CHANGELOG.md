@@ -1,3 +1,6 @@
+## [10.3.0]
+- Avoid adding unwanted spaces to reflowed Japanese, Chinese text
+
 ## [10.2.0]
 - Allow skipping a visibility cycling state or cycling directly to a state
 
