@@ -46,6 +46,10 @@ void main() {
         final text = '𠮟\nる';
         expect(reflowText(text, TokenLocation.only), '𠮟る');
       });
+      test('punctuation', () {
+        final text = '、\nあ';
+        expect(reflowText(text, TokenLocation.only), '、あ');
+      });
     });
   });
   group('Unicode utils', () {

@@ -24,9 +24,9 @@ String reflowText(String text, TokenLocation location) => text.replaceAllMapped(
       },
       (match) {
         final before = text.codePointBefore(match.start);
-        if (before != null && _isNonSpaceDelimitedScript(before)) {
+        if (before != null && _isNonSpaceDelimited(before)) {
           final after = text.codePointAt(match.end);
-          if (after != null && _isNonSpaceDelimitedScript(after)) {
+          if (after != null && _isNonSpaceDelimited(after)) {
             return '';
           }
         }
@@ -97,7 +97,18 @@ final _hanMatcher = UnicodeCharMatcher.scriptHan();
 final _hiraganaMatcher = UnicodeCharMatcher.scriptHiragana();
 final _katakanaMatcher = UnicodeCharMatcher.scriptKatakana();
 
-bool _isNonSpaceDelimitedScript(int codeUnit) =>
+// These catch ranges that should be treated as full-width CJK (should not have
+// spaces inserted) but include characters that are Common script.
+bool _isCjkOther(int codeUnit) =>
+    (codeUnit >= 0x3000 && codeUnit <= 0x303F) || // CJK Symbols and Punctuation
+    (codeUnit >= 0x31C0 && codeUnit <= 0x31EF) || // CJK Strokes
+    (codeUnit >= 0x3200 && codeUnit <= 0x32FF) || // Enclosed CJK Letters and Months
+    (codeUnit >= 0x3300 && codeUnit <= 0x33FF) || // CJK Compatibility
+    (codeUnit >= 0xFE30 && codeUnit <= 0xFE4F) || // CJK Compatibility Forms
+    (codeUnit >= 0xFF00 && codeUnit <= 0xFFEF); // Halfwidth and Fullwidth Forms
+
+
+bool _isNonSpaceDelimited(int codeUnit) =>
     _hanMatcher.match(codeUnit) ||
     _hiraganaMatcher.match(codeUnit) ||
-    _katakanaMatcher.match(codeUnit);
+    _katakanaMatcher.match(codeUnit) || _isCjkOther(codeUnit);
