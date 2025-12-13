@@ -1,3 +1,6 @@
+## [10.3.1]
+- Handle CJK punctuation better when reflowing text
+
 ## [10.3.0]
 - Avoid adding unwanted spaces to reflowed Japanese, Chinese text
 
