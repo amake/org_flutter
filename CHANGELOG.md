@@ -1,3 +1,6 @@
+## [10.3.2]
+- Fix hiding of deep sections when sparse tree filtering
+
 ## [10.3.1]
 - Handle CJK punctuation better when reflowing text
 
