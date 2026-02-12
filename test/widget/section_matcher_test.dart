@@ -25,25 +25,54 @@ foo3''');
       expect(find.textContaining('foo2'), findsNothing);
       expect(find.textContaining('foo3'), findsNothing);
     });
-    testWidgets('Tag', (tester) async {
-      final doc = OrgDocument.parse('''foo1
+    group('Tag', () {
+      testWidgets('Simple', (tester) async {
+        final doc = OrgDocument.parse('''foo1
 * foo
 ** bar
 foo2
 ** baz :buzz:
 foo3''');
-      final widget = OrgController(
-        root: doc,
-        sparseQuery: const OrgQueryTagMatcher('buzz'),
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
-      );
-      await tester.pumpWidget(wrap(widget));
-      expect(find.textContaining('foo1'), findsOneWidget);
-      expect(find.textContaining('foo2'), findsNothing);
-      expect(find.textContaining('baz'), findsOneWidget);
-      expect(find.textContaining('foo3'), findsNothing);
+        final widget = OrgController(
+          root: doc,
+          sparseQuery: const OrgQueryTagMatcher('buzz'),
+          child: OrgRootWidget(
+            child: OrgDocumentWidget(doc),
+          ),
+        );
+        await tester.pumpWidget(wrap(widget));
+        expect(find.textContaining('foo1'), findsOneWidget);
+        expect(find.textContaining('foo2'), findsNothing);
+        expect(find.textContaining('baz'), findsOneWidget);
+        expect(find.textContaining('foo3'), findsNothing);
+      });
+      testWidgets('Deep visibility', (tester) async {
+        final doc = OrgDocument.parse('''foo1
+* foo
+** bar
+foo2
+** baz
+foo3
+*** qux
+foo4
+*** quux :buzz:
+foo5''');
+        final widget = OrgController(
+          root: doc,
+          sparseQuery: const OrgQueryTagMatcher('buzz'),
+          child: OrgRootWidget(
+            child: OrgDocumentWidget(doc),
+          ),
+        );
+        await tester.pumpWidget(wrap(widget));
+        expect(find.textContaining('foo1'), findsOneWidget);
+        expect(find.textContaining('bar'), findsNothing);
+        expect(find.textContaining('baz'), findsOneWidget);
+        expect(find.textContaining('foo3'), findsNothing);
+        expect(find.textContaining('qux'), findsNothing);
+        expect(find.textContaining('quux'), findsOneWidget);
+        expect(find.textContaining('foo5'), findsNothing);
+      });
     });
     group('With search', () {
       testWidgets('With hit', (tester) async {

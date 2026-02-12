@@ -23,7 +23,13 @@ class OrgSectionWidget extends StatelessWidget {
   final bool shrinkWrap;
   final int siblingIndex;
 
-  // Whether the section is open "enough" to not show the trailing ellipsis
+  // Whether the section is open "enough" to not show the trailing ellipsis.
+  //
+  // Real Org Mode shows an ellipsis not only to indicate hidden section
+  // content, but also when sibling sections are hidden due to sparse tree
+  // filtering. We don't handle that at all.
+  //
+  // TODO(aaron): Handle sparse tree scenarios
   bool _openEnough(OrgVisibilityState visibility) {
     switch (visibility) {
       case OrgVisibilityState.folded:

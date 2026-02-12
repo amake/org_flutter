@@ -391,7 +391,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
       final newValue = (() {
         if (anyMatch.sparseHit == false &&
             tree is OrgSection &&
-            tree.level == 2) {
+            tree.level >= 2) {
           return OrgVisibilityState.hidden;
         }
         if (anyMatch.searchHit == true) return OrgVisibilityState.children;
