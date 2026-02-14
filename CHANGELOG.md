@@ -1,3 +1,6 @@
+## [10.3.3]
+- Fix minor bugs
+
 ## [10.3.2]
 - Fix hiding of deep sections when sparse tree filtering
 
