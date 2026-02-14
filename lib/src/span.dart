@@ -128,6 +128,7 @@ class OrgSpanBuilder {
     } else if (element is OrgRadioLink) {
       final recognizer = TapGestureRecognizer()
         ..onTap = () => OrgLocator.of(context)?.jumpToRadioTarget(element);
+      recognizerHandler(recognizer);
       return highlightedSpan(
         transformer(element, element.content),
         recognizer: recognizer,
@@ -281,6 +282,7 @@ class OrgSpanBuilder {
     } else if (element is OrgCitation) {
       final recognizer = TapGestureRecognizer()
         ..onTap = () => OrgEvents.of(context).onCitationTap?.call(element);
+      recognizerHandler(recognizer);
       final citationStyle = style.copyWith(
         color: OrgTheme.dataOf(context).citationColor,
       );
