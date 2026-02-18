@@ -56,7 +56,7 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
         );
         if (!_isExportedKeyword) {
           body = InheritedOrgSettings.merge(
-            OrgSettings(strictSubSuperscripts: true),
+            const OrgSettings(strictSubSuperscripts: true),
             child: body,
           );
         }
