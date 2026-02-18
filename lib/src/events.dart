@@ -16,6 +16,7 @@ class OrgEvents extends InheritedWidget {
     this.onCitationTap,
     this.onTimestampTap,
     this.loadImage,
+    this.loadTransclusion,
     super.key,
   });
 
@@ -60,6 +61,14 @@ class OrgEvents extends InheritedWidget {
   ///
   /// Return null instead to display the link text.
   final Widget? Function(OrgLink)? loadImage;
+
+  /// A callback invoked when loading transcluded content. The argument is the
+  /// [OrgMeta] describing the transclusion. It is your responsibility to
+  /// resolve the link, if present, fetch the data, and return a widget for
+  /// displaying the transcluded content.
+  ///
+  /// If the content cannot be loaded, return a widget indicating the failure.
+  final Widget Function(OrgMeta)? loadTransclusion;
 
   static OrgEvents of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<OrgEvents>()!;
@@ -124,5 +133,6 @@ class OrgEvents extends InheritedWidget {
       onListItemTap != oldWidget.onListItemTap ||
       onCitationTap != oldWidget.onCitationTap ||
       onTimestampTap != oldWidget.onTimestampTap ||
-      loadImage != oldWidget.loadImage;
+      loadImage != oldWidget.loadImage ||
+      loadTransclusion != oldWidget.loadTransclusion;
 }

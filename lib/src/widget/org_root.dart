@@ -22,6 +22,7 @@ class OrgRootWidget extends StatelessWidget {
     this.onCitationTap,
     this.onTimestampTap,
     this.loadImage,
+    this.loadTransclusion,
     super.key,
   });
 
@@ -75,6 +76,14 @@ class OrgRootWidget extends StatelessWidget {
   /// Return null instead to display the link text.
   final Widget? Function(OrgLink)? loadImage;
 
+  /// A callback invoked when loading transcluded content. The argument is the
+  /// [OrgMeta] describing the transclusion. It is your responsibility to
+  /// resolve the link, if present, fetch the data, and return a widget for
+  /// displaying the transcluded content.
+  ///
+  /// If the content cannot be loaded, return a widget indicating the failure.
+  final Widget Function(OrgMeta)? loadTransclusion;
+
   @override
   Widget build(BuildContext context) {
     Widget body = OrgTheme(
@@ -89,6 +98,7 @@ class OrgRootWidget extends StatelessWidget {
         onListItemTap: onListItemTap,
         onCitationTap: onCitationTap,
         onTimestampTap: onTimestampTap,
+        loadTransclusion: loadTransclusion,
         child: IdentityTextScale(child: child),
       ),
     );

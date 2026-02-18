@@ -26,3 +26,4 @@ export './widget/org_section.dart';
 export './widget/org_sub_superscript.dart';
 export './widget/org_table.dart';
 export './widget/org_theme.dart';
+export './widget/org_transclude.dart';

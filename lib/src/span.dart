@@ -323,6 +323,11 @@ class OrgSpanBuilder {
         ],
       );
     } else if (element is OrgMeta) {
+      // TODO(aaron): Also gate on whether transclusion is enabled (we may
+      // disable nested transclusions)
+      if (element.key.toLowerCase() == '#+transclude:') {
+        return _styledWidgetSpan(OrgTranscludeWidget(element), style);
+      }
       final key = element.key.toUpperCase() == '#+NAME:' &&
               element.value != null
           ? OrgLocator.of(context)

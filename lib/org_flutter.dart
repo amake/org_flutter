@@ -37,6 +37,7 @@ class Org extends StatefulWidget {
     this.onCitationTap,
     this.onTimestampTap,
     this.loadImage,
+    this.loadTransclusion,
     this.restorationId,
     super.key,
   });
@@ -83,6 +84,14 @@ class Org extends StatefulWidget {
   ///
   /// Return null instead to display the link text.
   final Widget? Function(OrgLink)? loadImage;
+
+  /// A callback invoked when loading transcluded content. The argument is the
+  /// [OrgMeta] describing the transclusion. It is your responsibility to
+  /// resolve the link, if present, fetch the data, and return a widget for
+  /// displaying the transcluded content.
+  ///
+  /// If the content cannot be loaded, return a widget indicating the failure.
+  final Widget Function(OrgMeta)? loadTransclusion;
 
   /// A callback invoked when the user taps on a list item that has a checkbox
   /// within the current document. The argument is the tapped item. You might
@@ -139,6 +148,7 @@ class _OrgState extends State<Org> {
           onCitationTap: widget.onCitationTap,
           onTimestampTap: widget.onTimestampTap,
           loadImage: widget.loadImage,
+          loadTransclusion: widget.loadTransclusion,
           child: OrgDocumentWidget(_doc),
         ),
       ),
