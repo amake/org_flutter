@@ -118,5 +118,11 @@ class OrgEvents extends InheritedWidget {
   @override
   bool updateShouldNotify(OrgEvents oldWidget) =>
       onLinkTap != oldWidget.onLinkTap ||
-      onSectionLongPress != oldWidget.onSectionLongPress;
+      onLocalSectionLinkTap != oldWidget.onLocalSectionLinkTap ||
+      onSectionLongPress != oldWidget.onSectionLongPress ||
+      onSectionSlide != oldWidget.onSectionSlide ||
+      onListItemTap != oldWidget.onListItemTap ||
+      onCitationTap != oldWidget.onCitationTap ||
+      onTimestampTap != oldWidget.onTimestampTap ||
+      loadImage != oldWidget.loadImage;
 }
