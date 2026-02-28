@@ -116,8 +116,9 @@ final _urlLikeRegexp = RegExp(r'^\w+://');
 
 bool looksLikeImagePath(String text) => _imagePathLikeRegexp.hasMatch(text);
 
-final _imagePathLikeRegexp =
-    RegExp(r'\.(?:jpe?g|png|gif|webp|w?bmp|svg|avif)$');
+final _imagePathLikeRegexp = RegExp(
+    r'\.(?:jpe?g|png|gif|webp|w?bmp|svg|avif)$|^data:image/',
+    caseSensitive: false);
 
 String trimPrefSuff(String str, String prefix, String suffix) {
   if (str.startsWith(prefix) && str.endsWith(suffix)) {
