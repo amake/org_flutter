@@ -22,6 +22,7 @@ const _kDefaultNumMode = false;
 const _kDefaultVisibilityState = OrgVisibilityState.folded;
 const _kDefaultOrgAttachIdDir = 'data'; // Per `org-attach-id-dir`
 const _kDefaultHiddenKeywords = <String>[];
+const _kDefaultHiddenElements = <String>[];
 
 class InheritedOrgSettings extends InheritedWidget {
   static Widget merge(
@@ -74,6 +75,7 @@ class OrgSettings {
         todoSettings: [defaultTodoStates],
         orgAttachIdDir: _kDefaultOrgAttachIdDir,
         hiddenKeywords: _kDefaultHiddenKeywords,
+        hiddenElements: _kDefaultHiddenElements,
       );
 
   /// Equivalent to the old "hideMarkup" setting
@@ -240,6 +242,7 @@ class OrgSettings {
     this.textDirection,
     this.orgAttachIdDir,
     this.hiddenKeywords,
+    this.hiddenElements,
   });
 
   /// Whether to reflow text to remove intra-paragraph line breaks. Does not map
@@ -327,6 +330,10 @@ class OrgSettings {
   /// `org-hidden-keywords`.
   final List<String>? hiddenKeywords;
 
+  /// Element types that should be hidden from display. See
+  /// `org-element-all-elements` for possible values.
+  final List<String>? hiddenElements;
+
   @override
   bool operator ==(Object other) =>
       other is OrgSettings &&
@@ -347,7 +354,8 @@ class OrgSettings {
       locale == other.locale &&
       textDirection == other.textDirection &&
       orgAttachIdDir == other.orgAttachIdDir &&
-      listEquals(hiddenKeywords, other.hiddenKeywords);
+      listEquals(hiddenKeywords, other.hiddenKeywords) &&
+      listEquals(hiddenElements, other.hiddenElements);
 
   @override
   int get hashCode => Object.hash(
@@ -374,6 +382,7 @@ class OrgSettings {
         textDirection,
         orgAttachIdDir,
         hiddenKeywords == null ? null : Object.hashAll(hiddenKeywords!),
+        hiddenElements == null ? null : Object.hashAll(hiddenElements!),
       );
 
   OrgSettings copyWith({
@@ -395,6 +404,7 @@ class OrgSettings {
     TextDirection? textDirection,
     String? orgAttachIdDir,
     List<String>? hiddenKeywords,
+    List<String>? hiddenElements,
   }) =>
       OrgSettings(
         reflowText: reflowText ?? this.reflowText,
@@ -416,6 +426,7 @@ class OrgSettings {
         textDirection: textDirection ?? this.textDirection,
         orgAttachIdDir: orgAttachIdDir ?? this.orgAttachIdDir,
         hiddenKeywords: hiddenKeywords ?? this.hiddenKeywords,
+        hiddenElements: hiddenElements ?? this.hiddenElements,
       );
 }
 
@@ -485,4 +496,8 @@ extension LayeredOrgSettings on List<OrgSettings> {
   List<String> get hiddenKeywords =>
       firstWhere((layer) => layer.hiddenKeywords != null,
           orElse: () => OrgSettings.defaults).hiddenKeywords!;
+
+  List<String> get hiddenElements =>
+      firstWhere((layer) => layer.hiddenElements != null,
+          orElse: () => OrgSettings.defaults).hiddenElements!;
 }

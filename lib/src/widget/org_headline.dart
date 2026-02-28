@@ -19,6 +19,11 @@ class OrgHeadlineWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = OrgSettings.of(context).settings;
+    if (settings.hiddenElements.contains(headline.elementName)) {
+      // TODO(aaron): Should this check be done higher up, e.g. in OrgSectionWidget?
+      return const SizedBox.shrink();
+    }
     final theme = OrgTheme.dataOf(context);
     final isArchive = headline.tags?.values.contains('ARCHIVE') == true;
     final color = isArchive
@@ -35,7 +40,7 @@ class OrgHeadlineWidget extends StatelessWidget {
         height: 1.8,
       ),
       child: FancySpanBuilder(builder: (context, spanBuilder) {
-        final allowFancyLayout = OrgSettings.of(context).settings.reflowText;
+        final allowFancyLayout = settings.reflowText;
         final haveTags = headline.tags != null;
         final simpleLayout = !haveTags || !allowFancyLayout;
         // We don't need to check whether the section has content, because that

@@ -32,11 +32,13 @@ class OrgSpanBuilder {
     this.context, {
     required this.recognizerHandler,
     this.inlineImages = true,
+    this.hidden = const {},
   });
 
   final BuildContext context;
   final RecognizerHandler recognizerHandler;
   final bool inlineImages;
+  final Set<String> hidden;
 
   InlineSpan build(
     OrgNode element, {
@@ -44,6 +46,9 @@ class OrgSpanBuilder {
     Transformer transformer = identityTransformer,
     GestureRecognizer? recognizer,
   }) {
+    if (element is OrgElement && hidden.contains(element.elementName)) {
+      return const TextSpan();
+    }
     style ??= DefaultTextStyle.of(context).style;
     if (element is OrgPlainText) {
       return highlightedSpan(
@@ -482,6 +487,7 @@ class _FancySpanBuilderState extends State<FancySpanBuilder>
         context,
         recognizerHandler: registerRecognizer,
         inlineImages: widget.inlineImages,
+        hidden: OrgSettings.of(context).settings.hiddenElements.toSet(),
       ),
     );
   }
