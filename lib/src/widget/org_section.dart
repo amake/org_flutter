@@ -10,6 +10,9 @@ import 'package:org_flutter/src/widget/org_theme.dart';
 import 'package:org_parser/org_parser.dart';
 
 /// An Org Mode section
+//
+// TODO(aaron): Support special cycling behavior of inline tasks (see
+// org-inlinetask)
 class OrgSectionWidget extends StatelessWidget {
   const OrgSectionWidget(
     this.section, {

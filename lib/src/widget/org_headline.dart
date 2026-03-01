@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/span.dart';
+import 'package:org_flutter/src/theme.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_flutter/src/widget/org_theme.dart';
 import 'package:org_parser/org_parser.dart';
@@ -190,7 +191,11 @@ class _Body extends StatelessWidget {
   Iterable<TextSpan> _starsSpans(BuildContext context) sync* {
     final hideStars = OrgSettings.of(context).settings.hideStars;
     final style = _starStyle(context);
-    if (hideStars) {
+    if (headline.level >= kInlineTaskMinLevel) {
+      // inline task
+      yield TextSpan(text: ' ' * (headline.stars.value.length - 2));
+      yield TextSpan(text: '**', style: style);
+    } else if (hideStars) {
       yield TextSpan(
         // Real org-mode uses stars painted with the background color to make
         // them invisible; this is only really visible when highlighted in dark

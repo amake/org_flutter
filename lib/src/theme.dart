@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 
+const kInlineTaskMinLevel = 15; // org-inlinetask-min-level
+
 // These colors found by
 // 1. Finding the face used for something in an Org Mode buffer
 // 2. Finding the definition of the face or its root ancestor
@@ -249,6 +251,7 @@ class OrgThemeData {
   final EdgeInsets? rootPadding;
 
   Color? levelColor(int level) {
+    if (level >= kInlineTaskMinLevel) return codeColor; // inline task
     final levelColors = this.levelColors;
     return levelColors == null ? null : levelColors[level % levelColors.length];
   }
