@@ -17,13 +17,17 @@ class OrgContentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FancySpanBuilder(
-      builder: (context, spanBuilder) => Text.rich(
-        spanBuilder.build(
+      builder: (context, spanBuilder) {
+        final span = spanBuilder.build(
           content,
           transformer: transformer ?? identityTransformer,
-        ),
-        textAlign: textAlign,
-      ),
+        );
+        if (span == null) return const SizedBox.shrink();
+        return Text.rich(
+          span,
+          textAlign: textAlign,
+        );
+      },
     );
   }
 }

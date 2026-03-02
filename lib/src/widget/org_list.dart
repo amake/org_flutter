@@ -48,6 +48,7 @@ class _OrgListItemWidget extends StatelessWidget {
           builder: (context, spanBuilder) => Text.rich(
             TextSpan(
               children: _spans(context, spanBuilder, totalIndentSize)
+                  .whereType<InlineSpan>()
                   .toList(growable: false),
             ),
           ),
@@ -58,7 +59,7 @@ class _OrgListItemWidget extends StatelessWidget {
 
   bool get _hasCheckbox => item.checkbox != null;
 
-  Iterable<InlineSpan> _spans(
+  Iterable<InlineSpan?> _spans(
     BuildContext context,
     OrgSpanBuilder builder,
     int totalIndentSize,
@@ -84,10 +85,11 @@ class _OrgListItemWidget extends StatelessWidget {
       final style = DefaultTextStyle.of(context)
           .style
           .copyWith(fontWeight: FontWeight.bold);
-      yield TextSpan(children: [
+      yield TextSpan(
+          children: [
         builder.build(item.tag!.value, style: style),
         builder.highlightedSpan(item.tag!.delimiter, style: style),
-      ]);
+      ].whereType<InlineSpan>().toList(growable: false));
     }
     if (item.body != null) {
       final reflow = OrgSettings.of(context).settings.reflowText;

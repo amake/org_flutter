@@ -40,14 +40,14 @@ class OrgSpanBuilder {
   final bool inlineImages;
   final Set<String> hidden;
 
-  InlineSpan build(
+  InlineSpan? build(
     OrgNode element, {
     TextStyle? style,
     Transformer transformer = identityTransformer,
     GestureRecognizer? recognizer,
   }) {
     if (element is OrgElement && hidden.contains(element.elementName)) {
-      return const TextSpan();
+      return null;
     }
     style ??= DefaultTextStyle.of(context).style;
     if (element is OrgPlainText) {
@@ -65,13 +65,14 @@ class OrgSpanBuilder {
           transformer: transformer, style: markupStyle, recognizer: recognizer);
       return OrgSettings.of(context).settings.hideEmphasisMarkers
           ? body
-          : TextSpan(children: [
+          : TextSpan(
+              children: [
               highlightedSpan(element.leadingDecoration,
                   style: markupStyle, recognizer: recognizer),
               body,
               highlightedSpan(element.trailingDecoration,
                   style: markupStyle, recognizer: recognizer),
-            ]);
+            ].whereType<InlineSpan>().toList(growable: false));
     } else if (element is OrgEntity) {
       final text = OrgSettings.of(context).prettifyEntity(element.name) ??
           element.toMarkup();
@@ -192,7 +193,8 @@ class OrgSpanBuilder {
         ),
       );
     } else if (element is OrgDateRangeTimestamp) {
-      return TextSpan(children: [
+      return TextSpan(
+          children: [
         build(element.start,
             transformer: transformer, style: style, recognizer: recognizer),
         highlightedSpan(element.delimiter,
@@ -202,7 +204,7 @@ class OrgSpanBuilder {
             recognizer: recognizer),
         build(element.end,
             transformer: transformer, style: style, recognizer: recognizer),
-      ]);
+      ].whereType<InlineSpan>().toList(growable: false));
     } else if (element is OrgStatisticsPercentageCookie) {
       final color = element.done
           ? OrgTheme.dataOf(context).doneColor
@@ -223,27 +225,29 @@ class OrgSpanBuilder {
       if (shouldPrettifySubSuperscript(context, element)) {
         return _styledWidgetSpan(OrgSuperscriptWidget(element), style);
       } else {
-        return TextSpan(children: [
+        return TextSpan(
+            children: [
           highlightedSpan(element.leading,
               style: style, recognizer: recognizer),
           build(element.body,
               transformer: transformer, style: style, recognizer: recognizer),
           highlightedSpan(element.trailing,
               style: style, recognizer: recognizer)
-        ]);
+        ].whereType<InlineSpan>().toList(growable: false));
       }
     } else if (element is OrgSubscript) {
       if (shouldPrettifySubSuperscript(context, element)) {
         return _styledWidgetSpan(OrgSubscriptWidget(element), style);
       } else {
-        return TextSpan(children: [
+        return TextSpan(
+            children: [
           highlightedSpan(element.leading,
               style: style, recognizer: recognizer),
           build(element.body,
               transformer: transformer, style: style, recognizer: recognizer),
           highlightedSpan(element.trailing,
               style: style, recognizer: recognizer)
-        ]);
+        ].whereType<InlineSpan>().toList(growable: false));
       }
     } else if (element is OrgFootnoteReference) {
       if (element.name == null) {
@@ -268,7 +272,7 @@ class OrgSpanBuilder {
               ),
             highlightedSpan(element.trailing,
                 style: footnoteStyle, recognizer: recognizer),
-          ],
+          ].whereType<InlineSpan>().toList(growable: false),
         );
       } else {
         final key = OrgLocator.of(context)?.generateFootnoteKey(element.id);
@@ -276,14 +280,15 @@ class OrgSpanBuilder {
             OrgFootnoteReferenceWidget(element, key: key), style);
       }
     } else if (element is OrgFootnote) {
-      return TextSpan(children: [
+      return TextSpan(
+          children: [
         build(element.marker,
             transformer: transformer, style: style, recognizer: recognizer),
         build(element.content,
             transformer: transformer, style: style, recognizer: recognizer),
         highlightedSpan(removeTrailingLineBreak(element.trailing),
             style: style, recognizer: recognizer),
-      ]);
+      ].whereType<InlineSpan>().toList(growable: false));
     } else if (element is OrgCitation) {
       final recognizer = TapGestureRecognizer()
         ..onTap = () => OrgEvents.of(context).onCitationTap?.call(element);
@@ -320,7 +325,7 @@ class OrgSpanBuilder {
                 style: style, recognizer: recognizer),
           build(element.value,
               transformer: transformer, style: style, recognizer: recognizer),
-        ],
+        ].whereType<InlineSpan>().toList(growable: false),
       );
     } else if (element is OrgMeta) {
       // TODO(aaron): Also gate on whether transclusion is enabled (we may
@@ -377,6 +382,7 @@ class OrgSpanBuilder {
                     style: style,
                     recognizer: recognizer,
                   ))
+              .whereType<InlineSpan>()
               .toList(growable: false));
     }
     throw Exception('Unknown OrgNode type: $element');

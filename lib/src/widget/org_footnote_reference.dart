@@ -38,25 +38,26 @@ class OrgFootnoteReferenceWidgetState
           cookie: _cookie,
           child: Text.rich(
             TextSpan(
-              children: [
-                spanBuilder.highlightedSpan(widget.reference.leading,
+                children: [
+              spanBuilder.highlightedSpan(widget.reference.leading,
+                  style: footnoteStyle),
+              if (widget.reference.name != null)
+                spanBuilder.highlightedSpan(widget.reference.name!,
                     style: footnoteStyle),
-                if (widget.reference.name != null)
-                  spanBuilder.highlightedSpan(widget.reference.name!,
-                      style: footnoteStyle),
-                if (widget.reference.definition != null)
-                  spanBuilder.highlightedSpan(
-                      widget.reference.definition!.delimiter,
-                      style: footnoteStyle),
-                if (widget.reference.definition != null)
-                  spanBuilder.build(
-                    widget.reference.definition!.value,
-                    style: footnoteStyle,
-                  ),
-                spanBuilder.highlightedSpan(widget.reference.trailing,
+              if (widget.reference.definition != null)
+                spanBuilder.highlightedSpan(
+                    widget.reference.definition!.delimiter,
                     style: footnoteStyle),
-              ],
-            ),
+              if (widget.reference.definition != null)
+                spanBuilder.build(
+                  widget.reference.definition!.value,
+                  style: footnoteStyle,
+                ),
+              spanBuilder.highlightedSpan(widget.reference.trailing,
+                  style: footnoteStyle),
+            ].whereType<InlineSpan>().toList(
+                      growable: false,
+                    )),
           ),
         ),
       ),

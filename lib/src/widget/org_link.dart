@@ -23,7 +23,11 @@ class OrgLinkWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return FancySpanBuilder(
       inlineImages: false,
-      builder: (context, spanBuilder) => Text.rich(spanBuilder.build(link)),
+      builder: (context, spanBuilder) {
+        final span = spanBuilder.build(link);
+        if (span == null) return const SizedBox.shrink();
+        return Text.rich(span);
+      },
     );
   }
 }

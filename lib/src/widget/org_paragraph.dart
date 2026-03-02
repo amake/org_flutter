@@ -17,7 +17,8 @@ class OrgParagraphWidget extends StatelessWidget {
       paragraph.indent,
       builder: (context, totalIndentSize) {
         return FancySpanBuilder(
-          builder: (context, spanBuilder) => Text.rich(TextSpan(children: [
+          builder: (context, spanBuilder) => Text.rich(TextSpan(
+              children: [
             spanBuilder.build(
               paragraph.body,
               transformer: (elem, content) {
@@ -35,7 +36,7 @@ class OrgParagraphWidget extends StatelessWidget {
               },
             ),
             if (paragraph.trailing.isNotEmpty) _trailingSpan(),
-          ])),
+          ].whereType<InlineSpan>().toList(growable: false))),
         );
       },
     );

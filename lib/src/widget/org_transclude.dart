@@ -40,8 +40,9 @@ class _OrgTranscludeWidgetState extends State<OrgTranscludeWidget>
               child: FancySpanBuilder(
                 builder: (context, spanBuilder) => Text.rich(
                   TextSpan(
-                    children:
-                        _spans(context, spanBuilder).toList(growable: false),
+                    children: _spans(context, spanBuilder)
+                        .whereType<InlineSpan>()
+                        .toList(growable: false),
                   ),
                   softWrap: !deemphasize,
                 ),
@@ -86,7 +87,7 @@ class _OrgTranscludeWidgetState extends State<OrgTranscludeWidget>
     );
   }
 
-  Iterable<InlineSpan> _spans(
+  Iterable<InlineSpan?> _spans(
       BuildContext context, OrgSpanBuilder builder) sync* {
     final style = DefaultTextStyle.of(context).style;
     yield builder.highlightedSpan(

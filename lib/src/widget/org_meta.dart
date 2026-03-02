@@ -48,7 +48,9 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
             cookie: _cookie,
             child: Text.rich(
               TextSpan(
-                children: _spans(context, spanBuilder).toList(growable: false),
+                children: _spans(context, spanBuilder)
+                    .whereType<InlineSpan>()
+                    .toList(growable: false),
               ),
               softWrap: !deemphasize,
             ),
@@ -96,7 +98,7 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
         : style.copyWith(color: OrgTheme.dataOf(context).metaColor);
   }
 
-  Iterable<InlineSpan> _spans(
+  Iterable<InlineSpan?> _spans(
       BuildContext context, OrgSpanBuilder builder) sync* {
     final settings = OrgSettings.of(context).settings;
     if (!_isDocInfoKeyword ||

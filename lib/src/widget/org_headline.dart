@@ -167,7 +167,7 @@ class _Body extends StatelessWidget {
               ),
             if (includeTags) _tags(headline, spanBuilder),
             if (includeEllipsis) const TextSpan(text: '...'),
-          ],
+          ].whereType<InlineSpan>().toList(growable: false),
         ),
         textDirection: textDirection,
       );
