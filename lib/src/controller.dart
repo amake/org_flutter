@@ -557,58 +557,6 @@ class OrgControllerData extends InheritedWidget {
   /// Find the temporary data node for the given subtree
   OrgDataNode nodeFor(OrgTree tree) => _nodeMap.nodeFor(tree);
 
-  /// Find the section with the specified title
-  OrgSection? _sectionSearch(bool Function(OrgSection) predicate) {
-    OrgSection? result;
-    root.visitSections((section) {
-      if (predicate(section)) {
-        result = section;
-        return false;
-      }
-      return true;
-    });
-    return result;
-  }
-
-  /// Find the section with the specified title
-  OrgSection? sectionWithTitle(String title) =>
-      _sectionSearch((section) => section.headline.rawTitle == title);
-
-  /// Find the section with the specified ID
-  OrgTree? sectionWithId(String id) => root.ids.contains(id)
-      ? root
-      : _sectionSearch((section) => section.ids.contains(id));
-
-  /// Find the section with the specified custom ID
-  OrgTree? sectionWithCustomId(String customId) =>
-      root.customIds.contains(customId)
-          ? root
-          : _sectionSearch((section) => section.customIds.contains(customId));
-
-  /// Find the section corresponding to [target], which may be one of
-  ///
-  /// - A section title link fragment like `*Foo bar`
-  /// - A CUSTOM_ID link fragment like `#foo-bar`
-  /// - An ID link like `id:abcd1234`
-  ///
-  /// The specified section may not exist in this tree, in which case the result
-  /// will be null.
-  ///
-  /// If [target] is none of the above three types, an [Exception] will be
-  /// thrown.
-  OrgTree? sectionForTarget(String target) {
-    if (isOrgLocalSectionSearch(target)) {
-      return sectionWithTitle(parseOrgLocalSectionSearch(target));
-    } else if (isOrgIdSearch(target)) {
-      return sectionWithId(parseOrgIdSearch(target));
-    } else if (isOrgCustomIdSearch(target)) {
-      return sectionWithCustomId(parseOrgCustomIdSearch(target));
-    } else {
-      throw Exception(
-          'Unknown target type: $target (was not a title or an ID)');
-    }
-  }
-
   String? restorationIdFor(String name) =>
       _deriveRestorationId(_restorationId, name);
 

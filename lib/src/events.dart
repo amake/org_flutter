@@ -75,7 +75,7 @@ class OrgEvents extends InheritedWidget {
 
   /// Invoke the appropriate handler for the given [url]
   void dispatchLinkTap(BuildContext context, OrgLink link) async {
-    final controller = OrgController.of(context);
+    final root = OrgController.of(context).root;
 
     var target = link.location;
 
@@ -83,7 +83,7 @@ class OrgEvents extends InheritedWidget {
     try {
       final fileLink = OrgFileLink.parse(target);
       if (fileLink.scheme == 'id:') {
-        final section = controller.sectionWithId(fileLink.body);
+        final section = root.sectionWithId(fileLink.body);
         if (section != null) {
           onLocalSectionLinkTap?.call(section, searchOption: fileLink.extra);
           return;
@@ -102,14 +102,14 @@ class OrgEvents extends InheritedWidget {
     // covered above.
     if (isOrgLocalSectionSearch(target)) {
       final sectionTitle = parseOrgLocalSectionSearch(target);
-      final section = controller.sectionWithTitle(sectionTitle);
+      final section = root.sectionWithTitle(sectionTitle);
       if (section != null) {
         onLocalSectionLinkTap?.call(section);
         return;
       }
     } else if (isOrgCustomIdSearch(target)) {
       final sectionId = parseOrgCustomIdSearch(target);
-      final section = controller.sectionWithCustomId(sectionId);
+      final section = root.sectionWithCustomId(sectionId);
       if (section != null) {
         onLocalSectionLinkTap?.call(section);
         return;
