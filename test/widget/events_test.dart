@@ -28,6 +28,7 @@ void main() {
             expect(link.location, 'http://example.com');
           },
         )));
+        expect(invoked, isFalse);
         await tester.tapOnText(find.textRange.ofSubstring('example'));
         await tester.pump();
         expect(invoked, isTrue);
@@ -47,6 +48,7 @@ bar
               expect(searchOption, isNull);
             },
           )));
+          expect(invoked, isFalse);
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pump();
           expect(invoked, isTrue);
@@ -70,6 +72,7 @@ bar
               expect(searchOption, isNull);
             },
           )));
+          expect(invoked, isFalse);
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pump();
           expect(invoked, isTrue);
@@ -93,6 +96,7 @@ bar
               expect(searchOption, 'bar');
             },
           )));
+          expect(invoked, isFalse);
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pump();
           expect(invoked, isTrue);
@@ -116,6 +120,7 @@ bar
               expect(searchOption, isNull);
             },
           )));
+          expect(invoked, isFalse);
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pump();
           expect(invoked, isTrue);
@@ -153,6 +158,7 @@ bar
               expect(link.location, 'foo');
             },
           )));
+          expect(invoked, isFalse);
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pumpAndSettle();
           expect(invoked, isTrue);
@@ -211,6 +217,7 @@ bar
               expect(link.location, '(foo)');
             },
           )));
+          expect(invoked, isFalse);
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pumpAndSettle();
           expect(invoked, isTrue);
@@ -235,6 +242,7 @@ bar
               expect(searchOption, isNull);
             },
           )));
+          expect(invoked, isFalse);
           await tester.tap(find.byType(OrgHeadlineWidget));
           await tester.pumpAndSettle();
           await tester.tapOnText(find.textRange.ofSubstring('link'));
@@ -260,6 +268,7 @@ bar
               expect(searchOption, isNull);
             },
           )));
+          expect(invoked, isFalse);
           await tester.tap(find.byType(OrgHeadlineWidget));
           await tester.pumpAndSettle();
           await tester.tapOnText(find.textRange.ofSubstring('link'));
@@ -276,6 +285,7 @@ bar
             expect(section.toMarkup(), '* Foo');
           },
         )));
+        expect(invoked, isFalse);
         await tester.longPress(find.text('* Foo'));
         await tester.pump();
         expect(invoked, isTrue);
@@ -296,6 +306,9 @@ bar
             ];
           },
         )));
+        expect(onSectionSlideInvoked, isTrue,
+            reason: 'onSectionSlide is invoked immediately');
+        expect(onPressedInvoked, isFalse);
         await tester.drag(find.text('* Foo'), const Offset(-100, 0));
         await tester.pump();
         await tester.tap(find.byIcon(Icons.abc));
@@ -311,6 +324,7 @@ bar
             expect(item.toMarkup(), '- [ ] foo');
           },
         )));
+        expect(invoked, isFalse);
         await tester.tap(find.textContaining('[ ]'));
         await tester.pump();
         expect(invoked, isTrue);
@@ -339,6 +353,7 @@ bar
             expect(link.location, 'http://example.com');
           },
         )));
+        expect(invoked, isFalse);
         await tester.tapOnText(find.textRange.ofSubstring('example'));
         await tester.pump();
         expect(invoked, isTrue);
