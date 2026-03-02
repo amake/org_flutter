@@ -329,6 +329,22 @@ bar
         await tester.pump();
         expect(invoked, isTrue);
       });
+      testWidgets('Transclusion tap', (tester) async {
+        var invoked = false;
+        await tester.pumpWidget(wrap(Org(
+          '#+transclude: [[id:foo]]',
+          loadTransclusion: (meta) {
+            invoked = true;
+            expect(meta.toMarkup(), '#+transclude: [[id:foo]]');
+            return Icon(Icons.ac_unit);
+          },
+        )));
+        expect(invoked, isFalse);
+        await tester.tapOnText(find.textRange.ofSubstring('#+transclude:'));
+        await tester.pumpAndSettle();
+        expect(find.byIcon(Icons.ac_unit), findsOneWidget);
+        expect(invoked, isTrue);
+      });
     });
 
     group('OrgText widget', () {

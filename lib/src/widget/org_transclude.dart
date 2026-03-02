@@ -67,20 +67,7 @@ class _OrgTranscludeWidgetState extends State<OrgTranscludeWidget>
               child: open ? child : const SizedBox.shrink(),
             );
           },
-          child: Container(
-            padding: EdgeInsets.only(
-                left: OrgTheme.dataOf(context).rootPadding?.left ?? 8),
-            decoration: BoxDecoration(
-              border: Border(
-                left: BorderSide(
-                  // TODO(aaron): Figure out what color this should really be
-                  color: DefaultTextStyle.of(context).style.color!,
-                  width: 1,
-                ),
-              ),
-            ),
-            child: loader(widget.meta),
-          ),
+          child: _OrgTranscludedContent(() => loader(widget.meta)),
         ),
         if (trailing.isNotEmpty) Text(removeTrailingLineBreak(trailing))
       ],
@@ -100,5 +87,29 @@ class _OrgTranscludeWidgetState extends State<OrgTranscludeWidget>
     final valueStyle =
         style.copyWith(color: OrgTheme.dataOf(context).metaColor);
     yield builder.build(widget.meta.value!, style: valueStyle);
+  }
+}
+
+class _OrgTranscludedContent extends StatelessWidget {
+  const _OrgTranscludedContent(this.loader);
+
+  final Widget Function() loader;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(
+          left: OrgTheme.dataOf(context).rootPadding?.left ?? 8),
+      decoration: BoxDecoration(
+        border: Border(
+          left: BorderSide(
+            // TODO(aaron): Figure out what color this should really be
+            color: DefaultTextStyle.of(context).style.color!,
+            width: 1,
+          ),
+        ),
+      ),
+      child: loader(),
+    );
   }
 }
