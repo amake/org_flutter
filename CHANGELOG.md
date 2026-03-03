@@ -1,3 +1,13 @@
+## [11.0.0]
+- Optionally support transclusion à la the
+  [Org-transclusion](https://nobiot.github.io/org-transclusion/) package.
+  Provide a `loadTransclusion` callback to one of the higher-level widgets.
+- Allow hiding elements with `OrgSettings.hiddenElements`. See
+  `org-element-all-elements` for valid element names.
+- Display `data:image/*` URLs inline
+- Inline tasks now have distinct syntax highlighting
+- Bug fixes
+
 ## [10.3.3]
 - Fix minor bugs
 
