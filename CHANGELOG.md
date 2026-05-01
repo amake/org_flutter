@@ -1,3 +1,7 @@
+## [11.1.0]
+- Improve handling of drawer content
+- Improve styling of `#+CAPTION:` lines
+
 ## [11.0.0]
 - Optionally support transclusion à la the
   [Org-transclusion](https://nobiot.github.io/org-transclusion/) package.
