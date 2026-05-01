@@ -95,7 +95,13 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
                 ? FontWeight.bold
                 : null,
           )
-        : style.copyWith(color: OrgTheme.dataOf(context).metaColor);
+        : widget.meta.key
+                .toUpperCase()
+                .startsWith(RegExp(r'^#\+CAPTION[[:]', caseSensitive: false))
+            ? style.copyWith(
+                color: OrgTheme.dataOf(context).codeColor,
+              )
+            : style.copyWith(color: OrgTheme.dataOf(context).metaColor);
   }
 
   Iterable<InlineSpan?> _spans(
