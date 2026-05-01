@@ -34,13 +34,18 @@ class OrgPropertyWidget extends StatelessWidget {
 
   Iterable<InlineSpan?> _spans(
       BuildContext context, OrgSpanBuilder builder) sync* {
+    final theme = OrgTheme.dataOf(context);
+    final keyColor = property.isEmpty ? theme.drawerColor : theme.keywordColor;
     yield builder.highlightedSpan(
       property.key,
-      style: DefaultTextStyle.of(context)
-          .style
-          .copyWith(color: OrgTheme.dataOf(context).keywordColor),
+      style: DefaultTextStyle.of(context).style.copyWith(color: keyColor),
     );
-    yield builder.build(property.value);
+    if (property.delimiter.isNotEmpty) {
+      yield builder.highlightedSpan(property.delimiter);
+    }
+    if (property.isNotEmpty) {
+      yield builder.build(property.value!);
+    }
     final trailing = removeTrailingLineBreak(property.trailing);
     if (trailing.isNotEmpty) {
       yield builder.highlightedSpan(trailing);
