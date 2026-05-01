@@ -66,8 +66,17 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
             children: [
               OrgContentWidget(
                 widget.drawer.body,
-                transformer: (_, string) => removeTrailingLineBreak(
-                    hardDeindent(string, totalIndentSize)),
+                transformer: (elem, content) {
+                  final location =
+                      locationOf(elem, widget.drawer.body.children);
+                  var formattedContent = hardDeindent(content, totalIndentSize);
+                  if (location == TokenLocation.end ||
+                      location == TokenLocation.only) {
+                    formattedContent =
+                        removeTrailingLineBreak(formattedContent);
+                  }
+                  return formattedContent;
+                },
               ),
               Text(
                 hardDeindent(widget.drawer.footer, totalIndentSize),
