@@ -31,8 +31,9 @@ class _OrgDynamicBlockWidgetState extends State<OrgDynamicBlockWidget>
   @override
   Widget build(BuildContext context) {
     final defaultStyle = DefaultTextStyle.of(context).style;
-    final metaStyle =
-        defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
+    final metaStyle = defaultStyle.copyWith(
+      color: OrgTheme.dataOf(context).metaColor,
+    );
     final hideMarkup = OrgSettings.of(context).settings.deemphasizeMarkup;
     // Remove a line break because we introduce one by splitting the text into
     // two widgets in this Column
@@ -95,10 +96,8 @@ class _OrgDynamicBlockWidgetState extends State<OrgDynamicBlockWidget>
     if (hideMarkup && !open) {
       header = Row(
         children: [
-          Flexible(
-            child: header,
-          ),
-          if (hideMarkup && !open) Text('...', style: metaStyle)
+          Flexible(child: header),
+          if (hideMarkup && !open) Text('...', style: metaStyle),
         ],
       );
     }

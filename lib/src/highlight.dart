@@ -13,14 +13,13 @@ TextSpan buildSrcHighlightSpan(
   required String code,
   required String? languageId,
   SpanFactory? spanFactory,
-}) =>
-    _highlightedSpan(
-      code,
-      languageId: languageId,
-      theme: OrgTheme.dataOf(context).srcTheme ?? {},
-      textStyle: DefaultTextStyle.of(context).style,
-      spanFactory: spanFactory,
-    );
+}) => _highlightedSpan(
+  code,
+  languageId: languageId,
+  theme: OrgTheme.dataOf(context).srcTheme ?? {},
+  textStyle: DefaultTextStyle.of(context).style,
+  spanFactory: spanFactory,
+);
 
 // Below copied from:
 // https://github.com/akvelon/dart-highlighting/blob/25bc512c66d9eead9012dd129d0a12e77393b828/flutter_highlighting/lib/flutter_highlighting.dart
@@ -115,10 +114,11 @@ TextSpan _highlightedSpan(
   return TextSpan(
     style: style,
     children: _convert(
-        // ignore: invalid_use_of_internal_member
-        highlight.highlight(languageId ?? '', source, true).nodes ?? [],
-        theme,
-        spanFactory ?? _defaultSpanFactory),
+      // ignore: invalid_use_of_internal_member
+      highlight.highlight(languageId ?? '', source, true).nodes ?? [],
+      theme,
+      spanFactory ?? _defaultSpanFactory,
+    ),
   );
 }
 
@@ -127,7 +127,10 @@ InlineSpan _defaultSpanFactory({String? text, TextStyle? style}) =>
     TextSpan(text: text, style: style);
 
 List<InlineSpan> _convert(
-    List<Node> nodes, Map<String, TextStyle> theme, SpanFactory spanFactory) {
+  List<Node> nodes,
+  Map<String, TextStyle> theme,
+  SpanFactory spanFactory,
+) {
   List<InlineSpan> spans = [];
   var currentSpans = spans;
   List<List<InlineSpan>> stack = [];

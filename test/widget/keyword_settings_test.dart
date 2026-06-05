@@ -19,9 +19,7 @@ foo bar
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining('foo bar'), findsNothing);
@@ -40,9 +38,7 @@ foo bar
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining('foo bar'), findsOneWidget);
@@ -61,9 +57,7 @@ foo bar
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining(':foo: bar'), findsOneWidget);
@@ -82,9 +76,7 @@ foo bar
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining(':foo: bar'), findsNothing);
@@ -103,9 +95,7 @@ foo
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining('baz'), findsOneWidget);
@@ -124,15 +114,14 @@ foo
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining('baz'), findsNothing);
     });
-    testWidgets('Showeverything overrides hideblocks, hidedrawers',
-        (tester) async {
+    testWidgets('Showeverything overrides hideblocks, hidedrawers', (
+      tester,
+    ) async {
       final doc = OrgDocument.parse(r'''
 :PROPERTIES:
 :foo: bar
@@ -150,9 +139,7 @@ biz baz
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining(':foo: bar'), findsOneWidget);
@@ -172,9 +159,7 @@ biz baz
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining('* foo'), findsOneWidget);
@@ -195,9 +180,7 @@ foo \smiley bar^{2} baz_\alpha
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining('foo'), findsOneWidget);

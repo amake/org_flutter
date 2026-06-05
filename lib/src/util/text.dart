@@ -100,10 +100,9 @@ int detectIndent(String text) {
   return result == -1 ? 0 : result;
 }
 
-Pattern Function(int) _deindentPattern = _memoize1((indentSize) => RegExp(
-      '^ {$indentSize}',
-      multiLine: true,
-    ));
+Pattern Function(int) _deindentPattern = _memoize1(
+  (indentSize) => RegExp('^ {$indentSize}', multiLine: true),
+);
 
 R Function(T) _memoize1<T, R>(R Function(T) func) {
   final cache = <T, R>{};
@@ -117,8 +116,9 @@ final _urlLikeRegexp = RegExp(r'^\w+://');
 bool looksLikeImagePath(String text) => _imagePathLikeRegexp.hasMatch(text);
 
 final _imagePathLikeRegexp = RegExp(
-    r'\.(?:jpe?g|png|gif|webp|w?bmp|svg|avif)$|^data:image/',
-    caseSensitive: false);
+  r'\.(?:jpe?g|png|gif|webp|w?bmp|svg|avif)$|^data:image/',
+  caseSensitive: false,
+);
 
 String trimPrefSuff(String str, String prefix, String suffix) {
   if (str.startsWith(prefix) && str.endsWith(suffix)) {

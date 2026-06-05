@@ -105,10 +105,11 @@ baz: 1''').value;
 # buzz: ("a" "b")
 # End:''');
       final result = extractLocalVariables(doc, expectNoError);
-      expect(
-        result,
-        {'foo': Name('bar'), 'baz': 1, 'buzz': Cons('a', Cons('b'))},
-      );
+      expect(result, {
+        'foo': Name('bar'),
+        'baz': 1,
+        'buzz': Cons('a', Cons('b')),
+      });
     });
     test('eval', () {
       final doc = OrgDocument.parse('''# Local Variables:
@@ -128,10 +129,15 @@ baz: 1''').value;
 # End:''');
       final result = extractLocalVariables(doc, expectNoError);
       expect(result, {
-        'org-entities-user': Cons(Cons(
+        'org-entities-user': Cons(
+          Cons(
             'snowman',
-            Cons('[snowman]',
-                Cons(Name('nil'), Cons('&#9731;', Cons('[snowman]'))))))
+            Cons(
+              '[snowman]',
+              Cons(Name('nil'), Cons('&#9731;', Cons('[snowman]'))),
+            ),
+          ),
+        ),
       });
     });
   });

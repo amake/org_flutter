@@ -27,18 +27,16 @@ class OrgDocumentWidget extends StatelessWidget {
     return ListView(
       restorationId: shrinkWrap
           ? null
-          : OrgController.of(context)
-              .restorationIdFor('org_document_list_view'),
+          : OrgController.of(
+              context,
+            ).restorationIdFor('org_document_list_view'),
       padding: OrgTheme.dataOf(context).rootPadding,
       shrinkWrap: shrinkWrap,
       physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,
       children: <Widget>[
         if (document.content != null) ..._contentWidgets(context),
         for (final (i, section) in document.sections.indexed)
-          OrgSectionWidget(
-            section,
-            siblingIndex: i,
-          ),
+          OrgSectionWidget(section, siblingIndex: i),
         if (safeArea) listBottomSafeArea(),
       ],
     );
@@ -47,7 +45,8 @@ class OrgDocumentWidget extends StatelessWidget {
   Iterable<Widget> _contentWidgets(BuildContext context) sync* {
     for (final child in document.content!.children) {
       Widget widget = OrgContentWidget(child);
-      final textDirection = OrgSettings.of(context).settings.textDirection ??
+      final textDirection =
+          OrgSettings.of(context).settings.textDirection ??
           child.detectTextDirection();
       if (textDirection != null) {
         widget = Directionality(textDirection: textDirection, child: widget);

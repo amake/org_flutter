@@ -112,9 +112,6 @@ class OrgRootWidget extends StatelessWidget {
     }
     return style == null
         ? body
-        : DefaultTextStyle.merge(
-            style: style,
-            child: body,
-          );
+        : DefaultTextStyle.merge(style: style, child: body);
   }
 }

@@ -217,11 +217,7 @@ class _OrgTextState extends State<OrgText> {
         loadImage: widget.loadImage,
         lightTheme: OrgThemeData.light().copyWith(rootPadding: EdgeInsets.zero),
         darkTheme: OrgThemeData.dark().copyWith(rootPadding: EdgeInsets.zero),
-        child: OrgDocumentWidget(
-          _doc,
-          shrinkWrap: true,
-          safeArea: false,
-        ),
+        child: OrgDocumentWidget(_doc, shrinkWrap: true, safeArea: false),
       ),
     );
   }

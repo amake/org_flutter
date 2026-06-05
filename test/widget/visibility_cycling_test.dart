@@ -6,10 +6,14 @@ import './util.dart';
 void main() {
   group('Visibility cycling', () {
     testWidgets('Headline tap', (tester) async {
-      await tester.pumpWidget(wrap(const Org('''
+      await tester.pumpWidget(
+        wrap(
+          const Org('''
 foo bar
 * headline
-baz buzz''')));
+baz buzz'''),
+        ),
+      );
       expect(find.textContaining('foo bar'), findsOneWidget);
       expect(find.textContaining('baz buzz'), findsNothing);
       await tester.tap(find.byType(OrgHeadlineWidget));
@@ -17,12 +21,16 @@ baz buzz''')));
       expect(find.textContaining('baz buzz'), findsOneWidget);
     });
     testWidgets('Nested sections headline tap', (tester) async {
-      await tester.pumpWidget(wrap(const Org('''
+      await tester.pumpWidget(
+        wrap(
+          const Org('''
 foo bar
 * headline 1
 baz buzz
 ** headline 2
-bazinga''')));
+bazinga'''),
+        ),
+      );
       expect(find.textContaining('foo bar'), findsOneWidget);
       expect(find.textContaining('baz buzz'), findsNothing);
       expect(find.textContaining('headline 2'), findsNothing);
@@ -37,18 +45,23 @@ bazinga''')));
       expect(find.textContaining('bazinga'), findsOneWidget);
     });
     testWidgets('Whole document', (tester) async {
-      await tester.pumpWidget(wrap(const Org('''
+      await tester.pumpWidget(
+        wrap(
+          const Org('''
 foo bar
 * headline 1
 baz buzz
 ** headline 2
-bazinga''')));
+bazinga'''),
+        ),
+      );
       expect(find.textContaining('foo bar'), findsOneWidget);
       expect(find.textContaining('baz buzz'), findsNothing);
       expect(find.textContaining('headline 2'), findsNothing);
       expect(find.textContaining('bazinga'), findsNothing);
-      final controller =
-          OrgController.of(tester.element(find.textContaining('foo bar')));
+      final controller = OrgController.of(
+        tester.element(find.textContaining('foo bar')),
+      );
       controller.cycleVisibility();
       await tester.pump();
       expect(find.textContaining('baz buzz'), findsNothing);
@@ -61,18 +74,23 @@ bazinga''')));
       expect(find.textContaining('headline 2'), findsOneWidget);
     });
     testWidgets('Skip', (tester) async {
-      await tester.pumpWidget(wrap(const Org('''
+      await tester.pumpWidget(
+        wrap(
+          const Org('''
 foo bar
 * headline 1
 baz buzz
 ** headline 2
-bazinga''')));
+bazinga'''),
+        ),
+      );
       expect(find.textContaining('foo bar'), findsOneWidget);
       expect(find.textContaining('baz buzz'), findsNothing);
       expect(find.textContaining('headline 2'), findsNothing);
       expect(find.textContaining('bazinga'), findsNothing);
-      final controller =
-          OrgController.of(tester.element(find.textContaining('foo bar')));
+      final controller = OrgController.of(
+        tester.element(find.textContaining('foo bar')),
+      );
       controller.cycleVisibility(skip: OrgVisibilityState.subtree);
       await tester.pump();
       expect(find.textContaining('baz buzz'), findsNothing);
@@ -85,18 +103,23 @@ bazinga''')));
       expect(find.textContaining('headline 2'), findsNothing);
     });
     testWidgets('To', (tester) async {
-      await tester.pumpWidget(wrap(const Org('''
+      await tester.pumpWidget(
+        wrap(
+          const Org('''
 foo bar
 * headline 1
 baz buzz
 ** headline 2
-bazinga''')));
+bazinga'''),
+        ),
+      );
       expect(find.textContaining('foo bar'), findsOneWidget);
       expect(find.textContaining('baz buzz'), findsNothing);
       expect(find.textContaining('headline 2'), findsNothing);
       expect(find.textContaining('bazinga'), findsNothing);
-      final controller =
-          OrgController.of(tester.element(find.textContaining('foo bar')));
+      final controller = OrgController.of(
+        tester.element(find.textContaining('foo bar')),
+      );
       controller.cycleVisibility(to: OrgVisibilityState.subtree);
       await tester.pump();
       expect(find.textContaining('baz buzz'), findsOneWidget);
@@ -110,7 +133,9 @@ bazinga''')));
     });
     group('Archived sections', () {
       testWidgets('Global cycling', (tester) async {
-        await tester.pumpWidget(wrap(const Org('''
+        await tester.pumpWidget(
+          wrap(
+            const Org('''
 foo bar
 * headline 1 :archive:
 baz buzz
@@ -119,7 +144,9 @@ borz burz
 ** headline 3 :ARCHIVE:
 bazinga
 * headline 4 :ARCHIVE:
-bazonga''')));
+bazonga'''),
+          ),
+        );
         expect(find.textContaining('foo bar'), findsOneWidget);
         expect(find.textContaining('headline 1'), findsOneWidget);
         expect(find.textContaining('baz buzz'), findsNothing);
@@ -129,8 +156,9 @@ bazonga''')));
         expect(find.textContaining('bazinga'), findsNothing);
         expect(find.textContaining('headline 4'), findsOneWidget);
         expect(find.textContaining('bazonga'), findsNothing);
-        final controller =
-            OrgController.of(tester.element(find.textContaining('foo bar')));
+        final controller = OrgController.of(
+          tester.element(find.textContaining('foo bar')),
+        );
         controller.cycleVisibility();
         await tester.pump();
         expect(find.textContaining('foo bar'), findsOneWidget);
@@ -156,14 +184,18 @@ bazonga''')));
         expect(find.textContaining('bazonga'), findsNothing);
       });
       testWidgets('Tap cycling', (tester) async {
-        await tester.pumpWidget(wrap(const Org('''
+        await tester.pumpWidget(
+          wrap(
+            const Org('''
 foo bar
 * headline 1 :ARCHIVE:
 baz buzz
 ** headline 2
 borz burz
 ** headline 3 :ARCHIVE:
-bazinga''')));
+bazinga'''),
+          ),
+        );
         expect(find.textContaining('foo bar'), findsOneWidget);
         expect(find.textContaining('headline 1'), findsOneWidget);
         expect(find.textContaining('baz buzz'), findsNothing);
@@ -192,10 +224,14 @@ bazinga''')));
       });
     });
     testWidgets('Drawer', (tester) async {
-      await tester.pumpWidget(wrap(const Org('''
+      await tester.pumpWidget(
+        wrap(
+          const Org('''
 :PROPERTIES:
 :foo: bar
-:END:''')));
+:END:'''),
+        ),
+      );
       expect(find.textContaining(':foo: bar'), findsNothing);
       await tester.tap(find.textContaining(':PROPERTIES:...'));
       await tester.pump();
@@ -204,9 +240,13 @@ bazinga''')));
       expect(find.textContaining(':END:'), findsOneWidget);
     });
     testWidgets('Block', (tester) async {
-      await tester.pumpWidget(wrap(const Org('''#+begin_example
+      await tester.pumpWidget(
+        wrap(
+          const Org('''#+begin_example
   foo bar
-#+end_example''')));
+#+end_example'''),
+        ),
+      );
       expect(find.textContaining('foo bar'), findsOneWidget);
       expect(find.textContaining('#+end_example'), findsOneWidget);
       await tester.tap(find.textContaining('#+begin_example'));

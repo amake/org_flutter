@@ -23,20 +23,22 @@ void main() {
     testWidgets('Screenshot', (tester) async {
       final markup = File('test/widget/org-manual.org').readAsStringSync();
       final key = ValueKey('test');
-      await tester.pumpWidget(SingleChildScrollView(
-        child: RepaintBoundary(
-          key: key,
-          child: wrap(
-            OrgText(
-              markup,
-              settings: OrgSettings(
-                startupFolded: OrgVisibilityState.subtree,
-                reflowText: true,
+      await tester.pumpWidget(
+        SingleChildScrollView(
+          child: RepaintBoundary(
+            key: key,
+            child: wrap(
+              OrgText(
+                markup,
+                settings: OrgSettings(
+                  startupFolded: OrgVisibilityState.subtree,
+                  reflowText: true,
+                ),
               ),
             ),
           ),
         ),
-      ));
+      );
       const goldDir = String.fromEnvironment('GOLD_DIR', defaultValue: '.');
       await expectLater(
         find.byKey(key),

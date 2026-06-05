@@ -10,10 +10,9 @@ dynamic exec(String script, [InterruptCallback? interrupt]) {
 
 void main() {
   test('function quote', () {
-    expect(
-      elispParser.parse("#'foo").value,
-      [Cons(Name('quote'), Cons(Name('foo')))],
-    );
+    expect(elispParser.parse("#'foo").value, [
+      Cons(Name('quote'), Cons(Name('foo'))),
+    ]);
   });
   test('eq', () {
     expect(exec('(eq 1 1)'), true);

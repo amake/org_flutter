@@ -21,9 +21,10 @@ class OrgPropertyWidget extends StatelessWidget {
             physics: const AlwaysScrollableScrollPhysics(),
             child: Text.rich(
               TextSpan(
-                children: _spans(context, spanBuilder)
-                    .whereType<InlineSpan>()
-                    .toList(growable: false),
+                children: _spans(
+                  context,
+                  spanBuilder,
+                ).whereType<InlineSpan>().toList(growable: false),
               ),
             ),
           ),
@@ -33,7 +34,9 @@ class OrgPropertyWidget extends StatelessWidget {
   }
 
   Iterable<InlineSpan?> _spans(
-      BuildContext context, OrgSpanBuilder builder) sync* {
+    BuildContext context,
+    OrgSpanBuilder builder,
+  ) sync* {
     final theme = OrgTheme.dataOf(context);
     final keyColor = property.isEmpty ? theme.drawerColor : theme.keywordColor;
     yield builder.highlightedSpan(

@@ -33,26 +33,30 @@ class _OrgTranscludeWidgetState extends State<OrgTranscludeWidget>
         IndentBuilder(
           widget.meta.indent,
           builder: (context, _) {
-            final deemphasize =
-                OrgSettings.of(context).settings.deemphasizeMarkup;
+            final deemphasize = OrgSettings.of(
+              context,
+            ).settings.deemphasizeMarkup;
             Widget body = InheritedOrgSettings.merge(
               const OrgSettings(strictSubSuperscripts: true),
               child: FancySpanBuilder(
                 builder: (context, spanBuilder) => Text.rich(
                   TextSpan(
-                    children: _spans(context, spanBuilder)
-                        .whereType<InlineSpan>()
-                        .toList(growable: false),
+                    children: _spans(
+                      context,
+                      spanBuilder,
+                    ).whereType<InlineSpan>().toList(growable: false),
                   ),
                   softWrap: !deemphasize,
                 ),
               ),
             );
             if (deemphasize) {
-              body = reduceOpacity(SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: body,
-              ));
+              body = reduceOpacity(
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: body,
+                ),
+              );
             }
             return body;
           },
@@ -69,13 +73,15 @@ class _OrgTranscludeWidgetState extends State<OrgTranscludeWidget>
           },
           child: _OrgTranscludedContent(() => loader(widget.meta)),
         ),
-        if (trailing.isNotEmpty) Text(removeTrailingLineBreak(trailing))
+        if (trailing.isNotEmpty) Text(removeTrailingLineBreak(trailing)),
       ],
     );
   }
 
   Iterable<InlineSpan?> _spans(
-      BuildContext context, OrgSpanBuilder builder) sync* {
+    BuildContext context,
+    OrgSpanBuilder builder,
+  ) sync* {
     final style = DefaultTextStyle.of(context).style;
     yield builder.highlightedSpan(
       widget.meta.key,
@@ -84,8 +90,9 @@ class _OrgTranscludeWidgetState extends State<OrgTranscludeWidget>
         ..onTap = () => openListenable.value = !openListenable.value,
     );
 
-    final valueStyle =
-        style.copyWith(color: OrgTheme.dataOf(context).metaColor);
+    final valueStyle = style.copyWith(
+      color: OrgTheme.dataOf(context).metaColor,
+    );
     yield builder.build(widget.meta.value!, style: valueStyle);
   }
 }
@@ -99,7 +106,8 @@ class _OrgTranscludedContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(
-          left: OrgTheme.dataOf(context).rootPadding?.left ?? 8),
+        left: OrgTheme.dataOf(context).rootPadding?.left ?? 8,
+      ),
       decoration: BoxDecoration(
         border: Border(
           left: BorderSide(

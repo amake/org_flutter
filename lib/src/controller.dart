@@ -27,8 +27,9 @@ class OrgDataNodeMap {
       var result = isArchive ? OrgVisibilityState.folded : defaultState;
       if (json != null) {
         final title = subtree.headline.rawTitle;
-        final fromJson =
-            OrgVisibilityStateJson.fromJson(json[title] as String?);
+        final fromJson = OrgVisibilityStateJson.fromJson(
+          json[title] as String?,
+        );
         result = fromJson ?? result;
       }
       return result;
@@ -67,16 +68,17 @@ class OrgDataNodeMap {
   final Map<String, OrgDataNode> _data;
 
   OrgDataNode nodeFor(OrgTree tree) => _data.putIfAbsent(
-        tree.id,
-        // Trees added to the document after init will need ad hoc data nodes.
-        // Ex: an OrgPgpBlock replaced with an OrgDecryptedContent tree
-        // containing an OrgSection
-        () => OrgDataNode(
-          initialVisibility: OrgVisibilityState.folded,
-          isArchive: tree is OrgSection &&
-              tree.headline.tags?.values.contains('ARCHIVE') == true,
-        ),
-      );
+    tree.id,
+    // Trees added to the document after init will need ad hoc data nodes.
+    // Ex: an OrgPgpBlock replaced with an OrgDecryptedContent tree
+    // containing an OrgSection
+    () => OrgDataNode(
+      initialVisibility: OrgVisibilityState.folded,
+      isArchive:
+          tree is OrgSection &&
+          tree.headline.tags?.values.contains('ARCHIVE') == true,
+    ),
+  );
 
   Set<OrgVisibilityState> get currentVisibility => _data.values
       // ARCHIVEd sections do not participate in global visibility cycling
@@ -91,7 +93,9 @@ class OrgDataNodeMap {
       _toTitleMap(root, (node) => node.visibility.value);
 
   Map<String, T> _toTitleMap<T>(
-      OrgTree root, T Function(OrgDataNode) transform) {
+    OrgTree root,
+    T Function(OrgDataNode) transform,
+  ) {
     final result = <String, T>{};
     root.visitSections((subtree) {
       final node = _data[subtree.id];
@@ -162,16 +166,16 @@ class OrgController extends StatefulWidget {
     required Widget child,
     Key? key,
   }) : this._(
-          child: child,
-          root: root,
-          inheritedNodeMap: data._nodeMap,
-          searchQuery: searchQuery,
-          sparseQuery: sparseQuery,
-          restorationId: restorationId ?? data._restorationId,
-          settings: settings ?? data._callerSettings,
-          embeddedSettings: data._embeddedSettings,
-          key: key,
-        );
+         child: child,
+         root: root,
+         inheritedNodeMap: data._nodeMap,
+         searchQuery: searchQuery,
+         sparseQuery: sparseQuery,
+         restorationId: restorationId ?? data._restorationId,
+         settings: settings ?? data._callerSettings,
+         embeddedSettings: data._embeddedSettings,
+         key: key,
+       );
 
   const OrgController({
     required Widget child,
@@ -184,16 +188,16 @@ class OrgController extends StatefulWidget {
     String? restorationId,
     Key? key,
   }) : this._(
-          child: child,
-          root: root,
-          searchQuery: searchQuery,
-          interpretEmbeddedSettings: interpretEmbeddedSettings,
-          sparseQuery: sparseQuery,
-          settings: settings,
-          errorHandler: errorHandler,
-          restorationId: restorationId,
-          key: key,
-        );
+         child: child,
+         root: root,
+         searchQuery: searchQuery,
+         interpretEmbeddedSettings: interpretEmbeddedSettings,
+         sparseQuery: sparseQuery,
+         settings: settings,
+         errorHandler: errorHandler,
+         restorationId: restorationId,
+         key: key,
+       );
 
   const OrgController._({
     required this.child,
@@ -252,9 +256,9 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   OrgTree get _root => widget.root;
   bool get _inheritNodeMap => widget.inheritedNodeMap != null;
   List<OrgSettings> get _settings => [
-        if (widget.settings != null) widget.settings!,
-        ?_embeddedSettings
-      ];
+    if (widget.settings != null) widget.settings!,
+    ?_embeddedSettings,
+  ];
 
   late OrgDataNodeMap _nodeMap;
   Pattern? _searchQuery;
@@ -369,24 +373,26 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
             : sec is OrgSection && _sparseQuery!.matches(sec),
         searchHit: isEmptyPattern
             ? null
-            : sec.contains(_searchQuery!, includeChildren: false)
+            : sec.contains(_searchQuery!, includeChildren: false),
       );
     }
 
     final initialMatch = (
       sparseHit: _sparseQuery == null ? null : false,
-      searchHit: isEmptyPattern ? null : false
+      searchHit: isEmptyPattern ? null : false,
     );
 
     // Traverse tree from leaves to root in order to
     // a) prevent unnecessarily checking the same vertices twice
     // b) ensure correct visibility result
     OrgVisibilityResult visit(OrgTree tree) {
-      final childrenMatch =
-          tree.sections.fold<OrgVisibilityResult>(initialMatch, (acc, section) {
-        final match = visit(section);
-        return acc.or(match);
-      });
+      final childrenMatch = tree.sections.fold<OrgVisibilityResult>(
+        initialMatch,
+        (acc, section) {
+          final match = visit(section);
+          return acc.or(match);
+        },
+      );
       final anyMatch = childrenMatch.or(predicate(tree));
       final newValue = (() {
         if (anyMatch.sparseHit == false &&
@@ -401,7 +407,8 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
 
       final node = _nodeMap.nodeFor(tree);
       debugPrint(
-          'Changing visibility; from=${node.visibility.value}, to=$newValue');
+        'Changing visibility; from=${node.visibility.value}, to=$newValue',
+      );
       node.visibility.value = newValue;
       return anyMatch;
     }
@@ -423,12 +430,14 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
 
   void _cycleVisibilityOf(OrgTree tree) {
     final visibilityListenable = _nodeMap.nodeFor(tree).visibility;
-    final newVisibility =
-        visibilityListenable.value.cycleSubtree(tree.sections.isEmpty);
+    final newVisibility = visibilityListenable.value.cycleSubtree(
+      tree.sections.isEmpty,
+    );
     final subtreeVisibility = newVisibility.subtreeState;
     debugPrint(
-        'Cycling subtree visibility; from=${visibilityListenable.value}, '
-        'to=$newVisibility; subtree=$subtreeVisibility');
+      'Cycling subtree visibility; from=${visibilityListenable.value}, '
+      'to=$newVisibility; subtree=$subtreeVisibility',
+    );
     tree.visitSections((subtree) {
       final node = _nodeMap.nodeFor(subtree);
       if (node.isArchive &&
@@ -457,7 +466,8 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
     final node = _nodeMap.nodeFor(tree);
     final newValue = setter(node.visibility.value);
     debugPrint(
-        'Setting visibility; from=${node.visibility.value}, to=$newValue');
+      'Setting visibility; from=${node.visibility.value}, to=$newValue',
+    );
     node.visibility.value = newValue;
     _notifyState();
   }
@@ -529,7 +539,7 @@ class OrgControllerData extends InheritedWidget {
   /// Cycle the visibility of the entire document
   // TODO(aaron): Should this be a declarative API?
   final void Function({OrgVisibilityState? to, OrgVisibilityState? skip})
-      cycleVisibility;
+  cycleVisibility;
 
   /// Cycle the visibility of the specified subtree
   final void Function(OrgTree) cycleVisibilityOf;
@@ -547,7 +557,7 @@ class OrgControllerData extends InheritedWidget {
   //
   // TODO(aaron): This is weirdly specific and feels hacky
   final void Function(OrgTree, {OrgVisibilityState? defaultState})
-      adaptVisibility;
+  adaptVisibility;
 
   final String? _restorationId;
 
@@ -563,8 +573,9 @@ class OrgControllerData extends InheritedWidget {
       searchResultKeys.value = [
         // Filter out unmounted keys to prevent rebuilds from adding to the list
         // forever
-        ...searchResultKeys.value
-            .where((key) => key.currentContext?.mounted == true),
+        ...searchResultKeys.value.where(
+          (key) => key.currentContext?.mounted == true,
+        ),
         key,
       ];
     });

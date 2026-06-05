@@ -40,8 +40,9 @@ class OrgTableWidget extends StatelessWidget {
 
   Widget _buildTable(BuildContext context) {
     final tableColor = OrgTheme.dataOf(context).tableColor;
-    final borderSide =
-        tableColor == null ? const BorderSide() : BorderSide(color: tableColor);
+    final borderSide = tableColor == null
+        ? const BorderSide()
+        : BorderSide(color: tableColor);
     return Table(
       defaultColumnWidth: const IntrinsicColumnWidth(),
       defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
@@ -64,15 +65,17 @@ class OrgTableWidget extends StatelessWidget {
       final nextRow = i + 1 < table.rows.length ? table.rows[i + 1] : null;
       if (row is OrgTableCellRow) {
         // Peek at surrounding rows, add borders for dividers
-        final topBorder =
-            i == 1 && prevRow is OrgTableDividerRow ? borderSide : null;
+        final topBorder = i == 1 && prevRow is OrgTableDividerRow
+            ? borderSide
+            : null;
         final bottomBorder = nextRow is OrgTableDividerRow ? borderSide : null;
         final decoration = topBorder != null || bottomBorder != null
             ? BoxDecoration(
                 border: Border(
-                top: topBorder ?? BorderSide.none,
-                bottom: bottomBorder ?? BorderSide.none,
-              ))
+                  top: topBorder ?? BorderSide.none,
+                  bottom: bottomBorder ?? BorderSide.none,
+                ),
+              )
             : null;
         yield TableRow(
           decoration: decoration,

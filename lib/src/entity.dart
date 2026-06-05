@@ -449,11 +449,13 @@ const Map<String, String> orgDefaultEntityReplacements = {
   '_                 ': r'                 ',
   '_                  ': r'                  ',
   '_                   ': r'                   ',
-  '_                    ': r'                    '
+  '_                    ': r'                    ',
 };
 
 bool shouldPrettifySubSuperscript(
-    BuildContext context, OrgSubSuperscript element) {
+  BuildContext context,
+  OrgSubSuperscript element,
+) {
   final settings = OrgSettings.of(context).settings;
   if (!settings.prettyEntities) return false;
   if (!settings.subSuperscripts) return false;

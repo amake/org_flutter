@@ -9,25 +9,33 @@ void main() {
     group('Org widget', () {
       testWidgets('Load images', (tester) async {
         var invoked = false;
-        await tester.pumpWidget(wrap(Org(
-          'file:./foo.png',
-          loadImage: (link) {
-            invoked = true;
-            expect(link.location, 'file:./foo.png');
-            return null;
-          },
-        )));
+        await tester.pumpWidget(
+          wrap(
+            Org(
+              'file:./foo.png',
+              loadImage: (link) {
+                invoked = true;
+                expect(link.location, 'file:./foo.png');
+                return null;
+              },
+            ),
+          ),
+        );
         expect(invoked, isTrue);
       });
       testWidgets('Tap link', (tester) async {
         var invoked = false;
-        await tester.pumpWidget(wrap(Org(
-          '[[http://example.com][example]]',
-          onLinkTap: (link) {
-            invoked = true;
-            expect(link.location, 'http://example.com');
-          },
-        )));
+        await tester.pumpWidget(
+          wrap(
+            Org(
+              '[[http://example.com][example]]',
+              onLinkTap: (link) {
+                invoked = true;
+                expect(link.location, 'http://example.com');
+              },
+            ),
+          ),
+        );
         expect(invoked, isFalse);
         await tester.tapOnText(find.textRange.ofSubstring('example'));
         await tester.pump();
@@ -36,18 +44,22 @@ void main() {
       group('Tap local sections link', () {
         testWidgets('By title', (tester) async {
           var invoked = false;
-          await tester.pumpWidget(wrap(Org(
-            '''
+          await tester.pumpWidget(
+            wrap(
+              Org(
+                '''
 [[*Foo][link]]
 * Foo
 bar
 ''',
-            onLocalSectionLinkTap: (section, {searchOption}) {
-              invoked = true;
-              expect(section.toMarkup(), '* Foo\nbar\n');
-              expect(searchOption, isNull);
-            },
-          )));
+                onLocalSectionLinkTap: (section, {searchOption}) {
+                  invoked = true;
+                  expect(section.toMarkup(), '* Foo\nbar\n');
+                  expect(searchOption, isNull);
+                },
+              ),
+            ),
+          );
           expect(invoked, isFalse);
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pump();
@@ -55,23 +67,27 @@ bar
         });
         testWidgets('By ID', (tester) async {
           var invoked = false;
-          await tester.pumpWidget(wrap(Org(
-            '''
+          await tester.pumpWidget(
+            wrap(
+              Org(
+                '''
 [[id:foo][link]]
 * Bar
 :PROPERTIES:
 :ID: foo
 :END:
 ''',
-            onLocalSectionLinkTap: (section, {searchOption}) {
-              invoked = true;
-              expect(
-                section.toMarkup(),
-                '* Bar\n:PROPERTIES:\n:ID: foo\n:END:\n',
-              );
-              expect(searchOption, isNull);
-            },
-          )));
+                onLocalSectionLinkTap: (section, {searchOption}) {
+                  invoked = true;
+                  expect(
+                    section.toMarkup(),
+                    '* Bar\n:PROPERTIES:\n:ID: foo\n:END:\n',
+                  );
+                  expect(searchOption, isNull);
+                },
+              ),
+            ),
+          );
           expect(invoked, isFalse);
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pump();
@@ -79,23 +95,27 @@ bar
         });
         testWidgets('By ID with search option', (tester) async {
           var invoked = false;
-          await tester.pumpWidget(wrap(Org(
-            '''
+          await tester.pumpWidget(
+            wrap(
+              Org(
+                '''
 [[id:foo::bar][link]]
 * Bar
 :PROPERTIES:
 :ID: foo
 :END:
 ''',
-            onLocalSectionLinkTap: (section, {searchOption}) {
-              invoked = true;
-              expect(
-                section.toMarkup(),
-                '* Bar\n:PROPERTIES:\n:ID: foo\n:END:\n',
-              );
-              expect(searchOption, 'bar');
-            },
-          )));
+                onLocalSectionLinkTap: (section, {searchOption}) {
+                  invoked = true;
+                  expect(
+                    section.toMarkup(),
+                    '* Bar\n:PROPERTIES:\n:ID: foo\n:END:\n',
+                  );
+                  expect(searchOption, 'bar');
+                },
+              ),
+            ),
+          );
           expect(invoked, isFalse);
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pump();
@@ -103,23 +123,27 @@ bar
         });
         testWidgets('By custom ID', (tester) async {
           var invoked = false;
-          await tester.pumpWidget(wrap(Org(
-            '''
+          await tester.pumpWidget(
+            wrap(
+              Org(
+                '''
 [[#foo123][link]]
 * Bar
 :PROPERTIES:
 :CUSTOM_ID: foo123
 :END:
 ''',
-            onLocalSectionLinkTap: (section, {searchOption}) {
-              invoked = true;
-              expect(
-                section.toMarkup(),
-                '* Bar\n:PROPERTIES:\n:CUSTOM_ID: foo123\n:END:\n',
-              );
-              expect(searchOption, isNull);
-            },
-          )));
+                onLocalSectionLinkTap: (section, {searchOption}) {
+                  invoked = true;
+                  expect(
+                    section.toMarkup(),
+                    '* Bar\n:PROPERTIES:\n:CUSTOM_ID: foo123\n:END:\n',
+                  );
+                  expect(searchOption, isNull);
+                },
+              ),
+            ),
+          );
           expect(invoked, isFalse);
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pump();
@@ -127,37 +151,45 @@ bar
         });
         testWidgets('By present named target', (tester) async {
           var invoked = false;
-          await tester.pumpWidget(wrap(Org(
-            '''
+          await tester.pumpWidget(
+            wrap(
+              Org(
+                '''
 [[foo][link]]
 
 #+NAME: foo
 ''',
-            onLocalSectionLinkTap: (section, {searchOption}) {
-              fail('Should not be invoked');
-            },
-            onLinkTap: (link) {
-              fail('Should not be invoked');
-            },
-          )));
+                onLocalSectionLinkTap: (section, {searchOption}) {
+                  fail('Should not be invoked');
+                },
+                onLinkTap: (link) {
+                  fail('Should not be invoked');
+                },
+              ),
+            ),
+          );
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pumpAndSettle();
           expect(invoked, isFalse);
         });
         testWidgets('By absent named/link target', (tester) async {
           var invoked = false;
-          await tester.pumpWidget(wrap(Org(
-            '''
+          await tester.pumpWidget(
+            wrap(
+              Org(
+                '''
 [[foo][link]]
 ''',
-            onLocalSectionLinkTap: (section, {searchOption}) {
-              fail('Should not be invoked');
-            },
-            onLinkTap: (link) {
-              invoked = true;
-              expect(link.location, 'foo');
-            },
-          )));
+                onLocalSectionLinkTap: (section, {searchOption}) {
+                  fail('Should not be invoked');
+                },
+                onLinkTap: (link) {
+                  invoked = true;
+                  expect(link.location, 'foo');
+                },
+              ),
+            ),
+          );
           expect(invoked, isFalse);
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pumpAndSettle();
@@ -165,58 +197,70 @@ bar
         });
         testWidgets('By present link target', (tester) async {
           var invoked = false;
-          await tester.pumpWidget(wrap(Org(
-            '''
+          await tester.pumpWidget(
+            wrap(
+              Org(
+                '''
 [[foo][link]]
 
 <<foo>>
 ''',
-            onLocalSectionLinkTap: (section, {searchOption}) {
-              fail('Should not be invoked');
-            },
-            onLinkTap: (link) {
-              fail('Should not be invoked');
-            },
-          )));
+                onLocalSectionLinkTap: (section, {searchOption}) {
+                  fail('Should not be invoked');
+                },
+                onLinkTap: (link) {
+                  fail('Should not be invoked');
+                },
+              ),
+            ),
+          );
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pumpAndSettle();
           expect(invoked, isFalse);
         });
         testWidgets('By present coderef target', (tester) async {
           var invoked = false;
-          await tester.pumpWidget(wrap(Org(
-            '''
+          await tester.pumpWidget(
+            wrap(
+              Org(
+                '''
 [[(foo)][link]]
 
 #+BEGIN_SRC emacs-lisp -n -r
   (bar)                 (ref:foo)
 #+END_SRC
 ''',
-            onLocalSectionLinkTap: (section, {searchOption}) {
-              fail('Should not be invoked');
-            },
-            onLinkTap: (link) {
-              fail('Should not be invoked');
-            },
-          )));
+                onLocalSectionLinkTap: (section, {searchOption}) {
+                  fail('Should not be invoked');
+                },
+                onLinkTap: (link) {
+                  fail('Should not be invoked');
+                },
+              ),
+            ),
+          );
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pumpAndSettle();
           expect(invoked, isFalse);
         });
         testWidgets('By absent coderef target', (tester) async {
           var invoked = false;
-          await tester.pumpWidget(wrap(Org(
-            '''
+          await tester.pumpWidget(
+            wrap(
+              Org(
+                '''
 [[(foo)][link]]
 ''',
-            onLocalSectionLinkTap: (section, {searchOption}) {
-              fail('Should not be invoked');
-            },
-            onLinkTap: (link) {
-              invoked = true;
-              expect(link.location, '(foo)');
-            },
-          )));
+                onLocalSectionLinkTap: (section, {searchOption}) {
+                  fail('Should not be invoked');
+                },
+                onLinkTap: (link) {
+                  invoked = true;
+                  expect(link.location, '(foo)');
+                },
+              ),
+            ),
+          );
           expect(invoked, isFalse);
           await tester.tapOnText(find.textRange.ofSubstring('link'));
           await tester.pumpAndSettle();
@@ -225,23 +269,27 @@ bar
 
         testWidgets('Root by ID', (tester) async {
           var invoked = false;
-          await tester.pumpWidget(wrap(Org(
-            '''
+          await tester.pumpWidget(
+            wrap(
+              Org(
+                '''
 :PROPERTIES:
 :ID: foo
 :END:
 * Bar
 [[id:foo][link]]
 ''',
-            onLocalSectionLinkTap: (section, {searchOption}) {
-              invoked = true;
-              expect(
-                section.toMarkup(),
-                ':PROPERTIES:\n:ID: foo\n:END:\n* Bar\n[[id:foo][link]]\n',
-              );
-              expect(searchOption, isNull);
-            },
-          )));
+                onLocalSectionLinkTap: (section, {searchOption}) {
+                  invoked = true;
+                  expect(
+                    section.toMarkup(),
+                    ':PROPERTIES:\n:ID: foo\n:END:\n* Bar\n[[id:foo][link]]\n',
+                  );
+                  expect(searchOption, isNull);
+                },
+              ),
+            ),
+          );
           expect(invoked, isFalse);
           await tester.tap(find.byType(OrgHeadlineWidget));
           await tester.pumpAndSettle();
@@ -251,23 +299,27 @@ bar
         });
         testWidgets('Root by custom ID', (tester) async {
           var invoked = false;
-          await tester.pumpWidget(wrap(Org(
-            '''
+          await tester.pumpWidget(
+            wrap(
+              Org(
+                '''
 :PROPERTIES:
 :CUSTOM_ID: foo123
 :END:
 * Bar
 [[#foo123][link]]
 ''',
-            onLocalSectionLinkTap: (section, {searchOption}) {
-              invoked = true;
-              expect(
-                section.toMarkup(),
-                ':PROPERTIES:\n:CUSTOM_ID: foo123\n:END:\n* Bar\n[[#foo123][link]]\n',
-              );
-              expect(searchOption, isNull);
-            },
-          )));
+                onLocalSectionLinkTap: (section, {searchOption}) {
+                  invoked = true;
+                  expect(
+                    section.toMarkup(),
+                    ':PROPERTIES:\n:CUSTOM_ID: foo123\n:END:\n* Bar\n[[#foo123][link]]\n',
+                  );
+                  expect(searchOption, isNull);
+                },
+              ),
+            ),
+          );
           expect(invoked, isFalse);
           await tester.tap(find.byType(OrgHeadlineWidget));
           await tester.pumpAndSettle();
@@ -278,13 +330,17 @@ bar
       });
       testWidgets('Long press section', (tester) async {
         var invoked = false;
-        await tester.pumpWidget(wrap(Org(
-          '* Foo',
-          onSectionLongPress: (section) {
-            invoked = true;
-            expect(section.toMarkup(), '* Foo');
-          },
-        )));
+        await tester.pumpWidget(
+          wrap(
+            Org(
+              '* Foo',
+              onSectionLongPress: (section) {
+                invoked = true;
+                expect(section.toMarkup(), '* Foo');
+              },
+            ),
+          ),
+        );
         expect(invoked, isFalse);
         await tester.longPress(find.text('* Foo'));
         await tester.pump();
@@ -293,21 +349,28 @@ bar
       testWidgets('Slide section', (tester) async {
         var onSectionSlideInvoked = false;
         var onPressedInvoked = false;
-        await tester.pumpWidget(wrap(Org(
-          '* Foo',
-          onSectionSlide: (section) {
-            onSectionSlideInvoked = true;
-            expect(section.toMarkup(), '* Foo');
-            return [
-              IconButton(
-                icon: const Icon(Icons.abc),
-                onPressed: () => onPressedInvoked = true,
-              )
-            ];
-          },
-        )));
-        expect(onSectionSlideInvoked, isTrue,
-            reason: 'onSectionSlide is invoked immediately');
+        await tester.pumpWidget(
+          wrap(
+            Org(
+              '* Foo',
+              onSectionSlide: (section) {
+                onSectionSlideInvoked = true;
+                expect(section.toMarkup(), '* Foo');
+                return [
+                  IconButton(
+                    icon: const Icon(Icons.abc),
+                    onPressed: () => onPressedInvoked = true,
+                  ),
+                ];
+              },
+            ),
+          ),
+        );
+        expect(
+          onSectionSlideInvoked,
+          isTrue,
+          reason: 'onSectionSlide is invoked immediately',
+        );
         expect(onPressedInvoked, isFalse);
         await tester.drag(find.text('* Foo'), const Offset(-100, 0));
         await tester.pump();
@@ -317,13 +380,17 @@ bar
       });
       testWidgets('List item tap', (tester) async {
         var invoked = false;
-        await tester.pumpWidget(wrap(Org(
-          '- [ ] foo',
-          onListItemTap: (item) {
-            invoked = true;
-            expect(item.toMarkup(), '- [ ] foo');
-          },
-        )));
+        await tester.pumpWidget(
+          wrap(
+            Org(
+              '- [ ] foo',
+              onListItemTap: (item) {
+                invoked = true;
+                expect(item.toMarkup(), '- [ ] foo');
+              },
+            ),
+          ),
+        );
         expect(invoked, isFalse);
         await tester.tap(find.textContaining('[ ]'));
         await tester.pump();
@@ -331,14 +398,18 @@ bar
       });
       testWidgets('Transclusion tap', (tester) async {
         var invoked = false;
-        await tester.pumpWidget(wrap(Org(
-          '#+transclude: [[id:foo]]',
-          loadTransclusion: (meta) {
-            invoked = true;
-            expect(meta.toMarkup(), '#+transclude: [[id:foo]]');
-            return Icon(Icons.ac_unit);
-          },
-        )));
+        await tester.pumpWidget(
+          wrap(
+            Org(
+              '#+transclude: [[id:foo]]',
+              loadTransclusion: (meta) {
+                invoked = true;
+                expect(meta.toMarkup(), '#+transclude: [[id:foo]]');
+                return Icon(Icons.ac_unit);
+              },
+            ),
+          ),
+        );
         expect(invoked, isFalse);
         await tester.tapOnText(find.textRange.ofSubstring('#+transclude:'));
         await tester.pumpAndSettle();
@@ -350,25 +421,33 @@ bar
     group('OrgText widget', () {
       testWidgets('Load images', (tester) async {
         var invoked = false;
-        await tester.pumpWidget(wrap(OrgText(
-          'file:./foo.png',
-          loadImage: (link) {
-            invoked = true;
-            expect(link.location, 'file:./foo.png');
-            return null;
-          },
-        )));
+        await tester.pumpWidget(
+          wrap(
+            OrgText(
+              'file:./foo.png',
+              loadImage: (link) {
+                invoked = true;
+                expect(link.location, 'file:./foo.png');
+                return null;
+              },
+            ),
+          ),
+        );
         expect(invoked, isTrue);
       });
       testWidgets('Tap link', (tester) async {
         var invoked = false;
-        await tester.pumpWidget(wrap(OrgText(
-          '[[http://example.com][example]]',
-          onLinkTap: (link) {
-            invoked = true;
-            expect(link.location, 'http://example.com');
-          },
-        )));
+        await tester.pumpWidget(
+          wrap(
+            OrgText(
+              '[[http://example.com][example]]',
+              onLinkTap: (link) {
+                invoked = true;
+                expect(link.location, 'http://example.com');
+              },
+            ),
+          ),
+        );
         expect(invoked, isFalse);
         await tester.tapOnText(find.textRange.ofSubstring('example'));
         await tester.pump();

@@ -21,7 +21,8 @@ void main() {
       expect(detectIndent(text), 2);
     });
     test('middle blank line', () {
-      final text = '''  foo
+      final text =
+          '''  foo
 ${' '}
     bar''';
       expect(detectIndent(text), 2);

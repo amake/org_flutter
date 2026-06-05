@@ -104,8 +104,8 @@ extension PlistExtension on Plist {
 
 extension OrgAlignmentExtension on OrgAlignment {
   MainAxisAlignment get toMainAxisAlignment => switch (this) {
-        OrgAlignment.left => MainAxisAlignment.start,
-        OrgAlignment.center => MainAxisAlignment.center,
-        OrgAlignment.right => MainAxisAlignment.end
-      };
+    OrgAlignment.left => MainAxisAlignment.start,
+    OrgAlignment.center => MainAxisAlignment.center,
+    OrgAlignment.right => MainAxisAlignment.end,
+  };
 }

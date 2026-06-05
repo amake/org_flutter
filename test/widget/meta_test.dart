@@ -6,8 +6,9 @@ import './util.dart';
 void main() {
   group('Meta', () {
     testWidgets('Non-exported', (tester) async {
-      await tester
-          .pumpWidget(wrap(const Org(r'#+FOO: foo^1 bar^{2} baz_3 buzz_{4}')));
+      await tester.pumpWidget(
+        wrap(const Org(r'#+FOO: foo^1 bar^{2} baz_3 buzz_{4}')),
+      );
       expect(find.textContaining('^1'), findsOneWidget);
       expect(find.textContaining('2'), findsOneWidget);
       expect(find.textContaining('{2}'), findsNothing);
@@ -17,7 +18,8 @@ void main() {
     });
     testWidgets('Exported', (tester) async {
       await tester.pumpWidget(
-          wrap(const Org(r'#+CAPTION: foo^1 bar^{2} baz_3 buzz_{4}')));
+        wrap(const Org(r'#+CAPTION: foo^1 bar^{2} baz_3 buzz_{4}')),
+      );
       expect(find.textContaining('1'), findsOneWidget);
       expect(find.textContaining('^1'), findsNothing);
       expect(find.textContaining('2'), findsOneWidget);
@@ -48,9 +50,7 @@ void main() {
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining('A very good doc'), findsOneWidget);

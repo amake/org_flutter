@@ -17,26 +17,34 @@ class OrgParagraphWidget extends StatelessWidget {
       paragraph.indent,
       builder: (context, totalIndentSize) {
         return FancySpanBuilder(
-          builder: (context, spanBuilder) => Text.rich(TextSpan(
+          builder: (context, spanBuilder) => Text.rich(
+            TextSpan(
               children: [
-            spanBuilder.build(
-              paragraph.body,
-              transformer: (elem, content) {
-                final location = locationOf(elem, paragraph.body.children);
-                var formattedContent = hardDeindent(content, totalIndentSize);
-                if (reflow) {
-                  formattedContent = reflowText(formattedContent, location);
-                }
-                if (location == TokenLocation.end ||
-                    location == TokenLocation.only &&
-                        paragraph.trailing.isEmpty) {
-                  formattedContent = removeTrailingLineBreak(formattedContent);
-                }
-                return formattedContent;
-              },
+                spanBuilder.build(
+                  paragraph.body,
+                  transformer: (elem, content) {
+                    final location = locationOf(elem, paragraph.body.children);
+                    var formattedContent = hardDeindent(
+                      content,
+                      totalIndentSize,
+                    );
+                    if (reflow) {
+                      formattedContent = reflowText(formattedContent, location);
+                    }
+                    if (location == TokenLocation.end ||
+                        location == TokenLocation.only &&
+                            paragraph.trailing.isEmpty) {
+                      formattedContent = removeTrailingLineBreak(
+                        formattedContent,
+                      );
+                    }
+                    return formattedContent;
+                  },
+                ),
+                if (paragraph.trailing.isNotEmpty) _trailingSpan(),
+              ].whereType<InlineSpan>().toList(growable: false),
             ),
-            if (paragraph.trailing.isNotEmpty) _trailingSpan(),
-          ].whereType<InlineSpan>().toList(growable: false))),
+          ),
         );
       },
     );

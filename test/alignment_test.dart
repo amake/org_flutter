@@ -105,34 +105,19 @@ a [[foo]] b
   });
   group('plist', () {
     test('tokenize', () {
-      expect(
-        tokenizePlist(':align center'),
-        [':align', 'center'],
-      );
+      expect(tokenizePlist(':align center'), [':align', 'center']);
     });
     test('extra whitespace', () {
-      expect(
-        tokenizePlist(':align  center'),
-        [':align', 'center'],
-      );
+      expect(tokenizePlist(':align  center'), [':align', 'center']);
     });
     test('get value', () {
-      expect(
-        tokenizePlist(':align center').get(':align'),
-        'center',
-      );
+      expect(tokenizePlist(':align center').get(':align'), 'center');
     });
     test('get missing key', () {
-      expect(
-        tokenizePlist(':align center').get(':foo'),
-        isNull,
-      );
+      expect(tokenizePlist(':align center').get(':foo'), isNull);
     });
     test('malformed', () {
-      expect(
-        tokenizePlist(':align foo bar').get('bar'),
-        isNull,
-      );
+      expect(tokenizePlist(':align foo bar').get('bar'), isNull);
     });
   });
 }

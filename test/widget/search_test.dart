@@ -10,13 +10,12 @@ void main() {
         final doc = OrgDocument.parse('foo bar baz');
         final widget = OrgController(
           root: doc,
-          child: OrgRootWidget(
-            child: OrgDocumentWidget(doc),
-          ),
+          child: OrgRootWidget(child: OrgDocumentWidget(doc)),
         );
         await tester.pumpWidget(wrap(widget));
         final controller = OrgController.of(
-            tester.element(find.textContaining('foo bar baz')));
+          tester.element(find.textContaining('foo bar baz')),
+        );
         expect(controller.searchResultKeys.value.length, 0);
       });
       testWidgets('One result', (tester) async {
@@ -24,13 +23,12 @@ void main() {
         final widget = OrgController(
           root: doc,
           searchQuery: 'bar',
-          child: OrgRootWidget(
-            child: OrgDocumentWidget(doc),
-          ),
+          child: OrgRootWidget(child: OrgDocumentWidget(doc)),
         );
         await tester.pumpWidget(wrap(widget));
-        final controller =
-            OrgController.of(tester.element(find.textContaining('foo')));
+        final controller = OrgController.of(
+          tester.element(find.textContaining('foo')),
+        );
         expect(controller.searchResultKeys.value.length, 1);
       });
       testWidgets('In src block', (tester) async {
@@ -42,13 +40,12 @@ void main() {
         final widget = OrgController(
           root: doc,
           searchQuery: 'bar',
-          child: OrgRootWidget(
-            child: OrgDocumentWidget(doc),
-          ),
+          child: OrgRootWidget(child: OrgDocumentWidget(doc)),
         );
         await tester.pumpWidget(wrap(widget));
-        final controller =
-            OrgController.of(tester.element(find.textContaining('foo')));
+        final controller = OrgController.of(
+          tester.element(find.textContaining('foo')),
+        );
         expect(controller.searchResultKeys.value.length, 1);
       });
       testWidgets('Multiple results', (tester) async {
@@ -56,13 +53,12 @@ void main() {
         final widget = OrgController(
           root: doc,
           searchQuery: RegExp('ba[rz]'),
-          child: OrgRootWidget(
-            child: OrgDocumentWidget(doc),
-          ),
+          child: OrgRootWidget(child: OrgDocumentWidget(doc)),
         );
         await tester.pumpWidget(wrap(widget));
-        final controller =
-            OrgController.of(tester.element(find.textContaining('foo')));
+        final controller = OrgController.of(
+          tester.element(find.textContaining('foo')),
+        );
         expect(controller.searchResultKeys.value.length, 2);
       });
     });
@@ -75,9 +71,7 @@ foo2
 foo3''');
         final widget = OrgController(
           root: doc,
-          child: OrgRootWidget(
-            child: OrgDocumentWidget(doc),
-          ),
+          child: OrgRootWidget(child: OrgDocumentWidget(doc)),
         );
         await tester.pumpWidget(wrap(widget));
         expect(find.textContaining('foo1'), findsOneWidget);
@@ -93,9 +87,7 @@ foo3''');
         final widget = OrgController(
           root: doc,
           searchQuery: RegExp('foo[123]'),
-          child: OrgRootWidget(
-            child: OrgDocumentWidget(doc),
-          ),
+          child: OrgRootWidget(child: OrgDocumentWidget(doc)),
         );
         await tester.pumpWidget(wrap(widget));
         expect(find.textContaining('foo1'), findsOneWidget);

@@ -38,8 +38,9 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
   @override
   Widget build(BuildContext context) {
     final defaultStyle = DefaultTextStyle.of(context).style;
-    final metaStyle =
-        defaultStyle.copyWith(color: OrgTheme.dataOf(context).metaColor);
+    final metaStyle = defaultStyle.copyWith(
+      color: OrgTheme.dataOf(context).metaColor,
+    );
     final hideMarkup = OrgSettings.of(context).settings.deemphasizeMarkup;
     // Remove a line break because we introduce one by splitting the text into
     // two widgets in this Column
@@ -53,8 +54,13 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
             builder: (context, open, child) => Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                _header(context, spanBuilder, metaStyle,
-                    open: open, hideMarkup: hideMarkup),
+                _header(
+                  context,
+                  spanBuilder,
+                  metaStyle,
+                  open: open,
+                  hideMarkup: hideMarkup,
+                ),
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 100),
                   transitionBuilder: (child, animation) =>
@@ -74,7 +80,8 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
                 reduceOpacity(
                   Text.rich(
                     spanBuilder.highlightedSpan(
-                        hardDeindent(widget.block.footer, totalIndentSize)),
+                      hardDeindent(widget.block.footer, totalIndentSize),
+                    ),
                     style: metaStyle,
                   ),
                   enabled: hideMarkup,
@@ -107,10 +114,8 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
     if (hideMarkup && !open) {
       header = Row(
         children: [
-          Flexible(
-            child: header,
-          ),
-          if (hideMarkup && !open) Text('...', style: metaStyle)
+          Flexible(child: header),
+          if (hideMarkup && !open) Text('...', style: metaStyle),
         ],
       );
     }
@@ -122,13 +127,17 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
   }
 
   Widget _body(
-      BuildContext context, OrgSpanBuilder spanBuilder, int indentSize) {
+    BuildContext context,
+    OrgSpanBuilder spanBuilder,
+    int indentSize,
+  ) {
     final block = widget.block;
     Widget body;
     if (block is OrgSrcBlock) {
       final codeNode = block.body as OrgPlainText;
-      final code =
-          removeTrailingLineBreak(softDeindent(codeNode.content, indentSize));
+      final code = removeTrailingLineBreak(
+        softDeindent(codeNode.content, indentSize),
+      );
       final refPattern = block.coderefPattern();
       final defaultStyle = DefaultTextStyle.of(context).style;
       InlineSpan span;
@@ -137,19 +146,22 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
           color: OrgTheme.dataOf(context).codeColor,
         );
         span = TextSpan(
-          children: _tokenizeText(code, refPattern).map((t) {
-            return t.coderef == null
-                ? spanBuilder.highlightedSpan(t.text, style: codeStyle)
-                : WidgetSpan(
-                    child: OrgCoderefWidget(
-                      t.text,
-                      spanBuilder,
-                      style: codeStyle,
-                      key: OrgLocator.of(context)
-                          ?.generateCoderefKey(t.coderef!),
-                    ),
-                  );
-          }).toList(growable: false),
+          children: _tokenizeText(code, refPattern)
+              .map((t) {
+                return t.coderef == null
+                    ? spanBuilder.highlightedSpan(t.text, style: codeStyle)
+                    : WidgetSpan(
+                        child: OrgCoderefWidget(
+                          t.text,
+                          spanBuilder,
+                          style: codeStyle,
+                          key: OrgLocator.of(
+                            context,
+                          )?.generateCoderefKey(t.coderef!),
+                        ),
+                      );
+              })
+              .toList(growable: false),
         );
       } else {
         span = buildSrcHighlightSpan(
@@ -179,7 +191,8 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
     } else if (block.body is OrgPlainText) {
       final contentNode = block.body as OrgPlainText;
       final content = removeTrailingLineBreak(
-          softDeindent(contentNode.content, indentSize));
+        softDeindent(contentNode.content, indentSize),
+      );
       body = Text.rich(spanBuilder.highlightedSpan(content));
     } else {
       // This feels a bit costly, but it's the easiest way to handle scenarios
@@ -199,9 +212,9 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
     }
     if (block.type == 'example' || block.type == 'export') {
       body = DefaultTextStyle(
-        style: DefaultTextStyle.of(context).style.copyWith(
-              color: OrgTheme.dataOf(context).codeColor,
-            ),
+        style: DefaultTextStyle.of(
+          context,
+        ).style.copyWith(color: OrgTheme.dataOf(context).codeColor),
         child: body,
       );
     } else if (block.type == 'verse') {

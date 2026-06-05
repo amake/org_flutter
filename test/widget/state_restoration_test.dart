@@ -7,15 +7,19 @@ import './util.dart';
 void main() {
   group('State restoration', () {
     testWidgets('No restoration ID', (tester) async {
-      await tester.pumpWidget(RootRestorationScope(
-        restorationId: 'root',
-        child: wrap(const Org('''
+      await tester.pumpWidget(
+        RootRestorationScope(
+          restorationId: 'root',
+          child: wrap(
+            const Org('''
 foo bar
 * headline 1
 baz buzz
 ** headline 2
-bazinga''')),
-      ));
+bazinga'''),
+          ),
+        ),
+      );
       expect(find.textContaining('foo bar'), findsOneWidget);
       await tester.tap(find.byType(OrgHeadlineWidget).first);
       await tester.pump();
@@ -30,18 +34,19 @@ bazinga''')),
       expect(find.textContaining('bazinga'), findsNothing);
     });
     testWidgets('Restores section visibility', (tester) async {
-      await tester.pumpWidget(RootRestorationScope(
-        restorationId: 'root',
-        child: wrap(const Org(
-          '''
+      await tester.pumpWidget(
+        RootRestorationScope(
+          restorationId: 'root',
+          child: wrap(
+            const Org('''
 foo bar
 * headline 1
 baz buzz
 ** headline 2
-bazinga''',
-          restorationId: 'doc',
-        )),
-      ));
+bazinga''', restorationId: 'doc'),
+          ),
+        ),
+      );
       expect(find.textContaining('foo bar'), findsOneWidget);
       await tester.tap(find.byType(OrgHeadlineWidget).first);
       await tester.pump();
@@ -65,14 +70,11 @@ bazinga''');
         root: doc,
         searchQuery: RegExp('baz'),
         restorationId: 'doc',
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
-      await tester.pumpWidget(RootRestorationScope(
-        restorationId: 'root',
-        child: wrap(widget),
-      ));
+      await tester.pumpWidget(
+        RootRestorationScope(restorationId: 'root', child: wrap(widget)),
+      );
       expect(find.textContaining('foo bar'), findsOneWidget);
       expect(find.textContaining('buzz'), findsOneWidget);
       expect(find.textContaining('headline 2'), findsOneWidget);
@@ -99,14 +101,11 @@ bazinga''');
         root: doc,
         sparseQuery: const OrgQueryTagMatcher('abcd'),
         restorationId: 'doc',
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
-      await tester.pumpWidget(RootRestorationScope(
-        restorationId: 'root',
-        child: wrap(widget),
-      ));
+      await tester.pumpWidget(
+        RootRestorationScope(restorationId: 'root', child: wrap(widget)),
+      );
       expect(find.textContaining('foo bar'), findsOneWidget);
       expect(find.textContaining('baz buzz'), findsNothing);
       expect(find.textContaining('headline 2'), findsOneWidget);

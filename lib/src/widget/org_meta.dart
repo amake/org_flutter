@@ -14,13 +14,10 @@ const _kDocInfoKeywords = {
   '#+SUBTITLE:',
   '#+AUTHOR:',
   '#+EMAIL:',
-  '#+DATE:'
+  '#+DATE:',
 };
 
-const _kExportedKeywords = {
-  ..._kDocInfoKeywords,
-  '#+CAPTION:',
-};
+const _kExportedKeywords = {..._kDocInfoKeywords, '#+CAPTION:'};
 
 /// An Org Mode meta line
 class OrgMetaWidget extends StatefulWidget {
@@ -38,7 +35,8 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final deemphasize = !_isDocInfoKeyword &&
+    final deemphasize =
+        !_isDocInfoKeyword &&
         OrgSettings.of(context).settings.deemphasizeMarkup;
     return IndentBuilder(
       widget.meta.indent,
@@ -48,9 +46,10 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
             cookie: _cookie,
             child: Text.rich(
               TextSpan(
-                children: _spans(context, spanBuilder)
-                    .whereType<InlineSpan>()
-                    .toList(growable: false),
+                children: _spans(
+                  context,
+                  spanBuilder,
+                ).whereType<InlineSpan>().toList(growable: false),
               ),
               softWrap: !deemphasize,
             ),
@@ -63,10 +62,12 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
           );
         }
         if (deemphasize) {
-          body = reduceOpacity(SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: body,
-          ));
+          body = reduceOpacity(
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: body,
+            ),
+          );
         }
         return body;
       },
@@ -95,23 +96,26 @@ class OrgMetaWidgetState extends State<OrgMetaWidget> {
                 ? FontWeight.bold
                 : null,
           )
-        : widget.meta.key
-                .toUpperCase()
-                .startsWith(RegExp(r'^#\+CAPTION[[:]', caseSensitive: false))
-            ? style.copyWith(
-                color: OrgTheme.dataOf(context).codeColor,
-              )
-            : style.copyWith(color: OrgTheme.dataOf(context).metaColor);
+        : widget.meta.key.toUpperCase().startsWith(
+            RegExp(r'^#\+CAPTION[[:]', caseSensitive: false),
+          )
+        ? style.copyWith(color: OrgTheme.dataOf(context).codeColor)
+        : style.copyWith(color: OrgTheme.dataOf(context).metaColor);
   }
 
   Iterable<InlineSpan?> _spans(
-      BuildContext context, OrgSpanBuilder builder) sync* {
+    BuildContext context,
+    OrgSpanBuilder builder,
+  ) sync* {
     final settings = OrgSettings.of(context).settings;
     if (!_isDocInfoKeyword ||
-        !settings.hiddenKeywords.any((kw) =>
-            '#+${kw.toUpperCase()}:' == widget.meta.key.toUpperCase())) {
-      yield builder.highlightedSpan(widget.meta.key,
-          style: _keywordStyle(context));
+        !settings.hiddenKeywords.any(
+          (kw) => '#+${kw.toUpperCase()}:' == widget.meta.key.toUpperCase(),
+        )) {
+      yield builder.highlightedSpan(
+        widget.meta.key,
+        style: _keywordStyle(context),
+      );
     }
     if (widget.meta.value != null) {
       yield builder.build(widget.meta.value!, style: _valueStyle(context));

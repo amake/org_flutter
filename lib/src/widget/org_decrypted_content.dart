@@ -16,10 +16,7 @@ class OrgDecryptedContentWidget extends StatelessWidget {
       children: <Widget>[
         if (content.content != null) OrgContentWidget(content.content!),
         for (final (i, section) in content.sections.indexed)
-          OrgSectionWidget(
-            section,
-            siblingIndex: i,
-          ),
+          OrgSectionWidget(section, siblingIndex: i),
       ],
     );
   }

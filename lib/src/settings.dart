@@ -25,17 +25,16 @@ const _kDefaultHiddenKeywords = <String>[];
 const _kDefaultHiddenElements = <String>[];
 
 class InheritedOrgSettings extends InheritedWidget {
-  static Widget merge(
-    OrgSettings settings, {
-    required Widget child,
-  }) {
-    return Builder(builder: (context) {
-      final inherited = OrgSettings.of(context);
-      return InheritedOrgSettings(
-        [settings, ...inherited.settings],
-        child: child,
-      );
-    });
+  static Widget merge(OrgSettings settings, {required Widget child}) {
+    return Builder(
+      builder: (context) {
+        final inherited = OrgSettings.of(context);
+        return InheritedOrgSettings([
+          settings,
+          ...inherited.settings,
+        ], child: child);
+      },
+    );
   }
 
   const InheritedOrgSettings(this.settings, {required super.child, super.key});
@@ -59,31 +58,31 @@ class OrgSettings {
       context.dependOnInheritedWidgetOfExactType<InheritedOrgSettings>()!;
 
   static OrgSettings get defaults => const OrgSettings(
-        reflowText: _kDefaultReflowText,
-        deemphasizeMarkup: _kDefaultDeemphasizeMarkup,
-        startupFolded: _kDefaultVisibilityState,
-        prettyEntities: _kDefaultPrettyEntities,
-        subSuperscripts: _kDefaultSubSuperscripts,
-        strictSubSuperscripts: _kDefaultStrictSubSuperscripts,
-        hideBlockStartup: _kDefaultHideBlockStartup,
-        hideDrawerStartup: _kDefaultHideDrawerStartup,
-        hideStars: _kDefaultHideStars,
-        inlineImages: _kDefaultInlineImages,
-        numMode: _kDefaultNumMode,
-        hideEmphasisMarkers: _kDefaultHideEmphasisMarkers,
-        entityReplacements: orgDefaultEntityReplacements,
-        todoSettings: [defaultTodoStates],
-        orgAttachIdDir: _kDefaultOrgAttachIdDir,
-        hiddenKeywords: _kDefaultHiddenKeywords,
-        hiddenElements: _kDefaultHiddenElements,
-      );
+    reflowText: _kDefaultReflowText,
+    deemphasizeMarkup: _kDefaultDeemphasizeMarkup,
+    startupFolded: _kDefaultVisibilityState,
+    prettyEntities: _kDefaultPrettyEntities,
+    subSuperscripts: _kDefaultSubSuperscripts,
+    strictSubSuperscripts: _kDefaultStrictSubSuperscripts,
+    hideBlockStartup: _kDefaultHideBlockStartup,
+    hideDrawerStartup: _kDefaultHideDrawerStartup,
+    hideStars: _kDefaultHideStars,
+    inlineImages: _kDefaultInlineImages,
+    numMode: _kDefaultNumMode,
+    hideEmphasisMarkers: _kDefaultHideEmphasisMarkers,
+    entityReplacements: orgDefaultEntityReplacements,
+    todoSettings: [defaultTodoStates],
+    orgAttachIdDir: _kDefaultOrgAttachIdDir,
+    hiddenKeywords: _kDefaultHiddenKeywords,
+    hiddenElements: _kDefaultHiddenElements,
+  );
 
   /// Equivalent to the old "hideMarkup" setting
   static OrgSettings get hideMarkup => const OrgSettings(
-        reflowText: true,
-        deemphasizeMarkup: true,
-        hideEmphasisMarkers: true,
-      );
+    reflowText: true,
+    deemphasizeMarkup: true,
+    hideEmphasisMarkers: true,
+  );
 
   /// Initialize a settings object from values contained within the document,
   /// specifically:
@@ -181,8 +180,11 @@ class OrgSettings {
     List<String>? hiddenKeywords;
     try {
       final lvars = extractLocalVariables(doc, errorHandler);
-      entityReplacements =
-          getOrgEntities(orgDefaultEntityReplacements, lvars, errorHandler);
+      entityReplacements = getOrgEntities(
+        orgDefaultEntityReplacements,
+        lvars,
+        errorHandler,
+      );
       prettyEntities ??= getPrettyEntities(lvars);
       hideEmphasisMarkers = getHideEmphasisMarkers(lvars);
       textDirection = getTextDirection(lvars);
@@ -359,31 +361,31 @@ class OrgSettings {
 
   @override
   int get hashCode => Object.hash(
-        reflowText,
-        deemphasizeMarkup,
-        startupFolded,
-        hideEmphasisMarkers,
-        prettyEntities,
-        subSuperscripts,
-        strictSubSuperscripts,
-        hideBlockStartup,
-        hideDrawerStartup,
-        hideStars,
-        inlineImages,
-        numMode,
-        entityReplacements == null
-            ? null
-            : Object.hashAll(entityReplacements!.keys),
-        entityReplacements == null
-            ? null
-            : Object.hashAll(entityReplacements!.values),
-        todoSettings == null ? null : Object.hashAll(todoSettings!),
-        locale,
-        textDirection,
-        orgAttachIdDir,
-        hiddenKeywords == null ? null : Object.hashAll(hiddenKeywords!),
-        hiddenElements == null ? null : Object.hashAll(hiddenElements!),
-      );
+    reflowText,
+    deemphasizeMarkup,
+    startupFolded,
+    hideEmphasisMarkers,
+    prettyEntities,
+    subSuperscripts,
+    strictSubSuperscripts,
+    hideBlockStartup,
+    hideDrawerStartup,
+    hideStars,
+    inlineImages,
+    numMode,
+    entityReplacements == null
+        ? null
+        : Object.hashAll(entityReplacements!.keys),
+    entityReplacements == null
+        ? null
+        : Object.hashAll(entityReplacements!.values),
+    todoSettings == null ? null : Object.hashAll(todoSettings!),
+    locale,
+    textDirection,
+    orgAttachIdDir,
+    hiddenKeywords == null ? null : Object.hashAll(hiddenKeywords!),
+    hiddenElements == null ? null : Object.hashAll(hiddenElements!),
+  );
 
   OrgSettings copyWith({
     bool? reflowText,
@@ -405,99 +407,122 @@ class OrgSettings {
     String? orgAttachIdDir,
     List<String>? hiddenKeywords,
     List<String>? hiddenElements,
-  }) =>
-      OrgSettings(
-        reflowText: reflowText ?? this.reflowText,
-        deemphasizeMarkup: deemphasizeMarkup ?? this.deemphasizeMarkup,
-        startupFolded: startupFolded ?? this.startupFolded,
-        hideEmphasisMarkers: hideEmphasisMarkers ?? this.hideEmphasisMarkers,
-        prettyEntities: prettyEntities ?? this.prettyEntities,
-        subSuperscripts: subSuperscripts ?? this.subSuperscripts,
-        strictSubSuperscripts:
-            strictSubSuperscripts ?? this.strictSubSuperscripts,
-        hideBlockStartup: hideBlockStartup ?? this.hideBlockStartup,
-        hideDrawerStartup: hideDrawerStartup ?? this.hideDrawerStartup,
-        hideStars: hideStars ?? this.hideStars,
-        inlineImages: inlineImages ?? this.inlineImages,
-        numMode: numMode ?? this.numMode,
-        entityReplacements: entityReplacements ?? this.entityReplacements,
-        todoSettings: todoSettings ?? this.todoSettings,
-        locale: locale ?? this.locale,
-        textDirection: textDirection ?? this.textDirection,
-        orgAttachIdDir: orgAttachIdDir ?? this.orgAttachIdDir,
-        hiddenKeywords: hiddenKeywords ?? this.hiddenKeywords,
-        hiddenElements: hiddenElements ?? this.hiddenElements,
-      );
+  }) => OrgSettings(
+    reflowText: reflowText ?? this.reflowText,
+    deemphasizeMarkup: deemphasizeMarkup ?? this.deemphasizeMarkup,
+    startupFolded: startupFolded ?? this.startupFolded,
+    hideEmphasisMarkers: hideEmphasisMarkers ?? this.hideEmphasisMarkers,
+    prettyEntities: prettyEntities ?? this.prettyEntities,
+    subSuperscripts: subSuperscripts ?? this.subSuperscripts,
+    strictSubSuperscripts: strictSubSuperscripts ?? this.strictSubSuperscripts,
+    hideBlockStartup: hideBlockStartup ?? this.hideBlockStartup,
+    hideDrawerStartup: hideDrawerStartup ?? this.hideDrawerStartup,
+    hideStars: hideStars ?? this.hideStars,
+    inlineImages: inlineImages ?? this.inlineImages,
+    numMode: numMode ?? this.numMode,
+    entityReplacements: entityReplacements ?? this.entityReplacements,
+    todoSettings: todoSettings ?? this.todoSettings,
+    locale: locale ?? this.locale,
+    textDirection: textDirection ?? this.textDirection,
+    orgAttachIdDir: orgAttachIdDir ?? this.orgAttachIdDir,
+    hiddenKeywords: hiddenKeywords ?? this.hiddenKeywords,
+    hiddenElements: hiddenElements ?? this.hiddenElements,
+  );
 }
 
 extension LayeredOrgSettings on List<OrgSettings> {
-  bool get reflowText => firstWhere((layer) => layer.reflowText != null,
-      orElse: () => OrgSettings.defaults).reflowText!;
+  bool get reflowText => firstWhere(
+    (layer) => layer.reflowText != null,
+    orElse: () => OrgSettings.defaults,
+  ).reflowText!;
 
-  bool get deemphasizeMarkup =>
-      firstWhere((layer) => layer.deemphasizeMarkup != null,
-          orElse: () => OrgSettings.defaults).deemphasizeMarkup!;
+  bool get deemphasizeMarkup => firstWhere(
+    (layer) => layer.deemphasizeMarkup != null,
+    orElse: () => OrgSettings.defaults,
+  ).deemphasizeMarkup!;
 
-  OrgVisibilityState get startupFolded =>
-      firstWhere((layer) => layer.startupFolded != null,
-          orElse: () => OrgSettings.defaults).startupFolded!;
+  OrgVisibilityState get startupFolded => firstWhere(
+    (layer) => layer.startupFolded != null,
+    orElse: () => OrgSettings.defaults,
+  ).startupFolded!;
 
-  bool get hideEmphasisMarkers =>
-      firstWhere((layer) => layer.hideEmphasisMarkers != null,
-          orElse: () => OrgSettings.defaults).hideEmphasisMarkers!;
+  bool get hideEmphasisMarkers => firstWhere(
+    (layer) => layer.hideEmphasisMarkers != null,
+    orElse: () => OrgSettings.defaults,
+  ).hideEmphasisMarkers!;
 
-  bool get prettyEntities => firstWhere((layer) => layer.prettyEntities != null,
-      orElse: () => OrgSettings.defaults).prettyEntities!;
+  bool get prettyEntities => firstWhere(
+    (layer) => layer.prettyEntities != null,
+    orElse: () => OrgSettings.defaults,
+  ).prettyEntities!;
 
-  bool get subSuperscripts =>
-      firstWhere((layer) => layer.subSuperscripts != null,
-          orElse: () => OrgSettings.defaults).subSuperscripts!;
+  bool get subSuperscripts => firstWhere(
+    (layer) => layer.subSuperscripts != null,
+    orElse: () => OrgSettings.defaults,
+  ).subSuperscripts!;
 
-  bool get strictSubSuperscripts =>
-      firstWhere((layer) => layer.strictSubSuperscripts != null,
-          orElse: () => OrgSettings.defaults).strictSubSuperscripts!;
+  bool get strictSubSuperscripts => firstWhere(
+    (layer) => layer.strictSubSuperscripts != null,
+    orElse: () => OrgSettings.defaults,
+  ).strictSubSuperscripts!;
 
-  bool get hideBlockStartup =>
-      firstWhere((layer) => layer.hideBlockStartup != null,
-          orElse: () => OrgSettings.defaults).hideBlockStartup!;
+  bool get hideBlockStartup => firstWhere(
+    (layer) => layer.hideBlockStartup != null,
+    orElse: () => OrgSettings.defaults,
+  ).hideBlockStartup!;
 
-  bool get hideDrawerStartup =>
-      firstWhere((layer) => layer.hideDrawerStartup != null,
-          orElse: () => OrgSettings.defaults).hideDrawerStartup!;
+  bool get hideDrawerStartup => firstWhere(
+    (layer) => layer.hideDrawerStartup != null,
+    orElse: () => OrgSettings.defaults,
+  ).hideDrawerStartup!;
 
-  bool get hideStars => firstWhere((layer) => layer.hideStars != null,
-      orElse: () => OrgSettings.defaults).hideStars!;
+  bool get hideStars => firstWhere(
+    (layer) => layer.hideStars != null,
+    orElse: () => OrgSettings.defaults,
+  ).hideStars!;
 
-  bool get inlineImages => firstWhere((layer) => layer.inlineImages != null,
-      orElse: () => OrgSettings.defaults).inlineImages!;
+  bool get inlineImages => firstWhere(
+    (layer) => layer.inlineImages != null,
+    orElse: () => OrgSettings.defaults,
+  ).inlineImages!;
 
-  bool get numMode => firstWhere((layer) => layer.numMode != null,
-      orElse: () => OrgSettings.defaults).numMode!;
+  bool get numMode => firstWhere(
+    (layer) => layer.numMode != null,
+    orElse: () => OrgSettings.defaults,
+  ).numMode!;
 
-  Map<String, String> get entityReplacements =>
-      firstWhere((layer) => layer.entityReplacements != null,
-          orElse: () => OrgSettings.defaults).entityReplacements!;
+  Map<String, String> get entityReplacements => firstWhere(
+    (layer) => layer.entityReplacements != null,
+    orElse: () => OrgSettings.defaults,
+  ).entityReplacements!;
 
-  List<OrgTodoStates> get todoSettings =>
-      firstWhere((layer) => layer.todoSettings != null,
-          orElse: () => OrgSettings.defaults).todoSettings!;
+  List<OrgTodoStates> get todoSettings => firstWhere(
+    (layer) => layer.todoSettings != null,
+    orElse: () => OrgSettings.defaults,
+  ).todoSettings!;
 
-  Locale? get locale => firstWhere((layer) => layer.locale != null,
-      orElse: () => OrgSettings.defaults).locale;
+  Locale? get locale => firstWhere(
+    (layer) => layer.locale != null,
+    orElse: () => OrgSettings.defaults,
+  ).locale;
 
-  TextDirection? get textDirection =>
-      firstWhere((layer) => layer.textDirection != null,
-          orElse: () => OrgSettings.defaults).textDirection;
+  TextDirection? get textDirection => firstWhere(
+    (layer) => layer.textDirection != null,
+    orElse: () => OrgSettings.defaults,
+  ).textDirection;
 
-  String get orgAttachIdDir =>
-      firstWhere((layer) => layer.orgAttachIdDir != null,
-          orElse: () => OrgSettings.defaults).orgAttachIdDir!;
+  String get orgAttachIdDir => firstWhere(
+    (layer) => layer.orgAttachIdDir != null,
+    orElse: () => OrgSettings.defaults,
+  ).orgAttachIdDir!;
 
-  List<String> get hiddenKeywords =>
-      firstWhere((layer) => layer.hiddenKeywords != null,
-          orElse: () => OrgSettings.defaults).hiddenKeywords!;
+  List<String> get hiddenKeywords => firstWhere(
+    (layer) => layer.hiddenKeywords != null,
+    orElse: () => OrgSettings.defaults,
+  ).hiddenKeywords!;
 
-  List<String> get hiddenElements =>
-      firstWhere((layer) => layer.hiddenElements != null,
-          orElse: () => OrgSettings.defaults).hiddenElements!;
+  List<String> get hiddenElements => firstWhere(
+    (layer) => layer.hiddenElements != null,
+    orElse: () => OrgSettings.defaults,
+  ).hiddenElements!;
 }

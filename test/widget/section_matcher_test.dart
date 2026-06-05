@@ -15,9 +15,7 @@ foo3''');
       final widget = OrgController(
         root: doc,
         sparseQuery: OrgQueryMatcher.fromMarkup('TODO="TODO"'),
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining('foo1'), findsOneWidget);
@@ -36,9 +34,7 @@ foo3''');
         final widget = OrgController(
           root: doc,
           sparseQuery: const OrgQueryTagMatcher('buzz'),
-          child: OrgRootWidget(
-            child: OrgDocumentWidget(doc),
-          ),
+          child: OrgRootWidget(child: OrgDocumentWidget(doc)),
         );
         await tester.pumpWidget(wrap(widget));
         expect(find.textContaining('foo1'), findsOneWidget);
@@ -60,9 +56,7 @@ foo5''');
         final widget = OrgController(
           root: doc,
           sparseQuery: const OrgQueryTagMatcher('buzz'),
-          child: OrgRootWidget(
-            child: OrgDocumentWidget(doc),
-          ),
+          child: OrgRootWidget(child: OrgDocumentWidget(doc)),
         );
         await tester.pumpWidget(wrap(widget));
         expect(find.textContaining('foo1'), findsOneWidget);
@@ -86,9 +80,7 @@ foo3''');
           root: doc,
           sparseQuery: OrgQueryMatcher.fromMarkup('TODO="TODO"'),
           searchQuery: 'foo2',
-          child: OrgRootWidget(
-            child: OrgDocumentWidget(doc),
-          ),
+          child: OrgRootWidget(child: OrgDocumentWidget(doc)),
         );
         await tester.pumpWidget(wrap(widget));
         expect(find.textContaining('foo1'), findsOneWidget);
@@ -107,9 +99,7 @@ foo3''');
           root: doc,
           sparseQuery: OrgQueryMatcher.fromMarkup('TODO="TODO"'),
           searchQuery: 'foo3',
-          child: OrgRootWidget(
-            child: OrgDocumentWidget(doc),
-          ),
+          child: OrgRootWidget(child: OrgDocumentWidget(doc)),
         );
         await tester.pumpWidget(wrap(widget));
         expect(find.textContaining('foo1'), findsOneWidget);

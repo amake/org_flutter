@@ -15,11 +15,13 @@ class OrgLatexInlineWidget extends StatelessWidget {
       displayMode: false,
       error: (context, error) {
         debugPrint(error.toString());
-        return Text([
-          latex.leadingDecoration,
-          latex.content,
-          latex.trailingDecoration,
-        ].join(''));
+        return Text(
+          [
+            latex.leadingDecoration,
+            latex.content,
+            latex.trailingDecoration,
+          ].join(''),
+        );
       },
     );
   }

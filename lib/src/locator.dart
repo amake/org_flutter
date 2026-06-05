@@ -35,8 +35,9 @@ class _OrgLocatorState extends State<OrgLocator> {
 
   final ValueNotifier<Map<String, NameKey>> _nameKeys = SafeValueNotifier({});
 
-  final ValueNotifier<Map<String, CoderefKey>> _coderefKeys =
-      SafeValueNotifier({});
+  final ValueNotifier<Map<String, CoderefKey>> _coderefKeys = SafeValueNotifier(
+    {},
+  );
 
   OrgControllerData get _controller => OrgController.of(context);
 
@@ -51,9 +52,11 @@ class _OrgLocatorState extends State<OrgLocator> {
   }
 
   Future<bool> _jumpToFootnote(OrgFootnoteReference reference) async {
-    final result = _controller.root.find<OrgFootnoteReference>((ref) =>
-        ref.name == reference.name &&
-        ref.isDefinition != reference.isDefinition);
+    final result = _controller.root.find<OrgFootnoteReference>(
+      (ref) =>
+          ref.name == reference.name &&
+          ref.isDefinition != reference.isDefinition,
+    );
     if (result == null) return false;
 
     final key = _footnoteKeys.value[result.node.id];
@@ -77,8 +80,9 @@ class _OrgLocatorState extends State<OrgLocator> {
 
   Future<bool> _jumpToRadioTarget(OrgRadioLink radioLink) async {
     final id = radioLink.content.toLowerCase();
-    final result = _controller.root
-        .find<OrgRadioTarget>((target) => target.body.toLowerCase() == id);
+    final result = _controller.root.find<OrgRadioTarget>(
+      (target) => target.body.toLowerCase() == id,
+    );
     if (result == null) return false;
 
     final key = _radioTargetKeys.value[id];
@@ -102,8 +106,9 @@ class _OrgLocatorState extends State<OrgLocator> {
 
   Future<bool> _jumpToLinkTarget(String body) async {
     final keyId = body.toLowerCase();
-    final result = _controller.root
-        .find<OrgLinkTarget>((target) => target.body.toLowerCase() == keyId);
+    final result = _controller.root.find<OrgLinkTarget>(
+      (target) => target.body.toLowerCase() == keyId,
+    );
     if (result == null) return false;
 
     final key = _linkTargetKeys.value[keyId];
@@ -127,9 +132,11 @@ class _OrgLocatorState extends State<OrgLocator> {
 
   Future<bool> _jumpToName(String name) async {
     final keyId = name.toLowerCase();
-    final result = _controller.root.find<OrgMeta>((target) =>
-        target.key.toUpperCase() == '#+NAME:' &&
-        target.value?.toMarkup().trim().toLowerCase() == keyId);
+    final result = _controller.root.find<OrgMeta>(
+      (target) =>
+          target.key.toUpperCase() == '#+NAME:' &&
+          target.value?.toMarkup().trim().toLowerCase() == keyId,
+    );
     if (result == null) return false;
 
     final key = _nameKeys.value[keyId];
@@ -152,8 +159,9 @@ class _OrgLocatorState extends State<OrgLocator> {
   }
 
   Future<bool> _jumpToCoderef(String ref) async {
-    final result =
-        _controller.root.find<OrgSrcBlock>((target) => target.hasCoderef(ref));
+    final result = _controller.root.find<OrgSrcBlock>(
+      (target) => target.hasCoderef(ref),
+    );
     if (result == null) return false;
 
     final key = _coderefKeys.value[ref];

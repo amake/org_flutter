@@ -19,13 +19,12 @@ foo *bar* baz
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
-      final settings =
-          OrgSettings.of(tester.element(find.byType(OrgRootWidget)));
+      final settings = OrgSettings.of(
+        tester.element(find.byType(OrgRootWidget)),
+      );
       expect(settings.settings.orgAttachIdDir, '../foo');
     });
     testWidgets('Ignores invalid', (tester) async {
@@ -42,13 +41,12 @@ foo *bar* baz
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
-      final settings =
-          OrgSettings.of(tester.element(find.byType(OrgRootWidget)));
+      final settings = OrgSettings.of(
+        tester.element(find.byType(OrgRootWidget)),
+      );
       expect(settings.settings.orgAttachIdDir, 'data');
     });
   });

@@ -6,23 +6,31 @@ void main() {
     group('space-delimited script', () {
       test('solitary token', () {
         final text = ' \n foo\n\nbar\n\nbaz\nbuzz \nbazinga\n  ';
-        expect(reflowText(text, TokenLocation.only),
-            ' \n foo\n\nbar\n\nbaz buzz bazinga\n  ');
+        expect(
+          reflowText(text, TokenLocation.only),
+          ' \n foo\n\nbar\n\nbaz buzz bazinga\n  ',
+        );
       });
       test('start token', () {
         final text = ' \n foo\n\nbar\n\nbaz\nbuzz \nbazinga\n  ';
-        expect(reflowText(text, TokenLocation.start),
-            ' \n foo\n\nbar\n\nbaz buzz bazinga ');
+        expect(
+          reflowText(text, TokenLocation.start),
+          ' \n foo\n\nbar\n\nbaz buzz bazinga ',
+        );
       });
       test('middle token', () {
         final text = ' \n foo\n\nbar\n\nbaz\nbuzz \nbazinga\n  ';
-        expect(reflowText(text, TokenLocation.middle),
-            ' foo\n\nbar\n\nbaz buzz bazinga ');
+        expect(
+          reflowText(text, TokenLocation.middle),
+          ' foo\n\nbar\n\nbaz buzz bazinga ',
+        );
       });
       test('end token', () {
         final text = ' \n foo\n\nbar\n\nbaz\nbuzz \nbazinga\n  ';
-        expect(reflowText(text, TokenLocation.end),
-            ' foo\n\nbar\n\nbaz buzz bazinga\n  ');
+        expect(
+          reflowText(text, TokenLocation.end),
+          ' foo\n\nbar\n\nbaz buzz bazinga\n  ',
+        );
       });
     });
     group('non-space-delimited script', () {

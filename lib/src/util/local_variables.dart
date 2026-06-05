@@ -22,8 +22,9 @@ class LocalVariablesParser extends GrammarDefinition<List<dynamic>> {
   // stop at the delimiter
   Parser symbolToken() =>
       pattern('a-zA-Z!#\$%&*/:<=>?@\\^_|~+-') &
-      pattern('a-zA-Z0-9!#\$%&*/:<=>?@\\^_|~+-')
-          .starLazy(ref0(delimiter) | endOfInput());
+      pattern(
+        'a-zA-Z0-9!#\$%&*/:<=>?@\\^_|~+-',
+      ).starLazy(ref0(delimiter) | endOfInput());
 
   Parser delimiter() => char(':') & whitespace();
 
@@ -111,10 +112,7 @@ Map<String, dynamic> extractLocalVariables(
   );
 }
 
-const _kOrgEntitiesUserKeys = [
-  'org-entities-user',
-  'org-entities-local',
-];
+const _kOrgEntitiesUserKeys = ['org-entities-user', 'org-entities-local'];
 
 Map<String, String> getOrgEntities(
   Map<String, String> defaults,

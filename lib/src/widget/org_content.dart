@@ -23,10 +23,7 @@ class OrgContentWidget extends StatelessWidget {
           transformer: transformer ?? identityTransformer,
         );
         if (span == null) return const SizedBox.shrink();
-        return Text.rich(
-          span,
-          textAlign: textAlign,
-        );
+        return Text.rich(span, textAlign: textAlign);
       },
     );
   }

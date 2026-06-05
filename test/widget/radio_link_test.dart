@@ -6,22 +6,21 @@ import 'util.dart';
 void main() {
   group('Radio links', () {
     testWidgets('Keys', (tester) async {
-      final doc =
-          OrgDocument.parse('<<<foo>>>', interpretEmbeddedSettings: true);
+      final doc = OrgDocument.parse(
+        '<<<foo>>>',
+        interpretEmbeddedSettings: true,
+      );
       final widget = OrgController(
         root: doc,
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgLocator(
-          child: OrgRootWidget(
-            child: OrgDocumentWidget(doc),
-          ),
-        ),
+        child: OrgLocator(child: OrgRootWidget(child: OrgDocumentWidget(doc))),
       );
       await tester.pumpWidget(wrap(widget));
-      final locator =
-          OrgLocator.of(tester.element(find.textContaining('foo')))!;
+      final locator = OrgLocator.of(
+        tester.element(find.textContaining('foo')),
+      )!;
       expect(locator.radioTargetKeys.value.length, 1);
     });
     testWidgets('Visibility', (tester) async {
@@ -36,11 +35,7 @@ bazinga
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgLocator(
-          child: OrgRootWidget(
-            child: OrgDocumentWidget(doc),
-          ),
-        ),
+        child: OrgLocator(child: OrgRootWidget(child: OrgDocumentWidget(doc))),
       );
       await tester.pumpWidget(wrap(widget));
 

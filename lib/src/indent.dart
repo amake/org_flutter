@@ -28,8 +28,9 @@ class IndentBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final parentIndent = IndentContext.of(context)?.indentSize ?? 0;
-    final newIndent =
-        indent.length >= parentIndent ? indent.substring(parentIndent) : '';
+    final newIndent = indent.length >= parentIndent
+        ? indent.substring(parentIndent)
+        : '';
     final totalIndentSize = parentIndent + newIndent.length;
     Widget child = IndentContext(
       parentIndent + newIndent.length,

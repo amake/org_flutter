@@ -17,15 +17,12 @@ void main() {
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgLocator(
-          child: OrgRootWidget(
-            child: OrgDocumentWidget(doc),
-          ),
-        ),
+        child: OrgLocator(child: OrgRootWidget(child: OrgDocumentWidget(doc))),
       );
       await tester.pumpWidget(wrap(widget));
-      final locator =
-          OrgLocator.of(tester.element(find.textContaining('save-excursion')))!;
+      final locator = OrgLocator.of(
+        tester.element(find.textContaining('save-excursion')),
+      )!;
       expect(locator.coderefKeys.value.length, 2);
     });
     testWidgets('Visibility', (tester) async {
@@ -43,11 +40,7 @@ void main() {
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgLocator(
-          child: OrgRootWidget(
-            child: OrgDocumentWidget(doc),
-          ),
-        ),
+        child: OrgLocator(child: OrgRootWidget(child: OrgDocumentWidget(doc))),
       );
       await tester.pumpWidget(wrap(widget));
 

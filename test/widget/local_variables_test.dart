@@ -19,9 +19,7 @@ foo *bar* baz
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining('foo bar baz'), findsOneWidget);

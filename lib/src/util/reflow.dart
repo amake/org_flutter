@@ -9,47 +9,55 @@ TokenLocation locationOf(Object elem, List<Object> elems) {
   return isLast && isFirst
       ? TokenLocation.only
       : isLast
-          ? TokenLocation.end
-          : isFirst
-              ? TokenLocation.start
-              : TokenLocation.middle;
+      ? TokenLocation.end
+      : isFirst
+      ? TokenLocation.start
+      : TokenLocation.middle;
 }
 
 String reflowText(String text, TokenLocation location) => text.replaceAllMapped(
-      switch (location) {
-        TokenLocation.only => _unwrappableWhitespacePattern,
-        TokenLocation.start => _unwrappableStartWhitespacePattern,
-        TokenLocation.middle => _unwrappableMiddleWhitespacePattern,
-        TokenLocation.end => _unwrappableEndWhitespacePattern,
-      },
-      (match) {
-        final before = text.codePointBefore(match.start);
-        if (before != null && _isNonSpaceDelimited(before)) {
-          final after = text.codePointAt(match.end);
-          if (after != null && _isNonSpaceDelimited(after)) {
-            return '';
-          }
-        }
-        return ' ';
-      },
-    );
+  switch (location) {
+    TokenLocation.only => _unwrappableWhitespacePattern,
+    TokenLocation.start => _unwrappableStartWhitespacePattern,
+    TokenLocation.middle => _unwrappableMiddleWhitespacePattern,
+    TokenLocation.end => _unwrappableEndWhitespacePattern,
+  },
+  (match) {
+    final before = text.codePointBefore(match.start);
+    if (before != null && _isNonSpaceDelimited(before)) {
+      final after = text.codePointAt(match.end);
+      if (after != null && _isNonSpaceDelimited(after)) {
+        return '';
+      }
+    }
+    return ' ';
+  },
+);
 
 // Match single (CR)LF between non-whitespace chars only (preserve leading and
 // trailing linebreaks)
-final _unwrappableWhitespacePattern =
-    RegExp(r'(?<=\S)[ \t]*\r?\n[ \t]*(?=\S)', unicode: true);
+final _unwrappableWhitespacePattern = RegExp(
+  r'(?<=\S)[ \t]*\r?\n[ \t]*(?=\S)',
+  unicode: true,
+);
 // Match single (CR)LF between non-whitespace chars OR at end of text for
 // leading text run (preserve leading linebreaks)
-final _unwrappableStartWhitespacePattern =
-    RegExp(r'(?<=\S)[ \t]*\r?\n[ \t]*(?=\S|$)', unicode: true);
+final _unwrappableStartWhitespacePattern = RegExp(
+  r'(?<=\S)[ \t]*\r?\n[ \t]*(?=\S|$)',
+  unicode: true,
+);
 // Match single (CR)LF between non-whitespace chars OR at edge of text for
 // "inside" text runs (preserve none)
-final _unwrappableMiddleWhitespacePattern =
-    RegExp(r'(?<=\S|^)[ \t]*\r?\n[ \t]*(?=\S|$)', unicode: true);
+final _unwrappableMiddleWhitespacePattern = RegExp(
+  r'(?<=\S|^)[ \t]*\r?\n[ \t]*(?=\S|$)',
+  unicode: true,
+);
 // Match single (CR)LF between non-whitespace chars OR at start of text for
 // final text run (preserve trailing linebreaks)
-final _unwrappableEndWhitespacePattern =
-    RegExp(r'(?<=\S|^)[ \t]*\r?\n[ \t]*(?=\S)', unicode: true);
+final _unwrappableEndWhitespacePattern = RegExp(
+  r'(?<=\S|^)[ \t]*\r?\n[ \t]*(?=\S)',
+  unicode: true,
+);
 
 @visibleForTesting
 extension UnicodeUtils on String {
@@ -102,13 +110,14 @@ final _katakanaMatcher = UnicodeCharMatcher.scriptKatakana();
 bool _isCjkOther(int codeUnit) =>
     (codeUnit >= 0x3000 && codeUnit <= 0x303F) || // CJK Symbols and Punctuation
     (codeUnit >= 0x31C0 && codeUnit <= 0x31EF) || // CJK Strokes
-    (codeUnit >= 0x3200 && codeUnit <= 0x32FF) || // Enclosed CJK Letters and Months
+    (codeUnit >= 0x3200 &&
+        codeUnit <= 0x32FF) || // Enclosed CJK Letters and Months
     (codeUnit >= 0x3300 && codeUnit <= 0x33FF) || // CJK Compatibility
     (codeUnit >= 0xFE30 && codeUnit <= 0xFE4F) || // CJK Compatibility Forms
     (codeUnit >= 0xFF00 && codeUnit <= 0xFFEF); // Halfwidth and Fullwidth Forms
 
-
 bool _isNonSpaceDelimited(int codeUnit) =>
     _hanMatcher.match(codeUnit) ||
     _hiraganaMatcher.match(codeUnit) ||
-    _katakanaMatcher.match(codeUnit) || _isCjkOther(codeUnit);
+    _katakanaMatcher.match(codeUnit) ||
+    _isCjkOther(codeUnit);

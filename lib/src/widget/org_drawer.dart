@@ -23,8 +23,9 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_inited) {
-      openListenable.value =
-          !OrgSettings.of(context).settings.hideDrawerStartup;
+      openListenable.value = !OrgSettings.of(
+        context,
+      ).settings.hideDrawerStartup;
       _inited = true;
     }
   }
@@ -35,8 +36,9 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
       widget.drawer.indent,
       builder: (context, totalIndentSize) {
         final defaultStyle = DefaultTextStyle.of(context).style;
-        final drawerStyle =
-            defaultStyle.copyWith(color: OrgTheme.dataOf(context).drawerColor);
+        final drawerStyle = defaultStyle.copyWith(
+          color: OrgTheme.dataOf(context).drawerColor,
+        );
         return ValueListenableBuilder<bool>(
           valueListenable: openListenable,
           builder: (context, open, child) {
@@ -67,13 +69,16 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
               OrgContentWidget(
                 widget.drawer.body,
                 transformer: (elem, content) {
-                  final location =
-                      locationOf(elem, widget.drawer.body.children);
+                  final location = locationOf(
+                    elem,
+                    widget.drawer.body.children,
+                  );
                   var formattedContent = hardDeindent(content, totalIndentSize);
                   if (location == TokenLocation.end ||
                       location == TokenLocation.only) {
-                    formattedContent =
-                        removeTrailingLineBreak(formattedContent);
+                    formattedContent = removeTrailingLineBreak(
+                      formattedContent,
+                    );
                   }
                   return formattedContent;
                 },

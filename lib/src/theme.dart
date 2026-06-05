@@ -92,17 +92,20 @@ const _orgSrcThemeLight = {
   'selector-id': TextStyle(color: Color(0xff0000ff)), // css-selector
   'selector-class': TextStyle(color: Color(0xff0000ff)), // css-selector
   'quote': TextStyle(color: Color(0xff880000)), // markdown-blockquote-face
-  'template-tag':
-      TextStyle(color: Color(0xff0000ff)), // font-lock-function-name-face
+  'template-tag': TextStyle(
+    color: Color(0xff0000ff),
+  ), // font-lock-function-name-face
   'deletion': TextStyle(backgroundColor: Color(0xffffeeee)), // diff-removed
   'title': TextStyle(color: Color(0xff0000ff)), // font-lock-function-name-face
   'section': TextStyle(color: Color(0xff0000ff)), // markdown-header-face
   'regexp': TextStyle(color: Color(0xff8b2252)), // font-lock-string-face
   'symbol': TextStyle(color: Color(0xff008b8b)), // font-lock-constant-face
-  'variable':
-      TextStyle(color: Color(0xffa0522d)), // font-name-variable-name-face
-  'template-variable':
-      TextStyle(color: Color(0xffa0522d)), // font-name-variable-name-face
+  'variable': TextStyle(
+    color: Color(0xffa0522d),
+  ), // font-name-variable-name-face
+  'template-variable': TextStyle(
+    color: Color(0xffa0522d),
+  ), // font-name-variable-name-face
   'link': TextStyle(color: Color(0xff8b2252)), // markdown-url-face
   'selector-attr': TextStyle(color: Color(0xff0000ff)), // css-selector
   'selector-pseudo': TextStyle(color: Color(0xff0000ff)), // css-selector
@@ -133,17 +136,20 @@ const _orgSrcThemeDark = {
   'selector-id': TextStyle(color: Color(0xff87cefa)), // css-selector
   'selector-class': TextStyle(color: Color(0xff87cefa)), // css-selector
   'quote': TextStyle(color: Color(0xffffa07a)), // markdown-blockquote-face
-  'template-tag':
-      TextStyle(color: Color(0xff87cefa)), // font-lock-function-name-face
+  'template-tag': TextStyle(
+    color: Color(0xff87cefa),
+  ), // font-lock-function-name-face
   'deletion': TextStyle(backgroundColor: Color(0xff553333)), // diff-removed
   'title': TextStyle(color: Color(0xff87cefa)), // font-lock-function-name-face
   'section': TextStyle(color: Color(0xff87cefa)), // markdown-header-face
   'regexp': TextStyle(color: Color(0xffffa07a)), // font-lock-string-face
   'symbol': TextStyle(color: Color(0xff7fffd4)), // font-lock-constant-face
-  'variable':
-      TextStyle(color: Color(0xffeedd82)), // font-name-variable-name-face
-  'template-variable':
-      TextStyle(color: Color(0xffeedd82)), // font-name-variable-name-face
+  'variable': TextStyle(
+    color: Color(0xffeedd82),
+  ), // font-name-variable-name-face
+  'template-variable': TextStyle(
+    color: Color(0xffeedd82),
+  ), // font-name-variable-name-face
   'link': TextStyle(color: Color(0xffffa07a)), // markdown-url-face
   'selector-attr': TextStyle(color: Color(0xff87cefa)), // css-selector
   'selector-pseudo': TextStyle(color: Color(0xff87cefa)), // css-selector
@@ -160,50 +166,50 @@ const _orgSrcThemeDark = {
 
 class OrgThemeData {
   OrgThemeData.light()
-      : this(
-          todoColor: _orgTodoColorLight,
-          doneColor: _orgDoneColorLight,
-          priorityColor: _orgPriorityColorLight,
-          drawerColor: _orgDrawerColorLight,
-          dateColor: _orgDateColorLight,
-          codeColor: _orgCodeColorLight,
-          linkColor: _orgLinkColorLight,
-          metaColor: _orgMetaColorLight,
-          infoColor: _orgInfoColorLight,
-          macroColor: _orgMacroColorLight,
-          tableColor: _orgTableColorLight,
-          keywordColor: _orgKeywordColorLight,
-          highlightColor: _orgHighlightColorLight,
-          footnoteColor: _orgFootnoteColorLight,
-          citationColor: _orgCitationColorLight,
-          transcludeColor: _orgTranscludeColorLight,
-          levelColors: _orgLevelColorsLight,
-          srcTheme: _orgSrcThemeLight,
-          rootPadding: _orgRootPadding,
-        );
+    : this(
+        todoColor: _orgTodoColorLight,
+        doneColor: _orgDoneColorLight,
+        priorityColor: _orgPriorityColorLight,
+        drawerColor: _orgDrawerColorLight,
+        dateColor: _orgDateColorLight,
+        codeColor: _orgCodeColorLight,
+        linkColor: _orgLinkColorLight,
+        metaColor: _orgMetaColorLight,
+        infoColor: _orgInfoColorLight,
+        macroColor: _orgMacroColorLight,
+        tableColor: _orgTableColorLight,
+        keywordColor: _orgKeywordColorLight,
+        highlightColor: _orgHighlightColorLight,
+        footnoteColor: _orgFootnoteColorLight,
+        citationColor: _orgCitationColorLight,
+        transcludeColor: _orgTranscludeColorLight,
+        levelColors: _orgLevelColorsLight,
+        srcTheme: _orgSrcThemeLight,
+        rootPadding: _orgRootPadding,
+      );
 
   OrgThemeData.dark()
-      : this(
-          todoColor: _orgTodoColorDark,
-          doneColor: _orgDoneColorDark,
-          priorityColor: _orgPriorityColorDark,
-          drawerColor: _orgDrawerColorDark,
-          dateColor: _orgDateColorDark,
-          codeColor: _orgCodeColorDark,
-          linkColor: _orgLinkColorDark,
-          metaColor: _orgMetaColorDark,
-          infoColor: _orgInfoColorDark,
-          macroColor: _orgMacroColorDark,
-          tableColor: _orgTableColorDark,
-          keywordColor: _orgKeywordColorDark,
-          highlightColor: _orgHighlightColorDark,
-          footnoteColor: _orgFootnoteColorDark,
-          citationColor: _orgCitationColorDark,
-          transcludeColor: _orgTranscludeColorDark,
-          levelColors: _orgLevelColorsDark,
-          srcTheme: _orgSrcThemeDark,
-          rootPadding: _orgRootPadding,
-        );
+    : this(
+        todoColor: _orgTodoColorDark,
+        doneColor: _orgDoneColorDark,
+        priorityColor: _orgPriorityColorDark,
+        drawerColor: _orgDrawerColorDark,
+        dateColor: _orgDateColorDark,
+        codeColor: _orgCodeColorDark,
+        linkColor: _orgLinkColorDark,
+        metaColor: _orgMetaColorDark,
+        infoColor: _orgInfoColorDark,
+        macroColor: _orgMacroColorDark,
+        tableColor: _orgTableColorDark,
+        keywordColor: _orgKeywordColorDark,
+        highlightColor: _orgHighlightColorDark,
+        footnoteColor: _orgFootnoteColorDark,
+        citationColor: _orgCitationColorDark,
+        transcludeColor: _orgTranscludeColorDark,
+        levelColors: _orgLevelColorsDark,
+        srcTheme: _orgSrcThemeDark,
+        rootPadding: _orgRootPadding,
+      );
 
   OrgThemeData({
     this.todoColor,
@@ -225,9 +231,10 @@ class OrgThemeData {
     this.rootPadding,
     Iterable<Color>? levelColors,
     Map<String, TextStyle>? srcTheme,
-  })  : levelColors =
-            levelColors == null ? null : List.unmodifiable(levelColors),
-        srcTheme = srcTheme == null ? null : Map.unmodifiable(srcTheme);
+  }) : levelColors = levelColors == null
+           ? null
+           : List.unmodifiable(levelColors),
+       srcTheme = srcTheme == null ? null : Map.unmodifiable(srcTheme);
 
   final Color? todoColor;
   final Color? doneColor;
@@ -269,14 +276,14 @@ class OrgThemeData {
         return base.copyWith(
           decoration: TextDecoration.combine([
             TextDecoration.lineThrough,
-            if (base.decoration != null) base.decoration!
+            if (base.decoration != null) base.decoration!,
           ]),
         );
       case OrgStyle.underline:
         return base.copyWith(
           decoration: TextDecoration.combine([
             TextDecoration.underline,
-            if (base.decoration != null) base.decoration!
+            if (base.decoration != null) base.decoration!,
           ]),
         );
     }
@@ -302,28 +309,27 @@ class OrgThemeData {
     Iterable<Color>? levelColors,
     Map<String, TextStyle>? srcTheme,
     EdgeInsets? rootPadding,
-  }) =>
-      OrgThemeData(
-        todoColor: todoColor ?? this.todoColor,
-        doneColor: doneColor ?? this.doneColor,
-        priorityColor: priorityColor ?? this.priorityColor,
-        drawerColor: drawerColor ?? this.drawerColor,
-        dateColor: dateColor ?? this.dateColor,
-        codeColor: codeColor ?? this.codeColor,
-        linkColor: linkColor ?? this.linkColor,
-        metaColor: metaColor ?? this.metaColor,
-        infoColor: infoColor ?? this.infoColor,
-        macroColor: macroColor ?? this.macroColor,
-        tableColor: tableColor ?? this.tableColor,
-        keywordColor: keywordColor ?? this.keywordColor,
-        highlightColor: highlightColor ?? this.highlightColor,
-        footnoteColor: footnoteColor ?? this.footnoteColor,
-        citationColor: citationColor ?? this.citationColor,
-        transcludeColor: transcludeColor ?? this.transcludeColor,
-        levelColors: levelColors ?? this.levelColors,
-        srcTheme: srcTheme ?? this.srcTheme,
-        rootPadding: rootPadding ?? this.rootPadding,
-      );
+  }) => OrgThemeData(
+    todoColor: todoColor ?? this.todoColor,
+    doneColor: doneColor ?? this.doneColor,
+    priorityColor: priorityColor ?? this.priorityColor,
+    drawerColor: drawerColor ?? this.drawerColor,
+    dateColor: dateColor ?? this.dateColor,
+    codeColor: codeColor ?? this.codeColor,
+    linkColor: linkColor ?? this.linkColor,
+    metaColor: metaColor ?? this.metaColor,
+    infoColor: infoColor ?? this.infoColor,
+    macroColor: macroColor ?? this.macroColor,
+    tableColor: tableColor ?? this.tableColor,
+    keywordColor: keywordColor ?? this.keywordColor,
+    highlightColor: highlightColor ?? this.highlightColor,
+    footnoteColor: footnoteColor ?? this.footnoteColor,
+    citationColor: citationColor ?? this.citationColor,
+    transcludeColor: transcludeColor ?? this.transcludeColor,
+    levelColors: levelColors ?? this.levelColors,
+    srcTheme: srcTheme ?? this.srcTheme,
+    rootPadding: rootPadding ?? this.rootPadding,
+  );
 
   @override
   bool operator ==(Object other) {
@@ -354,27 +360,27 @@ class OrgThemeData {
 
   @override
   int get hashCode => Object.hash(
-        todoColor,
-        doneColor,
-        priorityColor,
-        drawerColor,
-        dateColor,
-        codeColor,
-        linkColor,
-        metaColor,
-        infoColor,
-        macroColor,
-        tableColor,
-        keywordColor,
-        highlightColor,
-        footnoteColor,
-        citationColor,
-        transcludeColor,
-        levelColors == null ? null : Object.hashAll(levelColors!),
-        srcTheme == null ? null : Object.hashAll(srcTheme!.keys),
-        srcTheme == null ? null : Object.hashAll(srcTheme!.values),
-        rootPadding,
-      );
+    todoColor,
+    doneColor,
+    priorityColor,
+    drawerColor,
+    dateColor,
+    codeColor,
+    linkColor,
+    metaColor,
+    infoColor,
+    macroColor,
+    tableColor,
+    keywordColor,
+    highlightColor,
+    footnoteColor,
+    citationColor,
+    transcludeColor,
+    levelColors == null ? null : Object.hashAll(levelColors!),
+    srcTheme == null ? null : Object.hashAll(srcTheme!.keys),
+    srcTheme == null ? null : Object.hashAll(srcTheme!.values),
+    rootPadding,
+  );
 
   // ignore: prefer_constructors_over_static_methods
   static OrgThemeData? lerp(OrgThemeData? a, OrgThemeData? b, double t) {

@@ -32,12 +32,18 @@ class OrgLinkTargetWidgetState extends State<OrgLinkTargetWidget> {
         child: Text.rich(
           TextSpan(
             children: [
-              spanBuilder.highlightedSpan(widget.radioTarget.leading,
-                  style: targetStyle),
-              spanBuilder.highlightedSpan(widget.radioTarget.body,
-                  style: targetStyle),
-              spanBuilder.highlightedSpan(widget.radioTarget.trailing,
-                  style: targetStyle),
+              spanBuilder.highlightedSpan(
+                widget.radioTarget.leading,
+                style: targetStyle,
+              ),
+              spanBuilder.highlightedSpan(
+                widget.radioTarget.body,
+                style: targetStyle,
+              ),
+              spanBuilder.highlightedSpan(
+                widget.radioTarget.trailing,
+                style: targetStyle,
+              ),
             ],
           ),
         ),

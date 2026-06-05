@@ -40,59 +40,62 @@ class OrgHeadlineWidget extends StatelessWidget {
         fontWeight: FontWeight.bold,
         height: 1.8,
       ),
-      child: FancySpanBuilder(builder: (context, spanBuilder) {
-        final allowFancyLayout = settings.reflowText;
-        final haveTags = headline.tags != null;
-        final simpleLayout = !haveTags || !allowFancyLayout;
-        // We don't need to check whether the section has content, because that
-        // is already encoded in [open].
-        final needEllipsis = !open;
-        final tagsInBody = simpleLayout && haveTags;
-        final ellipsisInBody = simpleLayout && needEllipsis;
-        final textDirection = _textDirection(context);
-        final body = _Body(
-          headline,
-          spanBuilder,
-          highlighted: highlighted,
-          includeTags: tagsInBody,
-          includeEllipsis: ellipsisInBody,
-          textDirection: textDirection,
-          isArchive: isArchive,
-        );
-        if (simpleLayout) {
-          return body;
-        }
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            return Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              textDirection: textDirection,
-              children: [
-                Expanded(child: body),
-                const SizedBox(width: 16),
-                ConstrainedBox(
-                  constraints:
-                      BoxConstraints(maxWidth: constraints.maxWidth / 3),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        child: Text.rich(
-                          _tags(headline, spanBuilder),
-                          overflow: open ? null : TextOverflow.fade,
-                          softWrap: open ? true : false,
+      child: FancySpanBuilder(
+        builder: (context, spanBuilder) {
+          final allowFancyLayout = settings.reflowText;
+          final haveTags = headline.tags != null;
+          final simpleLayout = !haveTags || !allowFancyLayout;
+          // We don't need to check whether the section has content, because that
+          // is already encoded in [open].
+          final needEllipsis = !open;
+          final tagsInBody = simpleLayout && haveTags;
+          final ellipsisInBody = simpleLayout && needEllipsis;
+          final textDirection = _textDirection(context);
+          final body = _Body(
+            headline,
+            spanBuilder,
+            highlighted: highlighted,
+            includeTags: tagsInBody,
+            includeEllipsis: ellipsisInBody,
+            textDirection: textDirection,
+            isArchive: isArchive,
+          );
+          if (simpleLayout) {
+            return body;
+          }
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                textDirection: textDirection,
+                children: [
+                  Expanded(child: body),
+                  const SizedBox(width: 16),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: constraints.maxWidth / 3,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: Text.rich(
+                            _tags(headline, spanBuilder),
+                            overflow: open ? null : TextOverflow.fade,
+                            softWrap: open ? true : false,
+                          ),
                         ),
-                      ),
-                      if (needEllipsis) const Text('...'),
-                    ],
+                        if (needEllipsis) const Text('...'),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            );
-          },
-        );
-      }),
+                ],
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -122,56 +125,61 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final theme = OrgTheme.dataOf(context);
-      return Text.rich(
-        TextSpan(
-          children: [
-            ..._starsSpans(context),
-            ..._orgNumSpans(context),
-            if (headline.keyword != null)
-              spanBuilder.highlightedSpan(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final theme = OrgTheme.dataOf(context);
+        return Text.rich(
+          TextSpan(
+            children: [
+              ..._starsSpans(context),
+              ..._orgNumSpans(context),
+              if (headline.keyword != null)
+                spanBuilder.highlightedSpan(
                   headline.keyword!.value + headline.keyword!.trailing,
                   style: DefaultTextStyle.of(context).style.copyWith(
-                      // In real Org Mode only the keyword (TODO, DONE, etc.)
-                      // and optional Org Num number are bolded. We bold the
-                      // entire headline, so this here is not necessary, but we
-                      // have it anyway in case we change our mind about bolding
-                      // the entire headline.
-                      fontWeight: FontWeight.bold,
-                      color: isArchive
-                          ? theme.codeColor
-                          : headline.keyword!.done
-                              ? theme.doneColor
-                              : theme.todoColor)),
-            if (headline.priority != null)
-              spanBuilder.highlightedSpan(
+                    // In real Org Mode only the keyword (TODO, DONE, etc.)
+                    // and optional Org Num number are bolded. We bold the
+                    // entire headline, so this here is not necessary, but we
+                    // have it anyway in case we change our mind about bolding
+                    // the entire headline.
+                    fontWeight: FontWeight.bold,
+                    color: isArchive
+                        ? theme.codeColor
+                        : headline.keyword!.done
+                        ? theme.doneColor
+                        : theme.todoColor,
+                  ),
+                ),
+              if (headline.priority != null)
+                spanBuilder.highlightedSpan(
                   headline.priority!.leading +
                       headline.priority!.value +
                       headline.priority!.trailing,
                   style: DefaultTextStyle.of(context).style.copyWith(
-                      color:
-                          isArchive ? theme.codeColor : theme.priorityColor)),
-            if (headline.title != null)
-              spanBuilder.build(
-                headline.title!,
-                transformer: (elem, text) {
-                  if (identical(elem, headline.title!.children.last)) {
-                    if (!includeTags) return text.trimRight();
-                    if (_willOverflowWidth(context, constraints)) {
-                      return '${text.trimRight()} ';
+                    color: isArchive ? theme.codeColor : theme.priorityColor,
+                  ),
+                ),
+              if (headline.title != null)
+                spanBuilder.build(
+                  headline.title!,
+                  transformer: (elem, text) {
+                    if (identical(elem, headline.title!.children.last)) {
+                      if (!includeTags) return text.trimRight();
+                      if (_willOverflowWidth(context, constraints)) {
+                        return '${text.trimRight()} ';
+                      }
                     }
-                  }
-                  return text;
-                },
-              ),
-            if (includeTags) _tags(headline, spanBuilder),
-            if (includeEllipsis) const TextSpan(text: '...'),
-          ].whereType<InlineSpan>().toList(growable: false),
-        ),
-        textDirection: textDirection,
-      );
-    });
+                    return text;
+                  },
+                ),
+              if (includeTags) _tags(headline, spanBuilder),
+              if (includeEllipsis) const TextSpan(text: '...'),
+            ].whereType<InlineSpan>().toList(growable: false),
+          ),
+          textDirection: textDirection,
+        );
+      },
+    );
   }
 
   bool _willOverflowWidth(BuildContext context, BoxConstraints constraints) {
@@ -214,11 +222,12 @@ class _Body extends StatelessWidget {
   TextStyle? _starStyle(BuildContext context) {
     // Stars are always the level color, even if the headline is ARCHIVEd.
     var style = DefaultTextStyle.of(context).style.copyWith(
-          color: OrgTheme.dataOf(context).levelColor(headline.level - 1),
-        );
+      color: OrgTheme.dataOf(context).levelColor(headline.level - 1),
+    );
     if (highlighted == true) {
       style = style.copyWith(
-          backgroundColor: OrgTheme.dataOf(context).highlightColor);
+        backgroundColor: OrgTheme.dataOf(context).highlightColor,
+      );
     }
     return style;
   }
@@ -231,29 +240,26 @@ class _Body extends StatelessWidget {
 
     // Org Num numbers are always the level color, even if the headline is ARCHIVEd.
     var style = DefaultTextStyle.of(context).style.copyWith(
-          color: OrgTheme.dataOf(context).levelColor(headline.level - 1),
-        );
+      color: OrgTheme.dataOf(context).levelColor(headline.level - 1),
+    );
     if (headline.keyword != null) {
       // In real Org Mode only the keyword (TODO, DONE, etc.) and optional Org
       // Num number are bolded. We bold the entire headline, so this here is not
       // necessary, but we have it anyway in case we change our mind about
       // bolding the entire headline.
-      style = style.copyWith(
-        fontWeight: FontWeight.bold,
-      );
+      style = style.copyWith(fontWeight: FontWeight.bold);
     }
 
-    yield TextSpan(
-      text: '$numString ',
-      style: style,
-    );
+    yield TextSpan(text: '$numString ', style: style);
   }
 }
 
 InlineSpan _tags(OrgHeadline headline, OrgSpanBuilder spanBuilder) =>
-    spanBuilder.highlightedSpan(headline.tags!.leading +
-        headline.tags!.values.join('\u200b:\u200b') +
-        headline.tags!.trailing);
+    spanBuilder.highlightedSpan(
+      headline.tags!.leading +
+          headline.tags!.values.join('\u200b:\u200b') +
+          headline.tags!.trailing,
+    );
 
 Rect _renderedBounds(
   BuildContext context,

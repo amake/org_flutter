@@ -15,9 +15,11 @@ extension OrgSrcBlockUtils on OrgSrcBlock {
   /// The matched name is in the 'name' named group.
   RegExp coderefPattern() {
     final format = coderefFormat();
-    final pattern = RegExp(RegExp.escape(format)
-        // See org-src-coderef-regexp
-        .replaceAll('%s', r'(?<name>[-a-zA-Z0-9_][-a-zA-Z0-9_ ]*)'));
+    final pattern = RegExp(
+      RegExp.escape(format)
+      // See org-src-coderef-regexp
+      .replaceAll('%s', r'(?<name>[-a-zA-Z0-9_][-a-zA-Z0-9_ ]*)'),
+    );
     return pattern;
   }
 

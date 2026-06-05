@@ -14,14 +14,17 @@ class OrgPgpBlockWidget extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: FancySpanBuilder(
         builder: (context, spanBuilder) => Text.rich(
-          TextSpan(children: [
-            spanBuilder.highlightedSpan(block.indent),
-            spanBuilder.highlightedSpan(block.header),
-            spanBuilder.highlightedSpan(block.body),
-            spanBuilder.highlightedSpan(block.footer),
-            spanBuilder
-                .highlightedSpan(removeTrailingLineBreak(block.trailing)),
-          ]),
+          TextSpan(
+            children: [
+              spanBuilder.highlightedSpan(block.indent),
+              spanBuilder.highlightedSpan(block.header),
+              spanBuilder.highlightedSpan(block.body),
+              spanBuilder.highlightedSpan(block.footer),
+              spanBuilder.highlightedSpan(
+                removeTrailingLineBreak(block.trailing),
+              ),
+            ],
+          ),
         ),
       ),
     );

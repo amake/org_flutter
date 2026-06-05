@@ -60,10 +60,9 @@ class _AnimatedTextFlashState extends State<AnimatedTextFlash>
         TextStyleTween(
           begin: defaultStyle,
           end: defaultStyle.copyWith(
-              backgroundColor: OrgTheme.dataOf(context).highlightColor),
-        ).chain(
-          CurveTween(curve: Curves.linearToEaseOut),
-        ),
+            backgroundColor: OrgTheme.dataOf(context).highlightColor,
+          ),
+        ).chain(CurveTween(curve: Curves.linearToEaseOut)),
       ),
       child: widget.child,
     );

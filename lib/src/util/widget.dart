@@ -38,11 +38,11 @@ mixin RecognizerManager<T extends StatefulWidget> on State<T> {
 }
 
 Widget listBottomSafeArea() => const SafeArea(
-      top: false,
-      left: false,
-      right: false,
-      child: SizedBox.shrink(),
-    );
+  top: false,
+  left: false,
+  right: false,
+  child: SizedBox.shrink(),
+);
 
 const _kReducedOpacity = 0.6;
 
@@ -58,9 +58,9 @@ class IdentityTextScale extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(
-        textScaler: const TextScaler.linear(1),
-      ),
+      data: MediaQuery.of(
+        context,
+      ).copyWith(textScaler: const TextScaler.linear(1)),
       child: child,
     );
   }

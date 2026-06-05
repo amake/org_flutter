@@ -50,12 +50,13 @@ class OrgSectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final visibilityListenable =
-        OrgController.of(context).nodeFor(section).visibility;
+    final visibilityListenable = OrgController.of(
+      context,
+    ).nodeFor(section).visibility;
     Widget widget = ValueListenableBuilder<OrgVisibilityState>(
       valueListenable: visibilityListenable,
-      builder: (context, visibility, child) => visibility ==
-              OrgVisibilityState.hidden
+      builder: (context, visibility, child) =>
+          visibility == OrgVisibilityState.hidden
           ? const SizedBox.shrink()
           : ListView(
               shrinkWrap: shrinkWrap || !root,
@@ -65,8 +66,9 @@ class OrgSectionWidget extends StatelessWidget {
               // It's very important that the padding not be null here; otherwise
               // sections inside a root document will get some extraneous padding (see
               // discussion of padding behavior on ListView)
-              padding:
-                  root ? OrgTheme.dataOf(context).rootPadding : EdgeInsets.zero,
+              padding: root
+                  ? OrgTheme.dataOf(context).rootPadding
+                  : EdgeInsets.zero,
               children: <Widget>[
                 InkWell(
                   onTap: () =>
@@ -76,8 +78,9 @@ class OrgSectionWidget extends StatelessWidget {
                   child: OrgHeadlineWidget(
                     section.headline,
                     open: _openEnough(visibility),
-                    highlighted:
-                        OrgController.of(context).sparseQuery?.matches(section),
+                    highlighted: OrgController.of(
+                      context,
+                    ).sparseQuery?.matches(section),
                   ),
                 ),
                 AnimatedSwitcher(
@@ -94,10 +97,7 @@ class OrgSectionWidget extends StatelessWidget {
                         ..._contentWidgets(context),
                       if (visibility != OrgVisibilityState.folded)
                         for (final (i, section) in section.sections.indexed)
-                          OrgSectionWidget(
-                            section,
-                            siblingIndex: i,
-                          ),
+                          OrgSectionWidget(section, siblingIndex: i),
                     ],
                   ),
                 ),
@@ -109,7 +109,7 @@ class OrgSectionWidget extends StatelessWidget {
     return OrgNumData(
       nums: {
         ...OrgNumData.of(context)?.nums ?? {},
-        section.level: siblingIndex + 1
+        section.level: siblingIndex + 1,
       },
       child: widget,
     );
@@ -118,7 +118,8 @@ class OrgSectionWidget extends StatelessWidget {
   Iterable<Widget> _contentWidgets(BuildContext context) sync* {
     for (final child in section.content!.children) {
       Widget widget = OrgContentWidget(child);
-      final textDirection = OrgSettings.of(context).settings.textDirection ??
+      final textDirection =
+          OrgSettings.of(context).settings.textDirection ??
           child.detectTextDirection();
       if (textDirection != null) {
         widget = Directionality(textDirection: textDirection, child: widget);

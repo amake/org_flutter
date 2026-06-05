@@ -19,9 +19,7 @@ foo \pineapple bar
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining('foo \u{1f34d} bar'), findsOneWidget);
@@ -40,9 +38,7 @@ foo \smiley bar^{2} baz_buzz
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining('☺'), findsOneWidget);
@@ -67,9 +63,7 @@ foo \smiley bar^{2} baz_buzz
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining('☺'), findsNothing);
@@ -92,9 +86,7 @@ foo \smiley bar^{2} baz_buzz
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining('☺'), findsOneWidget);
@@ -117,9 +109,7 @@ foo \smiley bar^{2} baz_buzz
         errorHandler: (e) {
           fail(e.toString());
         },
-        child: OrgRootWidget(
-          child: OrgDocumentWidget(doc),
-        ),
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
       );
       await tester.pumpWidget(wrap(widget));
       expect(find.textContaining('foo'), findsOneWidget);

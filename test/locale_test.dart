@@ -28,16 +28,10 @@ foo
   });
   group('parse', () {
     test('language', () {
-      expect(
-        tryParseLocale('en'),
-        Locale('en'),
-      );
+      expect(tryParseLocale('en'), Locale('en'));
     });
     test('language and region', () {
-      expect(
-        tryParseLocale('en_US'),
-        Locale('en', 'US'),
-      );
+      expect(tryParseLocale('en_US'), Locale('en', 'US'));
     });
     test('language and script', () {
       expect(
@@ -67,22 +61,13 @@ foo
     });
     group('invalid', () {
       test('empty', () {
-        expect(
-          tryParseLocale(''),
-          isNull,
-        );
+        expect(tryParseLocale(''), isNull);
       });
       test('too many parts', () {
-        expect(
-          tryParseLocale('en_Latn_US_foo'),
-          isNull,
-        );
+        expect(tryParseLocale('en_Latn_US_foo'), isNull);
       });
       test('second part bad length', () {
-        expect(
-          tryParseLocale('en_Lat'),
-          isNull,
-        );
+        expect(tryParseLocale('en_Lat'), isNull);
       });
     });
   });
