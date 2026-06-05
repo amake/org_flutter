@@ -1,3 +1,6 @@
+## [12.0.0]
+- Require Flutter 3.44/Dart 3.12
+
 ## [11.1.0]
 - Improve handling of drawer content
 - Improve styling of `#+CAPTION:` lines
