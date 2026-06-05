@@ -253,7 +253,7 @@ class _OrgControllerState extends State<OrgController> with RestorationMixin {
   bool get _inheritNodeMap => widget.inheritedNodeMap != null;
   List<OrgSettings> get _settings => [
         if (widget.settings != null) widget.settings!,
-        if (_embeddedSettings != null) _embeddedSettings!
+        ?_embeddedSettings
       ];
 
   late OrgDataNodeMap _nodeMap;
@@ -488,7 +488,7 @@ class OrgControllerData extends InheritedWidget {
   const OrgControllerData({
     required super.child,
     required this.root,
-    required OrgDataNodeMap nodeMap,
+    required this._nodeMap,
     required this.searchQuery,
     required this.sparseQuery,
     required this.searchResultKeys,
@@ -497,14 +497,11 @@ class OrgControllerData extends InheritedWidget {
     required this.ensureVisible,
     required this.setVisibilityOf,
     required this.adaptVisibility,
-    required OrgSettings? callerSettings,
-    required OrgSettings? embeddedSettings,
-    String? restorationId,
+    required this._callerSettings,
+    required this._embeddedSettings,
+    this._restorationId,
     super.key,
-  })  : _nodeMap = nodeMap,
-        _restorationId = restorationId,
-        _callerSettings = callerSettings,
-        _embeddedSettings = embeddedSettings;
+  });
 
   /// The Org Mode document or section this controller will control
   final OrgTree root;

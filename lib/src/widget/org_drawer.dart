@@ -57,7 +57,7 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
                       SizeTransition(sizeFactor: animation, child: child),
                   child: open ? child : const SizedBox.shrink(),
                 ),
-                if (trailingWidget != null) trailingWidget,
+                ?trailingWidget,
               ],
             );
           },
