@@ -1,3 +1,7 @@
+## [13.0.0]
+- Require Flutter 3.47/Dart 3.13
+- Migrate to standalone material_ui package
+
 ## [12.0.0]
 - Require Flutter 3.44/Dart 3.12
 
