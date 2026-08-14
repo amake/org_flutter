@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:org_flutter/src/flash.dart';
 import 'package:org_flutter/src/locator.dart';
 import 'package:org_flutter/src/span.dart';

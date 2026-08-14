@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:org_flutter/src/theme.dart';
 
 /// The theme for the Org Mode document
