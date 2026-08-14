@@ -100,10 +100,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_tex_js
-      sha256: c9a8f10908d47e7529af93a7d656d9b8455cf35ee034725f06d696ecda253ca3
+      sha256: "56a7a716d617c17797a3ff98458c0039c64db643f67577fe6466b77e03b93e3a"
       url: "https://pub.dev"
     source: hosted
-    version: "6.0.0"
+    version: "7.0.0"
   flutter_tex_js_android:
     dependency: transitive
     description:
