@@ -17,9 +17,8 @@ class OrgCommentWidget extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: FancySpanBuilder(
         builder: (context, spanBuilder) {
-          final metaStyle = DefaultTextStyle.of(
-            context,
-          ).style.copyWith(color: OrgTheme.dataOf(context).metaColor);
+          final metaStyle = DefaultTextStyle.of(context).style
+              .copyWith(color: OrgTheme.dataOf(context).metaColor);
           return Text.rich(
             TextSpan(
               children: [

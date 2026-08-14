@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/events.dart';
 import 'package:org_flutter/src/settings.dart';
@@ -50,9 +50,9 @@ class OrgSectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final visibilityListenable = OrgController.of(
-      context,
-    ).nodeFor(section).visibility;
+    final visibilityListenable = OrgController.of(context)
+        .nodeFor(section)
+        .visibility;
     Widget widget = ValueListenableBuilder<OrgVisibilityState>(
       valueListenable: visibilityListenable,
       builder: (context, visibility, child) =>
@@ -78,9 +78,8 @@ class OrgSectionWidget extends StatelessWidget {
                   child: OrgHeadlineWidget(
                     section.headline,
                     open: _openEnough(visibility),
-                    highlighted: OrgController.of(
-                      context,
-                    ).sparseQuery?.matches(section),
+                    highlighted: OrgController.of(context).sparseQuery
+                        ?.matches(section),
                   ),
                 ),
                 AnimatedSwitcher(

@@ -20,9 +20,9 @@ class OrgNumData extends InheritedWidget {
   /// The string for presentation, e.g. "1.2.0.3"
   String get numString {
     final maxLevel = nums.keys.reduce((a, b) => a > b ? a : b);
-    return Iterable<int>.generate(
-      maxLevel,
-    ).map((level) => nums[level + 1] ?? 0).join('.');
+    return Iterable<int>.generate(maxLevel)
+        .map((level) => nums[level + 1] ?? 0)
+        .join('.');
   }
 
   @override

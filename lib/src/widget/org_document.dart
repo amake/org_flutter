@@ -27,9 +27,8 @@ class OrgDocumentWidget extends StatelessWidget {
     return ListView(
       restorationId: shrinkWrap
           ? null
-          : OrgController.of(
-              context,
-            ).restorationIdFor('org_document_list_view'),
+          : OrgController.of(context)
+                .restorationIdFor('org_document_list_view'),
       padding: OrgTheme.dataOf(context).rootPadding,
       shrinkWrap: shrinkWrap,
       physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,

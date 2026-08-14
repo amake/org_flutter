@@ -155,9 +155,8 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
                           t.text,
                           spanBuilder,
                           style: codeStyle,
-                          key: OrgLocator.of(
-                            context,
-                          )?.generateCoderefKey(t.coderef!),
+                          key: OrgLocator.of(context)
+                              ?.generateCoderefKey(t.coderef!),
                         ),
                       );
               })
@@ -212,9 +211,8 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
     }
     if (block.type == 'example' || block.type == 'export') {
       body = DefaultTextStyle(
-        style: DefaultTextStyle.of(
-          context,
-        ).style.copyWith(color: OrgTheme.dataOf(context).codeColor),
+        style: DefaultTextStyle.of(context).style
+            .copyWith(color: OrgTheme.dataOf(context).codeColor),
         child: body,
       );
     } else if (block.type == 'verse') {

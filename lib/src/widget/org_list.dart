@@ -70,23 +70,20 @@ class _OrgListItemWidget extends StatelessWidget {
     if (item is OrgListOrderedItem && item.counterSet != null) {
       yield builder.highlightedSpan(
         '${item.counterSet} ',
-        style: DefaultTextStyle.of(
-          context,
-        ).style.copyWith(fontWeight: FontWeight.bold),
+        style: DefaultTextStyle.of(context).style
+            .copyWith(fontWeight: FontWeight.bold),
       );
     }
     if (item.checkbox != null) {
       yield builder.highlightedSpan(
         '${item.checkbox} ',
-        style: DefaultTextStyle.of(
-          context,
-        ).style.copyWith(fontWeight: FontWeight.bold),
+        style: DefaultTextStyle.of(context).style
+            .copyWith(fontWeight: FontWeight.bold),
       );
     }
     if (item is OrgListUnorderedItem && item.tag != null) {
-      final style = DefaultTextStyle.of(
-        context,
-      ).style.copyWith(fontWeight: FontWeight.bold);
+      final style = DefaultTextStyle.of(context).style
+          .copyWith(fontWeight: FontWeight.bold);
       yield TextSpan(
         children: [
           builder.build(item.tag!.value, style: style),

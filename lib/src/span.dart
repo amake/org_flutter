@@ -57,9 +57,8 @@ class OrgSpanBuilder {
         recognizer: recognizer,
       );
     } else if (element is OrgMarkup) {
-      final markupStyle = OrgTheme.dataOf(
-        context,
-      ).fontStyleForOrgStyle(style, element.style);
+      final markupStyle = OrgTheme.dataOf(context)
+          .fontStyleForOrgStyle(style, element.style);
       final body = build(
         element.content,
         transformer: transformer,
@@ -164,16 +163,14 @@ class OrgSpanBuilder {
     } else if (element is OrgRadioTarget) {
       // TODO(aaron): Figure out what is supposed to happen when tapping a radio
       // target
-      final key = OrgLocator.of(
-        context,
-      )?.generateRadioTargetKey(element.body.toLowerCase());
+      final key = OrgLocator.of(context)
+          ?.generateRadioTargetKey(element.body.toLowerCase());
       return _styledWidgetSpan(OrgRadioTargetWidget(element, key: key), style);
     } else if (element is OrgInlineSrcBlock) {
       return _styledWidgetSpan(OrgInlineSrcBlockWidget(element), style);
     } else if (element is OrgLinkTarget) {
-      final key = OrgLocator.of(
-        context,
-      )?.generateLinkTargetKey(element.body.toLowerCase());
+      final key = OrgLocator.of(context)
+          ?.generateLinkTargetKey(element.body.toLowerCase());
       return _styledWidgetSpan(OrgLinkTargetWidget(element, key: key), style);
     } else if (element is OrgDiaryTimestamp) {
       return highlightedSpan(

@@ -33,9 +33,9 @@ class _OrgTranscludeWidgetState extends State<OrgTranscludeWidget>
         IndentBuilder(
           widget.meta.indent,
           builder: (context, _) {
-            final deemphasize = OrgSettings.of(
-              context,
-            ).settings.deemphasizeMarkup;
+            final deemphasize = OrgSettings.of(context)
+                .settings
+                .deemphasizeMarkup;
             Widget body = InheritedOrgSettings.merge(
               const OrgSettings(strictSubSuperscripts: true),
               child: FancySpanBuilder(

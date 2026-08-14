@@ -23,9 +23,9 @@ class _OrgDrawerWidgetState extends State<OrgDrawerWidget>
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_inited) {
-      openListenable.value = !OrgSettings.of(
-        context,
-      ).settings.hideDrawerStartup;
+      openListenable.value = !OrgSettings.of(context)
+          .settings
+          .hideDrawerStartup;
       _inited = true;
     }
   }
