@@ -228,10 +228,10 @@ packages:
     dependency: "direct main"
     description:
       name: org_parser
-      sha256: f79b573e76ee497995353ff2daad8223ed97bc33df715fd9a7167f98ee026320
+      sha256: "01b4a9ccb96c1dda9e6616f4e8f6ddce5f94f54abea9626dadbc885d8192756d"
       url: "https://pub.dev"
     source: hosted
-    version: "11.4.0"
+    version: "11.5.0"
   path:
     dependency: transitive
     description:
