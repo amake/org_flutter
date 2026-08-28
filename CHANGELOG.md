@@ -1,3 +1,6 @@
+## [13.0.1]
+- Bump org_parser to 11.5.0
+
 ## [13.0.0]
 - Require Flutter 3.47/Dart 3.13
 - Migrate to standalone material_ui package
