@@ -244,3 +244,14 @@ List<String>? getHiddenKeywords(Map<String, dynamic> localVariables) {
   }
   return null;
 }
+
+const _kOrgLogDoneKey = 'org-log-done';
+
+bool? getLogDone(Map<String, dynamic> localVariables) {
+  if (localVariables.containsKey(_kOrgLogDoneKey)) {
+    final value = localVariables[_kOrgLogDoneKey];
+    // We don't support `note`
+    return value == Name('time');
+  }
+  return null;
+}

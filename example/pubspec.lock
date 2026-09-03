@@ -235,10 +235,10 @@ packages:
     dependency: transitive
     description:
       name: org_parser
-      sha256: "01b4a9ccb96c1dda9e6616f4e8f6ddce5f94f54abea9626dadbc885d8192756d"
+      sha256: "0a780ff905b28c35f0e5d356fb60ace8e11ccf3e679d1ea9723c3a9f36eee27b"
       url: "https://pub.dev"
     source: hosted
-    version: "11.5.0"
+    version: "11.6.0"
   path:
     dependency: transitive
     description:

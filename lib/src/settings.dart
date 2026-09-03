@@ -23,6 +23,7 @@ const _kDefaultVisibilityState = OrgVisibilityState.folded;
 const _kDefaultOrgAttachIdDir = 'data'; // Per `org-attach-id-dir`
 const _kDefaultHiddenKeywords = <String>[];
 const _kDefaultHiddenElements = <String>[];
+const _kDefaultLogDone = false;
 
 class InheritedOrgSettings extends InheritedWidget {
   static Widget merge(OrgSettings settings, {required Widget child}) {
@@ -75,6 +76,7 @@ class OrgSettings {
     orgAttachIdDir: _kDefaultOrgAttachIdDir,
     hiddenKeywords: _kDefaultHiddenKeywords,
     hiddenElements: _kDefaultHiddenElements,
+    logDone: _kDefaultLogDone,
   );
 
   /// Equivalent to the old "hideMarkup" setting
@@ -105,6 +107,7 @@ class OrgSettings {
     bool? inlineImages;
     bool? numMode;
     OrgVisibilityState? startupFolded;
+    bool? logDone;
     var showEverything = false;
     final startupSettings = getStartupSettings(doc);
     for (final setting in startupSettings) {
@@ -167,6 +170,12 @@ class OrgSettings {
         case 'nonum':
           numMode = false;
           break;
+        case 'logdone':
+          logDone = true;
+          break;
+        case 'nologdone':
+          logDone = false;
+          break;
       }
     }
     if (showEverything) {
@@ -192,6 +201,8 @@ class OrgSettings {
       strictSubSuperscripts = getStrictSubSuperscripts(lvars);
       orgAttachIdDir = getOrgAttachIdDir(lvars);
       hiddenKeywords = getHiddenKeywords(lvars);
+      // `org-log-done` in local variables overrides #+STARTUP: logdone
+      logDone = getLogDone(lvars) ?? logDone;
       // org-hide-{block,drawer}-startup, org-startup-folded are not respected
       // when set as local variables.
     } catch (e) {
@@ -222,6 +233,7 @@ class OrgSettings {
       textDirection: textDirection,
       orgAttachIdDir: orgAttachIdDir,
       hiddenKeywords: hiddenKeywords,
+      logDone: logDone,
     );
   }
 
@@ -245,6 +257,7 @@ class OrgSettings {
     this.orgAttachIdDir,
     this.hiddenKeywords,
     this.hiddenElements,
+    this.logDone,
   });
 
   /// Whether to reflow text to remove intra-paragraph line breaks. Does not map
@@ -336,6 +349,10 @@ class OrgSettings {
   /// `org-element-all-elements` for possible values.
   final List<String>? hiddenElements;
 
+  /// When marking a todo item as "done", whether to log the time and date of
+  /// completion. Set by `#+STARTUP: logdone` or `org-log-done`.
+  final bool? logDone;
+
   @override
   bool operator ==(Object other) =>
       other is OrgSettings &&
@@ -357,10 +374,11 @@ class OrgSettings {
       textDirection == other.textDirection &&
       orgAttachIdDir == other.orgAttachIdDir &&
       listEquals(hiddenKeywords, other.hiddenKeywords) &&
-      listEquals(hiddenElements, other.hiddenElements);
+      listEquals(hiddenElements, other.hiddenElements) &&
+      logDone == other.logDone;
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     reflowText,
     deemphasizeMarkup,
     startupFolded,
@@ -385,7 +403,8 @@ class OrgSettings {
     orgAttachIdDir,
     hiddenKeywords == null ? null : Object.hashAll(hiddenKeywords!),
     hiddenElements == null ? null : Object.hashAll(hiddenElements!),
-  );
+    logDone,
+  ]);
 
   OrgSettings copyWith({
     bool? reflowText,
@@ -407,6 +426,7 @@ class OrgSettings {
     String? orgAttachIdDir,
     List<String>? hiddenKeywords,
     List<String>? hiddenElements,
+    bool? logDone,
   }) => OrgSettings(
     reflowText: reflowText ?? this.reflowText,
     deemphasizeMarkup: deemphasizeMarkup ?? this.deemphasizeMarkup,
@@ -427,6 +447,7 @@ class OrgSettings {
     orgAttachIdDir: orgAttachIdDir ?? this.orgAttachIdDir,
     hiddenKeywords: hiddenKeywords ?? this.hiddenKeywords,
     hiddenElements: hiddenElements ?? this.hiddenElements,
+    logDone: logDone ?? this.logDone,
   );
 }
 
@@ -525,4 +546,9 @@ extension LayeredOrgSettings on List<OrgSettings> {
     (layer) => layer.hiddenElements != null,
     orElse: () => OrgSettings.defaults,
   ).hiddenElements!;
+
+  bool get logDone => firstWhere(
+    (layer) => layer.logDone != null,
+    orElse: () => OrgSettings.defaults,
+  ).logDone!;
 }
