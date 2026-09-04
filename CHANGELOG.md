@@ -1,3 +1,7 @@
+## [13.1.0]
+- Add `OrgSettings.logDone`. This is populated from `#+STARTUP: [no]logdone` or
+  `org-log-done`.
+
 ## [13.0.1]
 - Bump org_parser to 11.5.0
 
