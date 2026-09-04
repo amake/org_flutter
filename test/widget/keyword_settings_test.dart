@@ -5,6 +5,27 @@ import './util.dart';
 
 void main() {
   group('Keyword settings', () {
+    testWidgets('Tab-delimited entries are recognized', (tester) async {
+      final doc = OrgDocument.parse('''
+* foo
+
+#+STARTUP: logdone\thidestars
+''');
+      final widget = OrgController(
+        root: doc,
+        interpretEmbeddedSettings: true,
+        errorHandler: (e) {
+          fail(e.toString());
+        },
+        child: OrgRootWidget(child: OrgDocumentWidget(doc)),
+      );
+      await tester.pumpWidget(wrap(widget));
+      final settings = OrgSettings.of(
+        tester.element(find.byType(OrgRootWidget)),
+      );
+      expect(settings.settings.logDone, isTrue);
+      expect(settings.settings.hideStars, isTrue);
+    });
     testWidgets('Blocks start closed', (tester) async {
       final doc = OrgDocument.parse(r'''
 #+begin_example
