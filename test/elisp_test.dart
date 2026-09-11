@@ -64,6 +64,10 @@ void main() {
       throwsArgumentError,
     );
   });
+  test('boundp', () {
+    expect(exec('''(define a 1) (boundp 'a)'''), true);
+    expect(exec('''(boundp 'b)'''), false);
+  });
   test('dolist', () {
     expect(
       exec("""

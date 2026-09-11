@@ -22,6 +22,7 @@ class ElispEnvironment extends Environment {
     // petit_lisp's `set!` does not evaluate the symbol
     define(Name('set'), _set);
     define(Name('setq'), _setq);
+    define(Name('boundp'), _boundp);
     define(Name('debugger'), _debugger);
     evalString(elispParser, this, _standardLibrary);
   }
@@ -46,6 +47,17 @@ class ElispEnvironment extends Environment {
       args = args.tail;
     }
     return result;
+  }
+
+  static dynamic _boundp(Environment env, dynamic args) {
+    if (args is Cons && args.tail == null) {
+      final sym = eval(env, args.head);
+      if (sym is! Name) {
+        throw ArgumentError('Invalid boundp: $sym is not a symbol');
+      }
+      return env.keys.contains(sym);
+    }
+    throw ArgumentError('Invalid boundp: $args');
   }
 
   static dynamic _debugger(Environment env, dynamic args) {
