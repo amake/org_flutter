@@ -89,6 +89,11 @@ class ElispEnvironment extends Environment {
                         (cons element (eval list-var)))))
   (eval list-var))
 
+(defun add-hook (hook-var function &optional depth localp)
+  (unless (boundp hook-var)
+    (set hook-var nil))
+  (add-to-list hook-var function))
+
 (defmacro dolist (spec &rest body)
   (let ((var (car spec))
         (templist (make-symbol "list"))

@@ -96,6 +96,11 @@ result
       Cons(Name('x'), Cons(Name('was'), Cons(Name('a')))),
     );
   });
+  test('add-hook', () {
+    final result = exec("(add-hook 'foo (lambda () (fizzle)))");
+    expect(result, isA<Cons>());
+    expect(result.head, isA<Function>());
+  });
   test('infinite loop', () {
     final start = DateTime.timestamp().millisecondsSinceEpoch;
     expect(
