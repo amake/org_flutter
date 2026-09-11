@@ -1,3 +1,6 @@
+## [13.2.0]
+- Expand Elisp support
+
 ## [13.1.0]
 - Add `OrgSettings.logDone`. This is populated from `#+STARTUP: [no]logdone` or
   `org-log-done`.
