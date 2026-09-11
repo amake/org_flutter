@@ -31,7 +31,7 @@ class ElispEnvironment extends Environment {
     if (sym is! Name) {
       throw ArgumentError('set: first argument must be a symbol');
     }
-    return env[sym] = eval(env, args.tail.head);
+    return env.setOrDefine(sym, eval(env, args.tail.head));
   }
 
   static dynamic _setq(Environment env, dynamic args) {

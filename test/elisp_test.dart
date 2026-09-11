@@ -50,6 +50,11 @@ void main() {
       Cons("foo", Cons("foo")),
     );
   });
+  test('set', () {
+    expect(exec('''(set 'foo 1)'''), 1);
+    expect(() => exec('(set foo 1)'), throwsArgumentError);
+    expect(exec('''(define (foo) (set 'bar 1)) (foo) bar'''), 1);
+  });
   test('setq', () {
     expect(exec('(setq foo 1 bar 2) (cons foo bar)'), Cons(1, 2));
     expect(exec('(setq foo 1 bar 2)'), 2);
