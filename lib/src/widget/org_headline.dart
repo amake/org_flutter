@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:org_flutter/src/flash.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/theme.dart';
@@ -6,8 +7,10 @@ import 'package:org_flutter/src/util/util.dart';
 import 'package:org_flutter/src/widget/org_theme.dart';
 import 'package:org_parser/org_parser.dart';
 
+typedef HeadlineKey = GlobalKey<OrgHeadlineWidgetState>;
+
 /// An Org Mode section headline
-class OrgHeadlineWidget extends StatelessWidget {
+class OrgHeadlineWidget extends StatefulWidget {
   const OrgHeadlineWidget(
     this.headline, {
     required this.open,
@@ -19,89 +22,101 @@ class OrgHeadlineWidget extends StatelessWidget {
   final bool? highlighted;
 
   @override
+  State<OrgHeadlineWidget> createState() => OrgHeadlineWidgetState();
+}
+
+class OrgHeadlineWidgetState extends State<OrgHeadlineWidget> {
+  bool _cookie = true;
+
+  void doHighlight() => setState(() => _cookie = !_cookie);
+
+  @override
   Widget build(BuildContext context) {
     final settings = OrgSettings.of(context).settings;
-    if (settings.hiddenElements.contains(headline.elementName)) {
+    if (settings.hiddenElements.contains(widget.headline.elementName)) {
       // TODO(aaron): Should this check be done higher up, e.g. in OrgSectionWidget?
       return const SizedBox.shrink();
     }
     final theme = OrgTheme.dataOf(context);
-    final isArchive = headline.tags?.values.contains('ARCHIVE') == true;
+    final isArchive = widget.headline.tags?.values.contains('ARCHIVE') == true;
     final color = isArchive
         // TODO(aaron): Separate archive color from code color
         ? theme.codeColor
-        : theme.levelColor(headline.level - 1);
-    return DefaultTextStyle.merge(
-      style: TextStyle(
-        color: color,
-        // In real Org Mode only the keyword (TODO, DONE, etc.) and optional Org
-        // Num number is bolded, but we make the whole headline bolded because
-        // it looks nicer.
-        fontWeight: FontWeight.bold,
-        height: 1.8,
-      ),
-      child: FancySpanBuilder(
-        builder: (context, spanBuilder) {
-          final allowFancyLayout = settings.reflowText;
-          final haveTags = headline.tags != null;
-          final simpleLayout = !haveTags || !allowFancyLayout;
-          // We don't need to check whether the section has content, because that
-          // is already encoded in [open].
-          final needEllipsis = !open;
-          final tagsInBody = simpleLayout && haveTags;
-          final ellipsisInBody = simpleLayout && needEllipsis;
-          final textDirection = _textDirection(context);
-          final body = _Body(
-            headline,
-            spanBuilder,
-            highlighted: highlighted,
-            includeTags: tagsInBody,
-            includeEllipsis: ellipsisInBody,
-            textDirection: textDirection,
-            isArchive: isArchive,
-          );
-          if (simpleLayout) {
-            return body;
-          }
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                textDirection: textDirection,
-                children: [
-                  Expanded(child: body),
-                  const SizedBox(width: 16),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: constraints.maxWidth / 3,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(
-                          child: Text.rich(
-                            _tags(headline, spanBuilder),
-                            overflow: open ? null : TextOverflow.fade,
-                            softWrap: open ? true : false,
+        : theme.levelColor(widget.headline.level - 1);
+    return AnimatedTextFlash(
+      cookie: _cookie,
+      child: DefaultTextStyle.merge(
+        style: TextStyle(
+          color: color,
+          // In real Org Mode only the keyword (TODO, DONE, etc.) and optional Org
+          // Num number is bolded, but we make the whole headline bolded because
+          // it looks nicer.
+          fontWeight: FontWeight.bold,
+          height: 1.8,
+        ),
+        child: FancySpanBuilder(
+          builder: (context, spanBuilder) {
+            final allowFancyLayout = settings.reflowText;
+            final haveTags = widget.headline.tags != null;
+            final simpleLayout = !haveTags || !allowFancyLayout;
+            // We don't need to check whether the section has content, because that
+            // is already encoded in [open].
+            final needEllipsis = !widget.open;
+            final tagsInBody = simpleLayout && haveTags;
+            final ellipsisInBody = simpleLayout && needEllipsis;
+            final textDirection = _textDirection(context);
+            final body = _Body(
+              widget.headline,
+              spanBuilder,
+              highlighted: widget.highlighted,
+              includeTags: tagsInBody,
+              includeEllipsis: ellipsisInBody,
+              textDirection: textDirection,
+              isArchive: isArchive,
+            );
+            if (simpleLayout) {
+              return body;
+            }
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  textDirection: textDirection,
+                  children: [
+                    Expanded(child: body),
+                    const SizedBox(width: 16),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: constraints.maxWidth / 3,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: Text.rich(
+                              _tags(widget.headline, spanBuilder),
+                              overflow: widget.open ? null : TextOverflow.fade,
+                              softWrap: widget.open ? true : false,
+                            ),
                           ),
-                        ),
-                        if (needEllipsis) const Text('...'),
-                      ],
+                          if (needEllipsis) const Text('...'),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              );
-            },
-          );
-        },
+                  ],
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
 
   TextDirection? _textDirection(BuildContext context) =>
       OrgSettings.of(context).settings.textDirection ??
-      headline.detectTextDirection();
+      widget.headline.detectTextDirection();
 }
 
 class _Body extends StatelessWidget {

@@ -39,6 +39,9 @@ class _OrgLocatorState extends State<OrgLocator> {
     {},
   );
 
+  final ValueNotifier<Map<String, HeadlineKey>> _headlineKeys =
+      SafeValueNotifier({});
+
   OrgControllerData get _controller => OrgController.of(context);
 
   @override
@@ -48,6 +51,7 @@ class _OrgLocatorState extends State<OrgLocator> {
     _linkTargetKeys.dispose();
     _nameKeys.dispose();
     _coderefKeys.dispose();
+    _headlineKeys.dispose();
     super.dispose();
   }
 
@@ -60,8 +64,8 @@ class _OrgLocatorState extends State<OrgLocator> {
     if (result == null) return false;
 
     final key = _footnoteKeys.value[result.node.id];
-    if (await _makeVisible(key)) {
-      key!.currentState?.doHighlight();
+    if (key != null && await _makeVisible(key)) {
+      key.currentState?.doHighlight();
       return true;
     }
 
@@ -70,8 +74,8 @@ class _OrgLocatorState extends State<OrgLocator> {
     _controller.ensureVisible(result.path);
     _footnoteKeys.listenOnce(() async {
       final key = _footnoteKeys.value[result.node.id];
-      if (await _makeVisible(key)) {
-        key!.currentState?.doHighlight();
+      if (key != null && await _makeVisible(key)) {
+        key.currentState?.doHighlight();
       }
     });
 
@@ -86,8 +90,8 @@ class _OrgLocatorState extends State<OrgLocator> {
     if (result == null) return false;
 
     final key = _radioTargetKeys.value[id];
-    if (await _makeVisible(key)) {
-      key!.currentState?.doHighlight();
+    if (key != null && await _makeVisible(key)) {
+      key.currentState?.doHighlight();
       return true;
     }
 
@@ -96,8 +100,8 @@ class _OrgLocatorState extends State<OrgLocator> {
     _controller.ensureVisible(result.path);
     return await _radioTargetKeys.listenOnce(() async {
       final key = _radioTargetKeys.value[id];
-      if (await _makeVisible(key)) {
-        key!.currentState?.doHighlight();
+      if (key != null && await _makeVisible(key)) {
+        key.currentState?.doHighlight();
         return true;
       }
       return false;
@@ -112,8 +116,8 @@ class _OrgLocatorState extends State<OrgLocator> {
     if (result == null) return false;
 
     final key = _linkTargetKeys.value[keyId];
-    if (await _makeVisible(key)) {
-      key!.currentState?.doHighlight();
+    if (key != null && await _makeVisible(key)) {
+      key.currentState?.doHighlight();
       return true;
     }
 
@@ -122,8 +126,8 @@ class _OrgLocatorState extends State<OrgLocator> {
     _controller.ensureVisible(result.path);
     return await _linkTargetKeys.listenOnce(() async {
       final key = _linkTargetKeys.value[keyId];
-      if (await _makeVisible(key)) {
-        key!.currentState?.doHighlight();
+      if (key != null && await _makeVisible(key)) {
+        key.currentState?.doHighlight();
         return true;
       }
       return false;
@@ -140,8 +144,8 @@ class _OrgLocatorState extends State<OrgLocator> {
     if (result == null) return false;
 
     final key = _nameKeys.value[keyId];
-    if (await _makeVisible(key)) {
-      key!.currentState?.doHighlight();
+    if (key != null && await _makeVisible(key)) {
+      key.currentState?.doHighlight();
       return true;
     }
 
@@ -150,8 +154,8 @@ class _OrgLocatorState extends State<OrgLocator> {
     _controller.ensureVisible(result.path);
     return await _nameKeys.listenOnce(() async {
       final key = _nameKeys.value[keyId];
-      if (await _makeVisible(key)) {
-        key!.currentState?.doHighlight();
+      if (key != null && await _makeVisible(key)) {
+        key.currentState?.doHighlight();
         return true;
       }
       return false;
@@ -165,8 +169,8 @@ class _OrgLocatorState extends State<OrgLocator> {
     if (result == null) return false;
 
     final key = _coderefKeys.value[ref];
-    if (await _makeVisible(key)) {
-      key!.currentState?.doHighlight();
+    if (key != null && await _makeVisible(key)) {
+      key.currentState?.doHighlight();
       return true;
     }
 
@@ -175,8 +179,43 @@ class _OrgLocatorState extends State<OrgLocator> {
     _controller.ensureVisible(result.path);
     return await _coderefKeys.listenOnce(() async {
       final key = _coderefKeys.value[ref];
-      if (await _makeVisible(key)) {
-        key!.currentState?.doHighlight();
+      if (key != null && await _makeVisible(key)) {
+        key.currentState?.doHighlight();
+        return true;
+      }
+      return false;
+    });
+  }
+
+  // For public API purposes we refer to sections, but what we want to jump to
+  // is actually the headline, because aligning a very tall section to the
+  // center of the viewport is not very useful.
+  Future<bool> _jumpToSection(String target) async {
+    final result = _controller.root.find<OrgTree>(
+      (section) => section.isSectionForTarget(target),
+    );
+    if (result == null) return false;
+
+    final key = _headlineKeys.value[result.node.id];
+    if (key != null && await _makeVisible(key, alignment: 0.4)) {
+      key.currentState?.doHighlight();
+      // Open the section if it is currently folded
+      _controller.ensureVisible(result.path);
+      return true;
+    }
+
+    // Target widget is probably not currently visible, so make it visible and
+    // then listen for its key to become available.
+    _controller.ensureVisible(result.path);
+
+    return await _headlineKeys.listenOnce(() async {
+      // Opening the section causes a refresh that unmounts the previous key, so
+      // we wait for the animations to finish.
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+
+      final key = _headlineKeys.value[result.node.id];
+      if (key != null && await _makeVisible(key, alignment: 0.4)) {
+        key.currentState?.doHighlight();
         return true;
       }
       return false;
@@ -196,6 +235,8 @@ class _OrgLocatorState extends State<OrgLocator> {
       jumpToName: _jumpToName,
       coderefKeys: _coderefKeys,
       jumpToCoderef: _jumpToCoderef,
+      headlineKeys: _headlineKeys,
+      jumpToSection: _jumpToSection,
       child: widget.child,
     );
   }
@@ -214,6 +255,8 @@ class OrgLocatorData extends InheritedWidget {
     required this.jumpToName,
     required this.coderefKeys,
     required this.jumpToCoderef,
+    required this.headlineKeys,
+    required this.jumpToSection,
     super.key,
   });
 
@@ -324,20 +367,45 @@ class OrgLocatorData extends InheritedWidget {
     return false;
   }
 
+  /// Keys representing headlines in the document. It will only be populated
+  /// after the widget build phase.
+  final ValueNotifier<Map<String, HeadlineKey>> headlineKeys;
+
+  HeadlineKey generateHeadlineKey(String id, {String? label}) {
+    final key = HeadlineKey(debugLabel: label);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      headlineKeys.value = Map.of(headlineKeys.value)
+        ..removeWhere((_, v) => v.currentContext?.mounted != true)
+        ..[id] = key;
+    });
+    return key;
+  }
+
+  /// Jump to the section with the specified target. If successful, will return
+  /// true.
+  final Future<bool> Function(String) jumpToSection;
+
   @override
   bool updateShouldNotify(OrgLocatorData oldWidget) => false;
 }
 
-Future<bool> _makeVisible(GlobalKey? key) async {
-  final context = key?.currentContext;
-  if (context == null || !context.mounted) return false;
+Future<bool> _makeVisible(GlobalKey key, {double alignment = 0.5}) async {
+  if (key.currentContext?.mounted != true) {
+    debugPrint('Cannot make visible: $key (context: ${key.currentContext})');
+    return false;
+  }
 
   // Delay by enough to make sure any opening animations have finished
   await Future.delayed(const Duration(milliseconds: 100), () async {
-    if (!context.mounted) return;
+    if (key.currentContext?.mounted != true) {
+      debugPrint(
+        'Cannot make visible after delay: $key (context: ${key.currentContext})',
+      );
+      return;
+    }
     await Scrollable.ensureVisible(
-      context,
-      alignment: 0.5,
+      key.currentContext!,
+      alignment: alignment,
       duration: const Duration(milliseconds: 100),
     );
   });

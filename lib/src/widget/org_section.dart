@@ -2,6 +2,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:org_flutter/src/controller.dart';
 import 'package:org_flutter/src/events.dart';
+import 'package:org_flutter/src/locator.dart';
 import 'package:org_flutter/src/settings.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_flutter/src/widget/org_content.dart';
@@ -80,6 +81,8 @@ class OrgSectionWidget extends StatelessWidget {
                     open: _openEnough(visibility),
                     highlighted: OrgController.of(context).sparseQuery
                         ?.matches(section),
+                    key: OrgLocator.of(context)
+                        ?.generateHeadlineKey(section.id),
                   ),
                 ),
                 AnimatedSwitcher(
