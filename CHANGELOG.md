@@ -1,3 +1,6 @@
+## [13.3.0]
+- Allow jumping to sections via `OrgLocator`
+
 ## [13.2.0]
 - Expand Elisp support
 
