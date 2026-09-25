@@ -1,3 +1,6 @@
+## [13.4.0]
+- Bump org_parser to 12.0.0
+
 ## [13.3.0]
 - Allow jumping to sections via `OrgLocator`
 
