@@ -198,9 +198,14 @@ class _OrgLocatorState extends State<OrgLocator> {
 
     final key = _headlineKeys.value[result.node.id];
     if (key != null && await _makeVisible(key, alignment: 0.4)) {
-      key.currentState?.doHighlight();
       // Open the section if it is currently folded
       _controller.ensureVisible(result.path);
+
+      // Opening the section causes a refresh that unmounts the previous key, so
+      // we wait for the animations to finish.
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+
+      _headlineKeys.value[result.node.id]?.currentState?.doHighlight();
       return true;
     }
 
