@@ -1,3 +1,6 @@
+## [13.4.1]
+- Fix highlighting of jumped-to sections
+
 ## [13.4.0]
 - Bump org_parser to 12.0.0
 
