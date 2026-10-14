@@ -102,11 +102,12 @@ class OrgRootWidget extends StatelessWidget {
         child: IdentityTextScale(child: child),
       ),
     );
-    final locale = OrgSettings.of(context).settings.locale;
-    if (locale != null) {
+    final docLocale = OrgSettings.of(context).settings.locale;
+    if (docLocale != null) {
       body = Localizations.override(
         context: context,
-        locale: locale,
+        locale: docLocale,
+        delegates: _fallbackDelegates(context, docLocale),
         child: body,
       );
     }
@@ -114,4 +115,72 @@ class OrgRootWidget extends StatelessWidget {
         ? body
         : DefaultTextStyle.merge(style: style, child: body);
   }
+
+  List<LocalizationsDelegate<dynamic>>? _fallbackDelegates(
+    BuildContext context,
+    Locale docLocale,
+  ) {
+    final parentLocale = Localizations.localeOf(context);
+    if (docLocale == parentLocale) return null;
+
+    // The document locale may not be supported by the app's localizations, so
+    // we need to allow fallback in order for localizations in
+    // consumer-provided widgets to work.
+    //
+    // I.e. a widget supplied from loadImage that accesses
+    // MyLocalizations.of(context) will have the ambient locale set to
+    // docLocale, but MyLocalizations may not support that locale. By wrapping
+    // them we let them pretend to support docLocale.
+    final inheritedLocalizations = context
+        .findAncestorWidgetOfExactType<Localizations>();
+    final delegates = inheritedLocalizations?.delegates;
+    if (delegates == null) return null;
+
+    // Preserve Flutter's first-supported-delegate selection. If any delegate
+    // of a type supports the document locale, let Flutter select it normally.
+    final supportedTypes = delegates
+        .where((delegate) => delegate.isSupported(docLocale))
+        .map((d) => d.type)
+        .toSet();
+
+    // If no delegate of a type supports the document locale, forward through
+    // the first delegate of that type that supports the parent locale.
+    final fallbacks = <Type, LocalizationsDelegate<dynamic>>{};
+    for (final delegate in delegates) {
+      if (!supportedTypes.contains(delegate.type) &&
+          delegate.isSupported(parentLocale)) {
+        fallbacks.putIfAbsent(delegate.type, () => delegate);
+      }
+    }
+
+    return fallbacks.values
+        .map((d) => _ParentLocaleFallbackDelegate(d, parentLocale))
+        .toList(growable: false);
+  }
+}
+
+// A [LocalizationsDelegate] that allows the provided delegate to fall back to a
+// parent locale if the requested locale is not supported.
+class _ParentLocaleFallbackDelegate<T> extends LocalizationsDelegate<T> {
+  const _ParentLocaleFallbackDelegate(this.delegate, this.parentLocale);
+
+  final LocalizationsDelegate<T> delegate;
+  final Locale parentLocale;
+
+  @override
+  Type get type => delegate.type;
+
+  @override
+  bool isSupported(Locale locale) =>
+      delegate.isSupported(locale) || delegate.isSupported(parentLocale);
+
+  @override
+  Future<T> load(Locale locale) {
+    final loadLocale = delegate.isSupported(locale) ? locale : parentLocale;
+    return delegate.load(loadLocale);
+  }
+
+  @override
+  bool shouldReload(covariant _ParentLocaleFallbackDelegate<T> old) =>
+      delegate != old.delegate || parentLocale != old.parentLocale;
 }
