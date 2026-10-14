@@ -1,3 +1,6 @@
+## [13.4.2]
+- Fix resolving localizations in consumer-supplied widgets
+
 ## [13.4.1]
 - Fix highlighting of jumped-to sections
 
