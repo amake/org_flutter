@@ -220,10 +220,10 @@ packages:
     dependency: transitive
     description:
       name: more
-      sha256: "53e60f96fe1cd1468edf45ba2424f09f0a339db9eda90ba2da65e6485cd70cf7"
+      sha256: "59f5986cf2add0912842a5d705b1a2a91aab6e945b09fba8f38f87cff1b813d0"
       url: "https://pub.dev"
     source: hosted
-    version: "4.8.1"
+    version: "4.8.2"
   org_flutter:
     dependency: "direct main"
     description:

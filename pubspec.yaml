@@ -25,7 +25,7 @@ dependencies:
   petit_lisp: ^6.5.0
   # petit_lisp:
     # path: ../petit_lisp
-  more: ^4.7.0
+  more: ^4.8.2
   material_ui: ^1.0.0
 
 dev_dependencies:

@@ -108,13 +108,12 @@ final _katakanaMatcher = UnicodeCharMatcher.scriptKatakana();
 // These catch ranges that should be treated as full-width CJK (should not have
 // spaces inserted) but include characters that are Common script.
 bool _isCjkOther(int codeUnit) =>
-    (codeUnit >= 0x3000 && codeUnit <= 0x303F) || // CJK Symbols and Punctuation
-    (codeUnit >= 0x31C0 && codeUnit <= 0x31EF) || // CJK Strokes
-    (codeUnit >= 0x3200 &&
-        codeUnit <= 0x32FF) || // Enclosed CJK Letters and Months
-    (codeUnit >= 0x3300 && codeUnit <= 0x33FF) || // CJK Compatibility
-    (codeUnit >= 0xFE30 && codeUnit <= 0xFE4F) || // CJK Compatibility Forms
-    (codeUnit >= 0xFF00 && codeUnit <= 0xFFEF); // Halfwidth and Fullwidth Forms
+    UnicodeBlockCharMatcher.cjkSymbolsAndPunctuation.match(codeUnit) ||
+    UnicodeBlockCharMatcher.cjkStrokes.match(codeUnit) ||
+    UnicodeBlockCharMatcher.enclosedCjkLettersAndMonths.match(codeUnit) ||
+    UnicodeBlockCharMatcher.cjkCompatibility.match(codeUnit) ||
+    UnicodeBlockCharMatcher.cjkCompatibilityForms.match(codeUnit) ||
+    UnicodeBlockCharMatcher.halfwidthAndFullwidthForms.match(codeUnit);
 
 bool _isNonSpaceDelimited(int codeUnit) =>
     _hanMatcher.match(codeUnit) ||
