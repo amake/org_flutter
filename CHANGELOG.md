@@ -1,3 +1,6 @@
+## [13.4.3]
+- Bump flutter_slidable to 5.0.0
+
 ## [13.4.2]
 - Fix resolving localizations in consumer-supplied widgets
 
