@@ -133,18 +133,12 @@ class OrgSectionWidget extends StatelessWidget {
   Widget _withSlideActions(BuildContext context, Widget child) {
     final actions = OrgEvents.of(context).onSectionSlide?.call(section);
     if (actions == null) return child;
-    // TODO(aaron): Remove this once flutter_slidable is updated to use material_ui
-    // https://github.com/letsar/flutter_slidable/issues/548
-    //
-    // ignore: deprecated_member_use
-    return MaterialUiCompatibilityBridge(
-      child: Slidable(
-        endActionPane: ActionPane(
-          motion: const ScrollMotion(),
-          children: actions,
-        ),
-        child: child,
+    return Slidable(
+      endActionPane: ActionPane(
+        motion: const ScrollMotion(),
+        children: actions,
       ),
+      child: child,
     );
   }
 }
