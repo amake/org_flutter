@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_tex_js/flutter_tex_js.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:org_flutter/src/util/util.dart';
 import 'package:org_parser/org_parser.dart';
 

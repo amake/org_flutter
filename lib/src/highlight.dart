@@ -1,7 +1,7 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/widgets.dart';
 import 'package:highlighting/highlighting.dart';
 import 'package:highlighting/languages/all.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:org_flutter/src/widgets.dart';
 
 bool supportedSrcLanguage(String? language) =>

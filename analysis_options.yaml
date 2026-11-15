@@ -13,3 +13,7 @@ analyzer:
     strict-casts: true
     strict-inference: true
     strict-raw-types: true
+
+linter:
+  rules:
+    - directives_ordering
