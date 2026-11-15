@@ -18,6 +18,10 @@ test-watch:
 	fswatch -0 -e '*~$$' -e '/\.#' -e '#$$' lib test \
 		| xargs -0 -I {} bash -c 'flutter test $$([[ {} =~ test/.* ]] && echo {})'
 
+.PHONY: format-check
+format-check:
+	dart format --set-exit-if-changed .
+
 .PHONY: screenshot
 screenshot: ## Manually dump screenshots for layout testing purposes
 	rm -rf $(gold_dir)

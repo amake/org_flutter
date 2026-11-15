@@ -20,5 +20,7 @@ jobs:
       run: flutter pub get
     - name: Analyze
       run: flutter analyze
+    - name: Format check
+      run: make format-check
     - name: Run tests
       run: make test
