@@ -13,13 +13,24 @@ TextSpan buildSrcHighlightSpan(
   required String code,
   required String? languageId,
   SpanFactory? spanFactory,
-}) => _highlightedSpan(
-  code,
-  languageId: languageId,
-  theme: OrgTheme.dataOf(context).srcTheme ?? {},
-  textStyle: DefaultTextStyle.of(context).style,
-  spanFactory: spanFactory,
-);
+}) {
+  final theme = OrgTheme.dataOf(context);
+  final defaultStyle = DefaultTextStyle.of(context).style;
+  final rootColor =
+      defaultStyle.color ??
+      theme.srcTheme?[_rootKey]?.color ??
+      _defaultFontColor;
+  return _highlightedSpan(
+    code,
+    languageId: languageId,
+    theme: theme.srcTheme ?? {},
+    textStyle: defaultStyle
+        .merge(theme.blockTextStyle)
+        // Keep blockTextStyle.color from overriding the source root color
+        .copyWith(color: rootColor),
+    spanFactory: spanFactory,
+  );
+}
 
 // Below copied from:
 // https://github.com/akvelon/dart-highlighting/blob/25bc512c66d9eead9012dd129d0a12e77393b828/flutter_highlighting/lib/flutter_highlighting.dart
@@ -110,7 +121,6 @@ TextSpan _highlightedSpan(
   if (textStyle != null) {
     style = style.merge(textStyle);
   }
-
   return TextSpan(
     style: style,
     children: _convert(
@@ -118,6 +128,7 @@ TextSpan _highlightedSpan(
       highlight.highlight(languageId ?? '', source, true).nodes ?? [],
       theme,
       spanFactory ?? _defaultSpanFactory,
+      style,
     ),
   );
 }
@@ -130,22 +141,25 @@ List<InlineSpan> _convert(
   List<Node> nodes,
   Map<String, TextStyle> theme,
   SpanFactory spanFactory,
+  TextStyle inheritedStyle,
 ) {
   List<InlineSpan> spans = [];
   var currentSpans = spans;
   List<List<InlineSpan>> stack = [];
 
-  traverse(Node node, String? className) {
+  traverse(Node node, String? className, TextStyle parentStyle) {
+    final nodeStyle = theme[className];
+    final effectiveStyle = parentStyle.merge(nodeStyle);
     if (node.value != null) {
-      currentSpans.add(spanFactory(text: node.value, style: theme[className]));
+      currentSpans.add(spanFactory(text: node.value, style: effectiveStyle));
     } else {
       List<InlineSpan> tmp = [];
-      currentSpans.add(TextSpan(children: tmp, style: theme[className]));
+      currentSpans.add(TextSpan(children: tmp, style: nodeStyle));
       stack.add(currentSpans);
       currentSpans = tmp;
 
       for (var n in node.children) {
-        traverse(n, n.className ?? className);
+        traverse(n, n.className ?? className, effectiveStyle);
         if (n == node.children.last) {
           currentSpans = stack.isEmpty ? spans : stack.removeLast();
         }
@@ -154,7 +168,7 @@ List<InlineSpan> _convert(
   }
 
   for (var node in nodes) {
-    traverse(node, node.className);
+    traverse(node, node.className, inheritedStyle);
   }
 
   return spans;
