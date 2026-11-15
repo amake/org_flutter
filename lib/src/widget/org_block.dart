@@ -132,6 +132,11 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
     int indentSize,
   ) {
     final block = widget.block;
+    final theme = OrgTheme.dataOf(context);
+    final blockTextStyle = theme.blockTextStyle;
+    final blockStyle = DefaultTextStyle.of(context).style
+        .merge(blockTextStyle)
+        .copyWith(color: theme.codeColor);
     Widget body;
     if (block is OrgSrcBlock) {
       final codeNode = block.body as OrgPlainText;
@@ -139,22 +144,18 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
         softDeindent(codeNode.content, indentSize),
       );
       final refPattern = block.coderefPattern();
-      final defaultStyle = DefaultTextStyle.of(context).style;
       InlineSpan span;
       if (!supportedSrcLanguage(block.language)) {
-        final codeStyle = defaultStyle.copyWith(
-          color: OrgTheme.dataOf(context).codeColor,
-        );
         span = TextSpan(
           children: _tokenizeText(code, refPattern)
               .map((t) {
                 return t.coderef == null
-                    ? spanBuilder.highlightedSpan(t.text, style: codeStyle)
+                    ? spanBuilder.highlightedSpan(t.text, style: blockStyle)
                     : WidgetSpan(
                         child: OrgCoderefWidget(
                           t.text,
                           spanBuilder,
-                          style: codeStyle,
+                          style: blockStyle,
                           key: OrgLocator.of(context)
                               ?.generateCoderefKey(t.coderef!),
                         ),
@@ -163,6 +164,9 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
               .toList(growable: false),
         );
       } else {
+        // Coderefs and search matches become WidgetSpans, which don't
+        // inherit the enclosing span's style. The highlighter passes each
+        // token's resolved style to the span factory for those widgets.
         span = buildSrcHighlightSpan(
           context,
           code: code,
@@ -192,7 +196,16 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
       final content = removeTrailingLineBreak(
         softDeindent(contentNode.content, indentSize),
       );
-      body = Text.rich(spanBuilder.highlightedSpan(content));
+      // Search matches are drawn as widgets with an explicit style, which
+      // the DefaultTextStyle below does not reach; so example and export
+      // blocks pass their block style here too.
+      final isBlockStyled = block.type == 'example' || block.type == 'export';
+      body = Text.rich(
+        spanBuilder.highlightedSpan(
+          content,
+          style: isBlockStyled ? blockStyle : null,
+        ),
+      );
     } else {
       // This feels a bit costly, but it's the easiest way to handle scenarios
       // where the body is indented *less* than the block delimiters.
@@ -210,11 +223,7 @@ class _OrgBlockWidgetState extends State<OrgBlockWidget>
       );
     }
     if (block.type == 'example' || block.type == 'export') {
-      body = DefaultTextStyle(
-        style: DefaultTextStyle.of(context).style
-            .copyWith(color: OrgTheme.dataOf(context).codeColor),
-        child: body,
-      );
+      body = DefaultTextStyle(style: blockStyle, child: body);
     } else if (block.type == 'verse') {
       body = InheritedOrgSettings.merge(
         OrgSettings(reflowText: false),

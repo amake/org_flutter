@@ -16,7 +16,8 @@ class OrgFixedWidthAreaWidget extends StatelessWidget {
       fixedWidthArea.indent,
       builder: (context, totalIndentSize) {
         return DefaultTextStyle.merge(
-          style: TextStyle(color: OrgTheme.dataOf(context).codeColor),
+          style: OrgTheme.dataOf(context)
+              .fontStyleForOrgStyle(const TextStyle(), OrgStyle.code),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             physics: const AlwaysScrollableScrollPhysics(),

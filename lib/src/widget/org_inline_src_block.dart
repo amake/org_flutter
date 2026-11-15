@@ -14,16 +14,22 @@ class OrgInlineSrcBlockWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final defaultStyle = DefaultTextStyle.of(context).style;
     final orgTheme = OrgTheme.dataOf(context);
-    final codeStyle = defaultStyle.copyWith(color: orgTheme.codeColor);
-    final metaStyle = defaultStyle.copyWith(color: orgTheme.metaColor);
+    final blockTextStyle = orgTheme.blockTextStyle;
+    final blockStyle = defaultStyle
+        .merge(blockTextStyle)
+        .copyWith(color: orgTheme.codeColor);
+    // The language keeps metaColor while inheriting the block's other styles.
+    final languageStyle = defaultStyle
+        .merge(blockTextStyle)
+        .copyWith(color: orgTheme.metaColor);
     return Text.rich(
       TextSpan(
         children: [
-          TextSpan(text: block.leading, style: codeStyle),
-          TextSpan(text: block.language, style: metaStyle),
+          TextSpan(text: block.leading, style: blockStyle),
+          TextSpan(text: block.language, style: languageStyle),
           if (block.arguments != null)
-            TextSpan(text: block.arguments, style: codeStyle),
-          TextSpan(text: '{', style: codeStyle),
+            TextSpan(text: block.arguments, style: blockStyle),
+          TextSpan(text: '{', style: blockStyle),
           if (supportedSrcLanguage(block.language))
             buildSrcHighlightSpan(
               context,
@@ -33,9 +39,9 @@ class OrgInlineSrcBlockWidget extends StatelessWidget {
           else
             TextSpan(
               text: trimPrefSuff(block.body, '{', '}'),
-              style: codeStyle,
+              style: blockStyle,
             ),
-          TextSpan(text: '}', style: codeStyle),
+          TextSpan(text: '}', style: blockStyle),
         ],
       ),
     );
