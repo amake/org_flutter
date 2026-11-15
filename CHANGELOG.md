@@ -1,3 +1,6 @@
+## [13.5.0]
+- Allow specifying style of code, verbatim, and blocks in `OrgThemeData`
+
 ## [13.4.3]
 - Bump flutter_slidable to 5.0.0
 
