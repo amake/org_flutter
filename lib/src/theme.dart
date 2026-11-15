@@ -229,6 +229,9 @@ class OrgThemeData {
     this.citationColor,
     this.transcludeColor,
     this.rootPadding,
+    this.codeTextStyle,
+    this.verbatimTextStyle,
+    this.blockTextStyle,
     Iterable<Color>? levelColors,
     Map<String, TextStyle>? srcTheme,
   }) : levelColors = levelColors == null
@@ -257,6 +260,31 @@ class OrgThemeData {
 
   final EdgeInsets? rootPadding;
 
+  /// Merged into the style of inline code (`~code~`) and fixed-width areas
+  /// (`: ...` lines), like the Emacs face `org-code`. Set for example a
+  /// monospace `fontFamily` here when the document is shown in a
+  /// proportional font. Null leaves them in the surrounding font.
+  ///
+  /// The style controls font and other text attributes; Org colors still
+  /// determine the color of the element.
+  final TextStyle? codeTextStyle;
+
+  /// Merged into the style of inline verbatim (`=verbatim=`), like the Emacs
+  /// face `org-verbatim`. Null leaves it in the surrounding font. See
+  /// [codeTextStyle] for how it combines with [codeColor].
+  final TextStyle? verbatimTextStyle;
+
+  /// Merged into the style of source blocks, example and export blocks, and
+  /// inline source blocks as a whole (`src_lang`, header arguments and
+  /// body), like the Emacs face `org-block`. Quote and verse blocks are not
+  /// affected. Null leaves them in the surrounding font. See
+  /// [codeTextStyle] for how it combines with [codeColor].
+  ///
+  /// In highlighted source, a [srcTheme] entry that sets its own
+  /// `fontFamily` still wins for that token. Syntax colors come from
+  /// [srcTheme], and the language of an inline source block keeps [metaColor].
+  final TextStyle? blockTextStyle;
+
   Color? levelColor(int level) {
     if (level >= kInlineTaskMinLevel) return codeColor; // inline task
     final levelColors = this.levelColors;
@@ -267,9 +295,10 @@ class OrgThemeData {
     switch (style) {
       case OrgStyle.bold:
         return base.copyWith(fontWeight: FontWeight.bold);
-      case OrgStyle.verbatim: // fallthrough
+      case OrgStyle.verbatim:
+        return base.merge(verbatimTextStyle).copyWith(color: codeColor);
       case OrgStyle.code:
-        return base.copyWith(color: codeColor);
+        return base.merge(codeTextStyle).copyWith(color: codeColor);
       case OrgStyle.italic:
         return base.copyWith(fontStyle: FontStyle.italic);
       case OrgStyle.strikeThrough:
@@ -309,6 +338,9 @@ class OrgThemeData {
     Iterable<Color>? levelColors,
     Map<String, TextStyle>? srcTheme,
     EdgeInsets? rootPadding,
+    TextStyle? codeTextStyle,
+    TextStyle? verbatimTextStyle,
+    TextStyle? blockTextStyle,
   }) => OrgThemeData(
     todoColor: todoColor ?? this.todoColor,
     doneColor: doneColor ?? this.doneColor,
@@ -329,6 +361,9 @@ class OrgThemeData {
     levelColors: levelColors ?? this.levelColors,
     srcTheme: srcTheme ?? this.srcTheme,
     rootPadding: rootPadding ?? this.rootPadding,
+    codeTextStyle: codeTextStyle ?? this.codeTextStyle,
+    verbatimTextStyle: verbatimTextStyle ?? this.verbatimTextStyle,
+    blockTextStyle: blockTextStyle ?? this.blockTextStyle,
   );
 
   @override
@@ -355,11 +390,14 @@ class OrgThemeData {
         transcludeColor == other.transcludeColor &&
         listEquals(levelColors, other.levelColors) &&
         mapEquals(srcTheme, other.srcTheme) &&
-        rootPadding == other.rootPadding;
+        rootPadding == other.rootPadding &&
+        codeTextStyle == other.codeTextStyle &&
+        verbatimTextStyle == other.verbatimTextStyle &&
+        blockTextStyle == other.blockTextStyle;
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     todoColor,
     doneColor,
     priorityColor,
@@ -380,7 +418,10 @@ class OrgThemeData {
     srcTheme == null ? null : Object.hashAll(srcTheme!.keys),
     srcTheme == null ? null : Object.hashAll(srcTheme!.values),
     rootPadding,
-  );
+    codeTextStyle,
+    verbatimTextStyle,
+    blockTextStyle,
+  ]);
 
   // ignore: prefer_constructors_over_static_methods
   static OrgThemeData? lerp(OrgThemeData? a, OrgThemeData? b, double t) {
@@ -407,6 +448,13 @@ class OrgThemeData {
       levelColors: _lerpColorLists(a?.levelColors, b?.levelColors, t),
       srcTheme: _lerpSrcThemes(a?.srcTheme, b?.srcTheme, t),
       rootPadding: EdgeInsets.lerp(a?.rootPadding, b?.rootPadding, t),
+      codeTextStyle: TextStyle.lerp(a?.codeTextStyle, b?.codeTextStyle, t),
+      verbatimTextStyle: TextStyle.lerp(
+        a?.verbatimTextStyle,
+        b?.verbatimTextStyle,
+        t,
+      ),
+      blockTextStyle: TextStyle.lerp(a?.blockTextStyle, b?.blockTextStyle, t),
     );
   }
 
