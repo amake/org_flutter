@@ -16,6 +16,8 @@ class OrgEvents extends InheritedWidget {
     this.onCitationTap,
     this.onTimestampTap,
     this.loadImage,
+    this.loadLatexInline,
+    this.loadLatexBlock,
     this.loadTransclusion,
     super.key,
   });
@@ -61,6 +63,32 @@ class OrgEvents extends InheritedWidget {
   ///
   /// Return null instead to display the link text.
   final Widget? Function(OrgLink)? loadImage;
+
+  /// A callback invoked when an inline LaTeX fragment such as `\(a^2\)` should
+  /// be displayed. The argument is the [OrgLatexInline] fragment; the LaTeX
+  /// source is [OrgLatexInline.content]. It is your responsibility to render
+  /// the fragment and return a span for displaying it, e.g. a [WidgetSpan]
+  /// with [PlaceholderAlignment.baseline].
+  ///
+  /// `style` is the ambient text style at that point: the fully resolved style
+  /// the surrounding text is drawn with, including markup such as bold and the
+  /// theme's colors (e.g. a headline's level color). Apply it to the rendered
+  /// formula so that it matches the surrounding text; a [WidgetSpan] does not
+  /// pick it up on its own.
+  ///
+  /// Return null instead to display the LaTeX source.
+  final InlineSpan? Function(OrgLatexInline latex, TextStyle style)?
+  loadLatexInline;
+
+  /// A callback invoked when a LaTeX block such as
+  /// `\begin{equation}...\end{equation}` should be displayed. The argument is
+  /// the [OrgLatexBlock]; the environment is [OrgLatexBlock.environment] and
+  /// the LaTeX source is [OrgLatexBlock.begin], [OrgLatexBlock.content], and
+  /// [OrgLatexBlock.end]. It is your responsibility to render the block and
+  /// return a widget for displaying it.
+  ///
+  /// Return null instead to display the LaTeX source.
+  final Widget? Function(OrgLatexBlock latex)? loadLatexBlock;
 
   /// A callback invoked when loading transcluded content. The argument is the
   /// [OrgMeta] describing the transclusion. It is your responsibility to
@@ -134,5 +162,7 @@ class OrgEvents extends InheritedWidget {
       onCitationTap != oldWidget.onCitationTap ||
       onTimestampTap != oldWidget.onTimestampTap ||
       loadImage != oldWidget.loadImage ||
+      loadLatexInline != oldWidget.loadLatexInline ||
+      loadLatexBlock != oldWidget.loadLatexBlock ||
       loadTransclusion != oldWidget.loadTransclusion;
 }

@@ -474,11 +474,17 @@ class OrgSpanBuilder {
     } else if (element is OrgLatexBlock) {
       return _styledWidgetSpan(OrgLatexBlockWidget(element), style);
     } else if (element is OrgLatexInline) {
-      return _styledWidgetSpan(
-        OrgLatexInlineWidget(element),
-        style,
-        PlaceholderAlignment.middle,
-      );
+      // [style] is the resolved style of the surrounding text: either the
+      // ambient [DefaultTextStyle] or that style with markup applied by the
+      // caller, so the consumer can match it.
+      final latexSpan = OrgEvents.of(context).loadLatexInline
+          ?.call(element, style);
+      return latexSpan ??
+          highlightedSpan(
+            transformer(element, element.toMarkup()),
+            style: style,
+            recognizer: recognizer,
+          );
     } else if (element is OrgLocalVariables) {
       return _styledWidgetSpan(OrgLocalVariablesWidget(element), style);
     } else if (element is OrgPgpBlock) {
