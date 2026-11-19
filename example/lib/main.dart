@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:org_flutter/org_flutter.dart';
 
+import 'latex.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -54,9 +56,17 @@ class SimpleTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Org(
-      '''* TODO [#A] foo bar
+      r'''Inline LaTeX: \(e^{i\pi} + 1 = 0\)
+
+\begin{equation}
+a^2 + b^2 = c^2
+\end{equation}
+
+* TODO [#A] foo bar
 baz buzz''',
       restorationId: 'my_org_widget',
+      loadLatexInline: loadLatexInline,
+      loadLatexBlock: loadLatexBlock,
     );
   }
 }
@@ -85,7 +95,11 @@ class _ComplexTabState extends State<ComplexTab> {
       root: root,
       child: ListView(
         children: [
-          OrgRootWidget(child: OrgDocumentWidget(root, shrinkWrap: true)),
+          OrgRootWidget(
+            loadLatexInline: loadLatexInline,
+            loadLatexBlock: loadLatexBlock,
+            child: OrgDocumentWidget(root, shrinkWrap: true),
+          ),
           ElevatedButton(
             onPressed: _incrementCounter,
             child: const Text('Increment'),

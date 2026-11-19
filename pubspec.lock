@@ -96,38 +96,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_tex_js:
-    dependency: "direct main"
-    description:
-      name: flutter_tex_js
-      sha256: "56a7a716d617c17797a3ff98458c0039c64db643f67577fe6466b77e03b93e3a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.0.0"
-  flutter_tex_js_android:
-    dependency: transitive
-    description:
-      name: flutter_tex_js_android
-      sha256: fec96b079d0c09e02149ef43adfbceeea1b77c215be08034a8d3e51a5d1712ca
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.0.4"
-  flutter_tex_js_ios:
-    dependency: transitive
-    description:
-      name: flutter_tex_js_ios
-      sha256: "462d8f40e3b0f81394bd72763ed19da87db92e849b5dbf31b3d9b2872b1a510e"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.4"
-  flutter_tex_js_platform_interface:
-    dependency: transitive
-    description:
-      name: flutter_tex_js_platform_interface
-      sha256: d6d4055233af0160170cb193b52f450f81e120fdb85045596dfc52f9f9b46e26
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
   functional_zipper:
     dependency: transitive
     description:
@@ -184,14 +152,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.0"
-  listen:
-    dependency: transitive
-    description:
-      name: listen
-      sha256: "47501a08016a43fcad79252439d723f50f14f88fa7bfd8a177e0a417e5c9e1f2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
   matcher:
     dependency: transitive
     description:
@@ -264,14 +224,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.1.0"
-  plugin_platform_interface:
-    dependency: transitive
-    description:
-      name: plugin_platform_interface
-      sha256: "4820fbfdb9478b1ebae27888254d445073732dae3d6ea81f0b7e06d5dedc3f02"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.8"
   sky_engine:
     dependency: transitive
     description: flutter

@@ -1,9 +1,12 @@
-import 'package:flutter_tex_js/flutter_tex_js.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:org_flutter/src/events.dart';
+import 'package:org_flutter/src/span.dart';
 import 'package:org_flutter/src/util/util.dart';
+import 'package:org_flutter/src/widget/org_theme.dart';
 import 'package:org_parser/org_parser.dart';
 
-/// An Org Mode LaTeX block
+/// An Org Mode LaTeX block. Rendering is delegated to
+/// [OrgEvents.loadLatexBlock]; without it the LaTeX source is shown.
 class OrgLatexBlockWidget extends StatelessWidget {
   const OrgLatexBlockWidget(this.block, {super.key});
 
@@ -20,14 +23,9 @@ class OrgLatexBlockWidget extends StatelessWidget {
           constraints: const BoxConstraints.tightFor(width: double.infinity),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: TexImage(
-              _content,
-              displayMode: true,
-              error: (context, error) {
-                debugPrint(error.toString());
-                return Text(block.toMarkup());
-              },
-            ),
+            child:
+                OrgEvents.of(context).loadLatexBlock?.call(block) ??
+                _source(context),
           ),
         ),
         if (trailing.isNotEmpty)
@@ -38,11 +36,19 @@ class OrgLatexBlockWidget extends StatelessWidget {
     );
   }
 
-  String get _content {
-    if (flutterTexJsSupportedEnvironments.contains(block.environment)) {
-      return '${block.begin}${block.content}${block.end}';
-    } else {
-      return block.content;
-    }
+  // The unrendered source, styled like other code-ish blocks (e.g. fixed-width
+  // areas)
+  Widget _source(BuildContext context) {
+    return DefaultTextStyle.merge(
+      style: OrgTheme.dataOf(context)
+          .fontStyleForOrgStyle(const TextStyle(), OrgStyle.code),
+      child: FancySpanBuilder(
+        builder: (context, spanBuilder) => Text.rich(
+          spanBuilder.highlightedSpan(
+            '${block.begin}${block.content}${block.end}',
+          ),
+        ),
+      ),
+    );
   }
 }
