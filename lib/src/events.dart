@@ -79,7 +79,7 @@ class OrgEvents extends InheritedWidget {
   /// The returned span is used as is: it gets no tap recognizer (e.g. of a
   /// surrounding link) and no search highlighting.
   ///
-  /// Return null instead to display the LaTeX source.
+  /// Return null instead to display the LaTeX source in the code style.
   final InlineSpan? Function(OrgLatexInline latex, TextStyle style)?
   loadLatexInline;
 
@@ -91,7 +91,7 @@ class OrgEvents extends InheritedWidget {
   /// return a widget for displaying it. The widget is placed in a horizontally
   /// scrolling container, so its width is unbounded and it must size itself.
   ///
-  /// Return null instead to display the LaTeX source.
+  /// Return null instead to display the LaTeX source in the code style.
   final Widget? Function(OrgLatexBlock latex)? loadLatexBlock;
 
   /// A callback invoked when loading transcluded content. The argument is the

@@ -479,10 +479,13 @@ class OrgSpanBuilder {
       // caller, so the consumer can match it.
       final latexSpan = OrgEvents.of(context).loadLatexInline
           ?.call(element, style);
+      // Without a rendered span, show the source in the code style, like
+      // ~code~ markup at this point.
       return latexSpan ??
           highlightedSpan(
             transformer(element, element.toMarkup()),
-            style: style,
+            style: OrgTheme.dataOf(context)
+                .fontStyleForOrgStyle(style, OrgStyle.code),
             recognizer: recognizer,
           );
     } else if (element is OrgLocalVariables) {

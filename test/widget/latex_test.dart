@@ -10,12 +10,53 @@ a^2 + b^2 = c^2
 \end{equation}
 ''';
 
+/// The effective style of the first text run containing [needle], with the
+/// styles of all enclosing spans applied.
+TextStyle _styleOf(String needle) {
+  TextStyle? found;
+  bool visit(InlineSpan span, TextStyle inherited) {
+    final style = inherited.merge(span.style);
+    if (span is TextSpan) {
+      if (span.text?.contains(needle) ?? false) {
+        found = style;
+        return false;
+      }
+      for (final child in span.children ?? const <InlineSpan>[]) {
+        if (!visit(child, style)) return false;
+      }
+    }
+    return true;
+  }
+
+  for (final element in find.byType(RichText).evaluate()) {
+    if (!visit((element.widget as RichText).text, const TextStyle())) break;
+  }
+  if (found == null) fail('No text run contains "$needle"');
+  return found!;
+}
+
 void main() {
   group('LaTeX', () {
     group('No callback', () {
       testWidgets('Inline shows source', (tester) async {
         await tester.pumpWidget(wrap(const Org(r'foo \(a^2\) bar')));
         expect(find.textContaining(r'foo \(a^2\) bar'), findsOneWidget);
+      });
+      testWidgets('Inline source is in the code style', (tester) async {
+        const code = TextStyle(fontFamily: 'TestCode');
+        await tester.pumpWidget(
+          wrap(
+            Org(
+              r'foo *bold \(a^2\) text* bar',
+              lightTheme: OrgThemeData.light().copyWith(codeTextStyle: code),
+            ),
+          ),
+        );
+        final source = _styleOf(r'\(a^2\)');
+        expect(source.fontFamily, 'TestCode');
+        expect(source.color, OrgThemeData.light().codeColor);
+        expect(source.fontWeight, FontWeight.bold);
+        expect(_styleOf('foo').fontFamily, isNot('TestCode'));
       });
       testWidgets('Block shows source', (tester) async {
         await tester.pumpWidget(wrap(const Org(_block)));
