@@ -98,7 +98,7 @@ class Org extends StatefulWidget {
   /// level color): the child of a [WidgetSpan] is wrapped in a
   /// [DefaultTextStyle] with that style, so a renderer can read it with
   /// [DefaultTextStyle.of]; any other span is wrapped in a [TextSpan] with that
-  /// style.
+  /// style (a [WidgetSpan] nested inside it is not wrapped).
   ///
   /// Otherwise the returned span is used as is: it gets no tap recognizer (e.g.
   /// of a surrounding link) and no search highlighting.
@@ -233,7 +233,7 @@ class OrgText extends StatefulWidget {
   /// level color): the child of a [WidgetSpan] is wrapped in a
   /// [DefaultTextStyle] with that style, so a renderer can read it with
   /// [DefaultTextStyle.of]; any other span is wrapped in a [TextSpan] with that
-  /// style.
+  /// style (a [WidgetSpan] nested inside it is not wrapped).
   ///
   /// Otherwise the returned span is used as is: it gets no tap recognizer (e.g.
   /// of a surrounding link) and no search highlighting.

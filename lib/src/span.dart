@@ -475,9 +475,9 @@ class OrgSpanBuilder {
       return _styledWidgetSpan(OrgLatexBlockWidget(element), style);
     } else if (element is OrgLatexInline) {
       final latexSpan = OrgEvents.of(context).loadLatexInline?.call(element);
-      // [style] is the resolved style of the surrounding text: either the
-      // ambient [DefaultTextStyle] or that style with markup applied by the
-      // caller.
+      // Show the rendered span in [style], the resolved style of the
+      // surrounding text (the ambient [DefaultTextStyle] or that style with
+      // markup applied by the caller).
       if (latexSpan != null) return _withStyle(latexSpan, style);
       // Without a rendered span, show the source in the code style, like
       // ~code~ markup at this point.

@@ -184,7 +184,9 @@ void main() {
         );
         expect(_styleOf('RENDERED').fontWeight, FontWeight.bold);
       });
-      testWidgets('Widget span keeps its alignment', (tester) async {
+      testWidgets('Widget span keeps its alignment, baseline and style', (
+        tester,
+      ) async {
         await tester.pumpWidget(
           wrap(
             Org(
@@ -192,6 +194,7 @@ void main() {
               loadLatexInline: (latex) => const WidgetSpan(
                 alignment: PlaceholderAlignment.baseline,
                 baseline: TextBaseline.alphabetic,
+                style: TextStyle(fontSize: 20),
                 child: SizedBox(key: Key('formula'), width: 1, height: 1),
               ),
             ),
@@ -201,8 +204,8 @@ void main() {
         final span = _widgetSpans().singleWhere(
           (span) => span.alignment == PlaceholderAlignment.baseline,
         );
-        expect(span.alignment, PlaceholderAlignment.baseline);
         expect(span.baseline, TextBaseline.alphabetic);
+        expect(span.style?.fontSize, 20);
       });
     });
     group('Other contexts', () {
