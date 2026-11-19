@@ -108,7 +108,8 @@ class Org extends StatefulWidget {
   /// the [OrgLatexBlock]; the environment is [OrgLatexBlock.environment] and
   /// the LaTeX source is [OrgLatexBlock.begin], [OrgLatexBlock.content], and
   /// [OrgLatexBlock.end]. It is your responsibility to render the block and
-  /// return a widget for displaying it.
+  /// return a widget for displaying it. The widget is placed in a horizontally
+  /// scrolling container, so its width is unbounded and it must size itself.
   ///
   /// Return null instead to display the LaTeX source.
   final Widget? Function(OrgLatexBlock latex)? loadLatexBlock;
@@ -239,7 +240,8 @@ class OrgText extends StatefulWidget {
   /// the [OrgLatexBlock]; the environment is [OrgLatexBlock.environment] and
   /// the LaTeX source is [OrgLatexBlock.begin], [OrgLatexBlock.content], and
   /// [OrgLatexBlock.end]. It is your responsibility to render the block and
-  /// return a widget for displaying it.
+  /// return a widget for displaying it. The widget is placed in a horizontally
+  /// scrolling container, so its width is unbounded and it must size itself.
   ///
   /// Return null instead to display the LaTeX source.
   final Widget? Function(OrgLatexBlock latex)? loadLatexBlock;
