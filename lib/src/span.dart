@@ -474,10 +474,18 @@ class OrgSpanBuilder {
     } else if (element is OrgLatexBlock) {
       return _styledWidgetSpan(OrgLatexBlockWidget(element), style);
     } else if (element is OrgLatexInline) {
-      return _styledWidgetSpan(
-        OrgLatexInlineWidget(element),
-        style,
-        PlaceholderAlignment.middle,
+      final latexSpan = OrgEvents.of(context).loadLatexInline?.call(element);
+      // Show the rendered span in [style], the resolved style of the
+      // surrounding text (the ambient [DefaultTextStyle] or that style with
+      // markup applied by the caller).
+      if (latexSpan != null) return _withStyle(latexSpan, style);
+      // Without a rendered span, show the source in the code style, like
+      // ~code~ markup at this point.
+      return highlightedSpan(
+        transformer(element, element.toMarkup()),
+        style: OrgTheme.dataOf(context)
+            .fontStyleForOrgStyle(style, OrgStyle.code),
+        recognizer: recognizer,
       );
     } else if (element is OrgLocalVariables) {
       return _styledWidgetSpan(OrgLocalVariablesWidget(element), style);
@@ -625,3 +633,15 @@ class _FancySpanBuilderState extends State<FancySpanBuilder>
     );
   }
 }
+
+/// [span] in [style]. The style of an enclosing [TextSpan] does not reach the
+/// child of a [WidgetSpan], so that child is wrapped in a [DefaultTextStyle]
+/// instead.
+InlineSpan _withStyle(InlineSpan span, TextStyle style) => span is WidgetSpan
+    ? WidgetSpan(
+        alignment: span.alignment,
+        baseline: span.baseline,
+        style: span.style,
+        child: DefaultTextStyle.merge(style: style, child: span.child),
+      )
+    : TextSpan(style: style, children: [span]);

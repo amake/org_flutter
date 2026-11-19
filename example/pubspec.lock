@@ -97,7 +97,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_tex_js:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_tex_js
       sha256: "56a7a716d617c17797a3ff98458c0039c64db643f67577fe6466b77e03b93e3a"
@@ -184,14 +184,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.0"
-  listen:
-    dependency: transitive
-    description:
-      name: listen
-      sha256: "47501a08016a43fcad79252439d723f50f14f88fa7bfd8a177e0a417e5c9e1f2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
   matcher:
     dependency: transitive
     description:

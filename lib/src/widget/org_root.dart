@@ -22,6 +22,8 @@ class OrgRootWidget extends StatelessWidget {
     this.onCitationTap,
     this.onTimestampTap,
     this.loadImage,
+    this.loadLatexInline,
+    this.loadLatexBlock,
     this.loadTransclusion,
     super.key,
   });
@@ -76,6 +78,25 @@ class OrgRootWidget extends StatelessWidget {
   /// Return null instead to display the link text.
   final Widget? Function(OrgLink)? loadImage;
 
+  /// A callback invoked when an inline LaTeX fragment such as `\(a^2\)` should
+  /// be displayed. The argument is the [OrgLatexInline] fragment; the LaTeX
+  /// source is [OrgLatexInline.content]. It is your responsibility to render
+  /// the fragment and return a span for displaying it.
+  ///
+  /// Return null instead to display the LaTeX source in the code style.
+  final InlineSpan? Function(OrgLatexInline latex)? loadLatexInline;
+
+  /// A callback invoked when a LaTeX block such as
+  /// `\begin{equation}...\end{equation}` should be displayed. The argument is
+  /// the [OrgLatexBlock]; the environment is [OrgLatexBlock.environment] and
+  /// the LaTeX source is [OrgLatexBlock.begin], [OrgLatexBlock.content], and
+  /// [OrgLatexBlock.end]. It is your responsibility to render the block and
+  /// return a widget for displaying it. The widget is placed in a horizontally
+  /// scrolling container, so its width is unbounded and it must size itself.
+  ///
+  /// Return null instead to display the LaTeX source in the code style.
+  final Widget? Function(OrgLatexBlock latex)? loadLatexBlock;
+
   /// A callback invoked when loading transcluded content. The argument is the
   /// [OrgMeta] describing the transclusion. It is your responsibility to
   /// resolve the link, if present, fetch the data, and return a widget for
@@ -95,6 +116,8 @@ class OrgRootWidget extends StatelessWidget {
         onSectionSlide: onSectionSlide,
         onLocalSectionLinkTap: onLocalSectionLinkTap,
         loadImage: loadImage,
+        loadLatexInline: loadLatexInline,
+        loadLatexBlock: loadLatexBlock,
         onListItemTap: onListItemTap,
         onCitationTap: onCitationTap,
         onTimestampTap: onTimestampTap,
