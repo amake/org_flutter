@@ -35,6 +35,28 @@ TextStyle _styleOf(String needle) {
   return found!;
 }
 
+/// A widget span whose child reports the [DefaultTextStyle] it sees.
+InlineSpan _probe(void Function(TextStyle) seen) => WidgetSpan(
+  child: Builder(
+    builder: (context) {
+      seen(DefaultTextStyle.of(context).style);
+      return const SizedBox(width: 1, height: 1);
+    },
+  ),
+);
+
+/// All widget spans in the text on screen.
+List<WidgetSpan> _widgetSpans() {
+  final found = <WidgetSpan>[];
+  for (final element in find.byType(RichText).evaluate()) {
+    (element.widget as RichText).text.visitChildren((span) {
+      if (span is WidgetSpan) found.add(span);
+      return true;
+    });
+  }
+  return found;
+}
+
 void main() {
   group('LaTeX', () {
     group('No callback', () {
@@ -75,7 +97,7 @@ void main() {
           wrap(
             Org(
               r'foo \(a^2\) bar',
-              loadLatexInline: (latex, style) {
+              loadLatexInline: (latex) {
                 received = latex;
                 return const TextSpan(text: 'RENDERED');
               },
@@ -92,7 +114,7 @@ void main() {
           wrap(
             Org(
               r'foo \(a^2\) bar',
-              loadLatexInline: (latex, style) {
+              loadLatexInline: (latex) {
                 invoked = true;
                 return null;
               },
@@ -102,16 +124,15 @@ void main() {
         expect(invoked, isTrue);
         expect(find.textContaining(r'foo \(a^2\) bar'), findsOneWidget);
       });
-      testWidgets('Receives resolved ambient style', (tester) async {
+      testWidgets('Widget span gets the ambient style', (tester) async {
         TextStyle? received;
         await tester.pumpWidget(
           wrap(
             Org(
               r'foo \(a^2\) bar',
               style: const TextStyle(fontSize: 30),
-              loadLatexInline: (latex, style) {
-                received = style;
-                return null;
+              loadLatexInline: (latex) {
+                return _probe((s) => received = s);
               },
             ),
           ),
@@ -119,16 +140,15 @@ void main() {
         expect(received?.fontSize, 30);
         expect(received?.fontWeight, isNot(FontWeight.bold));
       });
-      testWidgets('Receives markup style', (tester) async {
+      testWidgets('Widget span gets the markup style', (tester) async {
         TextStyle? received;
         await tester.pumpWidget(
           wrap(
             Org(
               r'foo *bold \(a^2\) text* bar',
               style: const TextStyle(fontSize: 30),
-              loadLatexInline: (latex, style) {
-                received = style;
-                return null;
+              loadLatexInline: (latex) {
+                return _probe((s) => received = s);
               },
             ),
           ),
@@ -136,16 +156,15 @@ void main() {
         expect(received?.fontWeight, FontWeight.bold);
         expect(received?.fontSize, 30);
       });
-      testWidgets('Receives headline style', (tester) async {
+      testWidgets('Widget span gets the headline style', (tester) async {
         TextStyle? received;
         await tester.pumpWidget(
           wrap(
             Org(
               r'* Heading \(a^2\)',
               style: const TextStyle(fontSize: 30),
-              loadLatexInline: (latex, style) {
-                received = style;
-                return null;
+              loadLatexInline: (latex) {
+                return _probe((s) => received = s);
               },
             ),
           ),
@@ -153,6 +172,37 @@ void main() {
         expect(received?.fontWeight, FontWeight.bold);
         expect(received?.fontSize, 30);
         expect(received?.color, OrgThemeData.light().levelColor(0));
+      });
+      testWidgets('Text span gets the markup style', (tester) async {
+        await tester.pumpWidget(
+          wrap(
+            Org(
+              r'foo *bold \(a^2\) text* bar',
+              loadLatexInline: (latex) => const TextSpan(text: 'RENDERED'),
+            ),
+          ),
+        );
+        expect(_styleOf('RENDERED').fontWeight, FontWeight.bold);
+      });
+      testWidgets('Widget span keeps its alignment', (tester) async {
+        await tester.pumpWidget(
+          wrap(
+            Org(
+              r'foo \(a^2\) bar',
+              loadLatexInline: (latex) => const WidgetSpan(
+                alignment: PlaceholderAlignment.baseline,
+                baseline: TextBaseline.alphabetic,
+                child: SizedBox(key: Key('formula'), width: 1, height: 1),
+              ),
+            ),
+          ),
+        );
+        expect(find.byKey(const Key('formula')), findsOneWidget);
+        final span = _widgetSpans().singleWhere(
+          (span) => span.alignment == PlaceholderAlignment.baseline,
+        );
+        expect(span.alignment, PlaceholderAlignment.baseline);
+        expect(span.baseline, TextBaseline.alphabetic);
       });
     });
     group('Other contexts', () {
@@ -168,15 +218,13 @@ void main() {
               Org(
                 text,
                 style: const TextStyle(fontSize: 30),
-                loadLatexInline: (latex, style) {
-                  received = style;
-                  return const TextSpan(text: 'RENDERED');
+                loadLatexInline: (latex) {
+                  return _probe((s) => received = s);
                 },
               ),
             ),
           );
           expect(received?.fontSize, 30);
-          expect(find.textContaining('foo RENDERED bar'), findsOneWidget);
         });
       }
       testWidgets('Source fallback is searchable', (tester) async {
@@ -238,8 +286,7 @@ void main() {
           wrap(
             OrgText(
               r'foo \(a^2\) bar',
-              loadLatexInline: (latex, style) =>
-                  const TextSpan(text: 'RENDERED'),
+              loadLatexInline: (latex) => const TextSpan(text: 'RENDERED'),
             ),
           ),
         );
@@ -262,8 +309,7 @@ void main() {
             OrgController(
               root: doc,
               child: OrgRootWidget(
-                loadLatexInline: (latex, style) =>
-                    const TextSpan(text: 'INLINE'),
+                loadLatexInline: (latex) => const TextSpan(text: 'INLINE'),
                 loadLatexBlock: (latex) => const Text('BLOCK'),
                 child: OrgDocumentWidget(doc),
               ),
@@ -276,12 +322,12 @@ void main() {
     });
     group('Updates', () {
       test('updateShouldNotify', () {
-        InlineSpan? inlineA(OrgLatexInline _, TextStyle _) => null;
-        InlineSpan? inlineB(OrgLatexInline _, TextStyle _) => null;
+        InlineSpan? inlineA(OrgLatexInline _) => null;
+        InlineSpan? inlineB(OrgLatexInline _) => null;
         Widget? blockA(OrgLatexBlock _) => null;
         Widget? blockB(OrgLatexBlock _) => null;
         OrgEvents events({
-          InlineSpan? Function(OrgLatexInline, TextStyle)? inline,
+          InlineSpan? Function(OrgLatexInline)? inline,
           Widget? Function(OrgLatexBlock)? block,
         }) => OrgEvents(
           loadLatexInline: inline,
@@ -308,7 +354,7 @@ void main() {
         Widget build(String inline, String block) => wrap(
           Org(
             'foo \\(a^2\\) bar\n$_block',
-            loadLatexInline: (latex, style) => TextSpan(text: inline),
+            loadLatexInline: (latex) => TextSpan(text: inline),
             loadLatexBlock: (latex) => Text(block),
           ),
         );

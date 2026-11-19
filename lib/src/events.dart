@@ -70,18 +70,18 @@ class OrgEvents extends InheritedWidget {
   /// the fragment and return a span for displaying it, e.g. a [WidgetSpan]
   /// with [PlaceholderAlignment.baseline].
   ///
-  /// `style` is the ambient text style at that point: the fully resolved style
-  /// the surrounding text is drawn with, including markup such as bold and the
-  /// theme's colors (e.g. a headline's level color). Apply it to the rendered
-  /// formula so that it matches the surrounding text; a [WidgetSpan] does not
-  /// pick it up on its own.
+  /// The returned span is shown in the style of the surrounding text,
+  /// including markup such as bold and the theme's colors (e.g. a headline's
+  /// level color): the child of a [WidgetSpan] is wrapped in a
+  /// [DefaultTextStyle] with that style, so a renderer can read it with
+  /// [DefaultTextStyle.of]; any other span is wrapped in a [TextSpan] with that
+  /// style.
   ///
-  /// The returned span is used as is: it gets no tap recognizer (e.g. of a
-  /// surrounding link) and no search highlighting.
+  /// Otherwise the returned span is used as is: it gets no tap recognizer (e.g.
+  /// of a surrounding link) and no search highlighting.
   ///
   /// Return null instead to display the LaTeX source in the code style.
-  final InlineSpan? Function(OrgLatexInline latex, TextStyle style)?
-  loadLatexInline;
+  final InlineSpan? Function(OrgLatexInline latex)? loadLatexInline;
 
   /// A callback invoked when a LaTeX block such as
   /// `\begin{equation}...\end{equation}` should be displayed. The argument is
