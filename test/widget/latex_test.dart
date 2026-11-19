@@ -114,6 +114,47 @@ void main() {
         expect(received?.color, OrgThemeData.light().levelColor(0));
       });
     });
+    group('Other contexts', () {
+      for (final (name, text) in [
+        ('list item', '- foo \\(a^2\\) bar'),
+        ('table cell', '| foo \\(a^2\\) bar |'),
+        ('link description', '[[https://example.com][foo \\(a^2\\) bar]]'),
+      ]) {
+        testWidgets('Inline callback in $name', (tester) async {
+          TextStyle? received;
+          await tester.pumpWidget(
+            wrap(
+              Org(
+                text,
+                style: const TextStyle(fontSize: 30),
+                loadLatexInline: (latex, style) {
+                  received = style;
+                  return const TextSpan(text: 'RENDERED');
+                },
+              ),
+            ),
+          );
+          expect(received?.fontSize, 30);
+          expect(find.textContaining('foo RENDERED bar'), findsOneWidget);
+        });
+      }
+      testWidgets('Source fallback is searchable', (tester) async {
+        final doc = OrgDocument.parse(r'foo \(a^2\) bar');
+        await tester.pumpWidget(
+          wrap(
+            OrgController(
+              root: doc,
+              searchQuery: 'a^2',
+              child: OrgRootWidget(child: OrgDocumentWidget(doc)),
+            ),
+          ),
+        );
+        final controller = OrgController.of(
+          tester.element(find.textContaining('foo')),
+        );
+        expect(controller.searchResultKeys.value.length, 1);
+      });
+    });
     group('Block callback', () {
       testWidgets('Receives block and returned widget is used', (tester) async {
         OrgLatexBlock? received;

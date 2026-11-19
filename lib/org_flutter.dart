@@ -99,6 +99,9 @@ class Org extends StatefulWidget {
   /// formula so that it matches the surrounding text; a [WidgetSpan] does not
   /// pick it up on its own.
   ///
+  /// The returned span is used as is: it gets no tap recognizer (e.g. of a
+  /// surrounding link) and no search highlighting.
+  ///
   /// Return null instead to display the LaTeX source.
   final InlineSpan? Function(OrgLatexInline latex, TextStyle style)?
   loadLatexInline;
@@ -230,6 +233,9 @@ class OrgText extends StatefulWidget {
   /// theme's colors (e.g. a headline's level color). Apply it to the rendered
   /// formula so that it matches the surrounding text; a [WidgetSpan] does not
   /// pick it up on its own.
+  ///
+  /// The returned span is used as is: it gets no tap recognizer (e.g. of a
+  /// surrounding link) and no search highlighting.
   ///
   /// Return null instead to display the LaTeX source.
   final InlineSpan? Function(OrgLatexInline latex, TextStyle style)?

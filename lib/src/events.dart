@@ -76,6 +76,9 @@ class OrgEvents extends InheritedWidget {
   /// formula so that it matches the surrounding text; a [WidgetSpan] does not
   /// pick it up on its own.
   ///
+  /// The returned span is used as is: it gets no tap recognizer (e.g. of a
+  /// surrounding link) and no search highlighting.
+  ///
   /// Return null instead to display the LaTeX source.
   final InlineSpan? Function(OrgLatexInline latex, TextStyle style)?
   loadLatexInline;
