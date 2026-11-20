@@ -37,6 +37,8 @@ class Org extends StatefulWidget {
     this.onCitationTap,
     this.onTimestampTap,
     this.loadImage,
+    this.loadLatexInline,
+    this.loadLatexBlock,
     this.loadTransclusion,
     this.restorationId,
     super.key,
@@ -84,6 +86,36 @@ class Org extends StatefulWidget {
   ///
   /// Return null instead to display the link text.
   final Widget? Function(OrgLink)? loadImage;
+
+  /// A callback invoked when an inline LaTeX fragment such as `\(a^2\)` should
+  /// be displayed. The argument is the [OrgLatexInline] fragment; the LaTeX
+  /// source is [OrgLatexInline.content]. It is your responsibility to render
+  /// the fragment and return a span for displaying it, e.g. a [WidgetSpan]
+  /// with [PlaceholderAlignment.baseline].
+  ///
+  /// The returned span is shown in the style of the surrounding text,
+  /// including markup such as bold and the theme's colors (e.g. a headline's
+  /// level color): the child of a [WidgetSpan] is wrapped in a
+  /// [DefaultTextStyle] with that style, so a renderer can read it with
+  /// [DefaultTextStyle.of]; any other span is wrapped in a [TextSpan] with that
+  /// style (a [WidgetSpan] nested inside it is not wrapped).
+  ///
+  /// Otherwise the returned span is used as is: it gets no tap recognizer (e.g.
+  /// of a surrounding link) and no search highlighting.
+  ///
+  /// Return null instead to display the LaTeX source in the code style.
+  final InlineSpan? Function(OrgLatexInline latex)? loadLatexInline;
+
+  /// A callback invoked when a LaTeX block such as
+  /// `\begin{equation}...\end{equation}` should be displayed. The argument is
+  /// the [OrgLatexBlock]; the environment is [OrgLatexBlock.environment] and
+  /// the LaTeX source is [OrgLatexBlock.begin], [OrgLatexBlock.content], and
+  /// [OrgLatexBlock.end]. It is your responsibility to render the block and
+  /// return a widget for displaying it. The widget is placed in a horizontally
+  /// scrolling container, so its width is unbounded and it must size itself.
+  ///
+  /// Return null instead to display the LaTeX source in the code style.
+  final Widget? Function(OrgLatexBlock latex)? loadLatexBlock;
 
   /// A callback invoked when loading transcluded content. The argument is the
   /// [OrgMeta] describing the transclusion. It is your responsibility to
@@ -148,6 +180,8 @@ class _OrgState extends State<Org> {
           onCitationTap: widget.onCitationTap,
           onTimestampTap: widget.onTimestampTap,
           loadImage: widget.loadImage,
+          loadLatexInline: widget.loadLatexInline,
+          loadLatexBlock: widget.loadLatexBlock,
           loadTransclusion: widget.loadTransclusion,
           child: OrgDocumentWidget(_doc),
         ),
@@ -163,6 +197,8 @@ class OrgText extends StatefulWidget {
     this.text, {
     this.onLinkTap,
     this.loadImage,
+    this.loadLatexInline,
+    this.loadLatexBlock,
     this.settings,
     super.key,
   });
@@ -185,6 +221,36 @@ class OrgText extends StatefulWidget {
   ///
   /// Return null instead to display the link text.
   final Widget? Function(OrgLink)? loadImage;
+
+  /// A callback invoked when an inline LaTeX fragment such as `\(a^2\)` should
+  /// be displayed. The argument is the [OrgLatexInline] fragment; the LaTeX
+  /// source is [OrgLatexInline.content]. It is your responsibility to render
+  /// the fragment and return a span for displaying it, e.g. a [WidgetSpan]
+  /// with [PlaceholderAlignment.baseline].
+  ///
+  /// The returned span is shown in the style of the surrounding text,
+  /// including markup such as bold and the theme's colors (e.g. a headline's
+  /// level color): the child of a [WidgetSpan] is wrapped in a
+  /// [DefaultTextStyle] with that style, so a renderer can read it with
+  /// [DefaultTextStyle.of]; any other span is wrapped in a [TextSpan] with that
+  /// style (a [WidgetSpan] nested inside it is not wrapped).
+  ///
+  /// Otherwise the returned span is used as is: it gets no tap recognizer (e.g.
+  /// of a surrounding link) and no search highlighting.
+  ///
+  /// Return null instead to display the LaTeX source in the code style.
+  final InlineSpan? Function(OrgLatexInline latex)? loadLatexInline;
+
+  /// A callback invoked when a LaTeX block such as
+  /// `\begin{equation}...\end{equation}` should be displayed. The argument is
+  /// the [OrgLatexBlock]; the environment is [OrgLatexBlock.environment] and
+  /// the LaTeX source is [OrgLatexBlock.begin], [OrgLatexBlock.content], and
+  /// [OrgLatexBlock.end]. It is your responsibility to render the block and
+  /// return a widget for displaying it. The widget is placed in a horizontally
+  /// scrolling container, so its width is unbounded and it must size itself.
+  ///
+  /// Return null instead to display the LaTeX source in the code style.
+  final Widget? Function(OrgLatexBlock latex)? loadLatexBlock;
 
   @override
   State<OrgText> createState() => _OrgTextState();
@@ -215,6 +281,8 @@ class _OrgTextState extends State<OrgText> {
       child: OrgRootWidget(
         onLinkTap: widget.onLinkTap,
         loadImage: widget.loadImage,
+        loadLatexInline: widget.loadLatexInline,
+        loadLatexBlock: widget.loadLatexBlock,
         lightTheme: OrgThemeData.light().copyWith(rootPadding: EdgeInsets.zero),
         darkTheme: OrgThemeData.dark().copyWith(rootPadding: EdgeInsets.zero),
         child: OrgDocumentWidget(_doc, shrinkWrap: true, safeArea: false),
