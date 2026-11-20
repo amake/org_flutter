@@ -1,15 +1,21 @@
 PODS:
   - Flutter (1.0.0)
+  - flutter_tex_js_ios (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - flutter_tex_js_ios (from `.symlinks/plugins/flutter_tex_js_ios/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  flutter_tex_js_ios:
+    :path: ".symlinks/plugins/flutter_tex_js_ios/ios"
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_tex_js_ios: babbfcf08c2586a67d7ee713dbb5e8acdff19dd6
 
 PODFILE CHECKSUM: c4c93c5f6502fe2754f48404d3594bf779584011
 
