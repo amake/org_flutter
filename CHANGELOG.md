@@ -1,3 +1,10 @@
+## [14.0.0]
+- org_flutter no longer depends on
+  [flutter_tex_js](https://pub.dev/packages/flutter_tex_js). Instead consumers
+  must provide their own rendering via the `loadLatexBlock` and
+  `loadLatexInline` callbacks. See the [example app](./example/lib/latex.dart)
+  for code equivalent to the old behavior.
+
 ## [13.5.0]
 - Allow specifying style of code, verbatim, and blocks in `OrgThemeData`
 
